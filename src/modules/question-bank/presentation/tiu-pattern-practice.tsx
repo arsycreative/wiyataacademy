@@ -2,8 +2,10 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
+  Award,
   BarChart3,
   BookOpen,
+  Check,
   CheckCircle2,
   ChevronLeft,
   ChevronRight,
@@ -24,9 +26,11 @@ import {
   getQuestionsByPattern,
 } from "@/modules/question-bank/data/tiu";
 import {
+  DIFFICULTIES,
   OPTION_KEYS,
   TIU_PATTERN_IDS,
   TIU_PATTERNS,
+  type Difficulty,
   type OptionKey,
   type Question,
   type TiuPatternId,
@@ -37,18 +41,73 @@ type TiuPatternPracticeProps = {
 };
 
 type ViewMode = "list" | "single";
+type StatusFilter = "all" | "unanswered" | "wrong" | "flagged";
+
+type DiagnosticReport = {
+  correct: number;
+  total: number;
+  accuracy: number;
+  recommendedSubPattern: string;
+  recommendedDifficulty: Difficulty;
+  subPatternBreakdown: readonly {
+    subPattern: string;
+    label: string;
+    correct: number;
+    total: number;
+    accuracy: number;
+    recommendedDifficulty: Difficulty;
+  }[];
+};
+
+type ActiveDiagnosticSession = {
+  patternId: TiuPatternId;
+  questions: readonly Question[];
+  currentIndex: number;
+  answers: Record<string, OptionKey>;
+};
 
 type StoredPracticeProgress = {
   selectedAnswers?: Record<string, OptionKey>;
   flaggedQuestions?: Record<string, boolean>;
   viewMode?: ViewMode;
   lastPattern?: TiuPatternId;
+  diagnosticReports?: Partial<Record<TiuPatternId, DiagnosticReport>>;
 };
 
 const PAGE_SIZE = 25;
 const NAV_CHUNK_SIZE = 50;
+const MASTERY_THRESHOLD = 80;
 const STORAGE_KEY = "wiyata-tiu-practice-progress-v1";
 const DEFAULT_PATTERN: TiuPatternId = "sinonim-antonim-akronim";
+
+const DIFFICULTY_META: Record<
+  Difficulty,
+  {
+    step: number;
+    title: string;
+    subtitle: string;
+    badgeClass: string;
+  }
+> = {
+  mudah: {
+    step: 1,
+    title: "Level 1 • Pondasi",
+    subtitle: "Konsep Dasar & Pola Inti",
+    badgeClass: "bg-emerald-50 text-emerald-700 border-emerald-200",
+  },
+  sedang: {
+    step: 2,
+    title: "Level 2 • Standar CAT",
+    subtitle: "Setara Soal SKD CPNS",
+    badgeClass: "bg-blue-50 text-blue-700 border-blue-200",
+  },
+  sulit: {
+    step: 3,
+    title: "Level 3 • HOTS & Jebakan",
+    subtitle: "Penalaran Lanjut & Pengecoh",
+    badgeClass: "bg-violet-50 text-violet-700 border-violet-200",
+  },
+};
 
 function isTiuPatternId(value: unknown): value is TiuPatternId {
   return (
@@ -64,12 +123,53 @@ function isOptionKey(value: unknown): value is OptionKey {
   );
 }
 
+function isDifficulty(value: unknown): value is Difficulty {
+  return (
+    typeof value === "string" &&
+    (DIFFICULTIES as readonly string[]).includes(value)
+  );
+}
+
 function syncPatternUrl(patternId: TiuPatternId) {
   if (typeof window === "undefined") return;
   const url = new URL(window.location.href);
   url.searchParams.set("pattern", patternId);
   url.searchParams.delete("pola");
   window.history.replaceState(null, "", `${url.pathname}${url.search}${url.hash}`);
+}
+
+function recommendDifficultyFromAccuracy(accuracy: number): Difficulty {
+  if (accuracy < 50) return "mudah";
+  if (accuracy < 80) return "sedang";
+  return "sulit";
+}
+
+/**
+ * Menyusun paket soal Tes Diagnostik Singkat secara proporsional:
+ * mengambil 1 soal Mudah, 1 Sedang, dan 1 Sulit dari setiap sub-pola.
+ */
+function buildDiagnosticQuestions(
+  patternId: TiuPatternId,
+  allQuestions: readonly Question[],
+): readonly Question[] {
+  const subPatterns = TIU_PATTERNS[patternId].subPatterns;
+  if (subPatterns.length === 0) {
+    return allQuestions.slice(0, 9);
+  }
+
+  const picked: Question[] = [];
+  for (const sub of subPatterns) {
+    const inSub = allQuestions.filter((q) => q.subPattern === sub);
+    for (const diff of DIFFICULTIES) {
+      const candidate = inSub.find(
+        (q) => q.difficulty === diff && !picked.some((p) => p.id === q.id),
+      );
+      if (candidate) {
+        picked.push(candidate);
+      }
+    }
+  }
+  return picked;
 }
 
 export function TiuPatternPractice({
@@ -79,6 +179,8 @@ export function TiuPatternPractice({
     initialPattern ?? DEFAULT_PATTERN,
   );
   const [selectedSubPattern, setSelectedSubPattern] = useState<string>("all");
+  const [selectedDifficulty, setSelectedDifficulty] = useState<"all" | Difficulty>("all");
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [viewMode, setViewMode] = useState<ViewMode>("list");
   const [isReviewMode, setIsReviewMode] = useState<boolean>(false);
@@ -87,6 +189,11 @@ export function TiuPatternPractice({
   const [flaggedQuestions, setFlaggedQuestions] = useState<Record<string, boolean>>({});
   const [revealedHints, setRevealedHints] = useState<Record<string, boolean>>({});
   const [activeQuestionId, setActiveQuestionId] = useState<string | null>(null);
+  const [diagnosticSession, setDiagnosticSession] =
+    useState<ActiveDiagnosticSession | null>(null);
+  const [diagnosticReports, setDiagnosticReports] = useState<
+    Partial<Record<TiuPatternId, DiagnosticReport>>
+  >({});
   const [isStorageHydrated, setIsStorageHydrated] = useState<boolean>(false);
 
   const pendingScrollIdRef = useRef<string | null>(null);
@@ -128,6 +235,10 @@ export function TiuPatternPractice({
             setViewMode(parsed.viewMode);
           }
 
+          if (parsed.diagnosticReports && typeof parsed.diagnosticReports === "object") {
+            setDiagnosticReports(parsed.diagnosticReports);
+          }
+
           if (urlPattern) {
             setActivePattern(urlPattern);
             syncPatternUrl(urlPattern);
@@ -153,8 +264,11 @@ export function TiuPatternPractice({
       if (isTiuPatternId(nextPattern)) {
         setActivePattern(nextPattern);
         setSelectedSubPattern("all");
+        setSelectedDifficulty("all");
+        setStatusFilter("all");
         setCurrentPage(1);
         setActiveQuestionId(null);
+        setDiagnosticSession(null);
       }
     };
 
@@ -174,12 +288,19 @@ export function TiuPatternPractice({
         flaggedQuestions,
         viewMode,
         lastPattern: activePattern,
+        diagnosticReports,
       };
       window.localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
     } catch {
       // Ignore storage write quota/privacy errors
     }
-  }, [selectedAnswers, flaggedQuestions, viewMode, activePattern]);
+  }, [
+    selectedAnswers,
+    flaggedQuestions,
+    viewMode,
+    activePattern,
+    diagnosticReports,
+  ]);
 
   const patternStats = useMemo(() => getPatternStats(), []);
   const activeMeta = TIU_PATTERNS[activePattern];
@@ -188,13 +309,54 @@ export function TiuPatternPractice({
     [activePattern],
   );
 
-  const filteredQuestions = useMemo(
+  // Questions filtered by sub-pattern only (used to compute level mastery cards)
+  const subPatternScopedQuestions = useMemo(
     () =>
       getQuestionsByPattern(activePattern, {
         subPattern: selectedSubPattern === "all" ? undefined : selectedSubPattern,
       }),
     [activePattern, selectedSubPattern],
   );
+
+  // Questions filtered by sub-pattern + difficulty
+  const difficultyScopedQuestions = useMemo(
+    () =>
+      getQuestionsByPattern(activePattern, {
+        subPattern: selectedSubPattern === "all" ? undefined : selectedSubPattern,
+        difficulty: selectedDifficulty === "all" ? undefined : selectedDifficulty,
+      }),
+    [activePattern, selectedSubPattern, selectedDifficulty],
+  );
+
+  // Final filtered questions including status filter (all / unanswered / wrong / flagged)
+  const filteredQuestions = useMemo(() => {
+    if (statusFilter === "all") return difficultyScopedQuestions;
+    return difficultyScopedQuestions.filter((q) => {
+      const ans = selectedAnswers[q.id];
+      if (statusFilter === "unanswered") return ans === undefined;
+      if (statusFilter === "wrong") return ans !== undefined && ans !== q.answer;
+      if (statusFilter === "flagged") return Boolean(flaggedQuestions[q.id]);
+      return true;
+    });
+  }, [difficultyScopedQuestions, statusFilter, selectedAnswers, flaggedQuestions]);
+
+  const statusCounts = useMemo(() => {
+    let unanswered = 0;
+    let wrong = 0;
+    let flagged = 0;
+    for (const q of difficultyScopedQuestions) {
+      const ans = selectedAnswers[q.id];
+      if (ans === undefined) unanswered += 1;
+      else if (ans !== q.answer) wrong += 1;
+      if (flaggedQuestions[q.id]) flagged += 1;
+    }
+    return {
+      all: difficultyScopedQuestions.length,
+      unanswered,
+      wrong,
+      flagged,
+    };
+  }, [difficultyScopedQuestions, selectedAnswers, flaggedQuestions]);
 
   const subPatternCounts = useMemo(() => {
     const counts: Record<string, number> = {};
@@ -204,6 +366,54 @@ export function TiuPatternPractice({
     return counts;
   }, [allPatternQuestions]);
 
+  // Step-by-step Level Mastery stats (Mudah -> Sedang -> Sulit) for current scope
+  const levelMasteryStats = useMemo(() => {
+    return DIFFICULTIES.map((diff) => {
+      const questionsInLevel = subPatternScopedQuestions.filter(
+        (q) => q.difficulty === diff,
+      );
+      const answered = questionsInLevel.filter(
+        (q) => selectedAnswers[q.id] !== undefined,
+      );
+      const correct = answered.filter(
+        (q) => selectedAnswers[q.id] === q.answer,
+      ).length;
+      const accuracy =
+        answered.length > 0 ? Math.round((correct / answered.length) * 100) : null;
+      const minRequiredForMastery = Math.min(5, questionsInLevel.length);
+      const isMastered =
+        questionsInLevel.length > 0 &&
+        answered.length >= minRequiredForMastery &&
+        (accuracy ?? 0) >= MASTERY_THRESHOLD;
+
+      return {
+        difficulty: diff,
+        meta: DIFFICULTY_META[diff],
+        total: questionsInLevel.length,
+        answered: answered.length,
+        correct,
+        accuracy,
+        minRequiredForMastery,
+        isMastered,
+      };
+    });
+  }, [subPatternScopedQuestions, selectedAnswers]);
+
+  const currentLevelStat = useMemo(
+    () =>
+      selectedDifficulty === "all"
+        ? null
+        : levelMasteryStats.find((item) => item.difficulty === selectedDifficulty) ??
+          null,
+    [levelMasteryStats, selectedDifficulty],
+  );
+
+  const nextDifficultyLevel = useMemo<Difficulty | null>(() => {
+    if (selectedDifficulty === "mudah") return "sedang";
+    if (selectedDifficulty === "sedang") return "sulit";
+    return null;
+  }, [selectedDifficulty]);
+
   // Sub-pattern evaluation & weakness analytics
   const subPatternEvaluations = useMemo(() => {
     return activeMeta.subPatterns.map((sub) => {
@@ -212,6 +422,8 @@ export function TiuPatternPractice({
       const correct = answered.filter((q) => selectedAnswers[q.id] === q.answer).length;
       const accuracy =
         answered.length > 0 ? Math.round((correct / answered.length) * 100) : null;
+      const recommendedDifficulty: Difficulty =
+        accuracy === null ? "mudah" : recommendDifficultyFromAccuracy(accuracy);
 
       return {
         subPattern: sub,
@@ -220,6 +432,7 @@ export function TiuPatternPractice({
         answered: answered.length,
         correct,
         accuracy,
+        recommendedDifficulty,
       };
     });
   }, [activeMeta.subPatterns, allPatternQuestions, selectedAnswers]);
@@ -236,8 +449,8 @@ export function TiuPatternPractice({
   }, [subPatternEvaluations]);
 
   const answeredInView = useMemo(
-    () => filteredQuestions.filter((q) => selectedAnswers[q.id] !== undefined),
-    [filteredQuestions, selectedAnswers],
+    () => difficultyScopedQuestions.filter((q) => selectedAnswers[q.id] !== undefined),
+    [difficultyScopedQuestions, selectedAnswers],
   );
 
   const correctInView = useMemo(
@@ -273,7 +486,7 @@ export function TiuPatternPractice({
   );
 
   useEffect(() => {
-    if (viewMode === "single") {
+    if (viewMode === "single" || diagnosticSession !== null) {
       pendingScrollIdRef.current = null;
       return;
     }
@@ -287,23 +500,150 @@ export function TiuPatternPractice({
       }
     });
     return () => window.cancelAnimationFrame(frame);
-  }, [safePage, activePattern, selectedSubPattern, viewMode]);
+  }, [
+    safePage,
+    activePattern,
+    selectedSubPattern,
+    selectedDifficulty,
+    statusFilter,
+    viewMode,
+    diagnosticSession,
+  ]);
 
   const handlePatternChange = useCallback((patternId: TiuPatternId) => {
     setActivePattern(patternId);
     setSelectedSubPattern("all");
+    setSelectedDifficulty("all");
+    setStatusFilter("all");
     setCurrentPage(1);
     setActiveQuestionId(null);
+    setDiagnosticSession(null);
     pendingScrollIdRef.current = null;
     syncPatternUrl(patternId);
   }, []);
 
   const handleSubPatternChange = useCallback((subPattern: string) => {
     setSelectedSubPattern(subPattern);
+    setStatusFilter("all");
     setCurrentPage(1);
     setActiveQuestionId(null);
     pendingScrollIdRef.current = null;
   }, []);
+
+  const handleDifficultyChange = useCallback((difficulty: "all" | Difficulty) => {
+    setSelectedDifficulty(difficulty);
+    setStatusFilter("all");
+    setCurrentPage(1);
+    setActiveQuestionId(null);
+    pendingScrollIdRef.current = null;
+  }, []);
+
+  const handleStatusFilterChange = useCallback((nextStatus: StatusFilter) => {
+    setStatusFilter(nextStatus);
+    setCurrentPage(1);
+    setActiveQuestionId(null);
+    pendingScrollIdRef.current = null;
+  }, []);
+
+  const applyAdaptiveRecommendation = useCallback(
+    (subPattern: string, difficulty: Difficulty) => {
+      setDiagnosticSession(null);
+      setSelectedSubPattern(subPattern);
+      setSelectedDifficulty(difficulty);
+      setStatusFilter("all");
+      setCurrentPage(1);
+      setActiveQuestionId(null);
+      setIsReviewMode(false);
+    },
+    [],
+  );
+
+  // Diagnostic Flow handlers
+  const handleStartDiagnostic = useCallback(() => {
+    const questions = buildDiagnosticQuestions(activePattern, allPatternQuestions);
+    if (questions.length === 0) return;
+    setDiagnosticSession({
+      patternId: activePattern,
+      questions,
+      currentIndex: 0,
+      answers: {},
+    });
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [activePattern, allPatternQuestions]);
+
+  const handleSelectDiagnosticOption = useCallback((optionKey: OptionKey) => {
+    setDiagnosticSession((prev) => {
+      if (!prev) return null;
+      const currentQ = prev.questions[prev.currentIndex];
+      if (!currentQ) return prev;
+      const nextAnswers = {
+        ...prev.answers,
+        [currentQ.id]: optionKey,
+      };
+      const nextIndex =
+        prev.currentIndex < prev.questions.length - 1
+          ? prev.currentIndex + 1
+          : prev.currentIndex;
+      return {
+        ...prev,
+        answers: nextAnswers,
+        currentIndex: nextIndex,
+      };
+    });
+  }, []);
+
+  const handleFinishDiagnostic = useCallback(() => {
+    if (!diagnosticSession) return;
+    const { patternId, questions, answers } = diagnosticSession;
+    const subPatterns = TIU_PATTERNS[patternId].subPatterns;
+
+    // Also record diagnostic answers into main selectedAnswers so user doesn't lose work
+    setSelectedAnswers((prev) => ({
+      ...prev,
+      ...answers,
+    }));
+
+    const total = questions.length;
+    const correct = questions.filter((q) => answers[q.id] === q.answer).length;
+    const accuracy = total > 0 ? Math.round((correct / total) * 100) : 0;
+
+    const breakdown = subPatterns.map((sub) => {
+      const subQs = questions.filter((q) => q.subPattern === sub);
+      const subCorrect = subQs.filter((q) => answers[q.id] === q.answer).length;
+      const subAcc = subQs.length > 0 ? Math.round((subCorrect / subQs.length) * 100) : 0;
+      return {
+        subPattern: sub,
+        label: capitalize(sub),
+        correct: subCorrect,
+        total: subQs.length,
+        accuracy: subAcc,
+        recommendedDifficulty: recommendDifficultyFromAccuracy(subAcc),
+      };
+    });
+
+    const weakest =
+      breakdown.length > 0
+        ? breakdown.reduce((min, item) =>
+            item.accuracy < min.accuracy ? item : min,
+          )
+        : null;
+
+    const report: DiagnosticReport = {
+      correct,
+      total,
+      accuracy,
+      recommendedSubPattern: weakest?.subPattern ?? "all",
+      recommendedDifficulty:
+        weakest?.recommendedDifficulty ?? recommendDifficultyFromAccuracy(accuracy),
+      subPatternBreakdown: breakdown,
+    };
+
+    setDiagnosticReports((prev) => ({
+      ...prev,
+      [patternId]: report,
+    }));
+    setDiagnosticSession(null);
+  }, [diagnosticSession]);
 
   const handlePageChange = useCallback(
     (nextPage: number) => {
@@ -362,6 +702,35 @@ export function TiuPatternPractice({
     [isReviewMode],
   );
 
+  const handleRetryWrongInScope = useCallback(() => {
+    const wrongIds = difficultyScopedQuestions
+      .filter((q) => {
+        const ans = selectedAnswers[q.id];
+        return ans !== undefined && ans !== q.answer;
+      })
+      .map((q) => q.id);
+
+    if (wrongIds.length === 0) return;
+
+    setSelectedAnswers((prev) => {
+      const next = { ...prev };
+      for (const id of wrongIds) {
+        delete next[id];
+      }
+      return next;
+    });
+    setRevealedHints((prev) => {
+      const next = { ...prev };
+      for (const id of wrongIds) {
+        delete next[id];
+      }
+      return next;
+    });
+    setStatusFilter("all");
+    setCurrentPage(1);
+    setActiveQuestionId(wrongIds[0] ?? null);
+  }, [difficultyScopedQuestions, selectedAnswers]);
+
   const handleReset = useCallback(() => {
     const patternIds = new Set(allPatternQuestions.map((q) => q.id));
     setSelectedAnswers((prev) => {
@@ -385,8 +754,14 @@ export function TiuPatternPractice({
       }
       return next;
     });
+    setDiagnosticReports((prev) => {
+      const next = { ...prev };
+      delete next[activePattern];
+      return next;
+    });
+    setStatusFilter("all");
     setActiveQuestionId(null);
-  }, [allPatternQuestions]);
+  }, [activePattern, allPatternQuestions]);
 
   const toggleHint = useCallback((questionId: string) => {
     setActiveQuestionId(questionId);
@@ -411,7 +786,7 @@ export function TiuPatternPractice({
 
   // Keyboard shortcuts for CAT navigation & answering
   useEffect(() => {
-    if (filteredQuestions.length === 0) return;
+    if (diagnosticSession !== null || filteredQuestions.length === 0) return;
 
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.metaKey || event.ctrlKey || event.altKey) return;
@@ -471,6 +846,7 @@ export function TiuPatternPractice({
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [
+    diagnosticSession,
     effectiveActiveIndex,
     effectiveActiveQuestion,
     filteredQuestions.length,
@@ -482,17 +858,16 @@ export function TiuPatternPractice({
     toggleHint,
   ]);
 
+  const activeDiagnosticReport = diagnosticReports[activePattern] ?? null;
+
   const hasPatternProgress = useMemo(
     () =>
+      Boolean(activeDiagnosticReport) ||
       allPatternQuestions.some(
         (q) => selectedAnswers[q.id] !== undefined || flaggedQuestions[q.id],
       ),
-    [allPatternQuestions, flaggedQuestions, selectedAnswers],
+    [activeDiagnosticReport, allPatternQuestions, flaggedQuestions, selectedAnswers],
   );
-
-  const showSubPatternBar =
-    allPatternQuestions.length > 0 &&
-    (activeMeta.subPatterns.length > 0 || (!isReviewMode && answeredInView.length > 0));
 
   return (
     <div className="grid gap-6 lg:grid-cols-[240px_minmax(0,1fr)_248px] xl:grid-cols-[270px_minmax(0,1fr)_285px] lg:items-start">
@@ -556,145 +931,184 @@ export function TiuPatternPractice({
 
       {/* Main Content */}
       <div className="order-3 min-w-0 space-y-6 lg:order-2">
-        {/* Active pattern controls & sub-pattern filter */}
-        <section className="rounded-2xl border border-blue-100 bg-white p-6 shadow-sm shadow-blue-100/60">
-          <div className="flex flex-col gap-4 border-b border-slate-100 pb-5 sm:flex-row sm:items-start sm:justify-between">
-            <div>
-              <div className="flex flex-wrap items-center gap-2">
-                <span className="inline-flex rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700">
-                  Pola #{activeMeta.order} • TIU
-                </span>
-                {isStorageHydrated && (
-                  <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-1 text-[11px] font-medium text-emerald-700">
-                    <CheckCircle2 className="size-3" aria-hidden />
-                    Progres tersimpan otomatis
-                  </span>
-                )}
-              </div>
-              <h2 className="mt-2.5 text-2xl font-semibold text-slate-950">
-                {activeMeta.label}
-              </h2>
-              <p className="mt-1 text-sm text-slate-600">
-                {filteredQuestions.length > 0 ? (
-                  viewMode === "single" ? (
-                    <>
-                      Mode Fokus CAT • Soal {effectiveActiveIndex + 1} dari{" "}
-                      {filteredQuestions.length} soal tersedia.
-                    </>
-                  ) : (
-                    <>
-                      Menampilkan soal {pageStartIndex + 1}–
-                      {Math.min(pageStartIndex + PAGE_SIZE, filteredQuestions.length)} dari{" "}
-                      {filteredQuestions.length} soal tersedia.
-                    </>
-                  )
-                ) : (
-                  <>Belum ada soal pada pilihan ini.</>
-                )}
-              </p>
-            </div>
+        {/* Mode Sesi Tes Diagnostik Singkat */}
+        {diagnosticSession ? (
+          <DiagnosticSessionPanel
+            session={diagnosticSession}
+            patternLabel={activeMeta.label}
+            onSelectOption={handleSelectDiagnosticOption}
+            onJumpIndex={(idx) =>
+              setDiagnosticSession((prev) =>
+                prev ? { ...prev, currentIndex: idx } : null,
+              )
+            }
+            onFinish={handleFinishDiagnostic}
+            onCancel={() => setDiagnosticSession(null)}
+          />
+        ) : (
+          <>
+            {/* Adaptive Mastery Banner: Tes Diagnostik -> Rekomendasi -> Level Bertahap */}
+            {allPatternQuestions.length > 0 && (
+              <AdaptiveMasteryHeader
+                patternLabel={activeMeta.label}
+                subPatternCount={activeMeta.subPatterns.length}
+                diagnosticReport={activeDiagnosticReport}
+                weakestSubPattern={weakestSubPattern}
+                selectedSubPattern={selectedSubPattern}
+                selectedDifficulty={selectedDifficulty}
+                onStartDiagnostic={handleStartDiagnostic}
+                onApplyRecommendation={applyAdaptiveRecommendation}
+              />
+            )}
 
-            <div className="flex flex-wrap items-center gap-2">
-              {filteredQuestions.length > 0 && (
-                <div
-                  role="group"
-                  aria-label="Mode tampilan soal"
-                  className="inline-flex rounded-xl border border-blue-100 bg-slate-50 p-1"
-                >
-                  <button
-                    type="button"
-                    onClick={() => setViewMode("list")}
-                    className={cn(
-                      "inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold transition-colors",
-                      viewMode === "list"
-                        ? "bg-white text-blue-700 shadow-xs"
-                        : "text-slate-600 hover:text-slate-900",
+            {/* Active pattern controls, sub-pattern filter, and 3-Stage Level Progression */}
+            <section className="rounded-2xl border border-blue-100 bg-white p-6 shadow-sm shadow-blue-100/60">
+              <div className="flex flex-col gap-4 border-b border-slate-100 pb-5 sm:flex-row sm:items-start sm:justify-between">
+                <div>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="inline-flex rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700">
+                      Pola #{activeMeta.order} • TIU
+                    </span>
+                    {selectedDifficulty !== "all" && isDifficulty(selectedDifficulty) && (
+                      <span
+                        className={cn(
+                          "inline-flex rounded-full border px-2.5 py-0.5 text-xs font-semibold",
+                          DIFFICULTY_META[selectedDifficulty].badgeClass,
+                        )}
+                      >
+                        {DIFFICULTY_META[selectedDifficulty].title}
+                      </span>
                     )}
-                  >
-                    <Layers3 className="size-3.5" aria-hidden />
-                    25 / Halaman
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setViewMode("single")}
-                    className={cn(
-                      "inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold transition-colors",
-                      viewMode === "single"
-                        ? "bg-blue-600 text-white shadow-xs"
-                        : "text-slate-600 hover:text-slate-900",
+                    {isStorageHydrated && (
+                      <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-1 text-[11px] font-medium text-emerald-700">
+                        <CheckCircle2 className="size-3" aria-hidden />
+                        Progres tersimpan otomatis
+                      </span>
                     )}
-                  >
-                    <ClipboardList className="size-3.5" aria-hidden />
-                    1 Soal (Mode CAT)
-                  </button>
+                  </div>
+                  <h2 className="mt-2.5 text-2xl font-semibold text-slate-950">
+                    {activeMeta.label}
+                  </h2>
+                  <p className="mt-1 text-sm text-slate-600">
+                    {filteredQuestions.length > 0 ? (
+                      viewMode === "single" ? (
+                        <>
+                          Mode Fokus CAT • Soal {effectiveActiveIndex + 1} dari{" "}
+                          {filteredQuestions.length} soal pada filter aktif.
+                        </>
+                      ) : (
+                        <>
+                          Menampilkan soal {pageStartIndex + 1}–
+                          {Math.min(pageStartIndex + PAGE_SIZE, filteredQuestions.length)} dari{" "}
+                          {filteredQuestions.length} soal pada filter aktif.
+                        </>
+                      )
+                    ) : (
+                      <>Belum ada soal pada pilihan filter ini.</>
+                    )}
+                  </p>
                 </div>
-              )}
 
-              <Button
-                type="button"
-                variant={isReviewMode ? "default" : "outline"}
-                onClick={() => setIsReviewMode((prev) => !prev)}
-                className={cn(
-                  "h-9 text-xs sm:text-sm",
-                  isReviewMode
-                    ? "bg-blue-600 text-white hover:bg-blue-700"
-                    : "border-blue-200 text-blue-700 hover:bg-blue-50",
-                )}
-              >
-                {isReviewMode ? (
-                  <>
-                    <Eye className="size-4" aria-hidden />
-                    Mode Review (Kunci Tampil)
-                  </>
-                ) : (
-                  <>
-                    <EyeOff className="size-4" aria-hidden />
-                    Mode Latihan (Kunci Tersembunyi)
-                  </>
-                )}
-              </Button>
-
-              {activeMeta.subPatterns.length > 0 && allPatternQuestions.length > 0 && (
-                <Button
-                  type="button"
-                  variant={showEvaluation ? "default" : "outline"}
-                  onClick={() => setShowEvaluation((prev) => !prev)}
-                  className={cn(
-                    "h-9 text-xs sm:text-sm",
-                    showEvaluation
-                      ? "bg-slate-900 text-white hover:bg-slate-800"
-                      : "border-blue-200 text-blue-700 hover:bg-blue-50",
-                  )}
-                >
-                  <BarChart3 className="size-4" aria-hidden />
-                  Evaluasi Sub-Pola
-                </Button>
-              )}
-
-              {!isReviewMode && hasPatternProgress && (
-                <Button
-                  type="button"
-                  variant="ghost"
-                  onClick={handleReset}
-                  className="h-9 text-xs text-slate-600 hover:bg-slate-100 hover:text-slate-950 sm:text-sm"
-                >
-                  <RotateCcw className="size-4" aria-hidden />
-                  Reset Pola Ini
-                </Button>
-              )}
-            </div>
-          </div>
-
-          {showSubPatternBar && (
-            <div className="mt-5 flex flex-wrap items-center justify-between gap-3">
-              {activeMeta.subPatterns.length > 0 ? (
                 <div className="flex flex-wrap items-center gap-2">
+                  {filteredQuestions.length > 0 && (
+                    <div
+                      role="group"
+                      aria-label="Mode tampilan soal"
+                      className="inline-flex rounded-xl border border-blue-100 bg-slate-50 p-1"
+                    >
+                      <button
+                        type="button"
+                        onClick={() => setViewMode("list")}
+                        className={cn(
+                          "inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold transition-colors",
+                          viewMode === "list"
+                            ? "bg-white text-blue-700 shadow-xs"
+                            : "text-slate-600 hover:text-slate-900",
+                        )}
+                      >
+                        <Layers3 className="size-3.5" aria-hidden />
+                        25 / Halaman
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setViewMode("single")}
+                        className={cn(
+                          "inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold transition-colors",
+                          viewMode === "single"
+                            ? "bg-blue-600 text-white shadow-xs"
+                            : "text-slate-600 hover:text-slate-900",
+                        )}
+                      >
+                        <ClipboardList className="size-3.5" aria-hidden />
+                        1 Soal (Mode CAT)
+                      </button>
+                    </div>
+                  )}
+
+                  <Button
+                    type="button"
+                    variant={isReviewMode ? "default" : "outline"}
+                    onClick={() => setIsReviewMode((prev) => !prev)}
+                    className={cn(
+                      "h-9 text-xs sm:text-sm",
+                      isReviewMode
+                        ? "bg-blue-600 text-white hover:bg-blue-700"
+                        : "border-blue-200 text-blue-700 hover:bg-blue-50",
+                    )}
+                  >
+                    {isReviewMode ? (
+                      <>
+                        <Eye className="size-4" aria-hidden />
+                        Mode Review (Kunci Tampil)
+                      </>
+                    ) : (
+                      <>
+                        <EyeOff className="size-4" aria-hidden />
+                        Mode Latihan (Kunci Tersembunyi)
+                      </>
+                    )}
+                  </Button>
+
+                  {activeMeta.subPatterns.length > 0 && allPatternQuestions.length > 0 && (
+                    <Button
+                      type="button"
+                      variant={showEvaluation ? "default" : "outline"}
+                      onClick={() => setShowEvaluation((prev) => !prev)}
+                      className={cn(
+                        "h-9 text-xs sm:text-sm",
+                        showEvaluation
+                          ? "bg-slate-900 text-white hover:bg-slate-800"
+                          : "border-blue-200 text-blue-700 hover:bg-blue-50",
+                      )}
+                    >
+                      <BarChart3 className="size-4" aria-hidden />
+                      Peta Sub-Pola
+                    </Button>
+                  )}
+
+                  {!isReviewMode && hasPatternProgress && (
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      onClick={handleReset}
+                      className="h-9 text-xs text-slate-600 hover:bg-slate-100 hover:text-slate-950 sm:text-sm"
+                    >
+                      <RotateCcw className="size-4" aria-hidden />
+                      Reset Pola Ini
+                    </Button>
+                  )}
+                </div>
+              </div>
+
+              {/* Filter Sub-Pola */}
+              {allPatternQuestions.length > 0 && activeMeta.subPatterns.length > 0 && (
+                <div className="mt-5 flex flex-wrap items-center gap-2">
                   <span className="mr-1 text-xs font-semibold uppercase tracking-wide text-slate-500">
-                    Sub-pola:
+                    1. Fokus Sub-Pola:
                   </span>
                   <FilterPill
                     active={selectedSubPattern === "all"}
-                    label={`Semua (${allPatternQuestions.length})`}
+                    label={`Semua Sub-Pola (${allPatternQuestions.length})`}
                     onClick={() => handleSubPatternChange("all")}
                   />
                   {activeMeta.subPatterns.map((sub) => (
@@ -706,273 +1120,484 @@ export function TiuPatternPractice({
                     />
                   ))}
                 </div>
-              ) : (
-                <div />
               )}
 
-              {!isReviewMode && answeredInView.length > 0 && (
-                <p className="rounded-lg bg-blue-50 px-3 py-1.5 text-xs font-semibold text-blue-800">
-                  Skor sementara: {correctInView} / {answeredInView.length} benar (
-                  {Math.round((correctInView / answeredInView.length) * 100)}%)
-                </p>
-              )}
-            </div>
-          )}
-
-          {/* Ringkasan Evaluasi Sub-Pola (Analitik Kelemahan) */}
-          {(showEvaluation || weakestSubPattern !== null) &&
-            activeMeta.subPatterns.length > 0 &&
-            allPatternQuestions.length > 0 && (
-              <div className="mt-5 rounded-xl border border-blue-100 bg-[#f8fbff] p-4">
-                <div className="flex flex-wrap items-center justify-between gap-2">
-                  <div>
-                    <p className="text-xs font-semibold uppercase tracking-wider text-blue-700">
-                      Ringkasan Evaluasi Sub-Pola
-                    </p>
-                    <p className="mt-0.5 text-xs text-slate-600">
-                      Klik salah satu sub-pola di bawah untuk fokus memperbaiki topik yang masih lemah.
-                    </p>
-                  </div>
-                  {weakestSubPattern && (
+              {/* Jalur Level Bertahap: Mudah -> Sedang -> Sulit */}
+              {allPatternQuestions.length > 0 && (
+                <div className="mt-5">
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <span className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                      2. Pilih Tahap Kesulitan (Target Lulus Level ≥ {MASTERY_THRESHOLD}%):
+                    </span>
                     <button
                       type="button"
-                      onClick={() => handleSubPatternChange(weakestSubPattern.subPattern)}
-                      className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-1.5 text-xs font-semibold text-amber-900 transition hover:bg-amber-100"
+                      onClick={() => handleDifficultyChange("all")}
+                      className={cn(
+                        "rounded-full border px-3 py-1 text-xs font-semibold transition-colors",
+                        selectedDifficulty === "all"
+                          ? "border-slate-900 bg-slate-900 text-white"
+                          : "border-slate-200 bg-white text-slate-600 hover:border-blue-300 hover:text-blue-700",
+                      )}
                     >
-                      Fokus Perbaikan: {weakestSubPattern.label} ({weakestSubPattern.accuracy}% benar)
+                      Tampilkan Semua Level ({subPatternScopedQuestions.length} soal)
                     </button>
+                  </div>
+
+                  <div className="mt-2.5 grid gap-3 sm:grid-cols-3">
+                    {levelMasteryStats.map((level, idx) => {
+                      const isSelected = selectedDifficulty === level.difficulty;
+                      const prevLevel = idx > 0 ? levelMasteryStats[idx - 1] : null;
+                      const isRecommendedNext =
+                        (idx === 0 && !level.isMastered) ||
+                        (prevLevel?.isMastered && !level.isMastered);
+
+                      return (
+                        <button
+                          key={level.difficulty}
+                          type="button"
+                          onClick={() =>
+                            handleDifficultyChange(
+                              isSelected ? "all" : level.difficulty,
+                            )
+                          }
+                          className={cn(
+                            "flex flex-col justify-between rounded-xl border p-3.5 text-left transition-all",
+                            isSelected
+                              ? "border-blue-600 bg-blue-50/50 ring-2 ring-blue-600/20"
+                              : level.isMastered
+                                ? "border-emerald-200 bg-emerald-50/30 hover:border-emerald-300"
+                                : "border-slate-200 bg-white hover:border-blue-300",
+                          )}
+                        >
+                          <div className="flex items-start justify-between gap-2">
+                            <div>
+                              <p className="text-xs font-bold text-slate-950">
+                                {level.meta.title}
+                              </p>
+                              <p className="text-[11px] text-slate-500">
+                                {level.meta.subtitle}
+                              </p>
+                            </div>
+
+                            {level.isMastered ? (
+                              <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-bold text-emerald-800">
+                                <Check className="size-3" aria-hidden />
+                                Lulus
+                              </span>
+                            ) : isRecommendedNext ? (
+                              <span className="rounded-full bg-blue-100 px-2 py-0.5 text-[10px] font-bold text-blue-800">
+                                Disarankan
+                              </span>
+                            ) : (
+                              <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-semibold text-slate-600">
+                                {level.total} soal
+                              </span>
+                            )}
+                          </div>
+
+                          <div className="mt-3 flex items-baseline justify-between text-xs text-slate-600">
+                            <span>
+                              Benar:{" "}
+                              <strong className="text-slate-900">
+                                {level.correct}/{level.answered}
+                              </strong>{" "}
+                              ({level.total} soal)
+                            </span>
+                            <span
+                              className={cn(
+                                "font-bold",
+                                level.accuracy === null
+                                  ? "text-slate-400"
+                                  : level.accuracy >= MASTERY_THRESHOLD
+                                    ? "text-emerald-700"
+                                    : level.accuracy >= 60
+                                      ? "text-amber-700"
+                                      : "text-rose-700",
+                              )}
+                            >
+                              {level.accuracy !== null ? `${level.accuracy}%` : "0%"}
+                            </span>
+                          </div>
+
+                          <div className="mt-1.5 h-1.5 w-full overflow-hidden rounded-full bg-slate-100">
+                            <div
+                              className={cn(
+                                "h-full rounded-full transition-all",
+                                level.accuracy === null
+                                  ? "w-0"
+                                  : level.accuracy >= MASTERY_THRESHOLD
+                                    ? "bg-emerald-500"
+                                    : level.accuracy >= 60
+                                      ? "bg-amber-500"
+                                      : "bg-rose-500",
+                              )}
+                              style={{ width: `${level.accuracy ?? 0}%` }}
+                            />
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
+
+                  {/* Callout Naik Level saat level aktif sudah mencapai >= 80% */}
+                  {currentLevelStat?.isMastered && nextDifficultyLevel && (
+                    <div className="mt-3 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-emerald-200 bg-emerald-50/80 px-4 py-3 text-xs text-emerald-950">
+                      <div className="flex items-center gap-2">
+                        <Award className="size-4 shrink-0 text-emerald-600" aria-hidden />
+                        <span>
+                          <strong>{currentLevelStat.meta.title} Terkuasai!</strong> Akurasi Anda{" "}
+                          <strong>{currentLevelStat.accuracy}%</strong> (target ≥ {MASTERY_THRESHOLD}%).
+                          Siap naik ke tahap berikutnya?
+                        </span>
+                      </div>
+                      <Button
+                        type="button"
+                        size="sm"
+                        onClick={() => handleDifficultyChange(nextDifficultyLevel)}
+                        className="h-8 bg-emerald-600 px-3 text-xs font-semibold text-white hover:bg-emerald-700"
+                      >
+                        Lanjut ke {DIFFICULTY_META[nextDifficultyLevel].title}
+                        <ChevronRight className="size-3.5" aria-hidden />
+                      </Button>
+                    </div>
                   )}
                 </div>
+              )}
 
-                <div className="mt-3 grid gap-2.5 sm:grid-cols-2 lg:grid-cols-3">
-                  {subPatternEvaluations.map((item) => {
-                    const isSelected = selectedSubPattern === item.subPattern;
-                    const statusBadge =
-                      item.accuracy === null
-                        ? { label: "Belum Dijawab", className: "bg-slate-100 text-slate-600" }
-                        : item.accuracy >= 80
-                          ? { label: "Kuat", className: "bg-emerald-100 text-emerald-800" }
-                          : item.accuracy >= 60
-                            ? { label: "Cukup", className: "bg-amber-100 text-amber-800" }
-                            : { label: "Perlu Fokus", className: "bg-rose-100 text-rose-800" };
+              {/* Filter Status Jawaban & Tombol Ulangi Soal yang Salah */}
+              {allPatternQuestions.length > 0 && (
+                <div className="mt-5 flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 pt-4">
+                  <div className="flex flex-wrap items-center gap-1.5">
+                    <span className="mr-1 text-xs font-semibold uppercase tracking-wide text-slate-500">
+                      3. Filter Status:
+                    </span>
+                    <FilterPill
+                      active={statusFilter === "all"}
+                      label={`Semua (${statusCounts.all})`}
+                      onClick={() => handleStatusFilterChange("all")}
+                    />
+                    <FilterPill
+                      active={statusFilter === "unanswered"}
+                      label={`Belum Diisi (${statusCounts.unanswered})`}
+                      onClick={() => handleStatusFilterChange("unanswered")}
+                    />
+                    <FilterPill
+                      active={statusFilter === "wrong"}
+                      label={`Dijawab Salah (${statusCounts.wrong})`}
+                      onClick={() => handleStatusFilterChange("wrong")}
+                    />
+                    <FilterPill
+                      active={statusFilter === "flagged"}
+                      label={`Ragu-ragu (${statusCounts.flagged})`}
+                      onClick={() => handleStatusFilterChange("flagged")}
+                    />
+                  </div>
 
-                    return (
-                      <button
-                        key={item.subPattern}
+                  <div className="flex flex-wrap items-center gap-2">
+                    {statusCounts.wrong > 0 && !isReviewMode && (
+                      <Button
                         type="button"
-                        onClick={() =>
-                          handleSubPatternChange(
-                            isSelected ? "all" : item.subPattern,
-                          )
-                        }
-                        className={cn(
-                          "flex flex-col justify-between rounded-xl border bg-white p-3 text-left transition-all",
-                          isSelected
-                            ? "border-blue-500 ring-2 ring-blue-500/20"
-                            : "border-slate-200/90 hover:border-blue-300",
-                        )}
+                        variant="outline"
+                        size="sm"
+                        onClick={handleRetryWrongInScope}
+                        className="h-8 border-rose-200 bg-rose-50/70 text-xs font-semibold text-rose-700 hover:bg-rose-100"
                       >
-                        <div className="flex items-start justify-between gap-2">
-                          <span className="text-xs font-semibold text-slate-900">
-                            {item.label}
-                          </span>
-                          <span
+                        <RotateCcw className="size-3.5" aria-hidden />
+                        Ulangi {statusCounts.wrong} Soal yang Salah
+                      </Button>
+                    )}
+
+                    {!isReviewMode && answeredInView.length > 0 && (
+                      <p className="rounded-lg bg-blue-50 px-3 py-1.5 text-xs font-semibold text-blue-800">
+                        Skor level ini: {correctInView} / {answeredInView.length} benar (
+                        {Math.round((correctInView / answeredInView.length) * 100)}%)
+                      </p>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* Ringkasan Evaluasi Sub-Pola (Analitik Kelemahan) */}
+              {(showEvaluation || weakestSubPattern !== null) &&
+                activeMeta.subPatterns.length > 0 &&
+                allPatternQuestions.length > 0 && (
+                  <div className="mt-5 rounded-xl border border-blue-100 bg-[#f8fbff] p-4">
+                    <div className="flex flex-wrap items-center justify-between gap-2">
+                      <div>
+                        <p className="text-xs font-semibold uppercase tracking-wider text-blue-700">
+                          Peta Penguasaan Sub-Pola & Rekomendasi Level
+                        </p>
+                        <p className="mt-0.5 text-xs text-slate-600">
+                          Klik kartu sub-pola untuk langsung melatih sub-pola pada level kesulitan yang disarankan.
+                        </p>
+                      </div>
+                      {weakestSubPattern && (
+                        <button
+                          type="button"
+                          onClick={() =>
+                            applyAdaptiveRecommendation(
+                              weakestSubPattern.subPattern,
+                              weakestSubPattern.recommendedDifficulty,
+                            )
+                          }
+                          className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-1.5 text-xs font-semibold text-amber-900 transition hover:bg-amber-100"
+                        >
+                          Fokus Perbaikan: {weakestSubPattern.label} ({weakestSubPattern.accuracy}% •{" "}
+                          {DIFFICULTY_META[weakestSubPattern.recommendedDifficulty].title})
+                        </button>
+                      )}
+                    </div>
+
+                    <div className="mt-3 grid gap-2.5 sm:grid-cols-2 lg:grid-cols-3">
+                      {subPatternEvaluations.map((item) => {
+                        const isSelected = selectedSubPattern === item.subPattern;
+                        const statusBadge =
+                          item.accuracy === null
+                            ? {
+                                label: "Mulai: Level 1",
+                                className: "bg-slate-100 text-slate-600",
+                              }
+                            : item.accuracy >= 80
+                              ? {
+                                  label: "Kuat • Siap Level 3",
+                                  className: "bg-emerald-100 text-emerald-800",
+                                }
+                              : item.accuracy >= 50
+                                ? {
+                                    label: "Cukup • Lanjut Level 2",
+                                    className: "bg-amber-100 text-amber-800",
+                                  }
+                                : {
+                                    label: "Perlu Fokus • Level 1",
+                                    className: "bg-rose-100 text-rose-800",
+                                  };
+
+                        return (
+                          <button
+                            key={item.subPattern}
+                            type="button"
+                            onClick={() =>
+                              applyAdaptiveRecommendation(
+                                item.subPattern,
+                                item.recommendedDifficulty,
+                              )
+                            }
                             className={cn(
-                              "shrink-0 rounded-full px-2 py-0.5 text-[10px] font-semibold",
-                              statusBadge.className,
+                              "flex flex-col justify-between rounded-xl border bg-white p-3 text-left transition-all",
+                              isSelected
+                                ? "border-blue-500 ring-2 ring-blue-500/20"
+                                : "border-slate-200/90 hover:border-blue-300",
                             )}
                           >
-                            {statusBadge.label}
-                          </span>
-                        </div>
+                            <div className="flex items-start justify-between gap-2">
+                              <span className="text-xs font-semibold text-slate-900">
+                                {item.label}
+                              </span>
+                              <span
+                                className={cn(
+                                  "shrink-0 rounded-full px-2 py-0.5 text-[10px] font-semibold",
+                                  statusBadge.className,
+                                )}
+                              >
+                                {statusBadge.label}
+                              </span>
+                            </div>
 
-                        <div className="mt-2.5 flex items-baseline justify-between text-xs text-slate-600">
-                          <span>
-                            Benar:{" "}
-                            <strong className="text-slate-900">
-                              {item.correct}/{item.answered}
-                            </strong>{" "}
-                            (dari {item.total})
-                          </span>
-                          <span className="font-semibold text-slate-900">
-                            {item.accuracy !== null ? `${item.accuracy}%` : "—"}
-                          </span>
-                        </div>
+                            <div className="mt-2.5 flex items-baseline justify-between text-xs text-slate-600">
+                              <span>
+                                Benar:{" "}
+                                <strong className="text-slate-900">
+                                  {item.correct}/{item.answered}
+                                </strong>{" "}
+                                (dari {item.total})
+                              </span>
+                              <span className="font-semibold text-slate-900">
+                                {item.accuracy !== null ? `${item.accuracy}%` : "—"}
+                              </span>
+                            </div>
 
-                        <div className="mt-1.5 h-1.5 w-full overflow-hidden rounded-full bg-slate-100">
-                          <div
-                            className={cn(
-                              "h-full rounded-full transition-all",
-                              item.accuracy === null
-                                ? "w-0"
-                                : item.accuracy >= 80
-                                  ? "bg-emerald-500"
-                                  : item.accuracy >= 60
-                                    ? "bg-amber-500"
-                                    : "bg-rose-500",
-                            )}
-                            style={{ width: `${item.accuracy ?? 0}%` }}
-                          />
-                        </div>
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
-        </section>
+                            <div className="mt-1.5 h-1.5 w-full overflow-hidden rounded-full bg-slate-100">
+                              <div
+                                className={cn(
+                                  "h-full rounded-full transition-all",
+                                  item.accuracy === null
+                                    ? "w-0"
+                                    : item.accuracy >= 80
+                                      ? "bg-emerald-500"
+                                      : item.accuracy >= 50
+                                        ? "bg-amber-500"
+                                        : "bg-rose-500",
+                                )}
+                                style={{ width: `${item.accuracy ?? 0}%` }}
+                              />
+                            </div>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+            </section>
 
-        {/* Empty state or question list */}
-        {allPatternQuestions.length === 0 ? (
-          <section className="rounded-2xl border border-dashed border-blue-200 bg-white px-6 py-16 text-center">
-            <span className="mx-auto flex size-14 items-center justify-center rounded-full bg-blue-50 text-blue-600">
-              <BookOpen className="size-7" aria-hidden />
-            </span>
-            <h3 className="mt-4 text-xl font-semibold text-slate-950">
-              Bank soal {activeMeta.label} siap diisi
-            </h3>
-            <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-slate-600">
-              File terpisah untuk pola ini sudah disiapkan. Saat ini soal batch pertama sedang
-              tersedia pada pola{" "}
-              <button
-                type="button"
-                onClick={() => handlePatternChange("sinonim-antonim-akronim")}
-                className="font-semibold text-blue-700 underline underline-offset-4 hover:text-blue-800"
-              >
-                Sinonim, Antonim, dan Akronim ({patternStats[0]?.total ?? 0} soal)
-              </button>
-              .
-            </p>
-          </section>
-        ) : filteredQuestions.length === 0 ? (
-          <section className="rounded-2xl border border-dashed border-slate-200 bg-white px-6 py-12 text-center">
-            <p className="text-base font-semibold text-slate-800">
-              Tidak ada soal yang cocok dengan filter ini.
-            </p>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => handleSubPatternChange("all")}
-              className="mt-4 border-blue-200 text-blue-700"
-            >
-              Tampilkan Semua Soal
-            </Button>
-          </section>
-        ) : viewMode === "single" && effectiveActiveQuestion ? (
-          <div className="space-y-4">
-            <QuestionCard
-              key={effectiveActiveQuestion.id}
-              index={effectiveActiveIndex + 1}
-              question={effectiveActiveQuestion}
-              selectedOption={selectedAnswers[effectiveActiveQuestion.id]}
-              isReviewMode={isReviewMode}
-              isActive
-              isFlagged={Boolean(flaggedQuestions[effectiveActiveQuestion.id])}
-              isHintOpen={Boolean(revealedHints[effectiveActiveQuestion.id])}
-              onToggleFlag={() => toggleFlag(effectiveActiveQuestion.id)}
-              onToggleHint={() => toggleHint(effectiveActiveQuestion.id)}
-              onSelectOption={(key) =>
-                handleSelectOption(effectiveActiveQuestion.id, key)
-              }
-            />
-
-            <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-blue-100 bg-white px-5 py-4 shadow-sm shadow-blue-100/50">
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                disabled={effectiveActiveIndex <= 0}
-                onClick={() => handleJumpToQuestion(effectiveActiveIndex - 1)}
-                className="h-10 border-blue-200 px-4 text-blue-700 hover:bg-blue-50"
-              >
-                <ChevronLeft className="size-4" aria-hidden />
-                Soal Sebelumnya
-              </Button>
-
-              <div className="flex flex-wrap items-center gap-2">
-                <button
-                  type="button"
-                  onClick={() => toggleFlag(effectiveActiveQuestion.id)}
-                  className={cn(
-                    "inline-flex h-10 items-center gap-2 rounded-lg border px-4 text-xs font-semibold transition-colors sm:text-sm",
-                    flaggedQuestions[effectiveActiveQuestion.id]
-                      ? "border-amber-400 bg-amber-50 text-amber-900"
-                      : "border-slate-200 bg-slate-50 text-slate-700 hover:border-amber-300 hover:bg-amber-50/60",
-                  )}
-                >
-                  <span
-                    className={cn(
-                      "size-2.5 rounded-full",
-                      flaggedQuestions[effectiveActiveQuestion.id]
-                        ? "bg-amber-500"
-                        : "bg-slate-300",
-                    )}
-                    aria-hidden
-                  />
-                  {flaggedQuestions[effectiveActiveQuestion.id]
-                    ? "Ditandai Ragu-ragu"
-                    : "Tandai Ragu-ragu"}
-                </button>
-
-                <span className="px-2 text-xs font-semibold text-slate-600 sm:text-sm">
-                  {effectiveActiveIndex + 1} / {filteredQuestions.length}
+            {/* Empty state or question list */}
+            {allPatternQuestions.length === 0 ? (
+              <section className="rounded-2xl border border-dashed border-blue-200 bg-white px-6 py-16 text-center">
+                <span className="mx-auto flex size-14 items-center justify-center rounded-full bg-blue-50 text-blue-600">
+                  <BookOpen className="size-7" aria-hidden />
                 </span>
-              </div>
-
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                disabled={effectiveActiveIndex >= filteredQuestions.length - 1}
-                onClick={() => handleJumpToQuestion(effectiveActiveIndex + 1)}
-                className="h-10 border-blue-200 px-4 text-blue-700 hover:bg-blue-50"
-              >
-                Soal Berikutnya
-                <ChevronRight className="size-4" aria-hidden />
-              </Button>
-            </div>
-
-            <p className="rounded-xl border border-slate-200/80 bg-white/80 px-4 py-2.5 text-center text-xs text-slate-500">
-              Pintasan Keyboard: <strong className="text-slate-700">A–E</strong> Pilih Jawaban •{" "}
-              <strong className="text-slate-700">← / →</strong> Pindah Soal •{" "}
-              <strong className="text-slate-700">R</strong> Tandai Ragu-ragu •{" "}
-              <strong className="text-slate-700">H</strong> Buka/Tutup Hint
-            </p>
-          </div>
-        ) : (
-          <>
-            {totalPages > 1 && (
-              <PaginationBar
-                currentPage={safePage}
-                totalPages={totalPages}
-                onPageChange={handlePageChange}
-              />
-            )}
-
-            <div className="space-y-5">
-              {paginatedQuestions.map((question, index) => (
+                <h3 className="mt-4 text-xl font-semibold text-slate-950">
+                  Bank soal {activeMeta.label} siap diisi
+                </h3>
+                <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-slate-600">
+                  File terpisah untuk pola ini sudah disiapkan. Saat ini soal sedang
+                  tersedia pada pola{" "}
+                  <button
+                    type="button"
+                    onClick={() => handlePatternChange("sinonim-antonim-akronim")}
+                    className="font-semibold text-blue-700 underline underline-offset-4 hover:text-blue-800"
+                  >
+                    Sinonim, Antonim, dan Akronim ({patternStats[0]?.total ?? 0} soal)
+                  </button>
+                  .
+                </p>
+              </section>
+            ) : filteredQuestions.length === 0 ? (
+              <section className="rounded-2xl border border-dashed border-slate-200 bg-white px-6 py-12 text-center">
+                <p className="text-base font-semibold text-slate-800">
+                  Tidak ada soal pada kombinasi filter ini.
+                </p>
+                <div className="mt-4 flex flex-wrap justify-center gap-2">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => {
+                      setStatusFilter("all");
+                      setSelectedDifficulty("all");
+                      setSelectedSubPattern("all");
+                    }}
+                    className="border-blue-200 text-blue-700"
+                  >
+                    Reset Filter Tampilan
+                  </Button>
+                </div>
+              </section>
+            ) : viewMode === "single" && effectiveActiveQuestion ? (
+              <div className="space-y-4">
                 <QuestionCard
-                  key={question.id}
-                  index={pageStartIndex + index + 1}
-                  question={question}
-                  selectedOption={selectedAnswers[question.id]}
+                  key={effectiveActiveQuestion.id}
+                  index={effectiveActiveIndex + 1}
+                  question={effectiveActiveQuestion}
+                  selectedOption={selectedAnswers[effectiveActiveQuestion.id]}
                   isReviewMode={isReviewMode}
-                  isActive={effectiveActiveQuestionId === question.id}
-                  isFlagged={Boolean(flaggedQuestions[question.id])}
-                  isHintOpen={Boolean(revealedHints[question.id])}
-                  onToggleFlag={() => toggleFlag(question.id)}
-                  onToggleHint={() => toggleHint(question.id)}
-                  onSelectOption={(key) => handleSelectOption(question.id, key)}
+                  isActive
+                  isFlagged={Boolean(flaggedQuestions[effectiveActiveQuestion.id])}
+                  isHintOpen={Boolean(revealedHints[effectiveActiveQuestion.id])}
+                  onToggleFlag={() => toggleFlag(effectiveActiveQuestion.id)}
+                  onToggleHint={() => toggleHint(effectiveActiveQuestion.id)}
+                  onSelectOption={(key) =>
+                    handleSelectOption(effectiveActiveQuestion.id, key)
+                  }
                 />
-              ))}
-            </div>
 
-            {totalPages > 1 && (
-              <PaginationBar
-                currentPage={safePage}
-                totalPages={totalPages}
-                onPageChange={handlePageChange}
-              />
+                <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-blue-100 bg-white px-5 py-4 shadow-sm shadow-blue-100/50">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    disabled={effectiveActiveIndex <= 0}
+                    onClick={() => handleJumpToQuestion(effectiveActiveIndex - 1)}
+                    className="h-10 border-blue-200 px-4 text-blue-700 hover:bg-blue-50"
+                  >
+                    <ChevronLeft className="size-4" aria-hidden />
+                    Soal Sebelumnya
+                  </Button>
+
+                  <div className="flex flex-wrap items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => toggleFlag(effectiveActiveQuestion.id)}
+                      className={cn(
+                        "inline-flex h-10 items-center gap-2 rounded-lg border px-4 text-xs font-semibold transition-colors sm:text-sm",
+                        flaggedQuestions[effectiveActiveQuestion.id]
+                          ? "border-amber-400 bg-amber-50 text-amber-900"
+                          : "border-slate-200 bg-slate-50 text-slate-700 hover:border-amber-300 hover:bg-amber-50/60",
+                      )}
+                    >
+                      <span
+                        className={cn(
+                          "size-2.5 rounded-full",
+                          flaggedQuestions[effectiveActiveQuestion.id]
+                            ? "bg-amber-500"
+                            : "bg-slate-300",
+                        )}
+                        aria-hidden
+                      />
+                      {flaggedQuestions[effectiveActiveQuestion.id]
+                        ? "Ditandai Ragu-ragu"
+                        : "Tandai Ragu-ragu"}
+                    </button>
+
+                    <span className="px-2 text-xs font-semibold text-slate-600 sm:text-sm">
+                      {effectiveActiveIndex + 1} / {filteredQuestions.length}
+                    </span>
+                  </div>
+
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    disabled={effectiveActiveIndex >= filteredQuestions.length - 1}
+                    onClick={() => handleJumpToQuestion(effectiveActiveIndex + 1)}
+                    className="h-10 border-blue-200 px-4 text-blue-700 hover:bg-blue-50"
+                  >
+                    Soal Berikutnya
+                    <ChevronRight className="size-4" aria-hidden />
+                  </Button>
+                </div>
+
+                <p className="rounded-xl border border-slate-200/80 bg-white/80 px-4 py-2.5 text-center text-xs text-slate-500">
+                  Pintasan Keyboard: <strong className="text-slate-700">A–E</strong> Pilih Jawaban •{" "}
+                  <strong className="text-slate-700">← / →</strong> Pindah Soal •{" "}
+                  <strong className="text-slate-700">R</strong> Tandai Ragu-ragu •{" "}
+                  <strong className="text-slate-700">H</strong> Buka/Tutup Hint
+                </p>
+              </div>
+            ) : (
+              <>
+                {totalPages > 1 && (
+                  <PaginationBar
+                    currentPage={safePage}
+                    totalPages={totalPages}
+                    onPageChange={handlePageChange}
+                  />
+                )}
+
+                <div className="space-y-5">
+                  {paginatedQuestions.map((question, index) => (
+                    <QuestionCard
+                      key={question.id}
+                      index={pageStartIndex + index + 1}
+                      question={question}
+                      selectedOption={selectedAnswers[question.id]}
+                      isReviewMode={isReviewMode}
+                      isActive={effectiveActiveQuestionId === question.id}
+                      isFlagged={Boolean(flaggedQuestions[question.id])}
+                      isHintOpen={Boolean(revealedHints[question.id])}
+                      onToggleFlag={() => toggleFlag(question.id)}
+                      onToggleHint={() => toggleHint(question.id)}
+                      onSelectOption={(key) => handleSelectOption(question.id, key)}
+                    />
+                  ))}
+                </div>
+
+                {totalPages > 1 && (
+                  <PaginationBar
+                    currentPage={safePage}
+                    totalPages={totalPages}
+                    onPageChange={handlePageChange}
+                  />
+                )}
+              </>
             )}
           </>
         )}
@@ -990,6 +1615,328 @@ export function TiuPatternPractice({
         onJumpToQuestion={handleJumpToQuestion}
       />
     </div>
+  );
+}
+
+function AdaptiveMasteryHeader({
+  patternLabel,
+  subPatternCount,
+  diagnosticReport,
+  weakestSubPattern,
+  selectedSubPattern,
+  selectedDifficulty,
+  onStartDiagnostic,
+  onApplyRecommendation,
+}: {
+  patternLabel: string;
+  subPatternCount: number;
+  diagnosticReport: DiagnosticReport | null;
+  weakestSubPattern: {
+    subPattern: string;
+    label: string;
+    accuracy: number;
+    recommendedDifficulty: Difficulty;
+  } | null;
+  selectedSubPattern: string;
+  selectedDifficulty: "all" | Difficulty;
+  onStartDiagnostic: () => void;
+  onApplyRecommendation: (subPattern: string, difficulty: Difficulty) => void;
+}) {
+  const diagnosticCount = Math.max(9, subPatternCount * 3);
+
+  const recommendedTarget = diagnosticReport
+    ? {
+        subPattern: diagnosticReport.recommendedSubPattern,
+        label: capitalize(diagnosticReport.recommendedSubPattern),
+        difficulty: diagnosticReport.recommendedDifficulty,
+        reason: `Hasil Diagnostik: ${diagnosticReport.correct}/${diagnosticReport.total} benar (${diagnosticReport.accuracy}%)`,
+      }
+    : weakestSubPattern
+      ? {
+          subPattern: weakestSubPattern.subPattern,
+          label: weakestSubPattern.label,
+          difficulty: weakestSubPattern.recommendedDifficulty,
+          reason: `Akurasi terendah saat ini: ${weakestSubPattern.accuracy}%`,
+        }
+      : null;
+
+  const isRecommendationActive =
+    recommendedTarget !== null &&
+    selectedSubPattern === recommendedTarget.subPattern &&
+    selectedDifficulty === recommendedTarget.difficulty;
+
+  return (
+    <section className="overflow-hidden rounded-2xl border border-blue-200/80 bg-[linear-gradient(135deg,#0f2454_0%,#1d4ed8_58%,#4f46e5_100%)] p-6 text-white shadow-lg shadow-blue-950/10">
+      <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
+        <div className="max-w-2xl">
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-white/15 px-3 py-1 text-xs font-semibold tracking-wide text-blue-100 backdrop-blur-xs">
+            <Award className="size-3.5" aria-hidden />
+            Alur Belajar Adaptif • {patternLabel}
+          </span>
+          <h2 className="mt-3 text-xl font-semibold leading-snug sm:text-2xl">
+            {diagnosticReport
+              ? `Rekomendasi Fokus: ${capitalize(diagnosticReport.recommendedSubPattern)} (${DIFFICULTY_META[diagnosticReport.recommendedDifficulty].title})`
+              : "Mulai dengan Tes Diagnostik Singkat sebelum masuk ke ratusan soal"}
+          </h2>
+          <p className="mt-1.5 text-xs leading-6 text-blue-100 sm:text-sm">
+            {diagnosticReport ? (
+              <>
+                {recommendedTarget?.reason}. Selesaikan latihan bertahap dari{" "}
+                <strong>Level 1 (Pondasi)</strong> hingga{" "}
+                <strong>Level 3 (HOTS)</strong> dengan target akurasi minimal{" "}
+                <strong>{MASTERY_THRESHOLD}%</strong> per level.
+              </>
+            ) : (
+              <>
+                Kerjakan <strong>{diagnosticCount} soal sampel lintas sub-pola</strong>{" "}
+                (3 soal per sub-pola: Mudah, Sedang, Sulit) untuk memetakan kelemahan dan
+                menentukan level awal yang paling pas.
+              </>
+            )}
+          </p>
+        </div>
+
+        <div className="flex flex-wrap items-center gap-2.5">
+          {recommendedTarget && (
+            <Button
+              type="button"
+              onClick={() =>
+                onApplyRecommendation(
+                  recommendedTarget.subPattern,
+                  recommendedTarget.difficulty,
+                )
+              }
+              disabled={isRecommendationActive}
+              className="h-10 bg-white px-4 text-xs font-semibold text-blue-900 shadow-md hover:bg-blue-50 disabled:opacity-75 sm:text-sm"
+            >
+              {isRecommendationActive
+                ? "Fokus Rekomendasi Aktif"
+                : `Latih ${recommendedTarget.label} • ${DIFFICULTY_META[recommendedTarget.difficulty].title}`}
+            </Button>
+          )}
+
+          <Button
+            type="button"
+            variant="outline"
+            onClick={onStartDiagnostic}
+            className="h-10 border-white/35 bg-white/10 px-4 text-xs font-semibold text-white hover:bg-white/20 hover:text-white sm:text-sm"
+          >
+            {diagnosticReport
+              ? "Ulangi Tes Diagnostik"
+              : `Mulai Tes Diagnostik (${diagnosticCount} Soal)`}
+          </Button>
+        </div>
+      </div>
+
+      {diagnosticReport && diagnosticReport.subPatternBreakdown.length > 0 && (
+        <div className="mt-5 grid gap-2 border-t border-white/15 pt-4 sm:grid-cols-3 lg:grid-cols-5">
+          {diagnosticReport.subPatternBreakdown.map((item) => (
+            <button
+              key={item.subPattern}
+              type="button"
+              onClick={() =>
+                onApplyRecommendation(item.subPattern, item.recommendedDifficulty)
+              }
+              className="flex flex-col justify-between rounded-xl border border-white/15 bg-white/10 p-2.5 text-left transition hover:bg-white/20"
+            >
+              <span className="line-clamp-1 text-xs font-semibold text-white">
+                {item.label}
+              </span>
+              <div className="mt-1.5 flex items-center justify-between text-[11px] text-blue-100">
+                <span>
+                  {item.correct}/{item.total} benar ({item.accuracy}%)
+                </span>
+                <span className="rounded bg-white/20 px-1.5 py-0.5 text-[10px] font-bold text-white">
+                  Lv.{DIFFICULTY_META[item.recommendedDifficulty].step}
+                </span>
+              </div>
+            </button>
+          ))}
+        </div>
+      )}
+    </section>
+  );
+}
+
+function DiagnosticSessionPanel({
+  session,
+  patternLabel,
+  onSelectOption,
+  onJumpIndex,
+  onFinish,
+  onCancel,
+}: {
+  session: ActiveDiagnosticSession;
+  patternLabel: string;
+  onSelectOption: (optionKey: OptionKey) => void;
+  onJumpIndex: (index: number) => void;
+  onFinish: () => void;
+  onCancel: () => void;
+}) {
+  const { questions, currentIndex, answers } = session;
+  const currentQuestion = questions[currentIndex];
+  const answeredCount = Object.keys(answers).length;
+  const allAnswered = answeredCount === questions.length;
+
+  if (!currentQuestion) return null;
+
+  const chosenOption = answers[currentQuestion.id];
+
+  return (
+    <section className="rounded-2xl border border-blue-200 bg-white p-6 shadow-md shadow-blue-100/60">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-4">
+        <div>
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700">
+            Tes Diagnostik Adaptif • {patternLabel}
+          </span>
+          <h2 className="mt-1.5 text-lg font-semibold text-slate-950">
+            Soal Diagnostik {currentIndex + 1} dari {questions.length}
+          </h2>
+          <p className="text-xs text-slate-500">
+            Jawab seluruh soal sampel tanpa bantuan kunci untuk memetakan sub-pola dan level awal Anda.
+          </p>
+        </div>
+
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          onClick={onCancel}
+          className="text-xs text-slate-600 hover:text-slate-950"
+        >
+          Batalkan Diagnostik
+        </Button>
+      </div>
+
+      {/* Nomor soal diagnostik */}
+      <div className="mt-4 flex flex-wrap gap-1.5">
+        {questions.map((q, idx) => {
+          const isFilled = answers[q.id] !== undefined;
+          const isCurrent = idx === currentIndex;
+          return (
+            <button
+              key={q.id}
+              type="button"
+              onClick={() => onJumpIndex(idx)}
+              className={cn(
+                "flex size-8 items-center justify-center rounded-lg border text-xs font-semibold transition-all",
+                isFilled
+                  ? "border-blue-600 bg-blue-600 text-white"
+                  : "border-slate-200 bg-slate-50 text-slate-700 hover:border-blue-300",
+                isCurrent && "ring-2 ring-amber-400 ring-offset-1",
+              )}
+            >
+              {idx + 1}
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Isi soal diagnostik */}
+      <div className="mt-5 rounded-xl border border-slate-200/90 bg-[#f8fbff] p-5">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <span className="rounded-md bg-blue-100 px-2.5 py-1 text-xs font-semibold text-blue-800">
+            Sub-pola: {capitalize(currentQuestion.subPattern)}
+          </span>
+          <span
+            className={cn(
+              "rounded-md border px-2.5 py-1 text-xs font-semibold",
+              DIFFICULTY_META[currentQuestion.difficulty].badgeClass,
+            )}
+          >
+            {DIFFICULTY_META[currentQuestion.difficulty].title}
+          </span>
+        </div>
+
+        <p className="mt-4 whitespace-pre-line text-base font-medium leading-7 text-slate-950">
+          {currentQuestion.prompt}
+        </p>
+
+        <div className="mt-5 grid gap-2.5">
+          {currentQuestion.options.map((option) => {
+            const isSelected = chosenOption === option.key;
+            return (
+              <button
+                key={option.key}
+                type="button"
+                onClick={() => onSelectOption(option.key)}
+                className={cn(
+                  "flex w-full items-center justify-between gap-3 rounded-xl border px-4 py-3 text-left text-sm transition-colors",
+                  isSelected
+                    ? "border-blue-600 bg-blue-50 font-semibold text-blue-950 ring-1 ring-blue-600"
+                    : "border-slate-200 bg-white text-slate-700 hover:border-blue-300 hover:bg-blue-50/40",
+                )}
+              >
+                <span className="flex items-start gap-3">
+                  <span
+                    className={cn(
+                      "mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-full border text-xs font-semibold",
+                      isSelected
+                        ? "border-blue-600 bg-blue-600 text-white"
+                        : "border-slate-300 bg-white text-slate-700",
+                    )}
+                  >
+                    {option.key}
+                  </span>
+                  <span className="leading-6">{option.text}</span>
+                </span>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Navigasi bawah diagnostik */}
+      <div className="mt-5 flex flex-wrap items-center justify-between gap-3">
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          disabled={currentIndex <= 0}
+          onClick={() => onJumpIndex(currentIndex - 1)}
+          className="h-10 border-blue-200 px-4 text-blue-700"
+        >
+          <ChevronLeft className="size-4" aria-hidden />
+          Sebelumnya
+        </Button>
+
+        <span className="text-xs font-semibold text-slate-600">
+          Terjawab: {answeredCount} / {questions.length} soal
+        </span>
+
+        <div className="flex items-center gap-2">
+          {currentIndex < questions.length - 1 && (
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => onJumpIndex(currentIndex + 1)}
+              className="h-10 border-blue-200 px-4 text-blue-700"
+            >
+              Berikutnya
+              <ChevronRight className="size-4" aria-hidden />
+            </Button>
+          )}
+
+          <Button
+            type="button"
+            size="sm"
+            disabled={answeredCount === 0}
+            onClick={onFinish}
+            className={cn(
+              "h-10 px-5 font-semibold text-white",
+              allAnswered
+                ? "bg-emerald-600 hover:bg-emerald-700"
+                : "bg-blue-600 hover:bg-blue-700",
+            )}
+          >
+            {allAnswered
+              ? "Lihat Hasil Diagnosis & Rekomendasi"
+              : `Selesai Diagnostik (${answeredCount}/${questions.length})`}
+          </Button>
+        </div>
+      </div>
+    </section>
   );
 }
 
@@ -1068,6 +2015,14 @@ function QuestionCard({
               {isHintOpen ? "Tutup Hint" : "Lihat Hint"}
             </button>
           ) : null}
+          <span
+            className={cn(
+              "rounded-md border px-2.5 py-1 text-xs font-semibold",
+              DIFFICULTY_META[question.difficulty].badgeClass,
+            )}
+          >
+            {DIFFICULTY_META[question.difficulty].title}
+          </span>
           <span className="rounded-md bg-blue-50 px-2.5 py-1 text-xs font-semibold text-blue-700">
             {capitalize(question.subPattern)}
           </span>
@@ -1297,7 +2252,7 @@ function QuestionNumberNavigator({
         </div>
 
         {questions.length === 0 && (
-          <p className="mt-2 text-xs text-slate-500">Belum ada soal untuk pola ini.</p>
+          <p className="mt-2 text-xs text-slate-500">Belum ada soal untuk filter ini.</p>
         )}
 
         {questions.length > 0 && (
