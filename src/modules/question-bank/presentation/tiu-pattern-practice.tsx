@@ -5,7 +5,6 @@ import {
   Award,
   BarChart3,
   BookOpen,
-  Check,
   CheckCircle2,
   ChevronLeft,
   ChevronRight,
@@ -30,7 +29,6 @@ import {
   OPTION_KEYS,
   TIU_PATTERN_IDS,
   TIU_PATTERNS,
-  type Difficulty,
   type OptionKey,
   type Question,
   type TiuPatternId,
@@ -48,14 +46,12 @@ type DiagnosticReport = {
   total: number;
   accuracy: number;
   recommendedSubPattern: string;
-  recommendedDifficulty: Difficulty;
   subPatternBreakdown: readonly {
     subPattern: string;
     label: string;
     correct: number;
     total: number;
     accuracy: number;
-    recommendedDifficulty: Difficulty;
   }[];
 };
 
@@ -79,38 +75,8 @@ type StoredPracticeProgress = {
 
 const PAGE_SIZE = 25;
 const NAV_CHUNK_SIZE = 50;
-const MASTERY_THRESHOLD = 80;
 const STORAGE_KEY = "wiyata-tiu-practice-progress-v1";
 const DEFAULT_PATTERN: TiuPatternId = "sinonim-antonim-akronim";
-
-const DIFFICULTY_META: Record<
-  Difficulty,
-  {
-    step: number;
-    title: string;
-    subtitle: string;
-    badgeClass: string;
-  }
-> = {
-  mudah: {
-    step: 1,
-    title: "Level 1 • Pondasi",
-    subtitle: "Konsep Dasar & Pola Inti",
-    badgeClass: "bg-emerald-50 text-emerald-700 border-emerald-200",
-  },
-  sedang: {
-    step: 2,
-    title: "Level 2 • Standar CAT",
-    subtitle: "Setara Soal SKD CPNS",
-    badgeClass: "bg-blue-50 text-blue-700 border-blue-200",
-  },
-  sulit: {
-    step: 3,
-    title: "Level 3 • HOTS & Jebakan",
-    subtitle: "Penalaran Lanjut & Pengecoh",
-    badgeClass: "bg-violet-50 text-violet-700 border-violet-200",
-  },
-};
 
 function isTiuPatternId(value: unknown): value is TiuPatternId {
   return (
@@ -123,13 +89,6 @@ function isOptionKey(value: unknown): value is OptionKey {
   return (
     typeof value === "string" &&
     (OPTION_KEYS as readonly string[]).includes(value)
-  );
-}
-
-function isDifficulty(value: unknown): value is Difficulty {
-  return (
-    typeof value === "string" &&
-    (DIFFICULTIES as readonly string[]).includes(value)
   );
 }
 
@@ -218,16 +177,9 @@ function syncPatternUrl(patternId: TiuPatternId) {
   window.history.replaceState(null, "", `${url.pathname}${url.search}${url.hash}`);
 }
 
-function recommendDifficultyFromAccuracy(accuracy: number): Difficulty {
-  if (accuracy < 50) return "mudah";
-  if (accuracy < 80) return "sedang";
-  return "sulit";
-}
-
 /**
- * Menyusun paket soal Tes Diagnostik Singkat secara proporsional & acak:
- * mengambil 1 soal Mudah, 1 Sedang, dan 1 Sulit secara acak dari setiap sub-pola,
- * lalu mengacak urutan soal dan urutan opsi A–E.
+ * Menyusun paket soal Tes Diagnostik Singkat secara proporsional & acak
+ * dari setiap sub-pola, lalu mengacak urutan soal dan urutan opsi A–E.
  */
 function buildDiagnosticQuestions(
   patternId: TiuPatternId,
@@ -274,7 +226,6 @@ export function TiuPatternPractice({
     initialPattern ?? DEFAULT_PATTERN,
   );
   const [selectedSubPattern, setSelectedSubPattern] = useState<string>("all");
-  const [selectedDifficulty, setSelectedDifficulty] = useState<"all" | Difficulty>("all");
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [viewMode, setViewMode] = useState<ViewMode>("list");
@@ -378,7 +329,6 @@ export function TiuPatternPractice({
       if (isTiuPatternId(nextPattern)) {
         setActivePattern(nextPattern);
         setSelectedSubPattern("all");
-        setSelectedDifficulty("all");
         setStatusFilter("all");
         setCurrentPage(1);
         setActiveQuestionId(null);
@@ -453,44 +403,35 @@ export function TiuPatternPractice({
     [allPatternQuestions, selectedSubPattern],
   );
 
-  // Questions filtered by sub-pattern + difficulty (preserving shuffled order & options)
-  const difficultyScopedQuestions = useMemo(
-    () =>
-      selectedDifficulty === "all"
-        ? subPatternScopedQuestions
-        : subPatternScopedQuestions.filter((q) => q.difficulty === selectedDifficulty),
-    [subPatternScopedQuestions, selectedDifficulty],
-  );
-
   // Final filtered questions including status filter (all / unanswered / wrong / flagged)
   const filteredQuestions = useMemo(() => {
-    if (statusFilter === "all") return difficultyScopedQuestions;
-    return difficultyScopedQuestions.filter((q) => {
+    if (statusFilter === "all") return subPatternScopedQuestions;
+    return subPatternScopedQuestions.filter((q) => {
       const ans = selectedAnswers[q.id];
       if (statusFilter === "unanswered") return ans === undefined;
       if (statusFilter === "wrong") return ans !== undefined && ans !== q.answer;
       if (statusFilter === "flagged") return Boolean(flaggedQuestions[q.id]);
       return true;
     });
-  }, [difficultyScopedQuestions, statusFilter, selectedAnswers, flaggedQuestions]);
+  }, [subPatternScopedQuestions, statusFilter, selectedAnswers, flaggedQuestions]);
 
   const statusCounts = useMemo(() => {
     let unanswered = 0;
     let wrong = 0;
     let flagged = 0;
-    for (const q of difficultyScopedQuestions) {
+    for (const q of subPatternScopedQuestions) {
       const ans = selectedAnswers[q.id];
       if (ans === undefined) unanswered += 1;
       else if (ans !== q.answer) wrong += 1;
       if (flaggedQuestions[q.id]) flagged += 1;
     }
     return {
-      all: difficultyScopedQuestions.length,
+      all: subPatternScopedQuestions.length,
       unanswered,
       wrong,
       flagged,
     };
-  }, [difficultyScopedQuestions, selectedAnswers, flaggedQuestions]);
+  }, [subPatternScopedQuestions, selectedAnswers, flaggedQuestions]);
 
   const subPatternCounts = useMemo(() => {
     const counts: Record<string, number> = {};
@@ -500,54 +441,6 @@ export function TiuPatternPractice({
     return counts;
   }, [allPatternQuestions]);
 
-  // Step-by-step Level Mastery stats (Mudah -> Sedang -> Sulit) for current scope
-  const levelMasteryStats = useMemo(() => {
-    return DIFFICULTIES.map((diff) => {
-      const questionsInLevel = subPatternScopedQuestions.filter(
-        (q) => q.difficulty === diff,
-      );
-      const answered = questionsInLevel.filter(
-        (q) => selectedAnswers[q.id] !== undefined,
-      );
-      const correct = answered.filter(
-        (q) => selectedAnswers[q.id] === q.answer,
-      ).length;
-      const accuracy =
-        answered.length > 0 ? Math.round((correct / answered.length) * 100) : null;
-      const minRequiredForMastery = Math.min(5, questionsInLevel.length);
-      const isMastered =
-        questionsInLevel.length > 0 &&
-        answered.length >= minRequiredForMastery &&
-        (accuracy ?? 0) >= MASTERY_THRESHOLD;
-
-      return {
-        difficulty: diff,
-        meta: DIFFICULTY_META[diff],
-        total: questionsInLevel.length,
-        answered: answered.length,
-        correct,
-        accuracy,
-        minRequiredForMastery,
-        isMastered,
-      };
-    });
-  }, [subPatternScopedQuestions, selectedAnswers]);
-
-  const currentLevelStat = useMemo(
-    () =>
-      selectedDifficulty === "all"
-        ? null
-        : levelMasteryStats.find((item) => item.difficulty === selectedDifficulty) ??
-          null,
-    [levelMasteryStats, selectedDifficulty],
-  );
-
-  const nextDifficultyLevel = useMemo<Difficulty | null>(() => {
-    if (selectedDifficulty === "mudah") return "sedang";
-    if (selectedDifficulty === "sedang") return "sulit";
-    return null;
-  }, [selectedDifficulty]);
-
   // Sub-pattern evaluation & weakness analytics
   const subPatternEvaluations = useMemo(() => {
     return activeMeta.subPatterns.map((sub) => {
@@ -556,8 +449,6 @@ export function TiuPatternPractice({
       const correct = answered.filter((q) => selectedAnswers[q.id] === q.answer).length;
       const accuracy =
         answered.length > 0 ? Math.round((correct / answered.length) * 100) : null;
-      const recommendedDifficulty: Difficulty =
-        accuracy === null ? "mudah" : recommendDifficultyFromAccuracy(accuracy);
 
       return {
         subPattern: sub,
@@ -566,7 +457,6 @@ export function TiuPatternPractice({
         answered: answered.length,
         correct,
         accuracy,
-        recommendedDifficulty,
       };
     });
   }, [activeMeta.subPatterns, allPatternQuestions, selectedAnswers]);
@@ -583,8 +473,8 @@ export function TiuPatternPractice({
   }, [subPatternEvaluations]);
 
   const answeredInView = useMemo(
-    () => difficultyScopedQuestions.filter((q) => selectedAnswers[q.id] !== undefined),
-    [difficultyScopedQuestions, selectedAnswers],
+    () => subPatternScopedQuestions.filter((q) => selectedAnswers[q.id] !== undefined),
+    [subPatternScopedQuestions, selectedAnswers],
   );
 
   const correctInView = useMemo(
@@ -638,7 +528,6 @@ export function TiuPatternPractice({
     safePage,
     activePattern,
     selectedSubPattern,
-    selectedDifficulty,
     statusFilter,
     viewMode,
     diagnosticSession,
@@ -647,7 +536,6 @@ export function TiuPatternPractice({
   const handlePatternChange = useCallback((patternId: TiuPatternId) => {
     setActivePattern(patternId);
     setSelectedSubPattern("all");
-    setSelectedDifficulty("all");
     setStatusFilter("all");
     setCurrentPage(1);
     setActiveQuestionId(null);
@@ -667,14 +555,6 @@ export function TiuPatternPractice({
     pendingScrollIdRef.current = null;
   }, []);
 
-  const handleDifficultyChange = useCallback((difficulty: "all" | Difficulty) => {
-    setSelectedDifficulty(difficulty);
-    setStatusFilter("all");
-    setCurrentPage(1);
-    setActiveQuestionId(null);
-    pendingScrollIdRef.current = null;
-  }, []);
-
   const handleStatusFilterChange = useCallback((nextStatus: StatusFilter) => {
     setStatusFilter(nextStatus);
     setCurrentPage(1);
@@ -682,18 +562,14 @@ export function TiuPatternPractice({
     pendingScrollIdRef.current = null;
   }, []);
 
-  const applyAdaptiveRecommendation = useCallback(
-    (subPattern: string, difficulty: Difficulty) => {
-      setDiagnosticSession(null);
-      setSelectedSubPattern(subPattern);
-      setSelectedDifficulty(difficulty);
-      setStatusFilter("all");
-      setCurrentPage(1);
-      setActiveQuestionId(null);
-      setIsReviewMode(false);
-    },
-    [],
-  );
+  const applyAdaptiveRecommendation = useCallback((subPattern: string) => {
+    setDiagnosticSession(null);
+    setSelectedSubPattern(subPattern);
+    setStatusFilter("all");
+    setCurrentPage(1);
+    setActiveQuestionId(null);
+    setIsReviewMode(false);
+  }, []);
 
   // Diagnostic Flow handlers (always generates a fresh random seed to shuffle questions & options)
   const handleStartDiagnostic = useCallback(() => {
@@ -772,7 +648,6 @@ export function TiuPatternPractice({
         correct: subCorrect,
         total: subQs.length,
         accuracy: subAcc,
-        recommendedDifficulty: recommendDifficultyFromAccuracy(subAcc),
       };
     });
 
@@ -788,8 +663,6 @@ export function TiuPatternPractice({
       total,
       accuracy,
       recommendedSubPattern: weakest?.subPattern ?? "all",
-      recommendedDifficulty:
-        weakest?.recommendedDifficulty ?? recommendDifficultyFromAccuracy(accuracy),
       subPatternBreakdown: breakdown,
     };
 
@@ -868,7 +741,7 @@ export function TiuPatternPractice({
 
   // Retry wrong questions: clears wrong answers and re-shuffles question order & wrong questions' options
   const handleRetryWrongInScope = useCallback(() => {
-    const wrongIds = difficultyScopedQuestions
+    const wrongIds = subPatternScopedQuestions
       .filter((q) => {
         const ans = selectedAnswers[q.id];
         return ans !== undefined && ans !== q.answer;
@@ -906,7 +779,7 @@ export function TiuPatternPractice({
     setStatusFilter("all");
     setCurrentPage(1);
     setActiveQuestionId(null);
-  }, [activePattern, difficultyScopedQuestions, selectedAnswers]);
+  }, [activePattern, subPatternScopedQuestions, selectedAnswers]);
 
   // Reset pattern: clears pattern progress and generates a new random seed to re-shuffle all questions & options
   const handleReset = useCallback(() => {
@@ -1137,7 +1010,7 @@ export function TiuPatternPractice({
           />
         ) : (
           <>
-            {/* Adaptive Mastery Banner: Tes Diagnostik -> Rekomendasi -> Level Bertahap */}
+            {/* Adaptive Mastery Banner: Tes Diagnostik -> Rekomendasi Fokus Sub-Pola */}
             {allPatternQuestions.length > 0 && (
               <AdaptiveMasteryHeader
                 patternLabel={activeMeta.label}
@@ -1145,13 +1018,12 @@ export function TiuPatternPractice({
                 diagnosticReport={activeDiagnosticReport}
                 weakestSubPattern={weakestSubPattern}
                 selectedSubPattern={selectedSubPattern}
-                selectedDifficulty={selectedDifficulty}
                 onStartDiagnostic={handleStartDiagnostic}
                 onApplyRecommendation={applyAdaptiveRecommendation}
               />
             )}
 
-            {/* Active pattern controls, sub-pattern filter, and 3-Stage Level Progression */}
+            {/* Active pattern controls & sub-pattern filter */}
             <section className="rounded-2xl border border-blue-100 bg-white p-6 shadow-sm shadow-blue-100/60">
               <div className="flex flex-col gap-4 border-b border-slate-100 pb-5 sm:flex-row sm:items-start sm:justify-between">
                 <div>
@@ -1159,16 +1031,6 @@ export function TiuPatternPractice({
                     <span className="inline-flex rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700">
                       Pola #{activeMeta.order} • TIU
                     </span>
-                    {selectedDifficulty !== "all" && isDifficulty(selectedDifficulty) && (
-                      <span
-                        className={cn(
-                          "inline-flex rounded-full border px-2.5 py-0.5 text-xs font-semibold",
-                          DIFFICULTY_META[selectedDifficulty].badgeClass,
-                        )}
-                      >
-                        {DIFFICULTY_META[selectedDifficulty].title}
-                      </span>
-                    )}
                     {isStorageHydrated && (
                       <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-1 text-[11px] font-medium text-emerald-700">
                         <CheckCircle2 className="size-3" aria-hidden />
@@ -1184,13 +1046,13 @@ export function TiuPatternPractice({
                       viewMode === "single" ? (
                         <>
                           Mode Fokus CAT • Soal {effectiveActiveIndex + 1} dari{" "}
-                          {filteredQuestions.length} soal pada filter aktif.
+                          {filteredQuestions.length} soal tersedia.
                         </>
                       ) : (
                         <>
                           Menampilkan soal {pageStartIndex + 1}–
                           {Math.min(pageStartIndex + PAGE_SIZE, filteredQuestions.length)} dari{" "}
-                          {filteredQuestions.length} soal pada filter aktif.
+                          {filteredQuestions.length} soal tersedia.
                         </>
                       )
                     ) : (
@@ -1272,7 +1134,7 @@ export function TiuPatternPractice({
                       )}
                     >
                       <BarChart3 className="size-4" aria-hidden />
-                      Peta Sub-Pola
+                      Evaluasi Sub-Pola
                     </Button>
                   )}
 
@@ -1294,11 +1156,11 @@ export function TiuPatternPractice({
               {allPatternQuestions.length > 0 && activeMeta.subPatterns.length > 0 && (
                 <div className="mt-5 flex flex-wrap items-center gap-2">
                   <span className="mr-1 text-xs font-semibold uppercase tracking-wide text-slate-500">
-                    1. Fokus Sub-Pola:
+                    Sub-pola:
                   </span>
                   <FilterPill
                     active={selectedSubPattern === "all"}
-                    label={`Semua Sub-Pola (${allPatternQuestions.length})`}
+                    label={`Semua (${allPatternQuestions.length})`}
                     onClick={() => handleSubPatternChange("all")}
                   />
                   {activeMeta.subPatterns.map((sub) => (
@@ -1312,154 +1174,12 @@ export function TiuPatternPractice({
                 </div>
               )}
 
-              {/* Jalur Level Bertahap: Mudah -> Sedang -> Sulit */}
-              {allPatternQuestions.length > 0 && (
-                <div className="mt-5">
-                  <div className="flex flex-wrap items-center justify-between gap-2">
-                    <span className="text-xs font-semibold uppercase tracking-wide text-slate-500">
-                      2. Pilih Tahap Kesulitan (Target Lulus Level ≥ {MASTERY_THRESHOLD}%):
-                    </span>
-                    <button
-                      type="button"
-                      onClick={() => handleDifficultyChange("all")}
-                      className={cn(
-                        "rounded-full border px-3 py-1 text-xs font-semibold transition-colors",
-                        selectedDifficulty === "all"
-                          ? "border-slate-900 bg-slate-900 text-white"
-                          : "border-slate-200 bg-white text-slate-600 hover:border-blue-300 hover:text-blue-700",
-                      )}
-                    >
-                      Tampilkan Semua Level ({subPatternScopedQuestions.length} soal)
-                    </button>
-                  </div>
-
-                  <div className="mt-2.5 grid gap-3 sm:grid-cols-3">
-                    {levelMasteryStats.map((level, idx) => {
-                      const isSelected = selectedDifficulty === level.difficulty;
-                      const prevLevel = idx > 0 ? levelMasteryStats[idx - 1] : null;
-                      const isRecommendedNext =
-                        (idx === 0 && !level.isMastered) ||
-                        (prevLevel?.isMastered && !level.isMastered);
-
-                      return (
-                        <button
-                          key={level.difficulty}
-                          type="button"
-                          onClick={() =>
-                            handleDifficultyChange(
-                              isSelected ? "all" : level.difficulty,
-                            )
-                          }
-                          className={cn(
-                            "flex flex-col justify-between rounded-xl border p-3.5 text-left transition-all",
-                            isSelected
-                              ? "border-blue-600 bg-blue-50/50 ring-2 ring-blue-600/20"
-                              : level.isMastered
-                                ? "border-emerald-200 bg-emerald-50/30 hover:border-emerald-300"
-                                : "border-slate-200 bg-white hover:border-blue-300",
-                          )}
-                        >
-                          <div className="flex items-start justify-between gap-2">
-                            <div>
-                              <p className="text-xs font-bold text-slate-950">
-                                {level.meta.title}
-                              </p>
-                              <p className="text-[11px] text-slate-500">
-                                {level.meta.subtitle}
-                              </p>
-                            </div>
-
-                            {level.isMastered ? (
-                              <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-bold text-emerald-800">
-                                <Check className="size-3" aria-hidden />
-                                Lulus
-                              </span>
-                            ) : isRecommendedNext ? (
-                              <span className="rounded-full bg-blue-100 px-2 py-0.5 text-[10px] font-bold text-blue-800">
-                                Disarankan
-                              </span>
-                            ) : (
-                              <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-semibold text-slate-600">
-                                {level.total} soal
-                              </span>
-                            )}
-                          </div>
-
-                          <div className="mt-3 flex items-baseline justify-between text-xs text-slate-600">
-                            <span>
-                              Benar:{" "}
-                              <strong className="text-slate-900">
-                                {level.correct}/{level.answered}
-                              </strong>{" "}
-                              ({level.total} soal)
-                            </span>
-                            <span
-                              className={cn(
-                                "font-bold",
-                                level.accuracy === null
-                                  ? "text-slate-400"
-                                  : level.accuracy >= MASTERY_THRESHOLD
-                                    ? "text-emerald-700"
-                                    : level.accuracy >= 60
-                                      ? "text-amber-700"
-                                      : "text-rose-700",
-                              )}
-                            >
-                              {level.accuracy !== null ? `${level.accuracy}%` : "0%"}
-                            </span>
-                          </div>
-
-                          <div className="mt-1.5 h-1.5 w-full overflow-hidden rounded-full bg-slate-100">
-                            <div
-                              className={cn(
-                                "h-full rounded-full transition-all",
-                                level.accuracy === null
-                                  ? "w-0"
-                                  : level.accuracy >= MASTERY_THRESHOLD
-                                    ? "bg-emerald-500"
-                                    : level.accuracy >= 60
-                                      ? "bg-amber-500"
-                                      : "bg-rose-500",
-                              )}
-                              style={{ width: `${level.accuracy ?? 0}%` }}
-                            />
-                          </div>
-                        </button>
-                      );
-                    })}
-                  </div>
-
-                  {/* Callout Naik Level saat level aktif sudah mencapai >= 80% */}
-                  {currentLevelStat?.isMastered && nextDifficultyLevel && (
-                    <div className="mt-3 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-emerald-200 bg-emerald-50/80 px-4 py-3 text-xs text-emerald-950">
-                      <div className="flex items-center gap-2">
-                        <Award className="size-4 shrink-0 text-emerald-600" aria-hidden />
-                        <span>
-                          <strong>{currentLevelStat.meta.title} Terkuasai!</strong> Akurasi Anda{" "}
-                          <strong>{currentLevelStat.accuracy}%</strong> (target ≥ {MASTERY_THRESHOLD}%).
-                          Siap naik ke tahap berikutnya?
-                        </span>
-                      </div>
-                      <Button
-                        type="button"
-                        size="sm"
-                        onClick={() => handleDifficultyChange(nextDifficultyLevel)}
-                        className="h-8 bg-emerald-600 px-3 text-xs font-semibold text-white hover:bg-emerald-700"
-                      >
-                        Lanjut ke {DIFFICULTY_META[nextDifficultyLevel].title}
-                        <ChevronRight className="size-3.5" aria-hidden />
-                      </Button>
-                    </div>
-                  )}
-                </div>
-              )}
-
               {/* Filter Status Jawaban & Tombol Ulangi Soal yang Salah */}
               {allPatternQuestions.length > 0 && (
-                <div className="mt-5 flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 pt-4">
+                <div className="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 pt-4">
                   <div className="flex flex-wrap items-center gap-1.5">
                     <span className="mr-1 text-xs font-semibold uppercase tracking-wide text-slate-500">
-                      3. Filter Status:
+                      Status:
                     </span>
                     <FilterPill
                       active={statusFilter === "all"}
@@ -1499,7 +1219,7 @@ export function TiuPatternPractice({
 
                     {!isReviewMode && answeredInView.length > 0 && (
                       <p className="rounded-lg bg-blue-50 px-3 py-1.5 text-xs font-semibold text-blue-800">
-                        Skor level ini: {correctInView} / {answeredInView.length} benar (
+                        Skor sementara: {correctInView} / {answeredInView.length} benar (
                         {Math.round((correctInView / answeredInView.length) * 100)}%)
                       </p>
                     )}
@@ -1515,25 +1235,21 @@ export function TiuPatternPractice({
                     <div className="flex flex-wrap items-center justify-between gap-2">
                       <div>
                         <p className="text-xs font-semibold uppercase tracking-wider text-blue-700">
-                          Peta Penguasaan Sub-Pola & Rekomendasi Level
+                          Peta Penguasaan Sub-Pola
                         </p>
                         <p className="mt-0.5 text-xs text-slate-600">
-                          Klik kartu sub-pola untuk langsung melatih sub-pola pada level kesulitan yang disarankan.
+                          Klik kartu sub-pola di bawah untuk fokus berlatih pada topik tersebut.
                         </p>
                       </div>
                       {weakestSubPattern && (
                         <button
                           type="button"
                           onClick={() =>
-                            applyAdaptiveRecommendation(
-                              weakestSubPattern.subPattern,
-                              weakestSubPattern.recommendedDifficulty,
-                            )
+                            applyAdaptiveRecommendation(weakestSubPattern.subPattern)
                           }
                           className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-1.5 text-xs font-semibold text-amber-900 transition hover:bg-amber-100"
                         >
-                          Fokus Perbaikan: {weakestSubPattern.label} ({weakestSubPattern.accuracy}% •{" "}
-                          {DIFFICULTY_META[weakestSubPattern.recommendedDifficulty].title})
+                          Fokus Perbaikan: {weakestSubPattern.label} ({weakestSubPattern.accuracy}% benar)
                         </button>
                       )}
                     </div>
@@ -1544,21 +1260,21 @@ export function TiuPatternPractice({
                         const statusBadge =
                           item.accuracy === null
                             ? {
-                                label: "Mulai: Level 1",
+                                label: "Belum Dijawab",
                                 className: "bg-slate-100 text-slate-600",
                               }
                             : item.accuracy >= 80
                               ? {
-                                  label: "Kuat • Siap Level 3",
+                                  label: "Kuat",
                                   className: "bg-emerald-100 text-emerald-800",
                                 }
-                              : item.accuracy >= 50
+                              : item.accuracy >= 60
                                 ? {
-                                    label: "Cukup • Lanjut Level 2",
+                                    label: "Cukup",
                                     className: "bg-amber-100 text-amber-800",
                                   }
                                 : {
-                                    label: "Perlu Fokus • Level 1",
+                                    label: "Perlu Fokus",
                                     className: "bg-rose-100 text-rose-800",
                                   };
 
@@ -1568,8 +1284,7 @@ export function TiuPatternPractice({
                             type="button"
                             onClick={() =>
                               applyAdaptiveRecommendation(
-                                item.subPattern,
-                                item.recommendedDifficulty,
+                                isSelected ? "all" : item.subPattern,
                               )
                             }
                             className={cn(
@@ -1614,7 +1329,7 @@ export function TiuPatternPractice({
                                     ? "w-0"
                                     : item.accuracy >= 80
                                       ? "bg-emerald-500"
-                                      : item.accuracy >= 50
+                                      : item.accuracy >= 60
                                         ? "bg-amber-500"
                                         : "bg-rose-500",
                                 )}
@@ -1662,12 +1377,11 @@ export function TiuPatternPractice({
                     variant="outline"
                     onClick={() => {
                       setStatusFilter("all");
-                      setSelectedDifficulty("all");
                       setSelectedSubPattern("all");
                     }}
                     className="border-blue-200 text-blue-700"
                   >
-                    Reset Filter Tampilan
+                    Tampilkan Semua Soal
                   </Button>
                 </div>
               </section>
@@ -1814,7 +1528,6 @@ function AdaptiveMasteryHeader({
   diagnosticReport,
   weakestSubPattern,
   selectedSubPattern,
-  selectedDifficulty,
   onStartDiagnostic,
   onApplyRecommendation,
 }: {
@@ -1825,12 +1538,10 @@ function AdaptiveMasteryHeader({
     subPattern: string;
     label: string;
     accuracy: number;
-    recommendedDifficulty: Difficulty;
   } | null;
   selectedSubPattern: string;
-  selectedDifficulty: "all" | Difficulty;
   onStartDiagnostic: () => void;
-  onApplyRecommendation: (subPattern: string, difficulty: Difficulty) => void;
+  onApplyRecommendation: (subPattern: string) => void;
 }) {
   const diagnosticCount = Math.max(9, subPatternCount * 3);
 
@@ -1838,22 +1549,19 @@ function AdaptiveMasteryHeader({
     ? {
         subPattern: diagnosticReport.recommendedSubPattern,
         label: capitalize(diagnosticReport.recommendedSubPattern),
-        difficulty: diagnosticReport.recommendedDifficulty,
         reason: `Hasil Diagnostik: ${diagnosticReport.correct}/${diagnosticReport.total} benar (${diagnosticReport.accuracy}%)`,
       }
     : weakestSubPattern
       ? {
           subPattern: weakestSubPattern.subPattern,
           label: weakestSubPattern.label,
-          difficulty: weakestSubPattern.recommendedDifficulty,
           reason: `Akurasi terendah saat ini: ${weakestSubPattern.accuracy}%`,
         }
       : null;
 
   const isRecommendationActive =
     recommendedTarget !== null &&
-    selectedSubPattern === recommendedTarget.subPattern &&
-    selectedDifficulty === recommendedTarget.difficulty;
+    selectedSubPattern === recommendedTarget.subPattern;
 
   return (
     <section className="overflow-hidden rounded-2xl border border-blue-200/80 bg-[linear-gradient(135deg,#0f2454_0%,#1d4ed8_58%,#4f46e5_100%)] p-6 text-white shadow-lg shadow-blue-950/10">
@@ -1865,22 +1573,19 @@ function AdaptiveMasteryHeader({
           </span>
           <h2 className="mt-3 text-xl font-semibold leading-snug sm:text-2xl">
             {diagnosticReport
-              ? `Rekomendasi Fokus: ${capitalize(diagnosticReport.recommendedSubPattern)} (${DIFFICULTY_META[diagnosticReport.recommendedDifficulty].title})`
-              : "Mulai dengan Tes Diagnostik Singkat sebelum masuk ke ratusan soal"}
+              ? `Rekomendasi Fokus Sub-Pola: ${capitalize(diagnosticReport.recommendedSubPattern)}`
+              : "Mulai dengan Tes Diagnostik Singkat untuk memetakan sub-pola terlemah"}
           </h2>
           <p className="mt-1.5 text-xs leading-6 text-blue-100 sm:text-sm">
             {diagnosticReport ? (
               <>
-                {recommendedTarget?.reason}. Selesaikan latihan bertahap dari{" "}
-                <strong>Level 1 (Pondasi)</strong> hingga{" "}
-                <strong>Level 3 (HOTS)</strong> dengan target akurasi minimal{" "}
-                <strong>{MASTERY_THRESHOLD}%</strong> per level.
+                {recommendedTarget?.reason}. Klik tombol rekomendasi atau salah satu
+                sub-pola di bawah untuk fokus memperbaiki sub-pola yang masih lemah.
               </>
             ) : (
               <>
                 Kerjakan <strong>{diagnosticCount} soal acak lintas sub-pola</strong>{" "}
-                (3 soal per sub-pola: Mudah, Sedang, Sulit dengan urutan &amp; opsi diacak)
-                untuk memetakan kelemahan dan menentukan level awal yang paling pas.
+                untuk mengetahui sub-pola mana yang sudah dikuasai dan mana yang perlu diprioritaskan.
               </>
             )}
           </p>
@@ -1890,18 +1595,13 @@ function AdaptiveMasteryHeader({
           {recommendedTarget && (
             <Button
               type="button"
-              onClick={() =>
-                onApplyRecommendation(
-                  recommendedTarget.subPattern,
-                  recommendedTarget.difficulty,
-                )
-              }
+              onClick={() => onApplyRecommendation(recommendedTarget.subPattern)}
               disabled={isRecommendationActive}
               className="h-10 bg-white px-4 text-xs font-semibold text-blue-900 shadow-md hover:bg-blue-50 disabled:opacity-75 sm:text-sm"
             >
               {isRecommendationActive
                 ? "Fokus Rekomendasi Aktif"
-                : `Latih ${recommendedTarget.label} • ${DIFFICULTY_META[recommendedTarget.difficulty].title}`}
+                : `Fokus Latih: ${recommendedTarget.label}`}
             </Button>
           )}
 
@@ -1924,9 +1624,7 @@ function AdaptiveMasteryHeader({
             <button
               key={item.subPattern}
               type="button"
-              onClick={() =>
-                onApplyRecommendation(item.subPattern, item.recommendedDifficulty)
-              }
+              onClick={() => onApplyRecommendation(item.subPattern)}
               className="flex flex-col justify-between rounded-xl border border-white/15 bg-white/10 p-2.5 text-left transition hover:bg-white/20"
             >
               <span className="line-clamp-1 text-xs font-semibold text-white">
@@ -1935,9 +1633,6 @@ function AdaptiveMasteryHeader({
               <div className="mt-1.5 flex items-center justify-between text-[11px] text-blue-100">
                 <span>
                   {item.correct}/{item.total} benar ({item.accuracy}%)
-                </span>
-                <span className="rounded bg-white/20 px-1.5 py-0.5 text-[10px] font-bold text-white">
-                  Lv.{DIFFICULTY_META[item.recommendedDifficulty].step}
                 </span>
               </div>
             </button>
@@ -1983,7 +1678,7 @@ function DiagnosticSessionPanel({
             Soal Diagnostik {currentIndex + 1} dari {questions.length}
           </h2>
           <p className="text-xs text-slate-500">
-            Jawab seluruh soal sampel tanpa bantuan kunci untuk memetakan sub-pola dan level awal Anda.
+            Jawab seluruh soal sampel tanpa bantuan kunci untuk memetakan penguasaan sub-pola Anda.
           </p>
         </div>
 
@@ -2027,14 +1722,6 @@ function DiagnosticSessionPanel({
         <div className="flex flex-wrap items-center justify-between gap-2">
           <span className="rounded-md bg-blue-100 px-2.5 py-1 text-xs font-semibold text-blue-800">
             Sub-pola: {capitalize(currentQuestion.subPattern)}
-          </span>
-          <span
-            className={cn(
-              "rounded-md border px-2.5 py-1 text-xs font-semibold",
-              DIFFICULTY_META[currentQuestion.difficulty].badgeClass,
-            )}
-          >
-            {DIFFICULTY_META[currentQuestion.difficulty].title}
           </span>
         </div>
 
@@ -2205,14 +1892,6 @@ function QuestionCard({
               {isHintOpen ? "Tutup Hint" : "Lihat Hint"}
             </button>
           ) : null}
-          <span
-            className={cn(
-              "rounded-md border px-2.5 py-1 text-xs font-semibold",
-              DIFFICULTY_META[question.difficulty].badgeClass,
-            )}
-          >
-            {DIFFICULTY_META[question.difficulty].title}
-          </span>
           <span className="rounded-md bg-blue-50 px-2.5 py-1 text-xs font-semibold text-blue-700">
             {capitalize(question.subPattern)}
           </span>
