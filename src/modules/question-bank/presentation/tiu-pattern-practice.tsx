@@ -98,7 +98,6 @@ export function TiuPatternPractice({
         : -1;
   const effectiveActiveQuestionId =
     effectiveActiveIndex >= 0 ? filteredQuestions[effectiveActiveIndex]?.id ?? null : null;
-  const activeQuestionNumber = effectiveActiveIndex >= 0 ? effectiveActiveIndex + 1 : 0;
 
   const firstUnansweredIndex = useMemo(
     () => filteredQuestions.findIndex((q) => selectedAnswers[q.id] === undefined),
@@ -428,11 +427,7 @@ export function TiuPatternPractice({
         questions={filteredQuestions}
         selectedAnswers={selectedAnswers}
         activeQuestionId={effectiveActiveQuestionId}
-        activeQuestionNumber={activeQuestionNumber}
-        answeredCount={answeredInView.length}
         firstUnansweredIndex={firstUnansweredIndex}
-        currentPage={safePage}
-        totalPages={totalPages}
         pageStartIndex={pageStartIndex}
         onJumpToQuestion={handleJumpToQuestion}
       />
@@ -665,27 +660,17 @@ function QuestionNumberNavigator({
   questions,
   selectedAnswers,
   activeQuestionId,
-  activeQuestionNumber,
-  answeredCount,
   firstUnansweredIndex,
-  currentPage,
-  totalPages,
   pageStartIndex,
   onJumpToQuestion,
 }: {
   questions: readonly Question[];
   selectedAnswers: Record<string, OptionKey>;
   activeQuestionId: string | null;
-  activeQuestionNumber: number;
-  answeredCount: number;
   firstUnansweredIndex: number;
-  currentPage: number;
-  totalPages: number;
   pageStartIndex: number;
   onJumpToQuestion: (questionIndex: number) => void;
 }) {
-  const unansweredCount = Math.max(0, questions.length - answeredCount);
-
   return (
     <aside
       aria-label="Navigasi nomor soal"
@@ -699,39 +684,9 @@ function QuestionNumberNavigator({
           </p>
         </div>
 
-        {questions.length > 0 ? (
-          <p className="mt-2 inline-flex flex-wrap items-center rounded-lg bg-amber-50 px-2.5 py-1 text-xs font-semibold text-amber-900">
-            Posisi: Soal #{activeQuestionNumber} • Hal. {currentPage}/{totalPages}
-          </p>
-        ) : (
+        {questions.length === 0 && (
           <p className="mt-2 text-xs text-slate-500">Belum ada soal untuk pola ini.</p>
         )}
-
-        <div className="mt-3 grid grid-cols-2 gap-2">
-          <div className="rounded-xl border border-blue-100 bg-blue-50/70 px-3 py-2">
-            <p className="text-[11px] font-medium text-blue-700">Sudah Diisi</p>
-            <p className="mt-0.5 text-base font-bold text-blue-950">{answeredCount}</p>
-          </div>
-          <div className="rounded-xl border border-slate-200 bg-slate-50/80 px-3 py-2">
-            <p className="text-[11px] font-medium text-slate-600">Belum Diisi</p>
-            <p className="mt-0.5 text-base font-bold text-slate-900">{unansweredCount}</p>
-          </div>
-        </div>
-
-        <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1.5 text-[11px] text-slate-600">
-          <span className="inline-flex items-center gap-1.5">
-            <span className="size-2.5 rounded-xs bg-blue-600" aria-hidden />
-            Sudah Diisi
-          </span>
-          <span className="inline-flex items-center gap-1.5">
-            <span className="size-2.5 rounded-xs border border-slate-300 bg-slate-50" aria-hidden />
-            Belum Diisi
-          </span>
-          <span className="inline-flex items-center gap-1.5">
-            <span className="size-2.5 rounded-xs border border-slate-300 bg-white ring-2 ring-amber-400" aria-hidden />
-            Posisi
-          </span>
-        </div>
 
         {questions.length > 0 && (
           <Button
