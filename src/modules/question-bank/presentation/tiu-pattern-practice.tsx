@@ -169,6 +169,7 @@ export function TiuPatternPractice({
     Partial<Record<TiuPatternId, number>>
   >({});
   const [questionSeeds, setQuestionSeeds] = useState<Record<string, number>>({});
+  const [retryQuestionIds, setRetryQuestionIds] = useState<string[] | null>(null);
   const [activeQuestionId, setActiveQuestionId] = useState<string | null>(null);
 
   const pendingScrollIdRef = useRef<string | null>(null);
@@ -250,6 +251,7 @@ export function TiuPatternPractice({
         setActivePattern(nextPattern);
         setSelectedSubPattern("all");
         setStatusFilter("all");
+        setRetryQuestionIds(null);
         setCurrentPage(1);
         setActiveQuestionId(null);
       }
@@ -320,8 +322,12 @@ export function TiuPatternPractice({
     [allPatternQuestions, selectedSubPattern],
   );
 
-  // Final filtered questions including status filter (all / unanswered / wrong / flagged)
+  // Final filtered questions including retry queue or status filter (all / unanswered / wrong / flagged)
   const filteredQuestions = useMemo(() => {
+    if (retryQuestionIds !== null) {
+      const retrySet = new Set(retryQuestionIds);
+      return subPatternScopedQuestions.filter((q) => retrySet.has(q.id));
+    }
     if (statusFilter === "all") return subPatternScopedQuestions;
     return subPatternScopedQuestions.filter((q) => {
       const ans = selectedAnswers[q.id];
@@ -330,7 +336,13 @@ export function TiuPatternPractice({
       if (statusFilter === "flagged") return Boolean(flaggedQuestions[q.id]);
       return true;
     });
-  }, [subPatternScopedQuestions, statusFilter, selectedAnswers, flaggedQuestions]);
+  }, [
+    retryQuestionIds,
+    subPatternScopedQuestions,
+    statusFilter,
+    selectedAnswers,
+    flaggedQuestions,
+  ]);
 
   const statusCounts = useMemo(() => {
     let unanswered = 0;
@@ -416,6 +428,7 @@ export function TiuPatternPractice({
     setActivePattern(patternId);
     setSelectedSubPattern("all");
     setStatusFilter("all");
+    setRetryQuestionIds(null);
     setCurrentPage(1);
     setActiveQuestionId(null);
     setPatternSeeds((prev) =>
@@ -428,6 +441,7 @@ export function TiuPatternPractice({
   const handleSubPatternChange = useCallback((subPattern: string) => {
     setSelectedSubPattern(subPattern);
     setStatusFilter("all");
+    setRetryQuestionIds(null);
     setCurrentPage(1);
     setActiveQuestionId(null);
     pendingScrollIdRef.current = null;
@@ -435,6 +449,7 @@ export function TiuPatternPractice({
 
   const handleStatusFilterChange = useCallback((nextStatus: StatusFilter) => {
     setStatusFilter(nextStatus);
+    setRetryQuestionIds(null);
     setCurrentPage(1);
     setActiveQuestionId(null);
     pendingScrollIdRef.current = null;
@@ -507,7 +522,7 @@ export function TiuPatternPractice({
     [activePatternSeed, isReviewMode],
   );
 
-  // Retry wrong questions: clears wrong answers and re-shuffles question order & wrong questions' options
+  // Retry wrong questions: clears wrong answers, re-shuffles ONLY those questions' options, and focuses view on them
   const handleRetryWrongInScope = useCallback(() => {
     const wrongIds = subPatternScopedQuestions
       .filter((q) => {
@@ -519,6 +534,8 @@ export function TiuPatternPractice({
     if (wrongIds.length === 0) return;
 
     const wrongSet = new Set(wrongIds);
+    const retryBatchSeed = createRandomSeed();
+
     setSelectedAnswers((prev) => {
       const next = { ...prev };
       for (const id of wrongSet) {
@@ -529,7 +546,12 @@ export function TiuPatternPractice({
     setQuestionSeeds((prev) => {
       const next = { ...prev };
       for (const id of wrongSet) {
-        delete next[id];
+        const currentSeed = next[id] ?? activePatternSeed;
+        let nextSeed = hashStringWithSeed(`retry:${id}`, retryBatchSeed);
+        if (nextSeed === currentSeed) {
+          nextSeed = ((nextSeed + 1) >>> 0) || 1;
+        }
+        next[id] = nextSeed;
       }
       return next;
     });
@@ -540,14 +562,13 @@ export function TiuPatternPractice({
       }
       return next;
     });
-    setPatternSeeds((prev) => ({
-      ...prev,
-      [activePattern]: createRandomSeed(),
-    }));
+    setRetryQuestionIds(wrongIds);
     setStatusFilter("all");
     setCurrentPage(1);
-    setActiveQuestionId(null);
-  }, [activePattern, subPatternScopedQuestions, selectedAnswers]);
+    setActiveQuestionId(wrongIds[0] ?? null);
+    pendingScrollIdRef.current = null;
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [activePatternSeed, subPatternScopedQuestions, selectedAnswers]);
 
   // Reset pattern: clears pattern progress and generates a new random seed to re-shuffle all questions & options
   const handleReset = useCallback(() => {
@@ -584,6 +605,7 @@ export function TiuPatternPractice({
       ...prev,
       [activePattern]: createRandomSeed(),
     }));
+    setRetryQuestionIds(null);
     setStatusFilter("all");
     setCurrentPage(1);
     setActiveQuestionId(null);
@@ -889,51 +911,68 @@ export function TiuPatternPractice({
             </div>
           )}
 
-          {/* Baris 3 (Hanya tampil jika sudah ada progres/flag pada pola ini): Filter Status Jawaban */}
-          {allPatternQuestions.length > 0 && hasPatternProgress && (
-            <div className="mt-3 flex flex-wrap items-center justify-between gap-2 rounded-xl bg-slate-50/90 px-3.5 py-2.5">
-              <div className="flex flex-wrap items-center gap-1.5">
-                <span className="mr-1 text-xs font-medium text-slate-500">
-                  Tampilkan:
-                </span>
-                <StatusChip
-                  active={statusFilter === "all"}
-                  label={`Semua (${statusCounts.all})`}
-                  onClick={() => handleStatusFilterChange("all")}
-                />
-                <StatusChip
-                  active={statusFilter === "unanswered"}
-                  label={`Belum Diisi (${statusCounts.unanswered})`}
-                  onClick={() => handleStatusFilterChange("unanswered")}
-                />
-                {statusCounts.wrong > 0 && (
+          {/* Baris 3 (Hanya tampil jika sudah ada progres/flag atau sedang mengulang soal salah): Filter Status Jawaban */}
+          {allPatternQuestions.length > 0 &&
+            (hasPatternProgress || retryQuestionIds !== null) && (
+              <div className="mt-3 flex flex-wrap items-center justify-between gap-2 rounded-xl bg-slate-50/90 px-3.5 py-2.5">
+                <div className="flex flex-wrap items-center gap-1.5">
+                  <span className="mr-1 text-xs font-medium text-slate-500">
+                    Tampilkan:
+                  </span>
                   <StatusChip
-                    active={statusFilter === "wrong"}
-                    label={`Salah (${statusCounts.wrong})`}
-                    onClick={() => handleStatusFilterChange("wrong")}
+                    active={retryQuestionIds === null && statusFilter === "all"}
+                    label={`Semua (${statusCounts.all})`}
+                    onClick={() => handleStatusFilterChange("all")}
                   />
-                )}
-                {statusCounts.flagged > 0 && (
                   <StatusChip
-                    active={statusFilter === "flagged"}
-                    label={`Ragu-ragu (${statusCounts.flagged})`}
-                    onClick={() => handleStatusFilterChange("flagged")}
+                    active={retryQuestionIds === null && statusFilter === "unanswered"}
+                    label={`Belum Diisi (${statusCounts.unanswered})`}
+                    onClick={() => handleStatusFilterChange("unanswered")}
                   />
-                )}
-              </div>
+                  {statusCounts.wrong > 0 && (
+                    <StatusChip
+                      active={retryQuestionIds === null && statusFilter === "wrong"}
+                      label={`Salah (${statusCounts.wrong})`}
+                      onClick={() => handleStatusFilterChange("wrong")}
+                    />
+                  )}
+                  {statusCounts.flagged > 0 && (
+                    <StatusChip
+                      active={retryQuestionIds === null && statusFilter === "flagged"}
+                      label={`Ragu-ragu (${statusCounts.flagged})`}
+                      onClick={() => handleStatusFilterChange("flagged")}
+                    />
+                  )}
+                  {retryQuestionIds !== null && (
+                    <span className="rounded-md bg-rose-700 px-2.5 py-1 text-xs font-semibold text-white">
+                      Ulang Salah ({filteredQuestions.length})
+                    </span>
+                  )}
+                </div>
 
-              {statusCounts.wrong > 0 && !isReviewMode && (
-                <button
-                  type="button"
-                  onClick={handleRetryWrongInScope}
-                  className="inline-flex items-center gap-1.5 text-xs font-semibold text-rose-700 hover:text-rose-800 hover:underline"
-                >
-                  <RotateCcw className="size-3" aria-hidden />
-                  Ulangi {statusCounts.wrong} soal salah
-                </button>
-              )}
-            </div>
-          )}
+                <div className="flex flex-wrap items-center gap-3">
+                  {retryQuestionIds !== null && (
+                    <button
+                      type="button"
+                      onClick={() => handleStatusFilterChange("all")}
+                      className="text-xs font-semibold text-blue-700 hover:text-blue-800 hover:underline"
+                    >
+                      Kembali ke semua soal
+                    </button>
+                  )}
+                  {statusCounts.wrong > 0 && !isReviewMode && (
+                    <button
+                      type="button"
+                      onClick={handleRetryWrongInScope}
+                      className="inline-flex items-center gap-1.5 text-xs font-semibold text-rose-700 hover:text-rose-800 hover:underline"
+                    >
+                      <RotateCcw className="size-3" aria-hidden />
+                      Ulangi {statusCounts.wrong} soal salah
+                    </button>
+                  )}
+                </div>
+              </div>
+            )}
         </section>
 
         {/* Empty state or question list */}
@@ -968,6 +1007,7 @@ export function TiuPatternPractice({
                 type="button"
                 variant="outline"
                 onClick={() => {
+                  setRetryQuestionIds(null);
                   setStatusFilter("all");
                   setSelectedSubPattern("all");
                 }}
