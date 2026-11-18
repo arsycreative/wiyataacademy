@@ -7,6 +7,7 @@ import {
 } from "@/modules/question-bank/domain/question";
 import {
   analogiKataQuestions,
+  analisisTabelQuestions,
   deretAngkaQuestions,
   getPatternStats,
   getQuestionsByPattern,
@@ -202,6 +203,30 @@ describe("TIU question bank", () => {
     }
   });
 
+  it("contains 150 questions for analisis-tabel (30 per sub-pattern)", () => {
+    expect(analisisTabelQuestions).toHaveLength(150);
+
+    const expectedSubPatterns = [
+      "total-dan-selisih-data",
+      "rata-rata-dan-rekapitulasi",
+      "persentase-dan-pertumbuhan",
+      "seleksi-syarat-dan-peringkat",
+      "simpulan-dan-perbandingan-tabel",
+    ] as const;
+
+    for (const subPattern of expectedSubPatterns) {
+      expect(
+        getQuestionsByPattern("analisis-tabel", { subPattern }),
+      ).toHaveLength(30);
+    }
+
+    for (const difficulty of DIFFICULTIES) {
+      expect(
+        getQuestionsByPattern("analisis-tabel", { difficulty }).length,
+      ).toBeGreaterThan(0);
+    }
+  });
+
   it("provides non-empty non-spoiler tips across all populated TIU pattern banks", () => {
     for (const patternId of TIU_PATTERN_IDS) {
       for (const question of TIU_QUESTION_BANKS[patternId]) {
@@ -246,6 +271,11 @@ describe("TIU question bank", () => {
     expect(stats[6]).toMatchObject({
       id: "deret-angka",
       order: 7,
+      total: 150,
+    });
+    expect(stats[7]).toMatchObject({
+      id: "analisis-tabel",
+      order: 8,
       total: 150,
     });
   });

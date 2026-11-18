@@ -1185,9 +1185,7 @@ function QuestionCard({
         </div>
       </div>
 
-      <p className="mt-4 whitespace-pre-line text-base font-medium leading-7 text-slate-950">
-        {question.prompt}
-      </p>
+      <QuestionPrompt content={question.prompt} />
 
       {question.tip && isHintOpen && !showSolution ? (
         <div className="mt-4 flex items-start gap-2.5 rounded-xl border border-amber-200 bg-amber-50/80 px-4 py-3 text-sm text-amber-950">
@@ -1542,6 +1540,94 @@ function QuestionNumberNavigator({
         </div>
       )}
     </aside>
+  );
+}
+
+function QuestionPrompt({ content }: { content: string }) {
+  const lines = content.split("\n");
+  const tableLines = lines.filter((line) => line.trim().startsWith("|"));
+
+  if (tableLines.length < 2) {
+    return (
+      <p className="mt-4 whitespace-pre-line text-base font-medium leading-7 text-slate-950">
+        {content}
+      </p>
+    );
+  }
+
+  const introLines: string[] = [];
+  const outroLines: string[] = [];
+  let seenTable = false;
+
+  for (const line of lines) {
+    if (line.trim().startsWith("|")) {
+      seenTable = true;
+    } else if (!seenTable) {
+      introLines.push(line);
+    } else {
+      outroLines.push(line);
+    }
+  }
+
+  const parseRow = (row: string) =>
+    row
+      .trim()
+      .replace(/^\|/, "")
+      .replace(/\|$/, "")
+      .split("|")
+      .map((cell) => cell.trim());
+
+  const headers = parseRow(tableLines[0]);
+  const bodyRows = tableLines.slice(1).map(parseRow);
+
+  return (
+    <div className="mt-4 space-y-3 text-slate-950">
+      {introLines.length > 0 && (
+        <p className="whitespace-pre-line text-base font-medium leading-7">
+          {introLines.join("\n")}
+        </p>
+      )}
+
+      <div className="overflow-x-auto rounded-xl border border-slate-200">
+        <table className="w-full border-collapse text-left text-xs sm:text-sm">
+          <thead className="bg-slate-100 text-slate-800">
+            <tr>
+              {headers.map((header, idx) => (
+                <th
+                  key={`${header}-${idx}`}
+                  className="border-b border-slate-200 px-3.5 py-2.5 font-semibold"
+                >
+                  {header}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-slate-200 bg-white">
+            {bodyRows.map((row, rowIdx) => (
+              <tr key={rowIdx} className="hover:bg-slate-50/80">
+                {row.map((cell, cellIdx) => (
+                  <td
+                    key={cellIdx}
+                    className={cn(
+                      "px-3.5 py-2 text-slate-700",
+                      cellIdx === 0 && "font-medium text-slate-900",
+                    )}
+                  >
+                    {cell}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {outroLines.length > 0 && (
+        <p className="whitespace-pre-line text-base font-medium leading-7">
+          {outroLines.join("\n")}
+        </p>
+      )}
+    </div>
   );
 }
 

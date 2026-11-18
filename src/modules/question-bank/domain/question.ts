@@ -110,7 +110,13 @@ export const TIU_PATTERNS: Record<TiuPatternId, TiuPatternMeta> = {
     id: "analisis-tabel",
     order: 8,
     label: "Analisis Tabel",
-    subPatterns: [],
+    subPatterns: [
+      "total-dan-selisih-data",
+      "rata-rata-dan-rekapitulasi",
+      "persentase-dan-pertumbuhan",
+      "seleksi-syarat-dan-peringkat",
+      "simpulan-dan-perbandingan-tabel",
+    ],
   },
   figural: {
     id: "figural",
@@ -303,6 +309,24 @@ function getDefaultHint(pattern: TiuPatternId, subPattern: string): string {
     }
     if (subPattern === "deret-pecahan-dan-desimal") {
       return "Untuk pecahan, analisis pola deret pembilang dan deret penyebut secara terpisah; untuk desimal, kalikan 10 agar menjadi bilangan bulat.";
+    }
+  }
+
+  if (pattern === "analisis-tabel") {
+    if (subPattern === "total-dan-selisih-data") {
+      return "Baca pertanyaan terlebih dahulu agar hanya menjumlahkan atau mengurangkan baris dan kolom yang benar-benar diperlukan.";
+    }
+    if (subPattern === "rata-rata-dan-rekapitulasi") {
+      return "Gunakan nilai acuan tengah untuk rata-rata sederhana, atau kalikan bobot jumlah peserta saat menghitung rata-rata gabungan.";
+    }
+    if (subPattern === "persentase-dan-pertumbuhan") {
+      return "Persentase perubahan selalu menggunakan nilai periode awal sebagai penyebut: ((Akhir - Awal) ÷ Awal) × 100%.";
+    }
+    if (subPattern === "seleksi-syarat-dan-peringkat") {
+      return "Coret baris yang tidak lolos syarat ambang batas terlebih dahulu sebelum mengurutkan peringkat nilai atau biaya.";
+    }
+    if (subPattern === "simpulan-dan-perbandingan-tabel") {
+      return "Periksa tren perubahan baris dari kiri ke kanan untuk mengeliminasi pernyataan yang jelas bertentangan dengan data tabel.";
     }
   }
 
