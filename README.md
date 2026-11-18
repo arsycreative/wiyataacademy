@@ -12,13 +12,14 @@ Aplikasi web bimbingan belajar persiapan seleksi **SKD CPNS (TWK, TIU, TKP)** da
 - **Testimoni Alumni & FAQ**: informasi terstruktur seputar persiapan seleksi CASN.
 
 ### 2. Latihan Soal Adaptif TIU SKD CPNS (`/latihan/tiu`)
-- **Bank Soal Terpisah per Pola (930 Soal Tervalidasi)**:
+- **Bank Soal Terpisah per Pola (1.080 Soal Tervalidasi)**:
   1. **Sinonim, Antonim, dan Akronim** — 330 soal (160 Sinonim, 150 Antonim, 20 Akronim)
   2. **Analogi Kata** — 150 soal (5 sub-pola × 30 soal)
   3. **Silogisme** — 150 soal (5 sub-pola × 30 soal)
   4. **Hitung Cepat** — 150 soal (5 sub-pola × 30 soal)
   5. **Perbandingan Kuantitatif** — 150 soal (5 sub-pola × 30 soal)
-  6. *Penalaran Analitis Melingkar, Deret Angka, Analisis Tabel, dan Figural* (struktur siap diisi)
+  6. **Penalaran Analitis Duduk Melingkar** — 150 soal (5 sub-pola × 30 soal)
+  7. *Deret Angka, Analisis Tabel, dan Figural* (struktur siap diisi)
 - **Alur Belajar Adaptif (*Adaptive Mastery*)**:
   - **Tes Diagnostik Singkat**: sampel soal acak lintas sub-pola & tingkat kesulitan untuk memetakan sub-pola terlemah dan merekomendasikan level awal.
   - **Jalur 3 Level Bertahap (`Mudah` → `Sedang` → `Sulit`)**: progres penguasaan per level dengan target kelulusan akurasi **≥ 80%**.

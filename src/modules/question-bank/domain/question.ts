@@ -86,7 +86,13 @@ export const TIU_PATTERNS: Record<TiuPatternId, TiuPatternMeta> = {
     id: "penalaran-analitis-melingkar",
     order: 6,
     label: "Penalaran Analitis Duduk Melingkar",
-    subPatterns: [],
+    subPatterns: [
+      "posisi-berhadapan",
+      "posisi-kanan-dan-kiri",
+      "syarat-berdampingan-dan-terpisah",
+      "meja-melingkar-kursi-kosong",
+      "evaluasi-pernyataan-dan-kemungkinan",
+    ],
   },
   "deret-angka": {
     id: "deret-angka",
@@ -255,6 +261,24 @@ function getDefaultHint(pattern: TiuPatternId, subPattern: string): string {
     }
     if (subPattern === "hubungan-variabel-x-dan-y") {
       return "Sederhanakan nilai X dan Y terlebih dahulu, serta waspadai persamaan kuadrat atau pertidaksamaan terbuka yang membuat hubungan tidak dapat ditentukan.";
+    }
+  }
+
+  if (pattern === "penalaran-analitis-melingkar") {
+    if (subPattern === "posisi-berhadapan") {
+      return "Pada meja bundar dengan N kursi genap, posisi berhadapan selalu berjarak N/2 kursi (misal 3 kursi pada meja 6 orang, atau 4 kursi pada meja 8 orang).";
+    }
+    if (subPattern === "posisi-kanan-dan-kiri") {
+      return "Ingat bahwa seluruh peserta menghadap ke pusat meja: arah kanan adalah berlawanan jarum jam dan arah kiri adalah searah jarum jam.";
+    }
+    if (subPattern === "syarat-berdampingan-dan-terpisah") {
+      return "Ikat pasangan yang wajib berdampingan sebagai satu blok terlebih dahulu, lalu tempatkan peserta yang memiliki syarat tidak boleh bersebelahan.";
+    }
+    if (subPattern === "meja-melingkar-kursi-kosong") {
+      return "Anggap kursi kosong sebagai satu peserta tetap di dalam lingkaran agar penomoran kursi dan posisi berhadapan tidak bergeser.";
+    }
+    if (subPattern === "evaluasi-pernyataan-dan-kemungkinan") {
+      return "Kunci posisi yang sudah pasti pada sketsa lingkaran, lalu masukkan syarat pengandaian pada soal sebelum menguji tiap opsi jawaban.";
     }
   }
 

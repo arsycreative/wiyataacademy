@@ -10,6 +10,7 @@ import {
   getPatternStats,
   getQuestionsByPattern,
   hitungCepatQuestions,
+  penalaranAnalitisMelingkarQuestions,
   perbandinganKuantitatifQuestions,
   silogismeQuestions,
   sinonimAntonimAkronimQuestions,
@@ -152,6 +153,30 @@ describe("TIU question bank", () => {
     }
   });
 
+  it("contains 150 questions for penalaran-analitis-melingkar (30 per sub-pattern)", () => {
+    expect(penalaranAnalitisMelingkarQuestions).toHaveLength(150);
+
+    const expectedSubPatterns = [
+      "posisi-berhadapan",
+      "posisi-kanan-dan-kiri",
+      "syarat-berdampingan-dan-terpisah",
+      "meja-melingkar-kursi-kosong",
+      "evaluasi-pernyataan-dan-kemungkinan",
+    ] as const;
+
+    for (const subPattern of expectedSubPatterns) {
+      expect(
+        getQuestionsByPattern("penalaran-analitis-melingkar", { subPattern }),
+      ).toHaveLength(30);
+    }
+
+    for (const difficulty of DIFFICULTIES) {
+      expect(
+        getQuestionsByPattern("penalaran-analitis-melingkar", { difficulty }).length,
+      ).toBeGreaterThan(0);
+    }
+  });
+
   it("provides non-empty non-spoiler tips across all populated TIU pattern banks", () => {
     for (const patternId of TIU_PATTERN_IDS) {
       for (const question of TIU_QUESTION_BANKS[patternId]) {
@@ -186,6 +211,11 @@ describe("TIU question bank", () => {
     expect(stats[4]).toMatchObject({
       id: "perbandingan-kuantitatif",
       order: 5,
+      total: 150,
+    });
+    expect(stats[5]).toMatchObject({
+      id: "penalaran-analitis-melingkar",
+      order: 6,
       total: 150,
     });
   });
