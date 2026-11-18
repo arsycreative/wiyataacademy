@@ -1,36 +1,93 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Wiyata Academy — Platform Bimbel & Latihan Adaptif SKD CPNS
 
-## Getting Started
+Aplikasi web bimbingan belajar persiapan seleksi **SKD CPNS (TWK, TIU, TKP)** dan pendalaman **SKB**, dilengkapi bank soal **TIU SKD CPNS** terpisah per pola dengan alur belajar adaptif (*Adaptive Mastery*).
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## Fitur Utama
+
+### 1. Landing Page & Katalog Program (`/`, `/courses/[slug]`)
+- **Ringkasan Metode Belajar 3 Tahap**: pemetaan bobot SKD, penguasaan konsep & trik cepat, serta evaluasi topik yang masih lemah.
+- **Katalog Program Bimbel Interaktif**: carousel program utama (*Intensif SKD CPNS*), pratinjau cepat via modal detail, serta halaman detail kurikulum & silabus lengkap.
+- **Testimoni Alumni & FAQ**: informasi terstruktur seputar persiapan seleksi CASN.
+
+### 2. Latihan Soal Adaptif TIU SKD CPNS (`/latihan/tiu`)
+- **Bank Soal Terpisah per Pola (780 Soal Tervalidasi)**:
+  1. **Sinonim, Antonim, dan Akronim** — 330 soal (160 Sinonim, 150 Antonim, 20 Akronim)
+  2. **Analogi Kata** — 150 soal (5 sub-pola × 30 soal)
+  3. **Silogisme** — 150 soal (5 sub-pola × 30 soal)
+  4. **Hitung Cepat** — 150 soal (5 sub-pola × 30 soal)
+  5. *Perbandingan Kuantitatif, Penalaran Analitis Melingkar, Deret Angka, Analisis Tabel, dan Figural* (struktur siap diisi)
+- **Alur Belajar Adaptif (*Adaptive Mastery*)**:
+  - **Tes Diagnostik Singkat**: sampel soal acak lintas sub-pola & tingkat kesulitan untuk memetakan sub-pola terlemah dan merekomendasikan level awal.
+  - **Jalur 3 Level Bertahap (`Mudah` → `Sedang` → `Sulit`)**: progres penguasaan per level dengan target kelulusan akurasi **≥ 80%**.
+  - **Pengacakan Otomatis Soal & Pilihan (`A`–`E`)**: urutan soal maupun posisi opsi jawaban `A`–`E` diacak ulang setiap tes diagnostik, pengulangan soal salah, atau reset pola.
+  - **Mode Tampilan Ganda**: pilihan tampilan **25 Soal / Halaman** atau **1 Soal per Layar (Mode CAT)** lengkap dengan pintasan keyboard (`A`–`E`, `←`/`→`, `R` untuk Ragu-ragu, `H` untuk Hint).
+  - **Simpan Progres Otomatis (`localStorage`)** & **Deep-Link Pola via URL** (`/latihan/tiu?pattern=<id-pola>`).
+
+---
+
+## Tech Stack
+
+- **Framework**: [Next.js 16](https://nextjs.org) (App Router, React Compiler) & [React 19](https://react.dev)
+- **Language**: TypeScript 5
+- **Styling & UI**: Tailwind CSS v4, Radix UI / shadcn, Lucide Icons
+- **State & Validation**: Zustand 5, Zod 4
+- **Testing**: Vitest (Unit & Schema Validation) & Playwright (End-to-End)
+
+---
+
+## Struktur Proyek
+
+```text
+src/
+├── app/
+│   ├── (marketing)/
+│   │   ├── page.tsx                  # Beranda Wiyata Academy
+│   │   ├── courses/[slug]/page.tsx   # Detail program bimbel
+│   │   └── latihan/tiu/page.tsx      # Latihan adaptif bank soal TIU
+│   └── layout.tsx
+├── components/
+│   ├── layout/                       # Header, Footer, BrandLogo, ToastContainer
+│   └── ui/                           # Komponen dasar UI
+├── modules/
+│   ├── catalog/                      # Domain, application, infrastructure & presentation katalog
+│   └── question-bank/
+│       ├── domain/question.ts        # Skema Zod & metadata 9 pola TIU
+│       ├── data/tiu/                 # Bank soal TIU per pola & sub-pola + unit test
+│       └── presentation/             # UI latihan adaptif & mode CAT
+└── shared/                           # Konstanta rute, helper Result, store toast, validasi
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Menjalankan Proyek secara Lokal
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1. **Instal dependensi**:
+   ```bash
+   npm install
+   ```
 
-## Learn More
+2. **Jalankan server development**:
+   ```bash
+   npm run dev
+   ```
+   Buka [http://localhost:3000](http://localhost:3000) di browser.
 
-To learn more about Next.js, take a look at the following resources:
+3. **Verifikasi kualitas kode (Lint, Typecheck, & Unit Test)**:
+   ```bash
+   npm run check
+   ```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Daftar Script `package.json`
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+| Perintah | Deskripsi |
+| :--- | :--- |
+| `npm run dev` | Menjalankan server development Next.js |
+| `npm run build` | Membuat build produksi |
+| `npm run start` | Menjalankan server produksi hasil build |
+| `npm run lint` | Menjalankan pemeriksaan ESLint |
+| `npm run typecheck` | Memvalidasi tipe TypeScript (`tsc --noEmit`) |
+| `npm run test:run` | Menjalankan seluruh unit test & validasi bank soal dengan Vitest |
+| `npm run test:e2e` | Menjalankan pengujian End-to-End dengan Playwright |
+| `npm run check` | Menjalankan `lint`, `typecheck`, dan `test:run` secara berurutan |
