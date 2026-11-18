@@ -98,7 +98,13 @@ export const TIU_PATTERNS: Record<TiuPatternId, TiuPatternMeta> = {
     id: "deret-angka",
     order: 7,
     label: "Deret Angka",
-    subPatterns: [],
+    subPatterns: [
+      "deret-satu-larik-dan-bertingkat",
+      "deret-dua-dan-tiga-larik",
+      "deret-operasi-campuran-dan-berpola",
+      "deret-fibonacci-dan-pangkat",
+      "deret-pecahan-dan-desimal",
+    ],
   },
   "analisis-tabel": {
     id: "analisis-tabel",
@@ -279,6 +285,24 @@ function getDefaultHint(pattern: TiuPatternId, subPattern: string): string {
     }
     if (subPattern === "evaluasi-pernyataan-dan-kemungkinan") {
       return "Kunci posisi yang sudah pasti pada sketsa lingkaran, lalu masukkan syarat pengandaian pada soal sebelum menguji tiap opsi jawaban.";
+    }
+  }
+
+  if (pattern === "deret-angka") {
+    if (subPattern === "deret-satu-larik-dan-bertingkat") {
+      return "Hitung selisih antar suku berdekatan; jika belum konstan, tarik selisih tingkat kedua atau cek pola selisih kuadrat dan bilangan prima.";
+    }
+    if (subPattern === "deret-dua-dan-tiga-larik") {
+      return "Jika angka naik-turun secara tidak beraturan, pisahkan menjadi 2 larik (lompat 1 angka) atau 3 larik (lompat 2 angka).";
+    }
+    if (subPattern === "deret-operasi-campuran-dan-berpola") {
+      return "Amati siklus operasi bergantian seperti (+a, ×2) atau (+a, ×2, -b) dari suku pertama hingga suku terakhir.";
+    }
+    if (subPattern === "deret-fibonacci-dan-pangkat") {
+      return "Uji apakah suku ke-3 merupakan jumlah dua suku sebelumnya (Fibonacci) atau dekat dengan bilangan berpangkat (n² atau n³).";
+    }
+    if (subPattern === "deret-pecahan-dan-desimal") {
+      return "Untuk pecahan, analisis pola deret pembilang dan deret penyebut secara terpisah; untuk desimal, kalikan 10 agar menjadi bilangan bulat.";
     }
   }
 

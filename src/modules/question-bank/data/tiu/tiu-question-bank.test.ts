@@ -7,6 +7,7 @@ import {
 } from "@/modules/question-bank/domain/question";
 import {
   analogiKataQuestions,
+  deretAngkaQuestions,
   getPatternStats,
   getQuestionsByPattern,
   hitungCepatQuestions,
@@ -177,6 +178,30 @@ describe("TIU question bank", () => {
     }
   });
 
+  it("contains 150 questions for deret-angka (30 per sub-pattern)", () => {
+    expect(deretAngkaQuestions).toHaveLength(150);
+
+    const expectedSubPatterns = [
+      "deret-satu-larik-dan-bertingkat",
+      "deret-dua-dan-tiga-larik",
+      "deret-operasi-campuran-dan-berpola",
+      "deret-fibonacci-dan-pangkat",
+      "deret-pecahan-dan-desimal",
+    ] as const;
+
+    for (const subPattern of expectedSubPatterns) {
+      expect(
+        getQuestionsByPattern("deret-angka", { subPattern }),
+      ).toHaveLength(30);
+    }
+
+    for (const difficulty of DIFFICULTIES) {
+      expect(
+        getQuestionsByPattern("deret-angka", { difficulty }).length,
+      ).toBeGreaterThan(0);
+    }
+  });
+
   it("provides non-empty non-spoiler tips across all populated TIU pattern banks", () => {
     for (const patternId of TIU_PATTERN_IDS) {
       for (const question of TIU_QUESTION_BANKS[patternId]) {
@@ -216,6 +241,11 @@ describe("TIU question bank", () => {
     expect(stats[5]).toMatchObject({
       id: "penalaran-analitis-melingkar",
       order: 6,
+      total: 150,
+    });
+    expect(stats[6]).toMatchObject({
+      id: "deret-angka",
+      order: 7,
       total: 150,
     });
   });
