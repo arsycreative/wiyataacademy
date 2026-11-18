@@ -122,7 +122,13 @@ export const TIU_PATTERNS: Record<TiuPatternId, TiuPatternMeta> = {
     id: "figural",
     order: 9,
     label: "Figural",
-    subPatterns: [],
+    subPatterns: [
+      "analogi-gambar",
+      "ketidaksamaan-gambar",
+      "serial-gambar",
+      "matriks-dan-komposisi",
+      "rotasi-dan-pencerminan",
+    ],
   },
 };
 
@@ -327,6 +333,24 @@ function getDefaultHint(pattern: TiuPatternId, subPattern: string): string {
     }
     if (subPattern === "simpulan-dan-perbandingan-tabel") {
       return "Periksa tren perubahan baris dari kiri ke kanan untuk mengeliminasi pernyataan yang jelas bertentangan dengan data tabel.";
+    }
+  }
+
+  if (pattern === "figural") {
+    if (subPattern === "analogi-gambar") {
+      return "Fokus pada satu elemen patokan (sudut panah, jumlah sisi, warna, atau titik pojok) dari Gambar 1 ke 2 lalu terapkan ke Gambar 3.";
+    }
+    if (subPattern === "ketidaksamaan-gambar") {
+      return "Cari kaidah mayoritas pada 4 opsi (misal jumlah sisi = jumlah titik, atau arah relatif titik pojok saat diputar) untuk menemukan 1 gambar yang menyimpang.";
+    }
+    if (subPattern === "serial-gambar") {
+      return "Amati pergerakan bertahap tiap elemen dari kotak 1 hingga 4 (perputaran sudut, pergeseran titik sudut, dan selang-seling warna).";
+    }
+    if (subPattern === "matriks-dan-komposisi") {
+      return "Pastikan setiap baris memiliki kelengkapan tiga bentuk, tiga jenis arsiran, dan tiga simbol dalam tanpa pengulangan.";
+    }
+    if (subPattern === "rotasi-dan-pencerminan") {
+      return "Lacak posisi titik sudut terlebih dahulu saat kotak diputar atau dicerminkan untuk langsung menyingkirkan opsi pengecoh.";
     }
   }
 

@@ -9,6 +9,7 @@ import {
   analogiKataQuestions,
   analisisTabelQuestions,
   deretAngkaQuestions,
+  figuralQuestions,
   getPatternStats,
   getQuestionsByPattern,
   hitungCepatQuestions,
@@ -227,6 +228,30 @@ describe("TIU question bank", () => {
     }
   });
 
+  it("contains 150 questions for figural (30 per sub-pattern)", () => {
+    expect(figuralQuestions).toHaveLength(150);
+
+    const expectedSubPatterns = [
+      "analogi-gambar",
+      "ketidaksamaan-gambar",
+      "serial-gambar",
+      "matriks-dan-komposisi",
+      "rotasi-dan-pencerminan",
+    ] as const;
+
+    for (const subPattern of expectedSubPatterns) {
+      expect(
+        getQuestionsByPattern("figural", { subPattern }),
+      ).toHaveLength(30);
+    }
+
+    for (const difficulty of DIFFICULTIES) {
+      expect(
+        getQuestionsByPattern("figural", { difficulty }).length,
+      ).toBeGreaterThan(0);
+    }
+  });
+
   it("provides non-empty non-spoiler tips across all populated TIU pattern banks", () => {
     for (const patternId of TIU_PATTERN_IDS) {
       for (const question of TIU_QUESTION_BANKS[patternId]) {
@@ -276,6 +301,11 @@ describe("TIU question bank", () => {
     expect(stats[7]).toMatchObject({
       id: "analisis-tabel",
       order: 8,
+      total: 150,
+    });
+    expect(stats[8]).toMatchObject({
+      id: "figural",
+      order: 9,
       total: 150,
     });
   });
