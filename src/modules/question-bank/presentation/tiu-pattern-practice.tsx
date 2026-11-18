@@ -2,8 +2,6 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
-  Award,
-  BarChart3,
   BookOpen,
   CheckCircle2,
   ChevronLeft,
@@ -25,7 +23,6 @@ import {
   getQuestionsByPattern,
 } from "@/modules/question-bank/data/tiu";
 import {
-  DIFFICULTIES,
   OPTION_KEYS,
   TIU_PATTERN_IDS,
   TIU_PATTERNS,
@@ -41,34 +38,11 @@ type TiuPatternPracticeProps = {
 type ViewMode = "list" | "single";
 type StatusFilter = "all" | "unanswered" | "wrong" | "flagged";
 
-type DiagnosticReport = {
-  correct: number;
-  total: number;
-  accuracy: number;
-  recommendedSubPattern: string;
-  subPatternBreakdown: readonly {
-    subPattern: string;
-    label: string;
-    correct: number;
-    total: number;
-    accuracy: number;
-  }[];
-};
-
-type ActiveDiagnosticSession = {
-  patternId: TiuPatternId;
-  seed: number;
-  questions: readonly Question[];
-  currentIndex: number;
-  answers: Record<string, OptionKey>;
-};
-
 type StoredPracticeProgress = {
   selectedAnswers?: Record<string, OptionKey>;
   flaggedQuestions?: Record<string, boolean>;
   viewMode?: ViewMode;
   lastPattern?: TiuPatternId;
-  diagnosticReports?: Partial<Record<TiuPatternId, DiagnosticReport>>;
   patternSeeds?: Partial<Record<TiuPatternId, number>>;
   questionSeeds?: Record<string, number>;
 };
@@ -177,48 +151,6 @@ function syncPatternUrl(patternId: TiuPatternId) {
   window.history.replaceState(null, "", `${url.pathname}${url.search}${url.hash}`);
 }
 
-/**
- * Menyusun paket soal Tes Diagnostik Singkat secara proporsional & acak
- * dari setiap sub-pola, lalu mengacak urutan soal dan urutan opsi A–E.
- */
-function buildDiagnosticQuestions(
-  patternId: TiuPatternId,
-  rawQuestions: readonly Question[],
-  seed: number,
-): readonly Question[] {
-  const subPatterns = TIU_PATTERNS[patternId].subPatterns;
-  if (subPatterns.length === 0) {
-    return seededShuffle(
-      rawQuestions,
-      hashStringWithSeed(`diag:${patternId}`, seed),
-    )
-      .slice(0, 9)
-      .map((q) => shuffleQuestionOptions(q, seed));
-  }
-
-  const picked: Question[] = [];
-  for (const sub of subPatterns) {
-    const inSub = rawQuestions.filter((q) => q.subPattern === sub);
-    for (const diff of DIFFICULTIES) {
-      const candidates = inSub.filter(
-        (q) => q.difficulty === diff && !picked.some((p) => p.id === q.id),
-      );
-      const shuffledCandidates = seededShuffle(
-        candidates,
-        hashStringWithSeed(`diag:${patternId}:${sub}:${diff}`, seed),
-      );
-      if (shuffledCandidates[0]) {
-        picked.push(shuffleQuestionOptions(shuffledCandidates[0], seed));
-      }
-    }
-  }
-
-  return seededShuffle(
-    picked,
-    hashStringWithSeed(`diag-order:${patternId}`, seed),
-  );
-}
-
 export function TiuPatternPractice({
   initialPattern,
 }: TiuPatternPracticeProps) {
@@ -230,7 +162,6 @@ export function TiuPatternPractice({
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [viewMode, setViewMode] = useState<ViewMode>("list");
   const [isReviewMode, setIsReviewMode] = useState<boolean>(false);
-  const [showEvaluation, setShowEvaluation] = useState<boolean>(false);
   const [selectedAnswers, setSelectedAnswers] = useState<Record<string, OptionKey>>({});
   const [flaggedQuestions, setFlaggedQuestions] = useState<Record<string, boolean>>({});
   const [revealedHints, setRevealedHints] = useState<Record<string, boolean>>({});
@@ -239,12 +170,6 @@ export function TiuPatternPractice({
   >({});
   const [questionSeeds, setQuestionSeeds] = useState<Record<string, number>>({});
   const [activeQuestionId, setActiveQuestionId] = useState<string | null>(null);
-  const [diagnosticSession, setDiagnosticSession] =
-    useState<ActiveDiagnosticSession | null>(null);
-  const [diagnosticReports, setDiagnosticReports] = useState<
-    Partial<Record<TiuPatternId, DiagnosticReport>>
-  >({});
-  const [isStorageHydrated, setIsStorageHydrated] = useState<boolean>(false);
 
   const pendingScrollIdRef = useRef<string | null>(null);
   const hasHydratedRef = useRef<boolean>(false);
@@ -285,10 +210,6 @@ export function TiuPatternPractice({
             setViewMode(parsed.viewMode);
           }
 
-          if (parsed.diagnosticReports && typeof parsed.diagnosticReports === "object") {
-            setDiagnosticReports(parsed.diagnosticReports);
-          }
-
           setPatternSeeds(createInitialPatternSeeds(parsed.patternSeeds));
 
           if (parsed.questionSeeds && typeof parsed.questionSeeds === "object") {
@@ -320,7 +241,6 @@ export function TiuPatternPractice({
       }
 
       hasHydratedRef.current = true;
-      setIsStorageHydrated(true);
     });
 
     const handlePopState = () => {
@@ -332,7 +252,6 @@ export function TiuPatternPractice({
         setStatusFilter("all");
         setCurrentPage(1);
         setActiveQuestionId(null);
-        setDiagnosticSession(null);
       }
     };
 
@@ -352,7 +271,6 @@ export function TiuPatternPractice({
         flaggedQuestions,
         viewMode,
         lastPattern: activePattern,
-        diagnosticReports,
         patternSeeds,
         questionSeeds,
       };
@@ -365,7 +283,6 @@ export function TiuPatternPractice({
     flaggedQuestions,
     viewMode,
     activePattern,
-    diagnosticReports,
     patternSeeds,
     questionSeeds,
   ]);
@@ -441,37 +358,6 @@ export function TiuPatternPractice({
     return counts;
   }, [allPatternQuestions]);
 
-  // Sub-pattern evaluation & weakness analytics
-  const subPatternEvaluations = useMemo(() => {
-    return activeMeta.subPatterns.map((sub) => {
-      const subQuestions = allPatternQuestions.filter((q) => q.subPattern === sub);
-      const answered = subQuestions.filter((q) => selectedAnswers[q.id] !== undefined);
-      const correct = answered.filter((q) => selectedAnswers[q.id] === q.answer).length;
-      const accuracy =
-        answered.length > 0 ? Math.round((correct / answered.length) * 100) : null;
-
-      return {
-        subPattern: sub,
-        label: capitalize(sub),
-        total: subQuestions.length,
-        answered: answered.length,
-        correct,
-        accuracy,
-      };
-    });
-  }, [activeMeta.subPatterns, allPatternQuestions, selectedAnswers]);
-
-  const weakestSubPattern = useMemo(() => {
-    const evaluated = subPatternEvaluations.filter(
-      (item): item is typeof item & { accuracy: number } =>
-        item.answered > 0 && item.accuracy !== null,
-    );
-    if (evaluated.length === 0) return null;
-    return evaluated.reduce((lowest, item) =>
-      item.accuracy < lowest.accuracy ? item : lowest,
-    );
-  }, [subPatternEvaluations]);
-
   const answeredInView = useMemo(
     () => subPatternScopedQuestions.filter((q) => selectedAnswers[q.id] !== undefined),
     [subPatternScopedQuestions, selectedAnswers],
@@ -510,7 +396,7 @@ export function TiuPatternPractice({
   );
 
   useEffect(() => {
-    if (viewMode === "single" || diagnosticSession !== null) {
+    if (viewMode === "single") {
       pendingScrollIdRef.current = null;
       return;
     }
@@ -524,14 +410,7 @@ export function TiuPatternPractice({
       }
     });
     return () => window.cancelAnimationFrame(frame);
-  }, [
-    safePage,
-    activePattern,
-    selectedSubPattern,
-    statusFilter,
-    viewMode,
-    diagnosticSession,
-  ]);
+  }, [safePage, activePattern, selectedSubPattern, statusFilter, viewMode]);
 
   const handlePatternChange = useCallback((patternId: TiuPatternId) => {
     setActivePattern(patternId);
@@ -539,7 +418,6 @@ export function TiuPatternPractice({
     setStatusFilter("all");
     setCurrentPage(1);
     setActiveQuestionId(null);
-    setDiagnosticSession(null);
     setPatternSeeds((prev) =>
       prev[patternId] ? prev : { ...prev, [patternId]: createRandomSeed() },
     );
@@ -561,117 +439,6 @@ export function TiuPatternPractice({
     setActiveQuestionId(null);
     pendingScrollIdRef.current = null;
   }, []);
-
-  const applyAdaptiveRecommendation = useCallback((subPattern: string) => {
-    setDiagnosticSession(null);
-    setSelectedSubPattern(subPattern);
-    setStatusFilter("all");
-    setCurrentPage(1);
-    setActiveQuestionId(null);
-    setIsReviewMode(false);
-  }, []);
-
-  // Diagnostic Flow handlers (always generates a fresh random seed to shuffle questions & options)
-  const handleStartDiagnostic = useCallback(() => {
-    const newSeed = createRandomSeed();
-    const questions = buildDiagnosticQuestions(
-      activePattern,
-      rawPatternQuestions,
-      newSeed,
-    );
-    if (questions.length === 0) return;
-    setDiagnosticSession({
-      patternId: activePattern,
-      seed: newSeed,
-      questions,
-      currentIndex: 0,
-      answers: {},
-    });
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  }, [activePattern, rawPatternQuestions]);
-
-  const handleSelectDiagnosticOption = useCallback((optionKey: OptionKey) => {
-    setDiagnosticSession((prev) => {
-      if (!prev) return null;
-      const currentQ = prev.questions[prev.currentIndex];
-      if (!currentQ) return prev;
-      const nextAnswers = {
-        ...prev.answers,
-        [currentQ.id]: optionKey,
-      };
-      const nextIndex =
-        prev.currentIndex < prev.questions.length - 1
-          ? prev.currentIndex + 1
-          : prev.currentIndex;
-      return {
-        ...prev,
-        answers: nextAnswers,
-        currentIndex: nextIndex,
-      };
-    });
-  }, []);
-
-  const handleFinishDiagnostic = useCallback(() => {
-    if (!diagnosticSession) return;
-    const { patternId, seed, questions, answers } = diagnosticSession;
-    const subPatterns = TIU_PATTERNS[patternId].subPatterns;
-
-    // Lock in option seeds for the diagnostic questions so their chosen option keys stay consistent
-    setQuestionSeeds((prev) => {
-      const next = { ...prev };
-      for (const qId of Object.keys(answers)) {
-        next[qId] = seed;
-      }
-      return next;
-    });
-    setSelectedAnswers((prev) => ({
-      ...prev,
-      ...answers,
-    }));
-    // Also re-shuffle the pattern's remaining questions with a fresh seed
-    setPatternSeeds((prev) => ({
-      ...prev,
-      [patternId]: createRandomSeed(),
-    }));
-
-    const total = questions.length;
-    const correct = questions.filter((q) => answers[q.id] === q.answer).length;
-    const accuracy = total > 0 ? Math.round((correct / total) * 100) : 0;
-
-    const breakdown = subPatterns.map((sub) => {
-      const subQs = questions.filter((q) => q.subPattern === sub);
-      const subCorrect = subQs.filter((q) => answers[q.id] === q.answer).length;
-      const subAcc = subQs.length > 0 ? Math.round((subCorrect / subQs.length) * 100) : 0;
-      return {
-        subPattern: sub,
-        label: capitalize(sub),
-        correct: subCorrect,
-        total: subQs.length,
-        accuracy: subAcc,
-      };
-    });
-
-    const weakest =
-      breakdown.length > 0
-        ? breakdown.reduce((min, item) =>
-            item.accuracy < min.accuracy ? item : min,
-          )
-        : null;
-
-    const report: DiagnosticReport = {
-      correct,
-      total,
-      accuracy,
-      recommendedSubPattern: weakest?.subPattern ?? "all",
-      subPatternBreakdown: breakdown,
-    };
-
-    setDiagnosticReports((prev) => ({
-      ...prev,
-      [patternId]: report,
-    }));
-    setDiagnosticSession(null);
-  }, [diagnosticSession]);
 
   const handlePageChange = useCallback(
     (nextPage: number) => {
@@ -812,11 +579,6 @@ export function TiuPatternPractice({
       }
       return next;
     });
-    setDiagnosticReports((prev) => {
-      const next = { ...prev };
-      delete next[activePattern];
-      return next;
-    });
     setPatternSeeds((prev) => ({
       ...prev,
       [activePattern]: createRandomSeed(),
@@ -849,7 +611,7 @@ export function TiuPatternPractice({
 
   // Keyboard shortcuts for CAT navigation & answering
   useEffect(() => {
-    if (diagnosticSession !== null || filteredQuestions.length === 0) return;
+    if (filteredQuestions.length === 0) return;
 
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.metaKey || event.ctrlKey || event.altKey) return;
@@ -909,7 +671,6 @@ export function TiuPatternPractice({
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [
-    diagnosticSession,
     effectiveActiveIndex,
     effectiveActiveQuestion,
     filteredQuestions.length,
@@ -921,15 +682,12 @@ export function TiuPatternPractice({
     toggleHint,
   ]);
 
-  const activeDiagnosticReport = diagnosticReports[activePattern] ?? null;
-
   const hasPatternProgress = useMemo(
     () =>
-      Boolean(activeDiagnosticReport) ||
       allPatternQuestions.some(
         (q) => selectedAnswers[q.id] !== undefined || flaggedQuestions[q.id],
       ),
-    [activeDiagnosticReport, allPatternQuestions, flaggedQuestions, selectedAnswers],
+    [allPatternQuestions, flaggedQuestions, selectedAnswers],
   );
 
   return (
@@ -993,515 +751,346 @@ export function TiuPatternPractice({
       </aside>
 
       {/* Main Content */}
-      <div className="order-3 min-w-0 space-y-6 lg:order-2">
-        {/* Mode Sesi Tes Diagnostik Singkat */}
-        {diagnosticSession ? (
-          <DiagnosticSessionPanel
-            session={diagnosticSession}
-            patternLabel={activeMeta.label}
-            onSelectOption={handleSelectDiagnosticOption}
-            onJumpIndex={(idx) =>
-              setDiagnosticSession((prev) =>
-                prev ? { ...prev, currentIndex: idx } : null,
-              )
-            }
-            onFinish={handleFinishDiagnostic}
-            onCancel={() => setDiagnosticSession(null)}
-          />
+      <div className="order-3 min-w-0 space-y-5 lg:order-2">
+        {/* Panel Kontrol & Filter yang Ringkas */}
+        <section className="rounded-2xl border border-blue-100 bg-white p-5 shadow-sm shadow-blue-100/60 sm:p-6">
+          {/* Baris 1: Judul Pola & Toolbar Aksi */}
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+            <div className="min-w-0">
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="inline-flex rounded-md bg-blue-50 px-2.5 py-0.5 text-xs font-semibold text-blue-700">
+                  Pola #{activeMeta.order}
+                </span>
+                <span className="text-xs text-slate-500">
+                  {filteredQuestions.length > 0 ? (
+                    viewMode === "single" ? (
+                      <>
+                        Soal {effectiveActiveIndex + 1} dari {filteredQuestions.length}
+                      </>
+                    ) : (
+                      <>
+                        Soal {pageStartIndex + 1}–
+                        {Math.min(pageStartIndex + PAGE_SIZE, filteredQuestions.length)} dari{" "}
+                        {filteredQuestions.length}
+                      </>
+                    )
+                  ) : (
+                    <>0 soal</>
+                  )}
+                </span>
+                {!isReviewMode && answeredInView.length > 0 && (
+                  <span className="inline-flex items-center rounded-md bg-emerald-50 px-2.5 py-0.5 text-xs font-semibold text-emerald-700">
+                    Skor: {correctInView}/{answeredInView.length} (
+                    {Math.round((correctInView / answeredInView.length) * 100)}%)
+                  </span>
+                )}
+              </div>
+
+              <h2 className="mt-1.5 text-xl font-semibold text-slate-950 sm:text-2xl">
+                {activeMeta.label}
+              </h2>
+            </div>
+
+            {allPatternQuestions.length > 0 && (
+              <div className="flex flex-wrap items-center gap-2">
+                <div
+                  role="group"
+                  aria-label="Mode tampilan soal"
+                  className="inline-flex h-9 items-center rounded-lg border border-slate-200 bg-slate-50 p-0.5"
+                >
+                  <button
+                    type="button"
+                    onClick={() => setViewMode("list")}
+                    className={cn(
+                      "inline-flex h-8 items-center gap-1.5 rounded-md px-2.5 text-xs font-semibold transition-colors",
+                      viewMode === "list"
+                        ? "bg-white text-blue-700 shadow-xs"
+                        : "text-slate-600 hover:text-slate-900",
+                    )}
+                  >
+                    <Layers3 className="size-3.5" aria-hidden />
+                    Daftar
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setViewMode("single")}
+                    className={cn(
+                      "inline-flex h-8 items-center gap-1.5 rounded-md px-2.5 text-xs font-semibold transition-colors",
+                      viewMode === "single"
+                        ? "bg-blue-600 text-white shadow-xs"
+                        : "text-slate-600 hover:text-slate-900",
+                    )}
+                  >
+                    <ClipboardList className="size-3.5" aria-hidden />
+                    1 Soal
+                  </button>
+                </div>
+
+                <Button
+                  type="button"
+                  size="sm"
+                  variant={isReviewMode ? "default" : "outline"}
+                  onClick={() => setIsReviewMode((prev) => !prev)}
+                  className={cn(
+                    "h-9 text-xs font-semibold",
+                    isReviewMode
+                      ? "bg-blue-600 text-white hover:bg-blue-700"
+                      : "border-slate-200 text-slate-700 hover:bg-slate-50",
+                  )}
+                >
+                  {isReviewMode ? (
+                    <>
+                      <Eye className="size-3.5" aria-hidden />
+                      Kunci Tampil
+                    </>
+                  ) : (
+                    <>
+                      <EyeOff className="size-3.5" aria-hidden />
+                      Lihat Kunci
+                    </>
+                  )}
+                </Button>
+
+                {!isReviewMode && (
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="outline"
+                    onClick={handleReset}
+                    className="h-9 border-slate-200 text-xs font-semibold text-slate-700 hover:bg-slate-50"
+                  >
+                    <RotateCcw className="size-3.5" aria-hidden />
+                    {hasPatternProgress ? "Reset & Acak" : "Acak Soal"}
+                  </Button>
+                )}
+              </div>
+            )}
+          </div>
+
+          {/* Baris 2: Tab Sub-Pola */}
+          {allPatternQuestions.length > 0 && activeMeta.subPatterns.length > 0 && (
+            <div className="mt-4 border-t border-slate-100 pt-4">
+              <div className="flex flex-wrap items-center gap-1.5">
+                <FilterPill
+                  active={selectedSubPattern === "all"}
+                  label={`Semua Topik (${allPatternQuestions.length})`}
+                  onClick={() => handleSubPatternChange("all")}
+                />
+                {activeMeta.subPatterns.map((sub) => (
+                  <FilterPill
+                    key={sub}
+                    active={selectedSubPattern === sub}
+                    label={`${capitalize(sub)} (${subPatternCounts[sub] ?? 0})`}
+                    onClick={() => handleSubPatternChange(sub)}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Baris 3 (Hanya tampil jika sudah ada progres/flag pada pola ini): Filter Status Jawaban */}
+          {allPatternQuestions.length > 0 && hasPatternProgress && (
+            <div className="mt-3 flex flex-wrap items-center justify-between gap-2 rounded-xl bg-slate-50/90 px-3.5 py-2.5">
+              <div className="flex flex-wrap items-center gap-1.5">
+                <span className="mr-1 text-xs font-medium text-slate-500">
+                  Tampilkan:
+                </span>
+                <StatusChip
+                  active={statusFilter === "all"}
+                  label={`Semua (${statusCounts.all})`}
+                  onClick={() => handleStatusFilterChange("all")}
+                />
+                <StatusChip
+                  active={statusFilter === "unanswered"}
+                  label={`Belum Diisi (${statusCounts.unanswered})`}
+                  onClick={() => handleStatusFilterChange("unanswered")}
+                />
+                {statusCounts.wrong > 0 && (
+                  <StatusChip
+                    active={statusFilter === "wrong"}
+                    label={`Salah (${statusCounts.wrong})`}
+                    onClick={() => handleStatusFilterChange("wrong")}
+                  />
+                )}
+                {statusCounts.flagged > 0 && (
+                  <StatusChip
+                    active={statusFilter === "flagged"}
+                    label={`Ragu-ragu (${statusCounts.flagged})`}
+                    onClick={() => handleStatusFilterChange("flagged")}
+                  />
+                )}
+              </div>
+
+              {statusCounts.wrong > 0 && !isReviewMode && (
+                <button
+                  type="button"
+                  onClick={handleRetryWrongInScope}
+                  className="inline-flex items-center gap-1.5 text-xs font-semibold text-rose-700 hover:text-rose-800 hover:underline"
+                >
+                  <RotateCcw className="size-3" aria-hidden />
+                  Ulangi {statusCounts.wrong} soal salah
+                </button>
+              )}
+            </div>
+          )}
+        </section>
+
+        {/* Empty state or question list */}
+        {allPatternQuestions.length === 0 ? (
+          <section className="rounded-2xl border border-dashed border-blue-200 bg-white px-6 py-16 text-center">
+            <span className="mx-auto flex size-14 items-center justify-center rounded-full bg-blue-50 text-blue-600">
+              <BookOpen className="size-7" aria-hidden />
+            </span>
+            <h3 className="mt-4 text-xl font-semibold text-slate-950">
+              Bank soal {activeMeta.label} siap diisi
+            </h3>
+            <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-slate-600">
+              File terpisah untuk pola ini sudah disiapkan. Saat ini soal sedang
+              tersedia pada pola{" "}
+              <button
+                type="button"
+                onClick={() => handlePatternChange("sinonim-antonim-akronim")}
+                className="font-semibold text-blue-700 underline underline-offset-4 hover:text-blue-800"
+              >
+                Sinonim, Antonim, dan Akronim ({patternStats[0]?.total ?? 0} soal)
+              </button>
+              .
+            </p>
+          </section>
+        ) : filteredQuestions.length === 0 ? (
+          <section className="rounded-2xl border border-dashed border-slate-200 bg-white px-6 py-12 text-center">
+            <p className="text-base font-semibold text-slate-800">
+              Tidak ada soal pada pilihan filter ini.
+            </p>
+            <div className="mt-4 flex flex-wrap justify-center gap-2">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => {
+                  setStatusFilter("all");
+                  setSelectedSubPattern("all");
+                }}
+                className="border-blue-200 text-blue-700"
+              >
+                Tampilkan Semua Soal
+              </Button>
+            </div>
+          </section>
+        ) : viewMode === "single" && effectiveActiveQuestion ? (
+          <div className="space-y-4">
+            <QuestionCard
+              key={effectiveActiveQuestion.id}
+              index={effectiveActiveIndex + 1}
+              question={effectiveActiveQuestion}
+              selectedOption={selectedAnswers[effectiveActiveQuestion.id]}
+              isReviewMode={isReviewMode}
+              isActive
+              isFlagged={Boolean(flaggedQuestions[effectiveActiveQuestion.id])}
+              isHintOpen={Boolean(revealedHints[effectiveActiveQuestion.id])}
+              onToggleFlag={() => toggleFlag(effectiveActiveQuestion.id)}
+              onToggleHint={() => toggleHint(effectiveActiveQuestion.id)}
+              onSelectOption={(key) =>
+                handleSelectOption(effectiveActiveQuestion.id, key)
+              }
+            />
+
+            <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-blue-100 bg-white px-5 py-4 shadow-sm shadow-blue-100/50">
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                disabled={effectiveActiveIndex <= 0}
+                onClick={() => handleJumpToQuestion(effectiveActiveIndex - 1)}
+                className="h-10 border-blue-200 px-4 text-blue-700 hover:bg-blue-50"
+              >
+                <ChevronLeft className="size-4" aria-hidden />
+                Soal Sebelumnya
+              </Button>
+
+              <div className="flex flex-wrap items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => toggleFlag(effectiveActiveQuestion.id)}
+                  className={cn(
+                    "inline-flex h-10 items-center gap-2 rounded-lg border px-4 text-xs font-semibold transition-colors sm:text-sm",
+                    flaggedQuestions[effectiveActiveQuestion.id]
+                      ? "border-amber-400 bg-amber-50 text-amber-900"
+                      : "border-slate-200 bg-slate-50 text-slate-700 hover:border-amber-300 hover:bg-amber-50/60",
+                  )}
+                >
+                  <span
+                    className={cn(
+                      "size-2.5 rounded-full",
+                      flaggedQuestions[effectiveActiveQuestion.id]
+                        ? "bg-amber-500"
+                        : "bg-slate-300",
+                    )}
+                    aria-hidden
+                  />
+                  {flaggedQuestions[effectiveActiveQuestion.id]
+                    ? "Ditandai Ragu-ragu"
+                    : "Tandai Ragu-ragu"}
+                </button>
+
+                <span className="px-2 text-xs font-semibold text-slate-600 sm:text-sm">
+                  {effectiveActiveIndex + 1} / {filteredQuestions.length}
+                </span>
+              </div>
+
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                disabled={effectiveActiveIndex >= filteredQuestions.length - 1}
+                onClick={() => handleJumpToQuestion(effectiveActiveIndex + 1)}
+                className="h-10 border-blue-200 px-4 text-blue-700 hover:bg-blue-50"
+              >
+                Soal Berikutnya
+                <ChevronRight className="size-4" aria-hidden />
+              </Button>
+            </div>
+
+            <p className="rounded-xl border border-slate-200/80 bg-white/80 px-4 py-2.5 text-center text-xs text-slate-500">
+              Pintasan Keyboard: <strong className="text-slate-700">A–E</strong> Pilih Jawaban •{" "}
+              <strong className="text-slate-700">← / →</strong> Pindah Soal •{" "}
+              <strong className="text-slate-700">R</strong> Tandai Ragu-ragu •{" "}
+              <strong className="text-slate-700">H</strong> Buka/Tutup Hint
+            </p>
+          </div>
         ) : (
           <>
-            {/* Adaptive Mastery Banner: Tes Diagnostik -> Rekomendasi Fokus Sub-Pola */}
-            {allPatternQuestions.length > 0 && (
-              <AdaptiveMasteryHeader
-                patternLabel={activeMeta.label}
-                subPatternCount={activeMeta.subPatterns.length}
-                diagnosticReport={activeDiagnosticReport}
-                weakestSubPattern={weakestSubPattern}
-                selectedSubPattern={selectedSubPattern}
-                onStartDiagnostic={handleStartDiagnostic}
-                onApplyRecommendation={applyAdaptiveRecommendation}
+            {totalPages > 1 && (
+              <PaginationBar
+                currentPage={safePage}
+                totalPages={totalPages}
+                onPageChange={handlePageChange}
               />
             )}
 
-            {/* Active pattern controls & sub-pattern filter */}
-            <section className="rounded-2xl border border-blue-100 bg-white p-6 shadow-sm shadow-blue-100/60">
-              <div className="flex flex-col gap-4 border-b border-slate-100 pb-5 sm:flex-row sm:items-start sm:justify-between">
-                <div>
-                  <div className="flex flex-wrap items-center gap-2">
-                    <span className="inline-flex rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700">
-                      Pola #{activeMeta.order} • TIU
-                    </span>
-                    {isStorageHydrated && (
-                      <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-1 text-[11px] font-medium text-emerald-700">
-                        <CheckCircle2 className="size-3" aria-hidden />
-                        Soal &amp; Opsi Diacak Otomatis
-                      </span>
-                    )}
-                  </div>
-                  <h2 className="mt-2.5 text-2xl font-semibold text-slate-950">
-                    {activeMeta.label}
-                  </h2>
-                  <p className="mt-1 text-sm text-slate-600">
-                    {filteredQuestions.length > 0 ? (
-                      viewMode === "single" ? (
-                        <>
-                          Mode Fokus CAT • Soal {effectiveActiveIndex + 1} dari{" "}
-                          {filteredQuestions.length} soal tersedia.
-                        </>
-                      ) : (
-                        <>
-                          Menampilkan soal {pageStartIndex + 1}–
-                          {Math.min(pageStartIndex + PAGE_SIZE, filteredQuestions.length)} dari{" "}
-                          {filteredQuestions.length} soal tersedia.
-                        </>
-                      )
-                    ) : (
-                      <>Belum ada soal pada pilihan filter ini.</>
-                    )}
-                  </p>
-                </div>
-
-                <div className="flex flex-wrap items-center gap-2">
-                  {filteredQuestions.length > 0 && (
-                    <div
-                      role="group"
-                      aria-label="Mode tampilan soal"
-                      className="inline-flex rounded-xl border border-blue-100 bg-slate-50 p-1"
-                    >
-                      <button
-                        type="button"
-                        onClick={() => setViewMode("list")}
-                        className={cn(
-                          "inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold transition-colors",
-                          viewMode === "list"
-                            ? "bg-white text-blue-700 shadow-xs"
-                            : "text-slate-600 hover:text-slate-900",
-                        )}
-                      >
-                        <Layers3 className="size-3.5" aria-hidden />
-                        25 / Halaman
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setViewMode("single")}
-                        className={cn(
-                          "inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold transition-colors",
-                          viewMode === "single"
-                            ? "bg-blue-600 text-white shadow-xs"
-                            : "text-slate-600 hover:text-slate-900",
-                        )}
-                      >
-                        <ClipboardList className="size-3.5" aria-hidden />
-                        1 Soal (Mode CAT)
-                      </button>
-                    </div>
-                  )}
-
-                  <Button
-                    type="button"
-                    variant={isReviewMode ? "default" : "outline"}
-                    onClick={() => setIsReviewMode((prev) => !prev)}
-                    className={cn(
-                      "h-9 text-xs sm:text-sm",
-                      isReviewMode
-                        ? "bg-blue-600 text-white hover:bg-blue-700"
-                        : "border-blue-200 text-blue-700 hover:bg-blue-50",
-                    )}
-                  >
-                    {isReviewMode ? (
-                      <>
-                        <Eye className="size-4" aria-hidden />
-                        Mode Review (Kunci Tampil)
-                      </>
-                    ) : (
-                      <>
-                        <EyeOff className="size-4" aria-hidden />
-                        Mode Latihan (Kunci Tersembunyi)
-                      </>
-                    )}
-                  </Button>
-
-                  {activeMeta.subPatterns.length > 0 && allPatternQuestions.length > 0 && (
-                    <Button
-                      type="button"
-                      variant={showEvaluation ? "default" : "outline"}
-                      onClick={() => setShowEvaluation((prev) => !prev)}
-                      className={cn(
-                        "h-9 text-xs sm:text-sm",
-                        showEvaluation
-                          ? "bg-slate-900 text-white hover:bg-slate-800"
-                          : "border-blue-200 text-blue-700 hover:bg-blue-50",
-                      )}
-                    >
-                      <BarChart3 className="size-4" aria-hidden />
-                      Evaluasi Sub-Pola
-                    </Button>
-                  )}
-
-                  {!isReviewMode && allPatternQuestions.length > 0 && (
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      onClick={handleReset}
-                      className="h-9 text-xs text-slate-600 hover:bg-slate-100 hover:text-slate-950 sm:text-sm"
-                    >
-                      <RotateCcw className="size-4" aria-hidden />
-                      {hasPatternProgress ? "Reset & Acak Ulang" : "Acak Ulang Soal"}
-                    </Button>
-                  )}
-                </div>
-              </div>
-
-              {/* Filter Sub-Pola */}
-              {allPatternQuestions.length > 0 && activeMeta.subPatterns.length > 0 && (
-                <div className="mt-5 flex flex-wrap items-center gap-2">
-                  <span className="mr-1 text-xs font-semibold uppercase tracking-wide text-slate-500">
-                    Sub-pola:
-                  </span>
-                  <FilterPill
-                    active={selectedSubPattern === "all"}
-                    label={`Semua (${allPatternQuestions.length})`}
-                    onClick={() => handleSubPatternChange("all")}
-                  />
-                  {activeMeta.subPatterns.map((sub) => (
-                    <FilterPill
-                      key={sub}
-                      active={selectedSubPattern === sub}
-                      label={`${capitalize(sub)} (${subPatternCounts[sub] ?? 0})`}
-                      onClick={() => handleSubPatternChange(sub)}
-                    />
-                  ))}
-                </div>
-              )}
-
-              {/* Filter Status Jawaban & Tombol Ulangi Soal yang Salah */}
-              {allPatternQuestions.length > 0 && (
-                <div className="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 pt-4">
-                  <div className="flex flex-wrap items-center gap-1.5">
-                    <span className="mr-1 text-xs font-semibold uppercase tracking-wide text-slate-500">
-                      Status:
-                    </span>
-                    <FilterPill
-                      active={statusFilter === "all"}
-                      label={`Semua (${statusCounts.all})`}
-                      onClick={() => handleStatusFilterChange("all")}
-                    />
-                    <FilterPill
-                      active={statusFilter === "unanswered"}
-                      label={`Belum Diisi (${statusCounts.unanswered})`}
-                      onClick={() => handleStatusFilterChange("unanswered")}
-                    />
-                    <FilterPill
-                      active={statusFilter === "wrong"}
-                      label={`Dijawab Salah (${statusCounts.wrong})`}
-                      onClick={() => handleStatusFilterChange("wrong")}
-                    />
-                    <FilterPill
-                      active={statusFilter === "flagged"}
-                      label={`Ragu-ragu (${statusCounts.flagged})`}
-                      onClick={() => handleStatusFilterChange("flagged")}
-                    />
-                  </div>
-
-                  <div className="flex flex-wrap items-center gap-2">
-                    {statusCounts.wrong > 0 && !isReviewMode && (
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        onClick={handleRetryWrongInScope}
-                        className="h-8 border-rose-200 bg-rose-50/70 text-xs font-semibold text-rose-700 hover:bg-rose-100"
-                      >
-                        <RotateCcw className="size-3.5" aria-hidden />
-                        Ulangi &amp; Acak {statusCounts.wrong} Soal Salah
-                      </Button>
-                    )}
-
-                    {!isReviewMode && answeredInView.length > 0 && (
-                      <p className="rounded-lg bg-blue-50 px-3 py-1.5 text-xs font-semibold text-blue-800">
-                        Skor sementara: {correctInView} / {answeredInView.length} benar (
-                        {Math.round((correctInView / answeredInView.length) * 100)}%)
-                      </p>
-                    )}
-                  </div>
-                </div>
-              )}
-
-              {/* Ringkasan Evaluasi Sub-Pola (Analitik Kelemahan) */}
-              {(showEvaluation || weakestSubPattern !== null) &&
-                activeMeta.subPatterns.length > 0 &&
-                allPatternQuestions.length > 0 && (
-                  <div className="mt-5 rounded-xl border border-blue-100 bg-[#f8fbff] p-4">
-                    <div className="flex flex-wrap items-center justify-between gap-2">
-                      <div>
-                        <p className="text-xs font-semibold uppercase tracking-wider text-blue-700">
-                          Peta Penguasaan Sub-Pola
-                        </p>
-                        <p className="mt-0.5 text-xs text-slate-600">
-                          Klik kartu sub-pola di bawah untuk fokus berlatih pada topik tersebut.
-                        </p>
-                      </div>
-                      {weakestSubPattern && (
-                        <button
-                          type="button"
-                          onClick={() =>
-                            applyAdaptiveRecommendation(weakestSubPattern.subPattern)
-                          }
-                          className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-1.5 text-xs font-semibold text-amber-900 transition hover:bg-amber-100"
-                        >
-                          Fokus Perbaikan: {weakestSubPattern.label} ({weakestSubPattern.accuracy}% benar)
-                        </button>
-                      )}
-                    </div>
-
-                    <div className="mt-3 grid gap-2.5 sm:grid-cols-2 lg:grid-cols-3">
-                      {subPatternEvaluations.map((item) => {
-                        const isSelected = selectedSubPattern === item.subPattern;
-                        const statusBadge =
-                          item.accuracy === null
-                            ? {
-                                label: "Belum Dijawab",
-                                className: "bg-slate-100 text-slate-600",
-                              }
-                            : item.accuracy >= 80
-                              ? {
-                                  label: "Kuat",
-                                  className: "bg-emerald-100 text-emerald-800",
-                                }
-                              : item.accuracy >= 60
-                                ? {
-                                    label: "Cukup",
-                                    className: "bg-amber-100 text-amber-800",
-                                  }
-                                : {
-                                    label: "Perlu Fokus",
-                                    className: "bg-rose-100 text-rose-800",
-                                  };
-
-                        return (
-                          <button
-                            key={item.subPattern}
-                            type="button"
-                            onClick={() =>
-                              applyAdaptiveRecommendation(
-                                isSelected ? "all" : item.subPattern,
-                              )
-                            }
-                            className={cn(
-                              "flex flex-col justify-between rounded-xl border bg-white p-3 text-left transition-all",
-                              isSelected
-                                ? "border-blue-500 ring-2 ring-blue-500/20"
-                                : "border-slate-200/90 hover:border-blue-300",
-                            )}
-                          >
-                            <div className="flex items-start justify-between gap-2">
-                              <span className="text-xs font-semibold text-slate-900">
-                                {item.label}
-                              </span>
-                              <span
-                                className={cn(
-                                  "shrink-0 rounded-full px-2 py-0.5 text-[10px] font-semibold",
-                                  statusBadge.className,
-                                )}
-                              >
-                                {statusBadge.label}
-                              </span>
-                            </div>
-
-                            <div className="mt-2.5 flex items-baseline justify-between text-xs text-slate-600">
-                              <span>
-                                Benar:{" "}
-                                <strong className="text-slate-900">
-                                  {item.correct}/{item.answered}
-                                </strong>{" "}
-                                (dari {item.total})
-                              </span>
-                              <span className="font-semibold text-slate-900">
-                                {item.accuracy !== null ? `${item.accuracy}%` : "—"}
-                              </span>
-                            </div>
-
-                            <div className="mt-1.5 h-1.5 w-full overflow-hidden rounded-full bg-slate-100">
-                              <div
-                                className={cn(
-                                  "h-full rounded-full transition-all",
-                                  item.accuracy === null
-                                    ? "w-0"
-                                    : item.accuracy >= 80
-                                      ? "bg-emerald-500"
-                                      : item.accuracy >= 60
-                                        ? "bg-amber-500"
-                                        : "bg-rose-500",
-                                )}
-                                style={{ width: `${item.accuracy ?? 0}%` }}
-                              />
-                            </div>
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </div>
-                )}
-            </section>
-
-            {/* Empty state or question list */}
-            {allPatternQuestions.length === 0 ? (
-              <section className="rounded-2xl border border-dashed border-blue-200 bg-white px-6 py-16 text-center">
-                <span className="mx-auto flex size-14 items-center justify-center rounded-full bg-blue-50 text-blue-600">
-                  <BookOpen className="size-7" aria-hidden />
-                </span>
-                <h3 className="mt-4 text-xl font-semibold text-slate-950">
-                  Bank soal {activeMeta.label} siap diisi
-                </h3>
-                <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-slate-600">
-                  File terpisah untuk pola ini sudah disiapkan. Saat ini soal sedang
-                  tersedia pada pola{" "}
-                  <button
-                    type="button"
-                    onClick={() => handlePatternChange("sinonim-antonim-akronim")}
-                    className="font-semibold text-blue-700 underline underline-offset-4 hover:text-blue-800"
-                  >
-                    Sinonim, Antonim, dan Akronim ({patternStats[0]?.total ?? 0} soal)
-                  </button>
-                  .
-                </p>
-              </section>
-            ) : filteredQuestions.length === 0 ? (
-              <section className="rounded-2xl border border-dashed border-slate-200 bg-white px-6 py-12 text-center">
-                <p className="text-base font-semibold text-slate-800">
-                  Tidak ada soal pada kombinasi filter ini.
-                </p>
-                <div className="mt-4 flex flex-wrap justify-center gap-2">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={() => {
-                      setStatusFilter("all");
-                      setSelectedSubPattern("all");
-                    }}
-                    className="border-blue-200 text-blue-700"
-                  >
-                    Tampilkan Semua Soal
-                  </Button>
-                </div>
-              </section>
-            ) : viewMode === "single" && effectiveActiveQuestion ? (
-              <div className="space-y-4">
+            <div className="space-y-5">
+              {paginatedQuestions.map((question, index) => (
                 <QuestionCard
-                  key={effectiveActiveQuestion.id}
-                  index={effectiveActiveIndex + 1}
-                  question={effectiveActiveQuestion}
-                  selectedOption={selectedAnswers[effectiveActiveQuestion.id]}
+                  key={question.id}
+                  index={pageStartIndex + index + 1}
+                  question={question}
+                  selectedOption={selectedAnswers[question.id]}
                   isReviewMode={isReviewMode}
-                  isActive
-                  isFlagged={Boolean(flaggedQuestions[effectiveActiveQuestion.id])}
-                  isHintOpen={Boolean(revealedHints[effectiveActiveQuestion.id])}
-                  onToggleFlag={() => toggleFlag(effectiveActiveQuestion.id)}
-                  onToggleHint={() => toggleHint(effectiveActiveQuestion.id)}
-                  onSelectOption={(key) =>
-                    handleSelectOption(effectiveActiveQuestion.id, key)
-                  }
+                  isActive={effectiveActiveQuestionId === question.id}
+                  isFlagged={Boolean(flaggedQuestions[question.id])}
+                  isHintOpen={Boolean(revealedHints[question.id])}
+                  onToggleFlag={() => toggleFlag(question.id)}
+                  onToggleHint={() => toggleHint(question.id)}
+                  onSelectOption={(key) => handleSelectOption(question.id, key)}
                 />
+              ))}
+            </div>
 
-                <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-blue-100 bg-white px-5 py-4 shadow-sm shadow-blue-100/50">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    disabled={effectiveActiveIndex <= 0}
-                    onClick={() => handleJumpToQuestion(effectiveActiveIndex - 1)}
-                    className="h-10 border-blue-200 px-4 text-blue-700 hover:bg-blue-50"
-                  >
-                    <ChevronLeft className="size-4" aria-hidden />
-                    Soal Sebelumnya
-                  </Button>
-
-                  <div className="flex flex-wrap items-center gap-2">
-                    <button
-                      type="button"
-                      onClick={() => toggleFlag(effectiveActiveQuestion.id)}
-                      className={cn(
-                        "inline-flex h-10 items-center gap-2 rounded-lg border px-4 text-xs font-semibold transition-colors sm:text-sm",
-                        flaggedQuestions[effectiveActiveQuestion.id]
-                          ? "border-amber-400 bg-amber-50 text-amber-900"
-                          : "border-slate-200 bg-slate-50 text-slate-700 hover:border-amber-300 hover:bg-amber-50/60",
-                      )}
-                    >
-                      <span
-                        className={cn(
-                          "size-2.5 rounded-full",
-                          flaggedQuestions[effectiveActiveQuestion.id]
-                            ? "bg-amber-500"
-                            : "bg-slate-300",
-                        )}
-                        aria-hidden
-                      />
-                      {flaggedQuestions[effectiveActiveQuestion.id]
-                        ? "Ditandai Ragu-ragu"
-                        : "Tandai Ragu-ragu"}
-                    </button>
-
-                    <span className="px-2 text-xs font-semibold text-slate-600 sm:text-sm">
-                      {effectiveActiveIndex + 1} / {filteredQuestions.length}
-                    </span>
-                  </div>
-
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    disabled={effectiveActiveIndex >= filteredQuestions.length - 1}
-                    onClick={() => handleJumpToQuestion(effectiveActiveIndex + 1)}
-                    className="h-10 border-blue-200 px-4 text-blue-700 hover:bg-blue-50"
-                  >
-                    Soal Berikutnya
-                    <ChevronRight className="size-4" aria-hidden />
-                  </Button>
-                </div>
-
-                <p className="rounded-xl border border-slate-200/80 bg-white/80 px-4 py-2.5 text-center text-xs text-slate-500">
-                  Pintasan Keyboard: <strong className="text-slate-700">A–E</strong> Pilih Jawaban •{" "}
-                  <strong className="text-slate-700">← / →</strong> Pindah Soal •{" "}
-                  <strong className="text-slate-700">R</strong> Tandai Ragu-ragu •{" "}
-                  <strong className="text-slate-700">H</strong> Buka/Tutup Hint
-                </p>
-              </div>
-            ) : (
-              <>
-                {totalPages > 1 && (
-                  <PaginationBar
-                    currentPage={safePage}
-                    totalPages={totalPages}
-                    onPageChange={handlePageChange}
-                  />
-                )}
-
-                <div className="space-y-5">
-                  {paginatedQuestions.map((question, index) => (
-                    <QuestionCard
-                      key={question.id}
-                      index={pageStartIndex + index + 1}
-                      question={question}
-                      selectedOption={selectedAnswers[question.id]}
-                      isReviewMode={isReviewMode}
-                      isActive={effectiveActiveQuestionId === question.id}
-                      isFlagged={Boolean(flaggedQuestions[question.id])}
-                      isHintOpen={Boolean(revealedHints[question.id])}
-                      onToggleFlag={() => toggleFlag(question.id)}
-                      onToggleHint={() => toggleHint(question.id)}
-                      onSelectOption={(key) => handleSelectOption(question.id, key)}
-                    />
-                  ))}
-                </div>
-
-                {totalPages > 1 && (
-                  <PaginationBar
-                    currentPage={safePage}
-                    totalPages={totalPages}
-                    onPageChange={handlePageChange}
-                  />
-                )}
-              </>
+            {totalPages > 1 && (
+              <PaginationBar
+                currentPage={safePage}
+                totalPages={totalPages}
+                onPageChange={handlePageChange}
+              />
             )}
           </>
         )}
@@ -1519,301 +1108,6 @@ export function TiuPatternPractice({
         onJumpToQuestion={handleJumpToQuestion}
       />
     </div>
-  );
-}
-
-function AdaptiveMasteryHeader({
-  patternLabel,
-  subPatternCount,
-  diagnosticReport,
-  weakestSubPattern,
-  selectedSubPattern,
-  onStartDiagnostic,
-  onApplyRecommendation,
-}: {
-  patternLabel: string;
-  subPatternCount: number;
-  diagnosticReport: DiagnosticReport | null;
-  weakestSubPattern: {
-    subPattern: string;
-    label: string;
-    accuracy: number;
-  } | null;
-  selectedSubPattern: string;
-  onStartDiagnostic: () => void;
-  onApplyRecommendation: (subPattern: string) => void;
-}) {
-  const diagnosticCount = Math.max(9, subPatternCount * 3);
-
-  const recommendedTarget = diagnosticReport
-    ? {
-        subPattern: diagnosticReport.recommendedSubPattern,
-        label: capitalize(diagnosticReport.recommendedSubPattern),
-        reason: `Hasil Diagnostik: ${diagnosticReport.correct}/${diagnosticReport.total} benar (${diagnosticReport.accuracy}%)`,
-      }
-    : weakestSubPattern
-      ? {
-          subPattern: weakestSubPattern.subPattern,
-          label: weakestSubPattern.label,
-          reason: `Akurasi terendah saat ini: ${weakestSubPattern.accuracy}%`,
-        }
-      : null;
-
-  const isRecommendationActive =
-    recommendedTarget !== null &&
-    selectedSubPattern === recommendedTarget.subPattern;
-
-  return (
-    <section className="overflow-hidden rounded-2xl border border-blue-200/80 bg-[linear-gradient(135deg,#0f2454_0%,#1d4ed8_58%,#4f46e5_100%)] p-6 text-white shadow-lg shadow-blue-950/10">
-      <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
-        <div className="max-w-2xl">
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-white/15 px-3 py-1 text-xs font-semibold tracking-wide text-blue-100 backdrop-blur-xs">
-            <Award className="size-3.5" aria-hidden />
-            Alur Belajar Adaptif • {patternLabel}
-          </span>
-          <h2 className="mt-3 text-xl font-semibold leading-snug sm:text-2xl">
-            {diagnosticReport
-              ? `Rekomendasi Fokus Sub-Pola: ${capitalize(diagnosticReport.recommendedSubPattern)}`
-              : "Mulai dengan Tes Diagnostik Singkat untuk memetakan sub-pola terlemah"}
-          </h2>
-          <p className="mt-1.5 text-xs leading-6 text-blue-100 sm:text-sm">
-            {diagnosticReport ? (
-              <>
-                {recommendedTarget?.reason}. Klik tombol rekomendasi atau salah satu
-                sub-pola di bawah untuk fokus memperbaiki sub-pola yang masih lemah.
-              </>
-            ) : (
-              <>
-                Kerjakan <strong>{diagnosticCount} soal acak lintas sub-pola</strong>{" "}
-                untuk mengetahui sub-pola mana yang sudah dikuasai dan mana yang perlu diprioritaskan.
-              </>
-            )}
-          </p>
-        </div>
-
-        <div className="flex flex-wrap items-center gap-2.5">
-          {recommendedTarget && (
-            <Button
-              type="button"
-              onClick={() => onApplyRecommendation(recommendedTarget.subPattern)}
-              disabled={isRecommendationActive}
-              className="h-10 bg-white px-4 text-xs font-semibold text-blue-900 shadow-md hover:bg-blue-50 disabled:opacity-75 sm:text-sm"
-            >
-              {isRecommendationActive
-                ? "Fokus Rekomendasi Aktif"
-                : `Fokus Latih: ${recommendedTarget.label}`}
-            </Button>
-          )}
-
-          <Button
-            type="button"
-            variant="outline"
-            onClick={onStartDiagnostic}
-            className="h-10 border-white/35 bg-white/10 px-4 text-xs font-semibold text-white hover:bg-white/20 hover:text-white sm:text-sm"
-          >
-            {diagnosticReport
-              ? "Tes Diagnostik Baru (Acak)"
-              : `Mulai Tes Diagnostik (${diagnosticCount} Soal)`}
-          </Button>
-        </div>
-      </div>
-
-      {diagnosticReport && diagnosticReport.subPatternBreakdown.length > 0 && (
-        <div className="mt-5 grid gap-2 border-t border-white/15 pt-4 sm:grid-cols-3 lg:grid-cols-5">
-          {diagnosticReport.subPatternBreakdown.map((item) => (
-            <button
-              key={item.subPattern}
-              type="button"
-              onClick={() => onApplyRecommendation(item.subPattern)}
-              className="flex flex-col justify-between rounded-xl border border-white/15 bg-white/10 p-2.5 text-left transition hover:bg-white/20"
-            >
-              <span className="line-clamp-1 text-xs font-semibold text-white">
-                {item.label}
-              </span>
-              <div className="mt-1.5 flex items-center justify-between text-[11px] text-blue-100">
-                <span>
-                  {item.correct}/{item.total} benar ({item.accuracy}%)
-                </span>
-              </div>
-            </button>
-          ))}
-        </div>
-      )}
-    </section>
-  );
-}
-
-function DiagnosticSessionPanel({
-  session,
-  patternLabel,
-  onSelectOption,
-  onJumpIndex,
-  onFinish,
-  onCancel,
-}: {
-  session: ActiveDiagnosticSession;
-  patternLabel: string;
-  onSelectOption: (optionKey: OptionKey) => void;
-  onJumpIndex: (index: number) => void;
-  onFinish: () => void;
-  onCancel: () => void;
-}) {
-  const { questions, currentIndex, answers } = session;
-  const currentQuestion = questions[currentIndex];
-  const answeredCount = Object.keys(answers).length;
-  const allAnswered = answeredCount === questions.length;
-
-  if (!currentQuestion) return null;
-
-  const chosenOption = answers[currentQuestion.id];
-
-  return (
-    <section className="rounded-2xl border border-blue-200 bg-white p-6 shadow-md shadow-blue-100/60">
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-4">
-        <div>
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700">
-            Tes Diagnostik Adaptif (Soal &amp; Opsi Acak) • {patternLabel}
-          </span>
-          <h2 className="mt-1.5 text-lg font-semibold text-slate-950">
-            Soal Diagnostik {currentIndex + 1} dari {questions.length}
-          </h2>
-          <p className="text-xs text-slate-500">
-            Jawab seluruh soal sampel tanpa bantuan kunci untuk memetakan penguasaan sub-pola Anda.
-          </p>
-        </div>
-
-        <Button
-          type="button"
-          variant="ghost"
-          size="sm"
-          onClick={onCancel}
-          className="text-xs text-slate-600 hover:text-slate-950"
-        >
-          Batalkan Diagnostik
-        </Button>
-      </div>
-
-      {/* Nomor soal diagnostik */}
-      <div className="mt-4 flex flex-wrap gap-1.5">
-        {questions.map((q, idx) => {
-          const isFilled = answers[q.id] !== undefined;
-          const isCurrent = idx === currentIndex;
-          return (
-            <button
-              key={q.id}
-              type="button"
-              onClick={() => onJumpIndex(idx)}
-              className={cn(
-                "flex size-8 items-center justify-center rounded-lg border text-xs font-semibold transition-all",
-                isFilled
-                  ? "border-blue-600 bg-blue-600 text-white"
-                  : "border-slate-200 bg-slate-50 text-slate-700 hover:border-blue-300",
-                isCurrent && "ring-2 ring-amber-400 ring-offset-1",
-              )}
-            >
-              {idx + 1}
-            </button>
-          );
-        })}
-      </div>
-
-      {/* Isi soal diagnostik */}
-      <div className="mt-5 rounded-xl border border-slate-200/90 bg-[#f8fbff] p-5">
-        <div className="flex flex-wrap items-center justify-between gap-2">
-          <span className="rounded-md bg-blue-100 px-2.5 py-1 text-xs font-semibold text-blue-800">
-            Sub-pola: {capitalize(currentQuestion.subPattern)}
-          </span>
-        </div>
-
-        <p className="mt-4 whitespace-pre-line text-base font-medium leading-7 text-slate-950">
-          {currentQuestion.prompt}
-        </p>
-
-        <div className="mt-5 grid gap-2.5">
-          {currentQuestion.options.map((option) => {
-            const isSelected = chosenOption === option.key;
-            return (
-              <button
-                key={option.key}
-                type="button"
-                onClick={() => onSelectOption(option.key)}
-                className={cn(
-                  "flex w-full items-center justify-between gap-3 rounded-xl border px-4 py-3 text-left text-sm transition-colors",
-                  isSelected
-                    ? "border-blue-600 bg-blue-50 font-semibold text-blue-950 ring-1 ring-blue-600"
-                    : "border-slate-200 bg-white text-slate-700 hover:border-blue-300 hover:bg-blue-50/40",
-                )}
-              >
-                <span className="flex items-start gap-3">
-                  <span
-                    className={cn(
-                      "mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-full border text-xs font-semibold",
-                      isSelected
-                        ? "border-blue-600 bg-blue-600 text-white"
-                        : "border-slate-300 bg-white text-slate-700",
-                    )}
-                  >
-                    {option.key}
-                  </span>
-                  <span className="leading-6">{option.text}</span>
-                </span>
-              </button>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* Navigasi bawah diagnostik */}
-      <div className="mt-5 flex flex-wrap items-center justify-between gap-3">
-        <Button
-          type="button"
-          variant="outline"
-          size="sm"
-          disabled={currentIndex <= 0}
-          onClick={() => onJumpIndex(currentIndex - 1)}
-          className="h-10 border-blue-200 px-4 text-blue-700"
-        >
-          <ChevronLeft className="size-4" aria-hidden />
-          Sebelumnya
-        </Button>
-
-        <span className="text-xs font-semibold text-slate-600">
-          Terjawab: {answeredCount} / {questions.length} soal
-        </span>
-
-        <div className="flex items-center gap-2">
-          {currentIndex < questions.length - 1 && (
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={() => onJumpIndex(currentIndex + 1)}
-              className="h-10 border-blue-200 px-4 text-blue-700"
-            >
-              Berikutnya
-              <ChevronRight className="size-4" aria-hidden />
-            </Button>
-          )}
-
-          <Button
-            type="button"
-            size="sm"
-            disabled={answeredCount === 0}
-            onClick={onFinish}
-            className={cn(
-              "h-10 px-5 font-semibold text-white",
-              allAnswered
-                ? "bg-emerald-600 hover:bg-emerald-700"
-                : "bg-blue-600 hover:bg-blue-700",
-            )}
-          >
-            {allAnswered
-              ? "Lihat Hasil Diagnosis & Rekomendasi"
-              : `Selesai Diagnostik (${answeredCount}/${questions.length})`}
-          </Button>
-        </div>
-      </div>
-    </section>
   );
 }
 
@@ -2012,10 +1306,35 @@ function FilterPill({
       type="button"
       onClick={onClick}
       className={cn(
-        "rounded-full border px-3 py-1 text-xs font-semibold transition-colors",
+        "rounded-lg border px-3 py-1.5 text-xs font-semibold transition-colors",
         active
-          ? "border-blue-600 bg-blue-600 text-white"
-          : "border-slate-200 bg-white text-slate-600 hover:border-blue-300 hover:text-blue-700",
+          ? "border-blue-600 bg-blue-600 text-white shadow-xs"
+          : "border-slate-200 bg-white text-slate-600 hover:border-blue-200 hover:bg-blue-50/50 hover:text-blue-700",
+      )}
+    >
+      {label}
+    </button>
+  );
+}
+
+function StatusChip({
+  active,
+  label,
+  onClick,
+}: {
+  active: boolean;
+  label: string;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={cn(
+        "rounded-md px-2.5 py-1 text-xs font-semibold transition-colors",
+        active
+          ? "bg-slate-900 text-white"
+          : "bg-white text-slate-600 hover:bg-slate-200/70 hover:text-slate-900",
       )}
     >
       {label}
