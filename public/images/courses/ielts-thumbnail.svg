@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="540" viewBox="0 0 960 540" role="img" aria-label="IELTS course thumbnail">
+  <rect width="960" height="540" fill="#f5f3ff"/>
+  <circle cx="725" cy="190" r="170" fill="#ddd6fe"/>
+  <rect x="130" y="130" width="340" height="280" rx="28" fill="#7c3aed"/>
+  <text x="178" y="282" fill="#ffffff" font-family="Arial, sans-serif" font-size="74" font-weight="700">IELTS</text>
+  <rect x="560" y="150" width="240" height="260" rx="24" fill="#ffffff"/>
+  <path d="M604 220h150M604 272h104M604 324h132" stroke="#a78bfa" stroke-width="20" stroke-linecap="round"/>
+</svg>

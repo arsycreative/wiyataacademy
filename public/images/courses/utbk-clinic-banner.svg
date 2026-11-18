@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="600" viewBox="0 0 1400 600" role="img" aria-label="UTBK clinic course banner">
+  <rect width="1400" height="600" fill="#1d4ed8"/>
+  <circle cx="1080" cy="120" r="250" fill="#ffffff" opacity=".14"/>
+  <text x="120" y="235" fill="#ffffff" font-family="Arial, sans-serif" font-size="78" font-weight="700">UTBK Tryout</text>
+  <text x="120" y="318" fill="#dbeafe" font-family="Arial, sans-serif" font-size="52">Review Clinic</text>
+  <rect x="820" y="150" width="360" height="260" rx="30" fill="#eff6ff"/>
+</svg>

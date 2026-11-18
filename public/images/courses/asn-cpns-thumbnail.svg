@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="540" viewBox="0 0 960 540" role="img" aria-label="ASN CPNS course thumbnail">
+  <rect width="960" height="540" fill="#eef2ff"/>
+  <rect x="190" y="210" width="580" height="220" rx="18" fill="#4338ca"/>
+  <path d="M480 95 170 230h620z" fill="#6366f1"/>
+  <rect x="250" y="260" width="80" height="170" fill="#ffffff" opacity=".88"/>
+  <rect x="440" y="260" width="80" height="170" fill="#ffffff" opacity=".88"/>
+  <rect x="630" y="260" width="80" height="170" fill="#ffffff" opacity=".88"/>
+  <text x="285" y="168" fill="#ffffff" font-family="Arial, sans-serif" font-size="56" font-weight="700">ASN / CPNS</text>
+</svg>

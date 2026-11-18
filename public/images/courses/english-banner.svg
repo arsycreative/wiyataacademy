@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="600" viewBox="0 0 1400 600" role="img" aria-label="English course banner">
+  <rect width="1400" height="600" fill="#d97706"/>
+  <circle cx="1080" cy="120" r="260" fill="#ffffff" opacity=".15"/>
+  <text x="120" y="230" fill="#ffffff" font-family="Arial, sans-serif" font-size="76" font-weight="700">English for Daily</text>
+  <text x="120" y="314" fill="#fef3c7" font-family="Arial, sans-serif" font-size="50">Communication</text>
+  <rect x="820" y="160" width="360" height="240" rx="30" fill="#fffbeb"/>
+</svg>

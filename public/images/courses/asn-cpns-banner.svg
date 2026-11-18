@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="600" viewBox="0 0 1400 600" role="img" aria-label="ASN CPNS course banner">
+  <rect width="1400" height="600" fill="#4338ca"/>
+  <path d="M1020 92 730 240h580z" fill="#818cf8" opacity=".85"/>
+  <rect x="790" y="240" width="460" height="220" rx="18" fill="#ffffff" opacity=".18"/>
+  <text x="120" y="235" fill="#ffffff" font-family="Arial, sans-serif" font-size="80" font-weight="700">ASN / CPNS</text>
+  <text x="120" y="318" fill="#e0e7ff" font-family="Arial, sans-serif" font-size="50">Masterclass</text>
+</svg>

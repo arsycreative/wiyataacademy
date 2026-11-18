@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="600" viewBox="0 0 1400 600" role="img" aria-label="IELTS course banner">
+  <rect width="1400" height="600" fill="#6d28d9"/>
+  <circle cx="1100" cy="110" r="250" fill="#ffffff" opacity=".15"/>
+  <text x="120" y="235" fill="#ffffff" font-family="Arial, sans-serif" font-size="82" font-weight="700">IELTS Academic</text>
+  <text x="120" y="318" fill="#ede9fe" font-family="Arial, sans-serif" font-size="52">Starter</text>
+  <rect x="830" y="150" width="330" height="280" rx="28" fill="#ffffff" opacity=".92"/>
+</svg>

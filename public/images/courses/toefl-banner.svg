@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="600" viewBox="0 0 1400 600" role="img" aria-label="TOEFL course banner">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#1459f5"/>
+      <stop offset="1" stop-color="#7c3aed"/>
+    </linearGradient>
+  </defs>
+  <rect width="1400" height="600" fill="url(#g)"/>
+  <circle cx="1120" cy="90" r="260" fill="#ffffff" opacity=".13"/>
+  <text x="110" y="205" fill="#ffffff" font-family="Arial, sans-serif" font-size="82" font-weight="700">TOEFL Intensive</text>
+  <text x="110" y="292" fill="#dbeafe" font-family="Arial, sans-serif" font-size="52" font-weight="500">Preparation</text>
+  <rect x="112" y="356" width="430" height="16" rx="8" fill="#ffffff" opacity=".8"/>
+  <rect x="820" y="130" width="360" height="240" rx="26" fill="#ffffff" opacity=".95"/>
+  <rect x="865" y="185" width="214" height="26" rx="13" fill="#bfdbfe"/>
+  <rect x="865" y="238" width="250" height="26" rx="13" fill="#bfdbfe"/>
+  <rect x="865" y="291" width="180" height="26" rx="13" fill="#bfdbfe"/>
+  <rect x="930" y="394" width="250" height="52" rx="12" fill="#0f172a"/>
+</svg>

@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="540" viewBox="0 0 960 540" role="img" aria-label="UTBK clinic course thumbnail">
+  <rect width="960" height="540" fill="#eff6ff"/>
+  <rect x="130" y="120" width="700" height="300" rx="34" fill="#2563eb"/>
+  <text x="190" y="255" fill="#ffffff" font-family="Arial, sans-serif" font-size="64" font-weight="700">Tryout Review</text>
+  <text x="190" y="326" fill="#dbeafe" font-family="Arial, sans-serif" font-size="44">Clinic</text>
+  <path d="M640 210h110M640 260h160M640 310h92" stroke="#bfdbfe" stroke-width="20" stroke-linecap="round"/>
+</svg>
