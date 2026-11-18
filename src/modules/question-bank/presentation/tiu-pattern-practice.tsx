@@ -61,6 +61,7 @@ type DiagnosticReport = {
 
 type ActiveDiagnosticSession = {
   patternId: TiuPatternId;
+  seed: number;
   questions: readonly Question[];
   currentIndex: number;
   answers: Record<string, OptionKey>;
@@ -72,6 +73,8 @@ type StoredPracticeProgress = {
   viewMode?: ViewMode;
   lastPattern?: TiuPatternId;
   diagnosticReports?: Partial<Record<TiuPatternId, DiagnosticReport>>;
+  patternSeeds?: Partial<Record<TiuPatternId, number>>;
+  questionSeeds?: Record<string, number>;
 };
 
 const PAGE_SIZE = 25;
@@ -130,6 +133,83 @@ function isDifficulty(value: unknown): value is Difficulty {
   );
 }
 
+function createRandomSeed(): number {
+  return ((Date.now() ^ Math.floor(Math.random() * 0x7fffffff)) >>> 0) || 1;
+}
+
+function createInitialPatternSeeds(
+  existing?: Partial<Record<TiuPatternId, number>>,
+): Record<TiuPatternId, number> {
+  const result = {} as Record<TiuPatternId, number>;
+  for (const id of TIU_PATTERN_IDS) {
+    const saved = existing?.[id];
+    result[id] =
+      typeof saved === "number" && Number.isFinite(saved) && saved > 0
+        ? saved >>> 0
+        : createRandomSeed();
+  }
+  return result;
+}
+
+function hashStringWithSeed(str: string, seed: number): number {
+  let h = (seed ^ 0x811c9dc5) >>> 0;
+  for (let i = 0; i < str.length; i += 1) {
+    h ^= str.charCodeAt(i);
+    h = Math.imul(h, 0x01000193) >>> 0;
+  }
+  return (h >>> 0) || 1;
+}
+
+function createSeededRng(seed: number): () => number {
+  let state = (seed >>> 0) || 1;
+  return () => {
+    state = (state + 0x6d2b79f5) >>> 0;
+    let t = Math.imul(state ^ (state >>> 15), 1 | state);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+function seededShuffle<T>(items: readonly T[], seed: number): T[] {
+  const copy = [...items];
+  const rng = createSeededRng(seed);
+  for (let i = copy.length - 1; i > 0; i -= 1) {
+    const j = Math.floor(rng() * (i + 1));
+    const temp = copy[i];
+    copy[i] = copy[j];
+    copy[j] = temp;
+  }
+  return copy;
+}
+
+/**
+ * Mengacak urutan opsi jawaban A–E untuk satu soal berdasarkan seed,
+ * sekaligus memperbarui kunci `answer` ke posisi huruf yang baru.
+ */
+function shuffleQuestionOptions(question: Question, optionSeed: number): Question {
+  if (!optionSeed) return question;
+  const perQuestionSeed = hashStringWithSeed(`opt:${question.id}`, optionSeed);
+  const shuffledRawOptions = seededShuffle(question.options, perQuestionSeed);
+
+  let nextAnswer: OptionKey = question.answer;
+  const remappedOptions = shuffledRawOptions.map((opt, idx) => {
+    const newKey = OPTION_KEYS[idx];
+    if (opt.key === question.answer) {
+      nextAnswer = newKey;
+    }
+    return {
+      key: newKey,
+      text: opt.text,
+    };
+  });
+
+  return {
+    ...question,
+    options: remappedOptions,
+    answer: nextAnswer,
+  };
+}
+
 function syncPatternUrl(patternId: TiuPatternId) {
   if (typeof window === "undefined") return;
   const url = new URL(window.location.href);
@@ -145,31 +225,46 @@ function recommendDifficultyFromAccuracy(accuracy: number): Difficulty {
 }
 
 /**
- * Menyusun paket soal Tes Diagnostik Singkat secara proporsional:
- * mengambil 1 soal Mudah, 1 Sedang, dan 1 Sulit dari setiap sub-pola.
+ * Menyusun paket soal Tes Diagnostik Singkat secara proporsional & acak:
+ * mengambil 1 soal Mudah, 1 Sedang, dan 1 Sulit secara acak dari setiap sub-pola,
+ * lalu mengacak urutan soal dan urutan opsi A–E.
  */
 function buildDiagnosticQuestions(
   patternId: TiuPatternId,
-  allQuestions: readonly Question[],
+  rawQuestions: readonly Question[],
+  seed: number,
 ): readonly Question[] {
   const subPatterns = TIU_PATTERNS[patternId].subPatterns;
   if (subPatterns.length === 0) {
-    return allQuestions.slice(0, 9);
+    return seededShuffle(
+      rawQuestions,
+      hashStringWithSeed(`diag:${patternId}`, seed),
+    )
+      .slice(0, 9)
+      .map((q) => shuffleQuestionOptions(q, seed));
   }
 
   const picked: Question[] = [];
   for (const sub of subPatterns) {
-    const inSub = allQuestions.filter((q) => q.subPattern === sub);
+    const inSub = rawQuestions.filter((q) => q.subPattern === sub);
     for (const diff of DIFFICULTIES) {
-      const candidate = inSub.find(
+      const candidates = inSub.filter(
         (q) => q.difficulty === diff && !picked.some((p) => p.id === q.id),
       );
-      if (candidate) {
-        picked.push(candidate);
+      const shuffledCandidates = seededShuffle(
+        candidates,
+        hashStringWithSeed(`diag:${patternId}:${sub}:${diff}`, seed),
+      );
+      if (shuffledCandidates[0]) {
+        picked.push(shuffleQuestionOptions(shuffledCandidates[0], seed));
       }
     }
   }
-  return picked;
+
+  return seededShuffle(
+    picked,
+    hashStringWithSeed(`diag-order:${patternId}`, seed),
+  );
 }
 
 export function TiuPatternPractice({
@@ -188,6 +283,10 @@ export function TiuPatternPractice({
   const [selectedAnswers, setSelectedAnswers] = useState<Record<string, OptionKey>>({});
   const [flaggedQuestions, setFlaggedQuestions] = useState<Record<string, boolean>>({});
   const [revealedHints, setRevealedHints] = useState<Record<string, boolean>>({});
+  const [patternSeeds, setPatternSeeds] = useState<
+    Partial<Record<TiuPatternId, number>>
+  >({});
+  const [questionSeeds, setQuestionSeeds] = useState<Record<string, number>>({});
   const [activeQuestionId, setActiveQuestionId] = useState<string | null>(null);
   const [diagnosticSession, setDiagnosticSession] =
     useState<ActiveDiagnosticSession | null>(null);
@@ -199,7 +298,7 @@ export function TiuPatternPractice({
   const pendingScrollIdRef = useRef<string | null>(null);
   const hasHydratedRef = useRef<boolean>(false);
 
-  // Hydrate progress & pattern deep-link on client mount
+  // Hydrate progress, random seeds, & pattern deep-link on client mount
   useEffect(() => {
     const frame = window.requestAnimationFrame(() => {
       const searchParams = new URLSearchParams(window.location.search);
@@ -239,6 +338,18 @@ export function TiuPatternPractice({
             setDiagnosticReports(parsed.diagnosticReports);
           }
 
+          setPatternSeeds(createInitialPatternSeeds(parsed.patternSeeds));
+
+          if (parsed.questionSeeds && typeof parsed.questionSeeds === "object") {
+            const validQuestionSeeds: Record<string, number> = {};
+            for (const [qId, qSeed] of Object.entries(parsed.questionSeeds)) {
+              if (typeof qSeed === "number" && Number.isFinite(qSeed) && qSeed > 0) {
+                validQuestionSeeds[qId] = qSeed >>> 0;
+              }
+            }
+            setQuestionSeeds(validQuestionSeeds);
+          }
+
           if (urlPattern) {
             setActivePattern(urlPattern);
             syncPatternUrl(urlPattern);
@@ -246,12 +357,15 @@ export function TiuPatternPractice({
             setActivePattern(parsed.lastPattern);
             syncPatternUrl(parsed.lastPattern);
           }
-        } else if (urlPattern) {
-          setActivePattern(urlPattern);
-          syncPatternUrl(urlPattern);
+        } else {
+          setPatternSeeds(createInitialPatternSeeds());
+          if (urlPattern) {
+            setActivePattern(urlPattern);
+            syncPatternUrl(urlPattern);
+          }
         }
       } catch {
-        // Ignore storage read errors in restricted environments
+        setPatternSeeds(createInitialPatternSeeds());
       }
 
       hasHydratedRef.current = true;
@@ -279,7 +393,7 @@ export function TiuPatternPractice({
     };
   }, [initialPattern]);
 
-  // Auto-save progress to localStorage whenever state updates
+  // Auto-save progress & seeds to localStorage whenever state updates
   useEffect(() => {
     if (!hasHydratedRef.current) return;
     try {
@@ -289,6 +403,8 @@ export function TiuPatternPractice({
         viewMode,
         lastPattern: activePattern,
         diagnosticReports,
+        patternSeeds,
+        questionSeeds,
       };
       window.localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
     } catch {
@@ -300,32 +416,50 @@ export function TiuPatternPractice({
     viewMode,
     activePattern,
     diagnosticReports,
+    patternSeeds,
+    questionSeeds,
   ]);
 
   const patternStats = useMemo(() => getPatternStats(), []);
   const activeMeta = TIU_PATTERNS[activePattern];
-  const allPatternQuestions = useMemo(
+  const rawPatternQuestions = useMemo(
     () => getQuestionsByPattern(activePattern),
     [activePattern],
   );
 
-  // Questions filtered by sub-pattern only (used to compute level mastery cards)
+  const activePatternSeed = patternSeeds[activePattern] ?? 0;
+
+  // Shuffled questions (both question order and options A-E are randomized per seed)
+  const allPatternQuestions = useMemo(() => {
+    if (!activePatternSeed) {
+      return rawPatternQuestions;
+    }
+    const orderSeed = hashStringWithSeed(`order:${activePattern}`, activePatternSeed);
+    const shuffledOrder = seededShuffle(rawPatternQuestions, orderSeed);
+    return shuffledOrder.map((question) =>
+      shuffleQuestionOptions(
+        question,
+        questionSeeds[question.id] ?? activePatternSeed,
+      ),
+    );
+  }, [rawPatternQuestions, activePattern, activePatternSeed, questionSeeds]);
+
+  // Questions filtered by sub-pattern only (preserving shuffled order & options)
   const subPatternScopedQuestions = useMemo(
     () =>
-      getQuestionsByPattern(activePattern, {
-        subPattern: selectedSubPattern === "all" ? undefined : selectedSubPattern,
-      }),
-    [activePattern, selectedSubPattern],
+      selectedSubPattern === "all"
+        ? allPatternQuestions
+        : allPatternQuestions.filter((q) => q.subPattern === selectedSubPattern),
+    [allPatternQuestions, selectedSubPattern],
   );
 
-  // Questions filtered by sub-pattern + difficulty
+  // Questions filtered by sub-pattern + difficulty (preserving shuffled order & options)
   const difficultyScopedQuestions = useMemo(
     () =>
-      getQuestionsByPattern(activePattern, {
-        subPattern: selectedSubPattern === "all" ? undefined : selectedSubPattern,
-        difficulty: selectedDifficulty === "all" ? undefined : selectedDifficulty,
-      }),
-    [activePattern, selectedSubPattern, selectedDifficulty],
+      selectedDifficulty === "all"
+        ? subPatternScopedQuestions
+        : subPatternScopedQuestions.filter((q) => q.difficulty === selectedDifficulty),
+    [subPatternScopedQuestions, selectedDifficulty],
   );
 
   // Final filtered questions including status filter (all / unanswered / wrong / flagged)
@@ -518,6 +652,9 @@ export function TiuPatternPractice({
     setCurrentPage(1);
     setActiveQuestionId(null);
     setDiagnosticSession(null);
+    setPatternSeeds((prev) =>
+      prev[patternId] ? prev : { ...prev, [patternId]: createRandomSeed() },
+    );
     pendingScrollIdRef.current = null;
     syncPatternUrl(patternId);
   }, []);
@@ -558,18 +695,24 @@ export function TiuPatternPractice({
     [],
   );
 
-  // Diagnostic Flow handlers
+  // Diagnostic Flow handlers (always generates a fresh random seed to shuffle questions & options)
   const handleStartDiagnostic = useCallback(() => {
-    const questions = buildDiagnosticQuestions(activePattern, allPatternQuestions);
+    const newSeed = createRandomSeed();
+    const questions = buildDiagnosticQuestions(
+      activePattern,
+      rawPatternQuestions,
+      newSeed,
+    );
     if (questions.length === 0) return;
     setDiagnosticSession({
       patternId: activePattern,
+      seed: newSeed,
       questions,
       currentIndex: 0,
       answers: {},
     });
     window.scrollTo({ top: 0, behavior: "smooth" });
-  }, [activePattern, allPatternQuestions]);
+  }, [activePattern, rawPatternQuestions]);
 
   const handleSelectDiagnosticOption = useCallback((optionKey: OptionKey) => {
     setDiagnosticSession((prev) => {
@@ -594,13 +737,25 @@ export function TiuPatternPractice({
 
   const handleFinishDiagnostic = useCallback(() => {
     if (!diagnosticSession) return;
-    const { patternId, questions, answers } = diagnosticSession;
+    const { patternId, seed, questions, answers } = diagnosticSession;
     const subPatterns = TIU_PATTERNS[patternId].subPatterns;
 
-    // Also record diagnostic answers into main selectedAnswers so user doesn't lose work
+    // Lock in option seeds for the diagnostic questions so their chosen option keys stay consistent
+    setQuestionSeeds((prev) => {
+      const next = { ...prev };
+      for (const qId of Object.keys(answers)) {
+        next[qId] = seed;
+      }
+      return next;
+    });
     setSelectedAnswers((prev) => ({
       ...prev,
       ...answers,
+    }));
+    // Also re-shuffle the pattern's remaining questions with a fresh seed
+    setPatternSeeds((prev) => ({
+      ...prev,
+      [patternId]: createRandomSeed(),
     }));
 
     const total = questions.length;
@@ -689,6 +844,15 @@ export function TiuPatternPractice({
     (questionId: string, optionKey: OptionKey) => {
       if (isReviewMode) return;
       setActiveQuestionId(questionId);
+      setQuestionSeeds((prev) => {
+        if (prev[questionId] !== undefined || !activePatternSeed) {
+          return prev;
+        }
+        return {
+          ...prev,
+          [questionId]: activePatternSeed,
+        };
+      });
       setSelectedAnswers((prev) => {
         if (prev[questionId] !== undefined) {
           return prev;
@@ -699,9 +863,10 @@ export function TiuPatternPractice({
         };
       });
     },
-    [isReviewMode],
+    [activePatternSeed, isReviewMode],
   );
 
+  // Retry wrong questions: clears wrong answers and re-shuffles question order & wrong questions' options
   const handleRetryWrongInScope = useCallback(() => {
     const wrongIds = difficultyScopedQuestions
       .filter((q) => {
@@ -712,28 +877,48 @@ export function TiuPatternPractice({
 
     if (wrongIds.length === 0) return;
 
+    const wrongSet = new Set(wrongIds);
     setSelectedAnswers((prev) => {
       const next = { ...prev };
-      for (const id of wrongIds) {
+      for (const id of wrongSet) {
+        delete next[id];
+      }
+      return next;
+    });
+    setQuestionSeeds((prev) => {
+      const next = { ...prev };
+      for (const id of wrongSet) {
         delete next[id];
       }
       return next;
     });
     setRevealedHints((prev) => {
       const next = { ...prev };
-      for (const id of wrongIds) {
+      for (const id of wrongSet) {
         delete next[id];
       }
       return next;
     });
+    setPatternSeeds((prev) => ({
+      ...prev,
+      [activePattern]: createRandomSeed(),
+    }));
     setStatusFilter("all");
     setCurrentPage(1);
-    setActiveQuestionId(wrongIds[0] ?? null);
-  }, [difficultyScopedQuestions, selectedAnswers]);
+    setActiveQuestionId(null);
+  }, [activePattern, difficultyScopedQuestions, selectedAnswers]);
 
+  // Reset pattern: clears pattern progress and generates a new random seed to re-shuffle all questions & options
   const handleReset = useCallback(() => {
-    const patternIds = new Set(allPatternQuestions.map((q) => q.id));
+    const patternIds = new Set(rawPatternQuestions.map((q) => q.id));
     setSelectedAnswers((prev) => {
+      const next = { ...prev };
+      for (const id of patternIds) {
+        delete next[id];
+      }
+      return next;
+    });
+    setQuestionSeeds((prev) => {
       const next = { ...prev };
       for (const id of patternIds) {
         delete next[id];
@@ -759,9 +944,14 @@ export function TiuPatternPractice({
       delete next[activePattern];
       return next;
     });
+    setPatternSeeds((prev) => ({
+      ...prev,
+      [activePattern]: createRandomSeed(),
+    }));
     setStatusFilter("all");
+    setCurrentPage(1);
     setActiveQuestionId(null);
-  }, [activePattern, allPatternQuestions]);
+  }, [activePattern, rawPatternQuestions]);
 
   const toggleHint = useCallback((questionId: string) => {
     setActiveQuestionId(questionId);
@@ -982,7 +1172,7 @@ export function TiuPatternPractice({
                     {isStorageHydrated && (
                       <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-1 text-[11px] font-medium text-emerald-700">
                         <CheckCircle2 className="size-3" aria-hidden />
-                        Progres tersimpan otomatis
+                        Soal &amp; Opsi Diacak Otomatis
                       </span>
                     )}
                   </div>
@@ -1086,7 +1276,7 @@ export function TiuPatternPractice({
                     </Button>
                   )}
 
-                  {!isReviewMode && hasPatternProgress && (
+                  {!isReviewMode && allPatternQuestions.length > 0 && (
                     <Button
                       type="button"
                       variant="ghost"
@@ -1094,7 +1284,7 @@ export function TiuPatternPractice({
                       className="h-9 text-xs text-slate-600 hover:bg-slate-100 hover:text-slate-950 sm:text-sm"
                     >
                       <RotateCcw className="size-4" aria-hidden />
-                      Reset Pola Ini
+                      {hasPatternProgress ? "Reset & Acak Ulang" : "Acak Ulang Soal"}
                     </Button>
                   )}
                 </div>
@@ -1303,7 +1493,7 @@ export function TiuPatternPractice({
                         className="h-8 border-rose-200 bg-rose-50/70 text-xs font-semibold text-rose-700 hover:bg-rose-100"
                       >
                         <RotateCcw className="size-3.5" aria-hidden />
-                        Ulangi {statusCounts.wrong} Soal yang Salah
+                        Ulangi &amp; Acak {statusCounts.wrong} Soal Salah
                       </Button>
                     )}
 
@@ -1688,9 +1878,9 @@ function AdaptiveMasteryHeader({
               </>
             ) : (
               <>
-                Kerjakan <strong>{diagnosticCount} soal sampel lintas sub-pola</strong>{" "}
-                (3 soal per sub-pola: Mudah, Sedang, Sulit) untuk memetakan kelemahan dan
-                menentukan level awal yang paling pas.
+                Kerjakan <strong>{diagnosticCount} soal acak lintas sub-pola</strong>{" "}
+                (3 soal per sub-pola: Mudah, Sedang, Sulit dengan urutan &amp; opsi diacak)
+                untuk memetakan kelemahan dan menentukan level awal yang paling pas.
               </>
             )}
           </p>
@@ -1722,7 +1912,7 @@ function AdaptiveMasteryHeader({
             className="h-10 border-white/35 bg-white/10 px-4 text-xs font-semibold text-white hover:bg-white/20 hover:text-white sm:text-sm"
           >
             {diagnosticReport
-              ? "Ulangi Tes Diagnostik"
+              ? "Tes Diagnostik Baru (Acak)"
               : `Mulai Tes Diagnostik (${diagnosticCount} Soal)`}
           </Button>
         </div>
@@ -1787,7 +1977,7 @@ function DiagnosticSessionPanel({
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-4">
         <div>
           <span className="inline-flex items-center gap-1.5 rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700">
-            Tes Diagnostik Adaptif • {patternLabel}
+            Tes Diagnostik Adaptif (Soal &amp; Opsi Acak) • {patternLabel}
           </span>
           <h2 className="mt-1.5 text-lg font-semibold text-slate-950">
             Soal Diagnostik {currentIndex + 1} dari {questions.length}
