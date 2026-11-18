@@ -463,6 +463,7 @@ export function TiuPatternPractice({
         if (targetPage !== safePage) {
           setCurrentPage(targetPage);
         }
+        window.scrollTo({ top: 0, behavior: "smooth" });
         return;
       }
 
@@ -1059,14 +1060,6 @@ export function TiuPatternPractice({
           </div>
         ) : (
           <>
-            {totalPages > 1 && (
-              <PaginationBar
-                currentPage={safePage}
-                totalPages={totalPages}
-                onPageChange={handlePageChange}
-              />
-            )}
-
             <div className="space-y-5">
               {paginatedQuestions.map((question, index) => (
                 <QuestionCard
