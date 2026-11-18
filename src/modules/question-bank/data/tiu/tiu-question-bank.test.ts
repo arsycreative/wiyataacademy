@@ -38,8 +38,8 @@ describe("TIU question bank", () => {
     expect(new Set(prompts).size).toBe(prompts.length);
   });
 
-  it("contains 330 questions for sinonim-antonim-akronim (160 sinonim, 150 antonim, 20 akronim)", () => {
-    expect(sinonimAntonimAkronimQuestions).toHaveLength(330);
+  it("contains 460 questions for sinonim-antonim-akronim (160 sinonim, 150 antonim, 150 akronim)", () => {
+    expect(sinonimAntonimAkronimQuestions).toHaveLength(460);
 
     expect(
       getQuestionsByPattern("sinonim-antonim-akronim", { subPattern: "sinonim" }),
@@ -49,7 +49,7 @@ describe("TIU question bank", () => {
     ).toHaveLength(150);
     expect(
       getQuestionsByPattern("sinonim-antonim-akronim", { subPattern: "akronim" }),
-    ).toHaveLength(20);
+    ).toHaveLength(150);
 
     for (const difficulty of DIFFICULTIES) {
       expect(
@@ -216,7 +216,7 @@ describe("TIU question bank", () => {
     expect(stats[0]).toMatchObject({
       id: "sinonim-antonim-akronim",
       order: 1,
-      total: 330,
+      total: 460,
     });
     expect(stats[1]).toMatchObject({
       id: "analogi-kata",
