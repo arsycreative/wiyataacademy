@@ -10,6 +10,7 @@ import {
   getPatternStats,
   getQuestionsByPattern,
   hitungCepatQuestions,
+  perbandinganKuantitatifQuestions,
   silogismeQuestions,
   sinonimAntonimAkronimQuestions,
   TIU_QUESTION_BANKS,
@@ -127,6 +128,30 @@ describe("TIU question bank", () => {
     }
   });
 
+  it("contains 150 questions for perbandingan-kuantitatif (30 per sub-pattern)", () => {
+    expect(perbandinganKuantitatifQuestions).toHaveLength(150);
+
+    const expectedSubPatterns = [
+      "perbandingan-senilai",
+      "perbandingan-berbalik-nilai",
+      "proyek-dan-pekerjaan-gabungan",
+      "kecepatan-jarak-dan-waktu",
+      "hubungan-variabel-x-dan-y",
+    ] as const;
+
+    for (const subPattern of expectedSubPatterns) {
+      expect(
+        getQuestionsByPattern("perbandingan-kuantitatif", { subPattern }),
+      ).toHaveLength(30);
+    }
+
+    for (const difficulty of DIFFICULTIES) {
+      expect(
+        getQuestionsByPattern("perbandingan-kuantitatif", { difficulty }).length,
+      ).toBeGreaterThan(0);
+    }
+  });
+
   it("provides non-empty non-spoiler tips across all populated TIU pattern banks", () => {
     for (const patternId of TIU_PATTERN_IDS) {
       for (const question of TIU_QUESTION_BANKS[patternId]) {
@@ -156,6 +181,11 @@ describe("TIU question bank", () => {
     expect(stats[3]).toMatchObject({
       id: "hitung-cepat",
       order: 4,
+      total: 150,
+    });
+    expect(stats[4]).toMatchObject({
+      id: "perbandingan-kuantitatif",
+      order: 5,
       total: 150,
     });
   });

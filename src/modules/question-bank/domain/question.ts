@@ -74,7 +74,13 @@ export const TIU_PATTERNS: Record<TiuPatternId, TiuPatternMeta> = {
     id: "perbandingan-kuantitatif",
     order: 5,
     label: "Perbandingan Kuantitatif",
-    subPatterns: [],
+    subPatterns: [
+      "perbandingan-senilai",
+      "perbandingan-berbalik-nilai",
+      "proyek-dan-pekerjaan-gabungan",
+      "kecepatan-jarak-dan-waktu",
+      "hubungan-variabel-x-dan-y",
+    ],
   },
   "penalaran-analitis-melingkar": {
     id: "penalaran-analitis-melingkar",
@@ -231,6 +237,24 @@ function getDefaultHint(pattern: TiuPatternId, subPattern: string): string {
     }
     if (subPattern === "taksiran-dan-ekor-angka") {
       return "Cek digit satuan terakhir (ekor angka) dan taksir orde besarannya untuk menyingkirkan opsi yang jauh atau tidak cocok.";
+    }
+  }
+
+  if (pattern === "perbandingan-kuantitatif") {
+    if (subPattern === "perbandingan-senilai") {
+      return "Jika satu variabel naik maka variabel pasangannya ikut naik secara proporsional; cari nilai per satu satuan terlebih dahulu.";
+    }
+    if (subPattern === "perbandingan-berbalik-nilai") {
+      return "Pada perbandingan berbalik nilai, hasil kali kedua besaran selalu konstan (A1 × B1 = A2 × B2).";
+    }
+    if (subPattern === "proyek-dan-pekerjaan-gabungan") {
+      return "Untuk proyek terhenti gunakan rumus (Pekerja Awal × Lama Berhenti) ÷ Sisa Hari Efektif; untuk kerja bersama jumlahkan laju 1/t.";
+    }
+    if (subPattern === "kecepatan-jarak-dan-waktu") {
+      return "Saat berpapasan jumlahkan kedua kecepatan; saat menyusul bagi selisih jarak awal dengan selisih kecepatan.";
+    }
+    if (subPattern === "hubungan-variabel-x-dan-y") {
+      return "Sederhanakan nilai X dan Y terlebih dahulu, serta waspadai persamaan kuadrat atau pertidaksamaan terbuka yang membuat hubungan tidak dapat ditentukan.";
     }
   }
 
