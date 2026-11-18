@@ -7,6 +7,7 @@ export const APP_ROUTES = {
   testimonials: "/#testimoni",
   faq: "/#faq",
   tiuPractice: "/latihan/tiu",
-  tiuPatternPractice: (pattern: string) => `/latihan/tiu/${pattern}`,
-  courseDetail: (slug: string) => `/program/${slug}`,
+  tiuPatternPractice: (pattern: string) =>
+    `/latihan/tiu?pattern=${encodeURIComponent(pattern)}`,
+  courseDetail: (slug: string) => `/courses/${slug}`,
 } as const;

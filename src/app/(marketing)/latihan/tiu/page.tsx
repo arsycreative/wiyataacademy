@@ -5,6 +5,10 @@ import { ArrowLeft } from "lucide-react";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteHeader } from "@/components/layout/site-header";
 import { Button } from "@/components/ui/button";
+import {
+  TIU_PATTERN_IDS,
+  type TiuPatternId,
+} from "@/modules/question-bank/domain/question";
 import { TiuPatternPractice } from "@/modules/question-bank/presentation/tiu-pattern-practice";
 import { APP_ROUTES } from "@/shared/constants/app";
 
@@ -14,7 +18,29 @@ export const metadata: Metadata = {
     "Latihan dan review bank soal TIU SKD CPNS yang dipisah per pola: Sinonim, Antonim, Akronim, dan pola TIU lainnya.",
 };
 
-export default function TiuPracticePage() {
+type TiuPracticePageProps = {
+  searchParams?: Promise<{
+    pattern?: string | string[];
+    pola?: string | string[];
+  }>;
+};
+
+function parsePatternParam(value?: string | string[]): TiuPatternId | undefined {
+  const raw = Array.isArray(value) ? value[0] : value;
+  if (!raw) return undefined;
+  return (TIU_PATTERN_IDS as readonly string[]).includes(raw)
+    ? (raw as TiuPatternId)
+    : undefined;
+}
+
+export default async function TiuPracticePage({
+  searchParams,
+}: TiuPracticePageProps) {
+  const resolvedParams = searchParams ? await searchParams : undefined;
+  const initialPattern =
+    parsePatternParam(resolvedParams?.pattern) ??
+    parsePatternParam(resolvedParams?.pola);
+
   return (
     <div className="flex min-h-screen flex-col bg-[#f8fbff] text-slate-950">
       <SiteHeader />
@@ -45,7 +71,7 @@ export default function TiuPracticePage() {
           </div>
         </div>
 
-        <TiuPatternPractice />
+        <TiuPatternPractice initialPattern={initialPattern} />
       </main>
 
       <SiteFooter />

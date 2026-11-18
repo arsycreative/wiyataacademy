@@ -1,14 +1,17 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
+  BarChart3,
   BookOpen,
   CheckCircle2,
   ChevronLeft,
   ChevronRight,
+  ClipboardList,
   Compass,
   Eye,
   EyeOff,
+  Layers3,
   Lightbulb,
   RotateCcw,
   XCircle,
@@ -21,6 +24,8 @@ import {
   getQuestionsByPattern,
 } from "@/modules/question-bank/data/tiu";
 import {
+  OPTION_KEYS,
+  TIU_PATTERN_IDS,
   TIU_PATTERNS,
   type OptionKey,
   type Question,
@@ -31,19 +36,150 @@ type TiuPatternPracticeProps = {
   initialPattern?: TiuPatternId;
 };
 
+type ViewMode = "list" | "single";
+
+type StoredPracticeProgress = {
+  selectedAnswers?: Record<string, OptionKey>;
+  flaggedQuestions?: Record<string, boolean>;
+  viewMode?: ViewMode;
+  lastPattern?: TiuPatternId;
+};
+
 const PAGE_SIZE = 25;
+const NAV_CHUNK_SIZE = 50;
+const STORAGE_KEY = "wiyata-tiu-practice-progress-v1";
+const DEFAULT_PATTERN: TiuPatternId = "sinonim-antonim-akronim";
+
+function isTiuPatternId(value: unknown): value is TiuPatternId {
+  return (
+    typeof value === "string" &&
+    (TIU_PATTERN_IDS as readonly string[]).includes(value)
+  );
+}
+
+function isOptionKey(value: unknown): value is OptionKey {
+  return (
+    typeof value === "string" &&
+    (OPTION_KEYS as readonly string[]).includes(value)
+  );
+}
+
+function syncPatternUrl(patternId: TiuPatternId) {
+  if (typeof window === "undefined") return;
+  const url = new URL(window.location.href);
+  url.searchParams.set("pattern", patternId);
+  url.searchParams.delete("pola");
+  window.history.replaceState(null, "", `${url.pathname}${url.search}${url.hash}`);
+}
 
 export function TiuPatternPractice({
-  initialPattern = "sinonim-antonim-akronim",
+  initialPattern,
 }: TiuPatternPracticeProps) {
-  const [activePattern, setActivePattern] = useState<TiuPatternId>(initialPattern);
+  const [activePattern, setActivePattern] = useState<TiuPatternId>(
+    initialPattern ?? DEFAULT_PATTERN,
+  );
   const [selectedSubPattern, setSelectedSubPattern] = useState<string>("all");
   const [currentPage, setCurrentPage] = useState<number>(1);
+  const [viewMode, setViewMode] = useState<ViewMode>("list");
   const [isReviewMode, setIsReviewMode] = useState<boolean>(false);
+  const [showEvaluation, setShowEvaluation] = useState<boolean>(false);
   const [selectedAnswers, setSelectedAnswers] = useState<Record<string, OptionKey>>({});
+  const [flaggedQuestions, setFlaggedQuestions] = useState<Record<string, boolean>>({});
   const [revealedHints, setRevealedHints] = useState<Record<string, boolean>>({});
   const [activeQuestionId, setActiveQuestionId] = useState<string | null>(null);
+  const [isStorageHydrated, setIsStorageHydrated] = useState<boolean>(false);
+
   const pendingScrollIdRef = useRef<string | null>(null);
+  const hasHydratedRef = useRef<boolean>(false);
+
+  // Hydrate progress & pattern deep-link on client mount
+  useEffect(() => {
+    const frame = window.requestAnimationFrame(() => {
+      const searchParams = new URLSearchParams(window.location.search);
+      const urlPatternRaw = searchParams.get("pattern") ?? searchParams.get("pola");
+      const urlPattern = isTiuPatternId(urlPatternRaw) ? urlPatternRaw : initialPattern;
+
+      try {
+        const raw = window.localStorage.getItem(STORAGE_KEY);
+        if (raw) {
+          const parsed = JSON.parse(raw) as StoredPracticeProgress;
+
+          if (parsed.selectedAnswers && typeof parsed.selectedAnswers === "object") {
+            const validAnswers: Record<string, OptionKey> = {};
+            for (const [qId, ans] of Object.entries(parsed.selectedAnswers)) {
+              if (isOptionKey(ans)) {
+                validAnswers[qId] = ans;
+              }
+            }
+            setSelectedAnswers(validAnswers);
+          }
+
+          if (parsed.flaggedQuestions && typeof parsed.flaggedQuestions === "object") {
+            const validFlags: Record<string, boolean> = {};
+            for (const [qId, flagged] of Object.entries(parsed.flaggedQuestions)) {
+              if (flagged === true) {
+                validFlags[qId] = true;
+              }
+            }
+            setFlaggedQuestions(validFlags);
+          }
+
+          if (parsed.viewMode === "list" || parsed.viewMode === "single") {
+            setViewMode(parsed.viewMode);
+          }
+
+          if (urlPattern) {
+            setActivePattern(urlPattern);
+            syncPatternUrl(urlPattern);
+          } else if (isTiuPatternId(parsed.lastPattern)) {
+            setActivePattern(parsed.lastPattern);
+            syncPatternUrl(parsed.lastPattern);
+          }
+        } else if (urlPattern) {
+          setActivePattern(urlPattern);
+          syncPatternUrl(urlPattern);
+        }
+      } catch {
+        // Ignore storage read errors in restricted environments
+      }
+
+      hasHydratedRef.current = true;
+      setIsStorageHydrated(true);
+    });
+
+    const handlePopState = () => {
+      const params = new URLSearchParams(window.location.search);
+      const nextPattern = params.get("pattern") ?? params.get("pola");
+      if (isTiuPatternId(nextPattern)) {
+        setActivePattern(nextPattern);
+        setSelectedSubPattern("all");
+        setCurrentPage(1);
+        setActiveQuestionId(null);
+      }
+    };
+
+    window.addEventListener("popstate", handlePopState);
+    return () => {
+      window.cancelAnimationFrame(frame);
+      window.removeEventListener("popstate", handlePopState);
+    };
+  }, [initialPattern]);
+
+  // Auto-save progress to localStorage whenever state updates
+  useEffect(() => {
+    if (!hasHydratedRef.current) return;
+    try {
+      const payload: StoredPracticeProgress = {
+        selectedAnswers,
+        flaggedQuestions,
+        viewMode,
+        lastPattern: activePattern,
+      };
+      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+    } catch {
+      // Ignore storage write quota/privacy errors
+    }
+  }, [selectedAnswers, flaggedQuestions, viewMode, activePattern]);
 
   const patternStats = useMemo(() => getPatternStats(), []);
   const activeMeta = TIU_PATTERNS[activePattern];
@@ -67,6 +203,37 @@ export function TiuPatternPractice({
     }
     return counts;
   }, [allPatternQuestions]);
+
+  // Sub-pattern evaluation & weakness analytics
+  const subPatternEvaluations = useMemo(() => {
+    return activeMeta.subPatterns.map((sub) => {
+      const subQuestions = allPatternQuestions.filter((q) => q.subPattern === sub);
+      const answered = subQuestions.filter((q) => selectedAnswers[q.id] !== undefined);
+      const correct = answered.filter((q) => selectedAnswers[q.id] === q.answer).length;
+      const accuracy =
+        answered.length > 0 ? Math.round((correct / answered.length) * 100) : null;
+
+      return {
+        subPattern: sub,
+        label: capitalize(sub),
+        total: subQuestions.length,
+        answered: answered.length,
+        correct,
+        accuracy,
+      };
+    });
+  }, [activeMeta.subPatterns, allPatternQuestions, selectedAnswers]);
+
+  const weakestSubPattern = useMemo(() => {
+    const evaluated = subPatternEvaluations.filter(
+      (item): item is typeof item & { accuracy: number } =>
+        item.answered > 0 && item.accuracy !== null,
+    );
+    if (evaluated.length === 0) return null;
+    return evaluated.reduce((lowest, item) =>
+      item.accuracy < lowest.accuracy ? item : lowest,
+    );
+  }, [subPatternEvaluations]);
 
   const answeredInView = useMemo(
     () => filteredQuestions.filter((q) => selectedAnswers[q.id] !== undefined),
@@ -96,8 +263,9 @@ export function TiuPatternPractice({
       : filteredQuestions.length > 0
         ? pageStartIndex
         : -1;
-  const effectiveActiveQuestionId =
-    effectiveActiveIndex >= 0 ? filteredQuestions[effectiveActiveIndex]?.id ?? null : null;
+  const effectiveActiveQuestion =
+    effectiveActiveIndex >= 0 ? filteredQuestions[effectiveActiveIndex] ?? null : null;
+  const effectiveActiveQuestionId = effectiveActiveQuestion?.id ?? null;
 
   const firstUnansweredIndex = useMemo(
     () => filteredQuestions.findIndex((q) => selectedAnswers[q.id] === undefined),
@@ -105,6 +273,10 @@ export function TiuPatternPractice({
   );
 
   useEffect(() => {
+    if (viewMode === "single") {
+      pendingScrollIdRef.current = null;
+      return;
+    }
     const targetId = pendingScrollIdRef.current;
     if (!targetId) return;
     pendingScrollIdRef.current = null;
@@ -115,77 +287,208 @@ export function TiuPatternPractice({
       }
     });
     return () => window.cancelAnimationFrame(frame);
-  }, [safePage, activePattern, selectedSubPattern]);
+  }, [safePage, activePattern, selectedSubPattern, viewMode]);
 
-  const handlePatternChange = (patternId: TiuPatternId) => {
+  const handlePatternChange = useCallback((patternId: TiuPatternId) => {
     setActivePattern(patternId);
     setSelectedSubPattern("all");
     setCurrentPage(1);
     setActiveQuestionId(null);
     pendingScrollIdRef.current = null;
-  };
+    syncPatternUrl(patternId);
+  }, []);
 
-  const handleSubPatternChange = (subPattern: string) => {
+  const handleSubPatternChange = useCallback((subPattern: string) => {
     setSelectedSubPattern(subPattern);
     setCurrentPage(1);
     setActiveQuestionId(null);
     pendingScrollIdRef.current = null;
-  };
+  }, []);
 
-  const handlePageChange = (nextPage: number) => {
-    const clampedPage = Math.max(1, Math.min(totalPages, nextPage));
-    setCurrentPage(clampedPage);
-    setActiveQuestionId(filteredQuestions[(clampedPage - 1) * PAGE_SIZE]?.id ?? null);
-    pendingScrollIdRef.current = null;
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
+  const handlePageChange = useCallback(
+    (nextPage: number) => {
+      const clampedPage = Math.max(1, Math.min(totalPages, nextPage));
+      setCurrentPage(clampedPage);
+      setActiveQuestionId(filteredQuestions[(clampedPage - 1) * PAGE_SIZE]?.id ?? null);
+      pendingScrollIdRef.current = null;
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    },
+    [filteredQuestions, totalPages],
+  );
 
-  const handleJumpToQuestion = (questionIndex: number) => {
-    const targetQuestion = filteredQuestions[questionIndex];
-    if (!targetQuestion) return;
+  const handleJumpToQuestion = useCallback(
+    (questionIndex: number) => {
+      const targetQuestion = filteredQuestions[questionIndex];
+      if (!targetQuestion) return;
 
-    const targetPage = Math.floor(questionIndex / PAGE_SIZE) + 1;
-    setActiveQuestionId(targetQuestion.id);
+      const targetPage = Math.floor(questionIndex / PAGE_SIZE) + 1;
+      setActiveQuestionId(targetQuestion.id);
 
-    if (targetPage !== safePage) {
-      pendingScrollIdRef.current = targetQuestion.id;
-      setCurrentPage(targetPage);
-      return;
-    }
-
-    const element = document.getElementById(`soal-${targetQuestion.id}`);
-    if (element) {
-      element.scrollIntoView({ behavior: "smooth", block: "center" });
-    }
-  };
-
-  const handleSelectOption = (questionId: string, optionKey: OptionKey) => {
-    if (isReviewMode) return;
-    setActiveQuestionId(questionId);
-    setSelectedAnswers((prev) => {
-      if (prev[questionId] !== undefined) {
-        return prev;
+      if (viewMode === "single") {
+        if (targetPage !== safePage) {
+          setCurrentPage(targetPage);
+        }
+        return;
       }
-      return {
-        ...prev,
-        [questionId]: optionKey,
-      };
+
+      if (targetPage !== safePage) {
+        pendingScrollIdRef.current = targetQuestion.id;
+        setCurrentPage(targetPage);
+        return;
+      }
+
+      const element = document.getElementById(`soal-${targetQuestion.id}`);
+      if (element) {
+        element.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+    },
+    [filteredQuestions, safePage, viewMode],
+  );
+
+  const handleSelectOption = useCallback(
+    (questionId: string, optionKey: OptionKey) => {
+      if (isReviewMode) return;
+      setActiveQuestionId(questionId);
+      setSelectedAnswers((prev) => {
+        if (prev[questionId] !== undefined) {
+          return prev;
+        }
+        return {
+          ...prev,
+          [questionId]: optionKey,
+        };
+      });
+    },
+    [isReviewMode],
+  );
+
+  const handleReset = useCallback(() => {
+    const patternIds = new Set(allPatternQuestions.map((q) => q.id));
+    setSelectedAnswers((prev) => {
+      const next = { ...prev };
+      for (const id of patternIds) {
+        delete next[id];
+      }
+      return next;
     });
-  };
-
-  const handleReset = () => {
-    setSelectedAnswers({});
-    setRevealedHints({});
+    setFlaggedQuestions((prev) => {
+      const next = { ...prev };
+      for (const id of patternIds) {
+        delete next[id];
+      }
+      return next;
+    });
+    setRevealedHints((prev) => {
+      const next = { ...prev };
+      for (const id of patternIds) {
+        delete next[id];
+      }
+      return next;
+    });
     setActiveQuestionId(null);
-  };
+  }, [allPatternQuestions]);
 
-  const toggleHint = (questionId: string) => {
+  const toggleHint = useCallback((questionId: string) => {
     setActiveQuestionId(questionId);
     setRevealedHints((prev) => ({
       ...prev,
       [questionId]: !prev[questionId],
     }));
-  };
+  }, []);
+
+  const toggleFlag = useCallback((questionId: string) => {
+    setActiveQuestionId(questionId);
+    setFlaggedQuestions((prev) => {
+      const next = { ...prev };
+      if (next[questionId]) {
+        delete next[questionId];
+      } else {
+        next[questionId] = true;
+      }
+      return next;
+    });
+  }, []);
+
+  // Keyboard shortcuts for CAT navigation & answering
+  useEffect(() => {
+    if (filteredQuestions.length === 0) return;
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.metaKey || event.ctrlKey || event.altKey) return;
+      const target = event.target as HTMLElement | null;
+      if (
+        target &&
+        (target.tagName === "INPUT" ||
+          target.tagName === "TEXTAREA" ||
+          target.tagName === "SELECT" ||
+          target.isContentEditable)
+      ) {
+        return;
+      }
+
+      if (event.key === "ArrowLeft") {
+        if (effectiveActiveIndex > 0) {
+          event.preventDefault();
+          handleJumpToQuestion(effectiveActiveIndex - 1);
+        }
+        return;
+      }
+
+      if (event.key === "ArrowRight") {
+        if (effectiveActiveIndex < filteredQuestions.length - 1) {
+          event.preventDefault();
+          handleJumpToQuestion(effectiveActiveIndex + 1);
+        }
+        return;
+      }
+
+      if (!effectiveActiveQuestion) return;
+
+      const upperKey = event.key.toUpperCase();
+      if (isOptionKey(upperKey)) {
+        if (!isReviewMode && selectedAnswers[effectiveActiveQuestion.id] === undefined) {
+          event.preventDefault();
+          handleSelectOption(effectiveActiveQuestion.id, upperKey);
+        }
+        return;
+      }
+
+      if (upperKey === "H" && effectiveActiveQuestion.tip) {
+        const hasAnswered = selectedAnswers[effectiveActiveQuestion.id] !== undefined;
+        if (!isReviewMode && !hasAnswered) {
+          event.preventDefault();
+          toggleHint(effectiveActiveQuestion.id);
+        }
+        return;
+      }
+
+      if (upperKey === "R") {
+        event.preventDefault();
+        toggleFlag(effectiveActiveQuestion.id);
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [
+    effectiveActiveIndex,
+    effectiveActiveQuestion,
+    filteredQuestions.length,
+    handleJumpToQuestion,
+    handleSelectOption,
+    isReviewMode,
+    selectedAnswers,
+    toggleFlag,
+    toggleHint,
+  ]);
+
+  const hasPatternProgress = useMemo(
+    () =>
+      allPatternQuestions.some(
+        (q) => selectedAnswers[q.id] !== undefined || flaggedQuestions[q.id],
+      ),
+    [allPatternQuestions, flaggedQuestions, selectedAnswers],
+  );
 
   const showSubPatternBar =
     allPatternQuestions.length > 0 &&
@@ -257,32 +560,82 @@ export function TiuPatternPractice({
         <section className="rounded-2xl border border-blue-100 bg-white p-6 shadow-sm shadow-blue-100/60">
           <div className="flex flex-col gap-4 border-b border-slate-100 pb-5 sm:flex-row sm:items-start sm:justify-between">
             <div>
-              <span className="inline-flex rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700">
-                Pola #{activeMeta.order} • TIU
-              </span>
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="inline-flex rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700">
+                  Pola #{activeMeta.order} • TIU
+                </span>
+                {isStorageHydrated && (
+                  <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-1 text-[11px] font-medium text-emerald-700">
+                    <CheckCircle2 className="size-3" aria-hidden />
+                    Progres tersimpan otomatis
+                  </span>
+                )}
+              </div>
               <h2 className="mt-2.5 text-2xl font-semibold text-slate-950">
                 {activeMeta.label}
               </h2>
               <p className="mt-1 text-sm text-slate-600">
                 {filteredQuestions.length > 0 ? (
-                  <>
-                    Menampilkan soal {pageStartIndex + 1}–
-                    {Math.min(pageStartIndex + PAGE_SIZE, filteredQuestions.length)} dari{" "}
-                    {filteredQuestions.length} soal tersedia.
-                  </>
+                  viewMode === "single" ? (
+                    <>
+                      Mode Fokus CAT • Soal {effectiveActiveIndex + 1} dari{" "}
+                      {filteredQuestions.length} soal tersedia.
+                    </>
+                  ) : (
+                    <>
+                      Menampilkan soal {pageStartIndex + 1}–
+                      {Math.min(pageStartIndex + PAGE_SIZE, filteredQuestions.length)} dari{" "}
+                      {filteredQuestions.length} soal tersedia.
+                    </>
+                  )
                 ) : (
                   <>Belum ada soal pada pilihan ini.</>
                 )}
               </p>
             </div>
 
-            <div className="flex flex-wrap items-center gap-2.5">
+            <div className="flex flex-wrap items-center gap-2">
+              {filteredQuestions.length > 0 && (
+                <div
+                  role="group"
+                  aria-label="Mode tampilan soal"
+                  className="inline-flex rounded-xl border border-blue-100 bg-slate-50 p-1"
+                >
+                  <button
+                    type="button"
+                    onClick={() => setViewMode("list")}
+                    className={cn(
+                      "inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold transition-colors",
+                      viewMode === "list"
+                        ? "bg-white text-blue-700 shadow-xs"
+                        : "text-slate-600 hover:text-slate-900",
+                    )}
+                  >
+                    <Layers3 className="size-3.5" aria-hidden />
+                    25 / Halaman
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setViewMode("single")}
+                    className={cn(
+                      "inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold transition-colors",
+                      viewMode === "single"
+                        ? "bg-blue-600 text-white shadow-xs"
+                        : "text-slate-600 hover:text-slate-900",
+                    )}
+                  >
+                    <ClipboardList className="size-3.5" aria-hidden />
+                    1 Soal (Mode CAT)
+                  </button>
+                </div>
+              )}
+
               <Button
                 type="button"
                 variant={isReviewMode ? "default" : "outline"}
                 onClick={() => setIsReviewMode((prev) => !prev)}
                 className={cn(
-                  "h-10",
+                  "h-9 text-xs sm:text-sm",
                   isReviewMode
                     ? "bg-blue-600 text-white hover:bg-blue-700"
                     : "border-blue-200 text-blue-700 hover:bg-blue-50",
@@ -301,15 +654,32 @@ export function TiuPatternPractice({
                 )}
               </Button>
 
-              {!isReviewMode && Object.keys(selectedAnswers).length > 0 && (
+              {activeMeta.subPatterns.length > 0 && allPatternQuestions.length > 0 && (
+                <Button
+                  type="button"
+                  variant={showEvaluation ? "default" : "outline"}
+                  onClick={() => setShowEvaluation((prev) => !prev)}
+                  className={cn(
+                    "h-9 text-xs sm:text-sm",
+                    showEvaluation
+                      ? "bg-slate-900 text-white hover:bg-slate-800"
+                      : "border-blue-200 text-blue-700 hover:bg-blue-50",
+                  )}
+                >
+                  <BarChart3 className="size-4" aria-hidden />
+                  Evaluasi Sub-Pola
+                </Button>
+              )}
+
+              {!isReviewMode && hasPatternProgress && (
                 <Button
                   type="button"
                   variant="ghost"
                   onClick={handleReset}
-                  className="h-10 text-slate-600 hover:bg-slate-100 hover:text-slate-950"
+                  className="h-9 text-xs text-slate-600 hover:bg-slate-100 hover:text-slate-950 sm:text-sm"
                 >
                   <RotateCcw className="size-4" aria-hidden />
-                  Reset Jawaban
+                  Reset Pola Ini
                 </Button>
               )}
             </div>
@@ -342,11 +712,114 @@ export function TiuPatternPractice({
 
               {!isReviewMode && answeredInView.length > 0 && (
                 <p className="rounded-lg bg-blue-50 px-3 py-1.5 text-xs font-semibold text-blue-800">
-                  Skor sementara: {correctInView} / {answeredInView.length} benar
+                  Skor sementara: {correctInView} / {answeredInView.length} benar (
+                  {Math.round((correctInView / answeredInView.length) * 100)}%)
                 </p>
               )}
             </div>
           )}
+
+          {/* Ringkasan Evaluasi Sub-Pola (Analitik Kelemahan) */}
+          {(showEvaluation || weakestSubPattern !== null) &&
+            activeMeta.subPatterns.length > 0 &&
+            allPatternQuestions.length > 0 && (
+              <div className="mt-5 rounded-xl border border-blue-100 bg-[#f8fbff] p-4">
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <div>
+                    <p className="text-xs font-semibold uppercase tracking-wider text-blue-700">
+                      Ringkasan Evaluasi Sub-Pola
+                    </p>
+                    <p className="mt-0.5 text-xs text-slate-600">
+                      Klik salah satu sub-pola di bawah untuk fokus memperbaiki topik yang masih lemah.
+                    </p>
+                  </div>
+                  {weakestSubPattern && (
+                    <button
+                      type="button"
+                      onClick={() => handleSubPatternChange(weakestSubPattern.subPattern)}
+                      className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-1.5 text-xs font-semibold text-amber-900 transition hover:bg-amber-100"
+                    >
+                      Fokus Perbaikan: {weakestSubPattern.label} ({weakestSubPattern.accuracy}% benar)
+                    </button>
+                  )}
+                </div>
+
+                <div className="mt-3 grid gap-2.5 sm:grid-cols-2 lg:grid-cols-3">
+                  {subPatternEvaluations.map((item) => {
+                    const isSelected = selectedSubPattern === item.subPattern;
+                    const statusBadge =
+                      item.accuracy === null
+                        ? { label: "Belum Dijawab", className: "bg-slate-100 text-slate-600" }
+                        : item.accuracy >= 80
+                          ? { label: "Kuat", className: "bg-emerald-100 text-emerald-800" }
+                          : item.accuracy >= 60
+                            ? { label: "Cukup", className: "bg-amber-100 text-amber-800" }
+                            : { label: "Perlu Fokus", className: "bg-rose-100 text-rose-800" };
+
+                    return (
+                      <button
+                        key={item.subPattern}
+                        type="button"
+                        onClick={() =>
+                          handleSubPatternChange(
+                            isSelected ? "all" : item.subPattern,
+                          )
+                        }
+                        className={cn(
+                          "flex flex-col justify-between rounded-xl border bg-white p-3 text-left transition-all",
+                          isSelected
+                            ? "border-blue-500 ring-2 ring-blue-500/20"
+                            : "border-slate-200/90 hover:border-blue-300",
+                        )}
+                      >
+                        <div className="flex items-start justify-between gap-2">
+                          <span className="text-xs font-semibold text-slate-900">
+                            {item.label}
+                          </span>
+                          <span
+                            className={cn(
+                              "shrink-0 rounded-full px-2 py-0.5 text-[10px] font-semibold",
+                              statusBadge.className,
+                            )}
+                          >
+                            {statusBadge.label}
+                          </span>
+                        </div>
+
+                        <div className="mt-2.5 flex items-baseline justify-between text-xs text-slate-600">
+                          <span>
+                            Benar:{" "}
+                            <strong className="text-slate-900">
+                              {item.correct}/{item.answered}
+                            </strong>{" "}
+                            (dari {item.total})
+                          </span>
+                          <span className="font-semibold text-slate-900">
+                            {item.accuracy !== null ? `${item.accuracy}%` : "—"}
+                          </span>
+                        </div>
+
+                        <div className="mt-1.5 h-1.5 w-full overflow-hidden rounded-full bg-slate-100">
+                          <div
+                            className={cn(
+                              "h-full rounded-full transition-all",
+                              item.accuracy === null
+                                ? "w-0"
+                                : item.accuracy >= 80
+                                  ? "bg-emerald-500"
+                                  : item.accuracy >= 60
+                                    ? "bg-amber-500"
+                                    : "bg-rose-500",
+                            )}
+                            style={{ width: `${item.accuracy ?? 0}%` }}
+                          />
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
         </section>
 
         {/* Empty state or question list */}
@@ -385,6 +858,87 @@ export function TiuPatternPractice({
               Tampilkan Semua Soal
             </Button>
           </section>
+        ) : viewMode === "single" && effectiveActiveQuestion ? (
+          <div className="space-y-4">
+            <QuestionCard
+              key={effectiveActiveQuestion.id}
+              index={effectiveActiveIndex + 1}
+              question={effectiveActiveQuestion}
+              selectedOption={selectedAnswers[effectiveActiveQuestion.id]}
+              isReviewMode={isReviewMode}
+              isActive
+              isFlagged={Boolean(flaggedQuestions[effectiveActiveQuestion.id])}
+              isHintOpen={Boolean(revealedHints[effectiveActiveQuestion.id])}
+              onToggleFlag={() => toggleFlag(effectiveActiveQuestion.id)}
+              onToggleHint={() => toggleHint(effectiveActiveQuestion.id)}
+              onSelectOption={(key) =>
+                handleSelectOption(effectiveActiveQuestion.id, key)
+              }
+            />
+
+            <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-blue-100 bg-white px-5 py-4 shadow-sm shadow-blue-100/50">
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                disabled={effectiveActiveIndex <= 0}
+                onClick={() => handleJumpToQuestion(effectiveActiveIndex - 1)}
+                className="h-10 border-blue-200 px-4 text-blue-700 hover:bg-blue-50"
+              >
+                <ChevronLeft className="size-4" aria-hidden />
+                Soal Sebelumnya
+              </Button>
+
+              <div className="flex flex-wrap items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => toggleFlag(effectiveActiveQuestion.id)}
+                  className={cn(
+                    "inline-flex h-10 items-center gap-2 rounded-lg border px-4 text-xs font-semibold transition-colors sm:text-sm",
+                    flaggedQuestions[effectiveActiveQuestion.id]
+                      ? "border-amber-400 bg-amber-50 text-amber-900"
+                      : "border-slate-200 bg-slate-50 text-slate-700 hover:border-amber-300 hover:bg-amber-50/60",
+                  )}
+                >
+                  <span
+                    className={cn(
+                      "size-2.5 rounded-full",
+                      flaggedQuestions[effectiveActiveQuestion.id]
+                        ? "bg-amber-500"
+                        : "bg-slate-300",
+                    )}
+                    aria-hidden
+                  />
+                  {flaggedQuestions[effectiveActiveQuestion.id]
+                    ? "Ditandai Ragu-ragu"
+                    : "Tandai Ragu-ragu"}
+                </button>
+
+                <span className="px-2 text-xs font-semibold text-slate-600 sm:text-sm">
+                  {effectiveActiveIndex + 1} / {filteredQuestions.length}
+                </span>
+              </div>
+
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                disabled={effectiveActiveIndex >= filteredQuestions.length - 1}
+                onClick={() => handleJumpToQuestion(effectiveActiveIndex + 1)}
+                className="h-10 border-blue-200 px-4 text-blue-700 hover:bg-blue-50"
+              >
+                Soal Berikutnya
+                <ChevronRight className="size-4" aria-hidden />
+              </Button>
+            </div>
+
+            <p className="rounded-xl border border-slate-200/80 bg-white/80 px-4 py-2.5 text-center text-xs text-slate-500">
+              Pintasan Keyboard: <strong className="text-slate-700">A–E</strong> Pilih Jawaban •{" "}
+              <strong className="text-slate-700">← / →</strong> Pindah Soal •{" "}
+              <strong className="text-slate-700">R</strong> Tandai Ragu-ragu •{" "}
+              <strong className="text-slate-700">H</strong> Buka/Tutup Hint
+            </p>
+          </div>
         ) : (
           <>
             {totalPages > 1 && (
@@ -403,8 +957,10 @@ export function TiuPatternPractice({
                   question={question}
                   selectedOption={selectedAnswers[question.id]}
                   isReviewMode={isReviewMode}
-                  isActive={activeQuestionId === question.id}
+                  isActive={effectiveActiveQuestionId === question.id}
+                  isFlagged={Boolean(flaggedQuestions[question.id])}
                   isHintOpen={Boolean(revealedHints[question.id])}
+                  onToggleFlag={() => toggleFlag(question.id)}
                   onToggleHint={() => toggleHint(question.id)}
                   onSelectOption={(key) => handleSelectOption(question.id, key)}
                 />
@@ -426,7 +982,9 @@ export function TiuPatternPractice({
       <QuestionNumberNavigator
         questions={filteredQuestions}
         selectedAnswers={selectedAnswers}
+        flaggedQuestions={flaggedQuestions}
         activeQuestionId={effectiveActiveQuestionId}
+        activeQuestionIndex={effectiveActiveIndex}
         firstUnansweredIndex={firstUnansweredIndex}
         pageStartIndex={pageStartIndex}
         onJumpToQuestion={handleJumpToQuestion}
@@ -441,7 +999,9 @@ function QuestionCard({
   selectedOption,
   isReviewMode,
   isActive,
+  isFlagged,
   isHintOpen,
+  onToggleFlag,
   onToggleHint,
   onSelectOption,
 }: {
@@ -450,7 +1010,9 @@ function QuestionCard({
   selectedOption?: OptionKey;
   isReviewMode: boolean;
   isActive: boolean;
+  isFlagged: boolean;
   isHintOpen: boolean;
+  onToggleFlag: () => void;
   onToggleHint: () => void;
   onSelectOption: (key: OptionKey) => void;
 }) {
@@ -468,9 +1030,32 @@ function QuestionCard({
       )}
     >
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <span className="inline-flex rounded-md bg-slate-900 px-2.5 py-1 text-xs font-semibold text-white">
-          Soal {index}
-        </span>
+        <div className="flex items-center gap-2">
+          <span className="inline-flex rounded-md bg-slate-900 px-2.5 py-1 text-xs font-semibold text-white">
+            Soal {index}
+          </span>
+          <button
+            type="button"
+            onClick={onToggleFlag}
+            aria-pressed={isFlagged}
+            className={cn(
+              "inline-flex items-center gap-1.5 rounded-md border px-2.5 py-1 text-xs font-semibold transition",
+              isFlagged
+                ? "border-amber-300 bg-amber-50 text-amber-900"
+                : "border-slate-200 bg-slate-50 text-slate-600 hover:border-amber-200 hover:bg-amber-50/60 hover:text-amber-900",
+            )}
+          >
+            <span
+              className={cn(
+                "size-2 rounded-full",
+                isFlagged ? "bg-amber-500" : "bg-slate-300",
+              )}
+              aria-hidden
+            />
+            {isFlagged ? "Ragu-ragu" : "Tandai"}
+          </button>
+        </div>
+
         <div className="flex flex-wrap items-center gap-2">
           {question.tip && !showSolution ? (
             <button
@@ -659,18 +1244,45 @@ function PaginationBar({
 function QuestionNumberNavigator({
   questions,
   selectedAnswers,
+  flaggedQuestions,
   activeQuestionId,
+  activeQuestionIndex,
   firstUnansweredIndex,
   pageStartIndex,
   onJumpToQuestion,
 }: {
   questions: readonly Question[];
   selectedAnswers: Record<string, OptionKey>;
+  flaggedQuestions: Record<string, boolean>;
   activeQuestionId: string | null;
+  activeQuestionIndex: number;
   firstUnansweredIndex: number;
   pageStartIndex: number;
   onJumpToQuestion: (questionIndex: number) => void;
 }) {
+  const totalChunks = Math.max(1, Math.ceil(questions.length / NAV_CHUNK_SIZE));
+  const activeChunkFromQuestion =
+    activeQuestionIndex >= 0 ? Math.floor(activeQuestionIndex / NAV_CHUNK_SIZE) : 0;
+
+  const [manualChunk, setManualChunk] = useState<{
+    baseChunk: number;
+    selectedChunk: number;
+  }>({
+    baseChunk: activeChunkFromQuestion,
+    selectedChunk: activeChunkFromQuestion,
+  });
+
+  const currentChunk =
+    manualChunk.baseChunk === activeChunkFromQuestion
+      ? Math.min(manualChunk.selectedChunk, totalChunks - 1)
+      : Math.min(activeChunkFromQuestion, totalChunks - 1);
+
+  const chunkStart = currentChunk * NAV_CHUNK_SIZE;
+  const visibleQuestions = useMemo(
+    () => questions.slice(chunkStart, chunkStart + NAV_CHUNK_SIZE),
+    [questions, chunkStart],
+  );
+
   return (
     <aside
       aria-label="Navigasi nomor soal"
@@ -702,13 +1314,57 @@ function QuestionNumberNavigator({
               : "Semua Soal Sudah Diisi"}
           </Button>
         )}
+
+        {totalChunks > 1 && (
+          <div
+            role="tablist"
+            aria-label="Rentang nomor soal"
+            className="mt-3 flex flex-wrap gap-1"
+          >
+            {Array.from({ length: totalChunks }, (_, chunkIdx) => {
+              const rangeStart = chunkIdx * NAV_CHUNK_SIZE + 1;
+              const rangeEnd = Math.min(
+                (chunkIdx + 1) * NAV_CHUNK_SIZE,
+                questions.length,
+              );
+              const isSelectedChunk = chunkIdx === currentChunk;
+
+              return (
+                <button
+                  key={rangeStart}
+                  type="button"
+                  role="tab"
+                  aria-selected={isSelectedChunk}
+                  onClick={() =>
+                    setManualChunk({
+                      baseChunk: activeChunkFromQuestion,
+                      selectedChunk: chunkIdx,
+                    })
+                  }
+                  className={cn(
+                    "rounded-md border px-2 py-1 text-[11px] font-semibold transition-colors",
+                    isSelectedChunk
+                      ? "border-blue-600 bg-blue-600 text-white"
+                      : "border-slate-200 bg-slate-50 text-slate-600 hover:border-blue-300 hover:text-blue-700",
+                  )}
+                >
+                  {rangeStart}–{rangeEnd}
+                </button>
+              );
+            })}
+          </div>
+        )}
       </div>
 
       {questions.length > 0 && (
         <div className="mt-3 grid max-h-[42svh] grid-cols-5 gap-1.5 overflow-y-auto p-1 lg:min-h-0 lg:flex-1">
-          {questions.map((question, idx) => {
+          {visibleQuestions.map((question, localIdx) => {
+            const idx = chunkStart + localIdx;
             const number = idx + 1;
-            const isAnswered = selectedAnswers[question.id] !== undefined;
+            const userAnswer = selectedAnswers[question.id];
+            const isAnswered = userAnswer !== undefined;
+            const isCorrect = isAnswered && userAnswer === question.answer;
+            const isFlagged = Boolean(flaggedQuestions[question.id]);
             const isCurrent = question.id === activeQuestionId;
             const isOnCurrentPage = idx >= pageStartIndex && idx < pageStartIndex + PAGE_SIZE;
 
@@ -717,12 +1373,20 @@ function QuestionNumberNavigator({
                 key={question.id}
                 type="button"
                 onClick={() => onJumpToQuestion(idx)}
-                aria-label={`Soal ${number}, ${isAnswered ? "sudah diisi" : "belum diisi"}`}
+                aria-label={`Soal ${number}, ${
+                  isAnswered
+                    ? isCorrect
+                      ? "dijawab benar"
+                      : "dijawab salah"
+                    : "belum diisi"
+                }${isFlagged ? ", ditandai ragu-ragu" : ""}`}
                 aria-current={isCurrent ? "true" : undefined}
                 className={cn(
-                  "flex h-9 items-center justify-center rounded-lg border text-xs font-semibold transition-all",
+                  "relative flex h-9 items-center justify-center rounded-lg border text-xs font-semibold transition-all",
                   isAnswered
-                    ? "border-blue-600 bg-blue-600 text-white hover:bg-blue-700"
+                    ? isCorrect
+                      ? "border-emerald-600 bg-emerald-600 text-white hover:bg-emerald-700"
+                      : "border-rose-500 bg-rose-500 text-white hover:bg-rose-600"
                     : isOnCurrentPage
                       ? "border-blue-200 bg-blue-50/70 text-blue-900 hover:border-blue-400 hover:bg-blue-100/80"
                       : "border-slate-200 bg-slate-50 text-slate-700 hover:border-blue-300 hover:bg-blue-50",
@@ -730,6 +1394,12 @@ function QuestionNumberNavigator({
                 )}
               >
                 {number}
+                {isFlagged && (
+                  <span
+                    aria-hidden
+                    className="absolute right-1 top-1 size-1.5 rounded-full bg-amber-400 ring-1 ring-white"
+                  />
+                )}
               </button>
             );
           })}
