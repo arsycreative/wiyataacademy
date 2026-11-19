@@ -39,7 +39,7 @@ export const akronimDrafts: readonly QuestionDraft[] = [
     "options": [
       "Tindakan Pelanggaran",
       "Tanda Pelanggaran",
-      "Tertib Lalu Lintas",
+      "Catatan Pelanggaran",
       "Bukti Pelanggaran",
       "Tagihan Pelanggaran"
     ],
@@ -53,7 +53,7 @@ export const akronimDrafts: readonly QuestionDraft[] = [
     "prompt": "PUSKESMAS = ...",
     "options": [
       "Penyuluhan Kesehatan Masyarakat",
-      "Pelayanan Kesehatan Masyarakat",
+      "Pusat Kesejahteraan Masyarakat",
       "Pusat Kesehatan Masyarakat",
       "Pos Usaha Kesehatan Masyarakat",
       "Program Utama Kesehatan Masyarakat"
@@ -202,10 +202,10 @@ export const akronimDrafts: readonly QuestionDraft[] = [
     "difficulty": "sulit",
     "prompt": "LEMHANNAS = ...",
     "options": [
-      "Lembaga Pertahanan dan Keamanan Nasional",
-      "Lembaga Hukum dan Administrasi Nasional",
-      "Lembaga Kajian Pertahanan Nasional",
-      "Lembaga Pembinaan Pertahanan Nasional",
+      "Lembaga Pertahanan Nasional",
+      "Lembaga Hukum Nasional",
+      "Lembaga Kajian Pertahanan",
+      "Lembaga Pembinaan Ketahanan",
       "Lembaga Ketahanan Nasional"
     ],
     "answer": "E",
@@ -251,7 +251,7 @@ export const akronimDrafts: readonly QuestionDraft[] = [
       "Inovasi Pendidikan dan Teknologi",
       "Ilmu Pengetahuan dan Teknologi",
       "Industri Penelitian dan Teknologi",
-      "Institut Pengembangan Teknologi"
+      "Integrasi Pengembangan dan Teknologi"
     ],
     "answer": "C",
     "explanation": "Iptek adalah akronim dari Ilmu Pengetahuan dan Teknologi."
@@ -262,11 +262,11 @@ export const akronimDrafts: readonly QuestionDraft[] = [
     "difficulty": "mudah",
     "prompt": "BANDARA = ...",
     "options": [
-      "Bangunan Darat Udara",
-      "Balai Armada Udara",
-      "Barisan Angkutan Udara",
+      "Bandar Angkutan",
+      "Balai Udara",
+      "Bangunan Udara",
       "Bandar Udara",
-      "Biro Angkutan Udara"
+      "Barisan Udara"
     ],
     "answer": "D",
     "explanation": "Bandara merupakan akronim dari Bandar Udara."
@@ -277,10 +277,10 @@ export const akronimDrafts: readonly QuestionDraft[] = [
     "difficulty": "mudah",
     "prompt": "RUDAL = ...",
     "options": [
-      "Ruang Kendali",
+      "Pelontar Kendali",
       "Radar Kendali",
       "Roket Kendali",
-      "Rantai Kendali",
+      "Peluncur Kendali",
       "Peluru Kendali"
     ],
     "answer": "E",
@@ -293,9 +293,9 @@ export const akronimDrafts: readonly QuestionDraft[] = [
     "prompt": "TOSERBA = ...",
     "options": [
       "Toko Serba Ada",
-      "Tempat Servis Barang",
+      "Toko Servis Barang",
       "Toko Sewa Barang",
-      "Tempat Serba Ada",
+      "Tempat Sedia Barang",
       "Toko Sedia Barang"
     ],
     "answer": "A",
@@ -310,7 +310,7 @@ export const akronimDrafts: readonly QuestionDraft[] = [
       "Surat Elektronik",
       "Saluran Elektronik",
       "Suara Elektronik",
-      "Sistem Uraian Elektronik",
+      "Suntingan Elektronik",
       "Sumber Elektronik"
     ],
     "answer": "A",
@@ -324,9 +324,9 @@ export const akronimDrafts: readonly QuestionDraft[] = [
     "options": [
       "Pondok Seluler",
       "Telepon Seluler",
-      "Poin Seluler",
+      "Telegram Seluler",
       "Portal Seluler",
-      "Perangkat Online Seluler"
+      "Pemancar Seluler"
     ],
     "answer": "B",
     "explanation": "PONSEL merupakan akronim resmi dari Telepon Seluler."
@@ -386,7 +386,7 @@ export const akronimDrafts: readonly QuestionDraft[] = [
       "Bayi Tiga Tahun",
       "Batas Tiga Tahun",
       "Binaan Tiga Tahun",
-      "Anak Tiga Tahun"
+      "Baru Tiga Tahun"
     ],
     "answer": "A",
     "explanation": "BATITA merupakan akronim resmi dari Bawah Tiga Tahun."
@@ -401,7 +401,7 @@ export const akronimDrafts: readonly QuestionDraft[] = [
       "Bawah Dua Tahun",
       "Batas Dua Tahun",
       "Binaan Dua Tahun",
-      "Anak Dua Tahun"
+      "Baru Dua Tahun"
     ],
     "answer": "B",
     "explanation": "BADUTA merupakan akronim resmi dari Bawah Dua Tahun."
@@ -519,8 +519,8 @@ export const akronimDrafts: readonly QuestionDraft[] = [
     "options": [
       "Ketahanan dan Keamanan",
       "Pertahanan Kampus",
-      "Hubungan Keamanan",
-      "Hukum dan Keamanan",
+      "Pertahanan Kawasan Masyarakat",
+      "Ketahanan dan Kemandirian",
       "Pertahanan dan Keamanan"
     ],
     "answer": "E",
@@ -535,8 +535,8 @@ export const akronimDrafts: readonly QuestionDraft[] = [
       "Sosial Budaya",
       "Sosialisasi Budaya",
       "Sosiologi Budaya",
-      "Komunitas Sosial Budaya",
-      "Sektor Sosial Budi"
+      "Solidaritas Budaya",
+      "Sentra Budaya"
     ],
     "answer": "A",
     "explanation": "SOSBUD merupakan akronim resmi dari Sosial Budaya."
@@ -550,8 +550,8 @@ export const akronimDrafts: readonly QuestionDraft[] = [
       "Sosialisasi Ekonomi",
       "Sosial Ekonomi",
       "Sosiologi Ekonomi",
-      "Sektor Ekonomi",
-      "Sistem Ekonomi"
+      "Solidaritas Ekonomi",
+      "Sektor Ekonomi"
     ],
     "answer": "B",
     "explanation": "SOSEK merupakan akronim resmi dari Sosial Ekonomi."
@@ -565,8 +565,8 @@ export const akronimDrafts: readonly QuestionDraft[] = [
       "Sosialisasi Politik",
       "Sosiologi Politik",
       "Sosial Politik",
-      "Sektor Politik",
-      "Suara Politik"
+      "Solidaritas Politik",
+      "Sektor Politik"
     ],
     "answer": "C",
     "explanation": "SOSPOL merupakan akronim resmi dari Sosial Politik."
@@ -652,11 +652,11 @@ export const akronimDrafts: readonly QuestionDraft[] = [
     "difficulty": "mudah",
     "prompt": "PRAMUKA = ...",
     "options": [
-      "Persatuan Muda Karya",
-      "Putra Muda Karana",
-      "Pasukan Muda Karya",
+      "Prakarsa Muda Karana",
+      "Pradana Muda Karya",
+      "Prajurit Muda Karana",
       "Praja Muda Karana",
-      "Perhimpunan Muda Karana"
+      "Pranata Muda Karana"
     ],
     "answer": "D",
     "explanation": "PRAMUKA merupakan akronim resmi dari Praja Muda Karana."
@@ -667,7 +667,7 @@ export const akronimDrafts: readonly QuestionDraft[] = [
     "difficulty": "sedang",
     "prompt": "PASKIBRAKA = ...",
     "options": [
-      "Pasukan Kirab Bendera Pusaka",
+      "Pasukan Pembawa Bendera Pusaka",
       "Persatuan Pengibar Bendera Pusaka",
       "Pelajar Pengibar Bendera Pusaka",
       "Petugas Pengibar Bendera Pusaka",
@@ -683,10 +683,10 @@ export const akronimDrafts: readonly QuestionDraft[] = [
     "prompt": "GERMAS = ...",
     "options": [
       "Gerakan Masyarakat Hidup Sehat",
-      "Gerakan Masyarakat Mandiri",
-      "Gerakan Makanan Sehat",
-      "Gugus Masyarakat Sehat",
-      "Gerakan Nasional Masyarakat"
+      "Gerakan Masyarakat Peduli Kesehatan",
+      "Gerakan Mandiri Masyarakat Sehat",
+      "Gerakan Masyarakat Sadar Gizi",
+      "Gerakan Nasional Masyarakat Sehat"
     ],
     "answer": "A",
     "explanation": "GERMAS merupakan akronim resmi dari Gerakan Masyarakat Hidup Sehat."
@@ -699,8 +699,8 @@ export const akronimDrafts: readonly QuestionDraft[] = [
     "options": [
       "Pencarian Kendaraan Bermotor",
       "Pencurian Kendaraan Bermotor",
-      "Kecurangan Kendaraan Bermotor",
       "Pencurian Angkutan Bermotor",
+      "Pelanggaran Kendaraan Bermotor",
       "Penertiban Kendaraan Bermotor"
     ],
     "answer": "B",
@@ -758,10 +758,10 @@ export const akronimDrafts: readonly QuestionDraft[] = [
     "prompt": "PINJOL = ...",
     "options": [
       "Pinjaman Online",
+      "Pinjaman Kolateral",
       "Pinjaman Kolektif",
-      "Pinjaman Sosial",
-      "Pinjaman Modal",
-      "Pinjaman Golongan"
+      "Pinjaman Olahan",
+      "Pinjaman Komunal"
     ],
     "answer": "A",
     "explanation": "PINJOL merupakan akronim resmi dari Pinjaman Online."
@@ -817,10 +817,10 @@ export const akronimDrafts: readonly QuestionDraft[] = [
     "difficulty": "sedang",
     "prompt": "MAPOLRES = ...",
     "options": [
-      "Mabes Kepolisian Resor",
+      "Markas Pelayanan Resor",
       "Manajemen Polisi Resor",
       "Majelis Kepolisian Resor",
-      "Mitra Kepolisian Resor",
+      "Mahkamah Polisi Resor",
       "Markas Kepolisian Resor"
     ],
     "answer": "E",
@@ -847,11 +847,11 @@ export const akronimDrafts: readonly QuestionDraft[] = [
     "difficulty": "mudah",
     "prompt": "KEMENLU = ...",
     "options": [
-      "Kementerian Lingkungan Umum",
+      "Kementerian Lingkungan Usaha",
       "Kementerian Luar Negeri",
-      "Kementerian Layanan Umum",
-      "Kementerian Lintas Negara",
-      "Kementerian Kelautan Umum"
+      "Kementerian Layanan Utama",
+      "Kementerian Lintas Urusan",
+      "Kementerian Kelautan Nusantara"
     ],
     "answer": "B",
     "explanation": "KEMENLU merupakan akronim resmi dari Kementerian Luar Negeri."
@@ -893,7 +893,7 @@ export const akronimDrafts: readonly QuestionDraft[] = [
     "prompt": "KEMENKES = ...",
     "options": [
       "Kementerian Kesejahteraan",
-      "Kementerian Kesekretariatan",
+      "Kementerian Kesetaraan",
       "Kementerian Keselamatan",
       "Kementerian Ketenagakerjaan",
       "Kementerian Kesehatan"
@@ -1028,10 +1028,10 @@ export const akronimDrafts: readonly QuestionDraft[] = [
     "prompt": "KEMENKOP = ...",
     "options": [
       "Kementerian Koordinasi",
-      "Kementerian Komunikasi",
-      "Kementerian Konstruksi",
+      "Kementerian Kopra",
+      "Kementerian Korporasi",
       "Kementerian Koperasi",
-      "Kementerian Korporasi"
+      "Kementerian Konsolidasi"
     ],
     "answer": "D",
     "explanation": "KEMENKOP merupakan akronim resmi dari Kementerian Koperasi."
@@ -1102,11 +1102,11 @@ export const akronimDrafts: readonly QuestionDraft[] = [
     "difficulty": "sedang",
     "prompt": "KEMENKUM = ...",
     "options": [
-      "Kementerian Komunikasi",
-      "Kementerian Konsumen",
-      "Kementerian Kemanusiaan",
+      "Kementerian Hukum dan Kemanusiaan",
+      "Kementerian Keuangan Umum",
+      "Kementerian Kehutanan Umum",
       "Kementerian Hukum",
-      "Kementerian Komunitas"
+      "Kementerian Kebudayaan Umum"
     ],
     "answer": "D",
     "explanation": "KEMENKUM merupakan akronim resmi dari Kementerian Hukum."
@@ -1358,9 +1358,9 @@ export const akronimDrafts: readonly QuestionDraft[] = [
     "prompt": "DAMKAR = ...",
     "options": [
       "Pemadam Kebakaran",
-      "Dampak Kebakaran",
-      "Dinas Keamanan Kebakaran",
-      "Darurat Kebakaran",
+      "Penanggulangan Kebakaran",
+      "Pengendali Kebakaran",
+      "Dinas Kebakaran",
       "Departemen Kebakaran"
     ],
     "answer": "A",
@@ -1417,7 +1417,7 @@ export const akronimDrafts: readonly QuestionDraft[] = [
     "difficulty": "mudah",
     "prompt": "PEMPROV = ...",
     "options": [
-      "Pemilihan Provinsi",
+      "Peraturan Provinsi",
       "Pembinaan Provinsi",
       "Pembangunan Provinsi",
       "Perwakilan Provinsi",
@@ -1433,7 +1433,7 @@ export const akronimDrafts: readonly QuestionDraft[] = [
     "prompt": "PEMKAB = ...",
     "options": [
       "Pemerintah Kabupaten",
-      "Pemilihan Kabupaten",
+      "Peraturan Kabupaten",
       "Pembangunan Kabupaten",
       "Pembinaan Kabupaten",
       "Perwakilan Kabupaten"
@@ -1447,7 +1447,7 @@ export const akronimDrafts: readonly QuestionDraft[] = [
     "difficulty": "mudah",
     "prompt": "PEMKOT = ...",
     "options": [
-      "Pemilihan Kota",
+      "Peraturan Kota",
       "Pemerintah Kota",
       "Pembangunan Kota",
       "Pembinaan Kota",
@@ -1462,7 +1462,7 @@ export const akronimDrafts: readonly QuestionDraft[] = [
     "difficulty": "mudah",
     "prompt": "PEMDA = ...",
     "options": [
-      "Pemilihan Daerah",
+      "Perwakilan Daerah",
       "Pembangunan Daerah",
       "Pemerintah Daerah",
       "Pembinaan Daerah",
@@ -1627,7 +1627,7 @@ export const akronimDrafts: readonly QuestionDraft[] = [
     "difficulty": "mudah",
     "prompt": "PILPRES = ...",
     "options": [
-      "Pilihan Presiden",
+      "Penetapan Presiden",
       "Pelantikan Presiden",
       "Pencalonan Presiden",
       "Pemilihan Presiden",
@@ -1642,7 +1642,7 @@ export const akronimDrafts: readonly QuestionDraft[] = [
     "difficulty": "mudah",
     "prompt": "PILKADA = ...",
     "options": [
-      "Pilihan Kepala Daerah",
+      "Penetapan Kepala Daerah",
       "Pelantikan Kepala Daerah",
       "Pencalonan Kepala Daerah",
       "Pemerintahan Kepala Daerah",
@@ -1658,7 +1658,7 @@ export const akronimDrafts: readonly QuestionDraft[] = [
     "prompt": "PILEG = ...",
     "options": [
       "Pemilihan Legislatif",
-      "Pilihan Legislatif",
+      "Penetapan Legislatif",
       "Pelantikan Legislatif",
       "Pencalonan Legislatif",
       "Perwakilan Legislatif"
@@ -1672,7 +1672,7 @@ export const akronimDrafts: readonly QuestionDraft[] = [
     "difficulty": "mudah",
     "prompt": "PILKADES = ...",
     "options": [
-      "Pilihan Kepala Desa",
+      "Penetapan Kepala Desa",
       "Pemilihan Kepala Desa",
       "Pelantikan Kepala Desa",
       "Perangkat Kepala Desa",
@@ -1747,11 +1747,11 @@ export const akronimDrafts: readonly QuestionDraft[] = [
     "difficulty": "sulit",
     "prompt": "MAHMIL = ...",
     "options": [
-      "Majelis Hukum Militer",
+      "Majelis Militer",
       "Mahkamah Militer",
-      "Markas Hukum Militer",
-      "Manajemen Hukum Militer",
-      "Mahkamah Sipil Militer"
+      "Markas Militer",
+      "Manajemen Militer",
+      "Mahkamah Hukum"
     ],
     "answer": "B",
     "explanation": "MAHMIL merupakan akronim resmi dari Mahkamah Militer."
@@ -1763,9 +1763,9 @@ export const akronimDrafts: readonly QuestionDraft[] = [
     "prompt": "BASARNAS = ...",
     "options": [
       "Badan Sarana Nasional",
-      "Badan Siaga Bencana Nasional",
+      "Badan Siaga Nasional",
       "Badan Nasional Pencarian dan Pertolongan",
-      "Barisan Search and Rescue Nasional",
+      "Badan Keselamatan Pelayaran Nasional",
       "Balai Penyelamatan Nasional"
     ],
     "answer": "C",
@@ -1868,9 +1868,9 @@ export const akronimDrafts: readonly QuestionDraft[] = [
     "prompt": "LINMAS = ...",
     "options": [
       "Lingkungan Masyarakat",
-      "Layanan Informasi Masyarakat",
-      "Lingkar Masyarakat",
-      "Lembaga Sosial Masyarakat",
+      "Layanan Masyarakat",
+      "Pembinaan Masyarakat",
+      "Pengamanan Masyarakat",
       "Perlindungan Masyarakat"
     ],
     "answer": "E",
@@ -1883,10 +1883,10 @@ export const akronimDrafts: readonly QuestionDraft[] = [
     "prompt": "HANSIP = ...",
     "options": [
       "Pertahanan Sipil",
-      "Keamanan Sipil",
-      "Hubungan Sipil",
-      "Hak Sipil",
-      "Hukum Sipil"
+      "Ketahanan Sipil",
+      "Pengamanan Sipil",
+      "Pembinaan Sipil",
+      "Penahanan Sipil"
     ],
     "answer": "A",
     "explanation": "HANSIP merupakan akronim resmi dari Pertahanan Sipil."
@@ -1899,9 +1899,9 @@ export const akronimDrafts: readonly QuestionDraft[] = [
     "options": [
       "Tenaga Tanggap Bencana",
       "Taruna Siaga Bencana",
-      "Tim Penanggulangan Bencana",
+      "Tenaga Siaga Bencana",
       "Tamtama Siaga Bencana",
-      "Tugas Gabungan Bencana"
+      "Taruna Tanggap Bencana"
     ],
     "answer": "B",
     "explanation": "TAGANA merupakan akronim resmi dari Taruna Siaga Bencana."
@@ -2002,11 +2002,11 @@ export const akronimDrafts: readonly QuestionDraft[] = [
     "difficulty": "mudah",
     "prompt": "PERUMNAS = ...",
     "options": [
-      "Perumahan Umum Masyarakat Nasional",
-      "Persatuan Perumahan Nasional",
-      "Pengelola Rumah Nasional",
+      "Perusahaan Umum Perumahan Rakyat",
+      "Perhimpunan Umum Pembangunan Perumahan",
+      "Pengelola Umum Perumahan Nasional",
       "Perusahaan Umum Pembangunan Perumahan Nasional",
-      "Pusat Perumahan Nasional"
+      "Pusat Pengembangan Perumahan Nasional Indonesia"
     ],
     "answer": "D",
     "explanation": "PERUMNAS merupakan akronim resmi dari Perusahaan Umum Pembangunan Perumahan Nasional."
@@ -2017,7 +2017,7 @@ export const akronimDrafts: readonly QuestionDraft[] = [
     "difficulty": "sedang",
     "prompt": "TAPERA = ...",
     "options": [
-      "Dana Perumahan Rakyat",
+      "Tabungan Pegawai Rakyat",
       "Tagihan Perumahan Rakyat",
       "Tunjangan Perumahan Rakyat",
       "Tata Perumahan Rakyat",
@@ -2108,10 +2108,10 @@ export const akronimDrafts: readonly QuestionDraft[] = [
     "prompt": "POKDARWIS = ...",
     "options": [
       "Kelompok Sadar Wisata",
-      "Pokok Daerah Wisata",
-      "Program Desa Wisata",
-      "Pusat Koordinasi Daerah Wisata",
-      "Perkumpulan Pemandu Wisata"
+      "Komunitas Sadar Wisata",
+      "Kelompok Daerah Wisata",
+      "Program Sadar Wisata",
+      "Perkumpulan Daerah Wisata"
     ],
     "answer": "A",
     "explanation": "POKDARWIS merupakan akronim resmi dari Kelompok Sadar Wisata."
@@ -2167,10 +2167,10 @@ export const akronimDrafts: readonly QuestionDraft[] = [
     "difficulty": "sedang",
     "prompt": "POLTEKKES = ...",
     "options": [
-      "Poliklinik Teknis Kesehatan",
-      "Pusat Teknologi Kesehatan",
-      "Perguruan Tinggi Kesehatan",
-      "Program Teknis Kesehatan",
+      "Poliklinik Kesehatan",
+      "Pusat Kesehatan",
+      "Perguruan Kesehatan",
+      "Pendidikan Kesehatan",
       "Politeknik Kesehatan"
     ],
     "answer": "E",
@@ -2213,9 +2213,9 @@ export const akronimDrafts: readonly QuestionDraft[] = [
     "prompt": "LITBANG = ...",
     "options": [
       "Lintas Pembangunan",
-      "Literasi dan Pembangunan",
+      "Literasi dan Pengembangan",
       "Penelitian dan Pengembangan",
-      "Lingkungan dan Pembangunan",
+      "Pelatihan dan Pengembangan",
       "Pengawasan dan Pengembangan"
     ],
     "answer": "C",
@@ -2242,9 +2242,9 @@ export const akronimDrafts: readonly QuestionDraft[] = [
     "difficulty": "sedang",
     "prompt": "MONEV = ...",
     "options": [
-      "Modal dan Evaluasi",
-      "Manajemen Operasional Evaluasi",
-      "Modul Evaluasi",
+      "Modul dan Evaluasi",
+      "Manajemen dan Evaluasi",
+      "Moderasi dan Evaluasi",
       "Monografi dan Evaluasi",
       "Monitoring dan Evaluasi"
     ],
