@@ -288,11 +288,13 @@ export async function fetchCloudTiuProgress(): Promise<{
 
 export async function saveCloudTiuProgress(
   progress: SanitizedPracticeProgress,
+  options?: { keepalive?: boolean },
 ): Promise<{ ok: boolean; schemaMissing: boolean; error: string | null }> {
   try {
     const res = await fetch(TIU_PROGRESS_API_PATH, {
       method: "PUT",
       credentials: "same-origin",
+      keepalive: options?.keepalive ?? false,
       headers: {
         "Content-Type": "application/json",
       },

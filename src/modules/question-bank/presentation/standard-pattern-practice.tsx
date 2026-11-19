@@ -34,7 +34,6 @@ import type {
 } from "@/modules/question-bank/domain/question";
 import {
   createRandomSeed,
-  hashStringWithSeed,
   seededShuffle,
 } from "@/modules/question-bank/domain/question-shuffle";
 import {
@@ -44,6 +43,15 @@ import {
   isTwkPattern,
   shuffleQuestionWithScores,
 } from "@/modules/question-bank/domain/subtest-summary";
+import {
+  commitRetryAnswer,
+  getRetryEffectiveAnswers,
+  getRetryEffectiveSeed,
+  startRetrySession,
+  startSingleQuestionRetry,
+  summarizeRetrySession,
+  type RetrySession,
+} from "@/modules/question-bank/domain/retry-session";
 import {
   fetchCloudTiuProgress,
   isOptionKey,
@@ -60,7 +68,9 @@ import { APP_ROUTES } from "@/shared/constants/app";
 import {
   PracticeFilterPill,
   PracticePaginationBar,
+  PracticeRetryBanner,
   PracticeStatusChip,
+  PracticeWrongFilterBanner,
   formatSubPatternLabel,
 } from "./practice-ui-primitives";
 
@@ -199,7 +209,7 @@ export function StandardPatternPractice({
   const [questionSeeds, setQuestionSeeds] = useState<Record<string, number>>({});
   const [lastTiuPattern, setLastTiuPattern] = useState<TiuPatternId>("sinonim-antonim-akronim");
   const [revealedHints, setRevealedHints] = useState<Record<string, boolean>>({});
-  const [retryQuestionIds, setRetryQuestionIds] = useState<readonly string[] | null>(null);
+  const [retrySession, setRetrySession] = useState<RetrySession | null>(null);
   const [isReviewMode, setIsReviewMode] = useState<boolean>(false);
   const [isHydrated, setIsHydrated] = useState<boolean>(false);
   const [isCloudReady, setIsCloudReady] = useState<boolean>(false);
@@ -208,6 +218,11 @@ export function StandardPatternPractice({
 
   const pendingScrollIdRef = useRef<string | null>(null);
   const skipNextCloudSaveRef = useRef<boolean>(false);
+  const cloudSyncedUserIdRef = useRef<string | null>(null);
+  const cloudSchemaMissingRef = useRef<boolean>(false);
+  const pendingCloudPayloadRef = useRef<ReturnType<typeof sanitizePracticeProgress> | null>(
+    null,
+  );
   const { user, isLoading: isAuthLoading, isConfigured: isAuthConfigured } = useSupabaseAuth();
 
   // Hydrate progres lokal & seed pengacakan saat mount di browser
@@ -252,7 +267,7 @@ export function StandardPatternPractice({
         setActivePattern(nextPattern as PracticePatternId);
         setSelectedSubPattern("all");
         setStatusFilter("all");
-        setRetryQuestionIds(null);
+        setRetrySession(null);
         setCurrentPage(1);
         setActiveQuestionId(null);
       }
@@ -265,11 +280,14 @@ export function StandardPatternPractice({
     };
   }, [initialPattern, subtest, ui]);
 
-  // Gabungkan & sinkronkan progres akun ke cloud saat login
+  // Gabungkan & sinkronkan progres akun ke cloud sekali per sesi user
   useEffect(() => {
     if (!isHydrated || isAuthLoading) return;
 
-    if (!user) {
+    const userId = user?.id ?? null;
+    if (!userId) {
+      cloudSyncedUserIdRef.current = null;
+      cloudSchemaMissingRef.current = false;
       const frame = window.requestAnimationFrame(() => {
         setIsCloudReady(false);
         setCloudSyncState("idle");
@@ -277,15 +295,22 @@ export function StandardPatternPractice({
       return () => window.cancelAnimationFrame(frame);
     }
 
+    if (cloudSyncedUserIdRef.current === userId) {
+      return;
+    }
+
     let cancelled = false;
     fetchCloudTiuProgress()
       .then(({ data: remote, schemaMissing }) => {
         if (cancelled) return;
         if (schemaMissing) {
+          cloudSyncedUserIdRef.current = userId;
+          cloudSchemaMissingRef.current = true;
           setIsCloudReady(false);
           setCloudSyncState("error");
           return;
         }
+        cloudSchemaMissingRef.current = false;
 
         const local = readLocalTiuProgress() ?? sanitizePracticeProgress({});
         const merged = mergePracticeProgress(local, remote);
@@ -304,6 +329,7 @@ export function StandardPatternPractice({
         setQuestionSeeds(mergedWithSeeds.questionSeeds);
 
         writeLocalTiuProgress(mergedWithSeeds);
+        cloudSyncedUserIdRef.current = userId;
 
         setIsCloudReady(true);
         setCloudSyncState("synced");
@@ -322,7 +348,7 @@ export function StandardPatternPractice({
     return () => {
       cancelled = true;
     };
-  }, [isHydrated, isAuthLoading, user]);
+  }, [isHydrated, isAuthLoading, user?.id]);
 
   // Persist progres otomatis ke localStorage dan cloud
   useEffect(() => {
@@ -339,15 +365,20 @@ export function StandardPatternPractice({
     });
     writeLocalTiuProgress(payload);
 
-    if (!user || !isCloudReady) return;
+    if (!user?.id || !isCloudReady || cloudSchemaMissingRef.current) return;
     if (skipNextCloudSaveRef.current) {
       skipNextCloudSaveRef.current = false;
       return;
     }
 
+    pendingCloudPayloadRef.current = payload;
     const timer = window.setTimeout(() => {
+      pendingCloudPayloadRef.current = null;
       setCloudSyncState("syncing");
-      void saveCloudTiuProgress(payload).then(({ ok }) => {
+      void saveCloudTiuProgress(payload).then(({ ok, schemaMissing }) => {
+        if (schemaMissing) {
+          cloudSchemaMissingRef.current = true;
+        }
         setCloudSyncState(ok ? "synced" : "error");
       });
     }, 450);
@@ -363,15 +394,34 @@ export function StandardPatternPractice({
     lastTiuPattern,
     patternSeeds,
     questionSeeds,
-    user,
+    user?.id,
     isCloudReady,
   ]);
+
+  // Pastikan perubahan yang tertunda tetap tersimpan ke server saat berpindah halaman
+  useEffect(() => {
+    return () => {
+      const pendingPayload = pendingCloudPayloadRef.current;
+      if (
+        pendingPayload &&
+        cloudSyncedUserIdRef.current &&
+        !cloudSchemaMissingRef.current
+      ) {
+        pendingCloudPayloadRef.current = null;
+        void saveCloudTiuProgress(pendingPayload, { keepalive: true });
+      }
+    };
+  }, []);
 
   const patternStats = catalog.patternStats;
   const activeMeta = catalog.patternCatalog[activePattern] ?? catalog.patternCatalog[ui.defaultPattern];
   const rawPatternQuestions = useMemo(
     () => catalog.questionBanks[activePattern] ?? [],
     [catalog.questionBanks, activePattern],
+  );
+  const rawQuestionById = useMemo(
+    () => new Map(rawPatternQuestions.map((question) => [question.id, question])),
+    [rawPatternQuestions],
   );
   const activePatternSeed = patternSeeds[activePattern] ?? 0;
 
@@ -389,10 +439,28 @@ export function StandardPatternPractice({
     return allPatternQuestions.filter((q) => q.subPattern === selectedSubPattern);
   }, [allPatternQuestions, selectedSubPattern]);
 
+  const effectiveSelectedAnswers = useMemo(
+    () => getRetryEffectiveAnswers(retrySession, selectedAnswers),
+    [retrySession, selectedAnswers],
+  );
+
   const filteredQuestions = useMemo(() => {
-    if (retryQuestionIds !== null) {
-      const retrySet = new Set(retryQuestionIds);
-      return subPatternScopedQuestions.filter((q) => retrySet.has(q.id));
+    if (retrySession !== null) {
+      const retrySet = new Set(retrySession.questionIds);
+      const pendingSet = new Set(retrySession.pendingIds);
+      return subPatternScopedQuestions
+        .filter((q) => retrySet.has(q.id))
+        .map((q) => {
+          if (!pendingSet.has(q.id)) return q;
+          const rawQ = rawQuestionById.get(q.id) ?? q;
+          const tempSeed = getRetryEffectiveSeed(
+            retrySession,
+            q.id,
+            questionSeeds[q.id],
+            activePatternSeed,
+          );
+          return tempSeed ? shuffleQuestionWithScores(rawQ, tempSeed) : rawQ;
+        });
     }
 
     return subPatternScopedQuestions.filter((question) => {
@@ -402,12 +470,26 @@ export function StandardPatternPractice({
       return true;
     });
   }, [
-    retryQuestionIds,
+    retrySession,
     subPatternScopedQuestions,
+    rawQuestionById,
+    questionSeeds,
+    activePatternSeed,
     statusFilter,
     selectedAnswers,
     flaggedQuestions,
   ]);
+
+  const retrySummary = useMemo(
+    () =>
+      summarizeRetrySession(
+        retrySession,
+        subPatternScopedQuestions,
+        selectedAnswers,
+        isNeedsImprovement,
+      ),
+    [retrySession, subPatternScopedQuestions, selectedAnswers],
+  );
 
   const statusCounts = useMemo(() => {
     let unanswered = 0;
@@ -470,8 +552,8 @@ export function StandardPatternPractice({
   const effectiveActiveQuestionId = effectiveActiveQuestion?.id ?? null;
 
   const firstUnansweredIndex = useMemo(
-    () => filteredQuestions.findIndex((q) => selectedAnswers[q.id] === undefined),
-    [filteredQuestions, selectedAnswers],
+    () => filteredQuestions.findIndex((q) => effectiveSelectedAnswers[q.id] === undefined),
+    [filteredQuestions, effectiveSelectedAnswers],
   );
 
   useEffect(() => {
@@ -495,7 +577,7 @@ export function StandardPatternPractice({
     setActivePattern(patternId);
     setSelectedSubPattern("all");
     setStatusFilter("all");
-    setRetryQuestionIds(null);
+    setRetrySession(null);
     setCurrentPage(1);
     setActiveQuestionId(null);
     setPatternSeeds((prev) =>
@@ -509,7 +591,7 @@ export function StandardPatternPractice({
   const handleSubPatternChange = useCallback((subPattern: string) => {
     setSelectedSubPattern(subPattern);
     setStatusFilter("all");
-    setRetryQuestionIds(null);
+    setRetrySession(null);
     setCurrentPage(1);
     setActiveQuestionId(null);
     pendingScrollIdRef.current = null;
@@ -517,7 +599,7 @@ export function StandardPatternPractice({
 
   const handleStatusFilterChange = useCallback((nextStatus: StatusFilter) => {
     setStatusFilter(nextStatus);
-    setRetryQuestionIds(null);
+    setRetrySession(null);
     setCurrentPage(1);
     setActiveQuestionId(null);
     pendingScrollIdRef.current = null;
@@ -577,19 +659,57 @@ export function StandardPatternPractice({
   const handleSelectOption = useCallback(
     (questionId: string, optionKey: OptionKey) => {
       if (isReviewMode) return;
+      const isPendingRetry = Boolean(retrySession?.pendingIds.includes(questionId));
+      const committedSeed = getRetryEffectiveSeed(
+        retrySession,
+        questionId,
+        questionSeeds[questionId],
+        activePatternSeed,
+      );
+
       setActiveQuestionId(questionId);
       setQuestionSeeds((prev) => {
-        if (prev[questionId] !== undefined || !activePatternSeed) {
+        if (!isPendingRetry && (prev[questionId] !== undefined || !activePatternSeed)) {
           return prev;
         }
-        return { ...prev, [questionId]: activePatternSeed };
+        if (!committedSeed) return prev;
+        return { ...prev, [questionId]: committedSeed };
       });
       setSelectedAnswers((prev) => {
-        if (prev[questionId] !== undefined) return prev;
+        if (!isPendingRetry && prev[questionId] !== undefined) return prev;
         return { ...prev, [questionId]: optionKey };
       });
+      if (isPendingRetry) {
+        setRetrySession((prev) => commitRetryAnswer(prev, questionId).nextSession);
+      }
     },
-    [activePatternSeed, isReviewMode],
+    [activePatternSeed, isReviewMode, questionSeeds, retrySession],
+  );
+
+  const startRetryForIds = useCallback(
+    (targetIds: readonly string[]) => {
+      const nextSession = startRetrySession(
+        targetIds,
+        questionSeeds,
+        activePatternSeed,
+      );
+      if (!nextSession) return;
+
+      const targetSet = new Set(nextSession.questionIds);
+      setRevealedHints((prev) => {
+        const next = { ...prev };
+        for (const id of targetSet) delete next[id];
+        return next;
+      });
+      setIsReviewMode(false);
+      setRetrySession(nextSession);
+      setStatusFilter("all");
+      setCurrentPage(1);
+      setActiveQuestionId(nextSession.questionIds[0] ?? null);
+      pendingScrollIdRef.current = null;
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    },
+    [activePatternSeed, questionSeeds],
   );
 
   const handleRetryWrongInScope = useCallback(() => {
@@ -597,72 +717,87 @@ export function StandardPatternPractice({
       .filter((q) => isNeedsImprovement(q, selectedAnswers[q.id]))
       .map((q) => q.id);
 
-    if (wrongIds.length === 0) return;
+    startRetryForIds(wrongIds);
+  }, [subPatternScopedQuestions, selectedAnswers, startRetryForIds]);
 
-    const wrongSet = new Set(wrongIds);
-    const retryBatchSeed = createRandomSeed();
-
-    setSelectedAnswers((prev) => {
-      const next = { ...prev };
-      for (const id of wrongSet) delete next[id];
-      return next;
-    });
-    setQuestionSeeds((prev) => {
-      const next = { ...prev };
-      for (const id of wrongSet) {
-        const currentSeed = next[id] ?? activePatternSeed;
-        let nextSeed = hashStringWithSeed(`retry:${id}`, retryBatchSeed);
-        if (nextSeed === currentSeed) {
-          nextSeed = ((nextSeed + 1) >>> 0) || 1;
-        }
-        next[id] = nextSeed;
-      }
-      return next;
-    });
-    setRevealedHints((prev) => {
-      const next = { ...prev };
-      for (const id of wrongSet) delete next[id];
-      return next;
-    });
-    setRetryQuestionIds(wrongIds);
-    setStatusFilter("all");
-    setCurrentPage(1);
-    setActiveQuestionId(wrongIds[0] ?? null);
-    pendingScrollIdRef.current = null;
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  }, [activePatternSeed, subPatternScopedQuestions, selectedAnswers]);
+  const handleRetrySingleQuestion = useCallback(
+    (questionId: string) => {
+      setIsReviewMode(false);
+      setRevealedHints((prev) => {
+        if (!prev[questionId]) return prev;
+        const next = { ...prev };
+        delete next[questionId];
+        return next;
+      });
+      setRetrySession((prev) =>
+        startSingleQuestionRetry(
+          prev,
+          questionId,
+          questionSeeds[questionId] ?? activePatternSeed,
+        ),
+      );
+      setStatusFilter("all");
+      setCurrentPage(1);
+      setActiveQuestionId(questionId);
+      pendingScrollIdRef.current = null;
+    },
+    [activePatternSeed, questionSeeds],
+  );
 
   const handleReset = useCallback(() => {
     const patternIds = new Set(rawPatternQuestions.map((q) => q.id));
-    setSelectedAnswers((prev) => {
-      const next = { ...prev };
-      for (const id of patternIds) delete next[id];
-      return next;
-    });
-    setQuestionSeeds((prev) => {
-      const next = { ...prev };
-      for (const id of patternIds) delete next[id];
-      return next;
-    });
-    setFlaggedQuestions((prev) => {
-      const next = { ...prev };
-      for (const id of patternIds) delete next[id];
-      return next;
-    });
+    const nextSelectedAnswers = { ...selectedAnswers };
+    for (const id of patternIds) delete nextSelectedAnswers[id];
+
+    const nextQuestionSeeds = { ...questionSeeds };
+    for (const id of patternIds) delete nextQuestionSeeds[id];
+
+    const nextFlaggedQuestions = { ...flaggedQuestions };
+    for (const id of patternIds) delete nextFlaggedQuestions[id];
+
+    const nextPatternSeeds = {
+      ...patternSeeds,
+      [activePattern]: createRandomSeed(),
+    };
+
+    setSelectedAnswers(nextSelectedAnswers);
+    setQuestionSeeds(nextQuestionSeeds);
+    setFlaggedQuestions(nextFlaggedQuestions);
     setRevealedHints((prev) => {
       const next = { ...prev };
       for (const id of patternIds) delete next[id];
       return next;
     });
-    setPatternSeeds((prev) => ({
-      ...prev,
-      [activePattern]: createRandomSeed(),
-    }));
-    setRetryQuestionIds(null);
+    setPatternSeeds(nextPatternSeeds);
+    setRetrySession(null);
     setStatusFilter("all");
     setCurrentPage(1);
     setActiveQuestionId(null);
-  }, [activePattern, rawPatternQuestions]);
+
+    if (cloudSyncedUserIdRef.current && !cloudSchemaMissingRef.current) {
+      const resetPayload = sanitizePracticeProgress({
+        selectedAnswers: nextSelectedAnswers,
+        flaggedQuestions: nextFlaggedQuestions,
+        viewMode,
+        lastPattern: lastTiuPattern,
+        patternSeeds: nextPatternSeeds,
+        questionSeeds: nextQuestionSeeds,
+      });
+      pendingCloudPayloadRef.current = null;
+      void saveCloudTiuProgress(resetPayload, { keepalive: true }).then(({ ok }) => {
+        setCloudSyncState(ok ? "synced" : "error");
+      });
+    }
+  }, [
+    activePattern,
+    flaggedQuestions,
+    lastTiuPattern,
+    patternSeeds,
+    questionSeeds,
+    rawPatternQuestions,
+    selectedAnswers,
+    viewMode,
+  ]);
 
   const toggleHint = useCallback((questionId: string) => {
     setActiveQuestionId(questionId);
@@ -716,7 +851,8 @@ export function StandardPatternPractice({
 
         const canAdvance =
           effectiveActiveQuestion !== null &&
-          (isReviewMode || selectedAnswers[effectiveActiveQuestion.id] !== undefined);
+          (isReviewMode ||
+            effectiveSelectedAnswers[effectiveActiveQuestion.id] !== undefined);
         if (canAdvance && effectiveActiveIndex < filteredQuestions.length - 1) {
           event.preventDefault();
           handleJumpToQuestion(effectiveActiveIndex + 1);
@@ -744,7 +880,10 @@ export function StandardPatternPractice({
 
       const upperKey = event.key.toUpperCase();
       if (isOptionKey(upperKey)) {
-        if (!isReviewMode && selectedAnswers[effectiveActiveQuestion.id] === undefined) {
+        if (
+          !isReviewMode &&
+          effectiveSelectedAnswers[effectiveActiveQuestion.id] === undefined
+        ) {
           event.preventDefault();
           handleSelectOption(effectiveActiveQuestion.id, upperKey);
         }
@@ -752,7 +891,8 @@ export function StandardPatternPractice({
       }
 
       if (upperKey === "H" && effectiveActiveQuestion.tip) {
-        const hasAnswered = selectedAnswers[effectiveActiveQuestion.id] !== undefined;
+        const hasAnswered =
+          effectiveSelectedAnswers[effectiveActiveQuestion.id] !== undefined;
         if (!isReviewMode && !hasAnswered) {
           event.preventDefault();
           toggleHint(effectiveActiveQuestion.id);
@@ -771,12 +911,12 @@ export function StandardPatternPractice({
   }, [
     effectiveActiveIndex,
     effectiveActiveQuestion,
+    effectiveSelectedAnswers,
     filteredQuestions.length,
     handleJumpToQuestion,
     handleSelectOption,
     isFocusNavOpen,
     isReviewMode,
-    selectedAnswers,
     toggleFlag,
     toggleHint,
     viewMode,
@@ -935,43 +1075,43 @@ export function StandardPatternPractice({
             </div>
           )}
 
-          {(hasPatternProgress || retryQuestionIds !== null) && (
+          {(hasPatternProgress || retrySession !== null) && (
             <div className="border-t border-slate-100 bg-slate-50/70 px-4 py-2 sm:px-6">
               <div className="mx-auto flex max-w-[1160px] flex-wrap items-center justify-between gap-2">
                 <div className="flex flex-wrap items-center gap-1.5">
                   <PracticeStatusChip
-                    active={retryQuestionIds === null && statusFilter === "all"}
+                    active={retrySession === null && statusFilter === "all"}
                     label={`Semua (${statusCounts.all})`}
                     onClick={() => handleStatusFilterChange("all")}
                   />
                   <PracticeStatusChip
-                    active={retryQuestionIds === null && statusFilter === "unanswered"}
+                    active={retrySession === null && statusFilter === "unanswered"}
                     label={`Belum Diisi (${statusCounts.unanswered})`}
                     onClick={() => handleStatusFilterChange("unanswered")}
                   />
                   {statusCounts.wrong > 0 && (
                     <PracticeStatusChip
-                      active={retryQuestionIds === null && statusFilter === "wrong"}
+                      active={retrySession === null && statusFilter === "wrong"}
                       label={`${ui.wrongChipLabel} (${statusCounts.wrong})`}
                       onClick={() => handleStatusFilterChange("wrong")}
                     />
                   )}
                   {statusCounts.flagged > 0 && (
                     <PracticeStatusChip
-                      active={retryQuestionIds === null && statusFilter === "flagged"}
+                      active={retrySession === null && statusFilter === "flagged"}
                       label={`Ragu (${statusCounts.flagged})`}
                       onClick={() => handleStatusFilterChange("flagged")}
                     />
                   )}
-                  {retryQuestionIds !== null && (
+                  {retrySession !== null && (
                     <span className="rounded-md bg-rose-700 px-2.5 py-1 text-xs font-semibold text-white">
-                      Ulang ({filteredQuestions.length})
+                      Ulang ({retrySummary?.completedCount ?? 0}/{filteredQuestions.length})
                     </span>
                   )}
                 </div>
 
                 <div className="flex items-center gap-3">
-                  {retryQuestionIds !== null && (
+                  {retrySession !== null && (
                     <button
                       type="button"
                       onClick={() => handleStatusFilterChange("all")}
@@ -980,16 +1120,17 @@ export function StandardPatternPractice({
                       Semua soal
                     </button>
                   )}
-                  {statusCounts.wrong > 0 && !isReviewMode && (
-                    <button
-                      type="button"
-                      onClick={handleRetryWrongInScope}
-                      className="inline-flex items-center gap-1 text-xs font-semibold text-rose-700 hover:underline"
-                    >
-                      <RotateCcw className="size-3" aria-hidden />
-                      Ulangi {statusCounts.wrong} {ui.retryShortLabel}
-                    </button>
-                  )}
+                  {statusCounts.wrong > 0 &&
+                    !(retrySession && retrySession.pendingIds.length > 0) && (
+                      <button
+                        type="button"
+                        onClick={handleRetryWrongInScope}
+                        className="inline-flex items-center gap-1 text-xs font-semibold text-rose-700 hover:underline"
+                      >
+                        <RotateCcw className="size-3" aria-hidden />
+                        Ulangi {statusCounts.wrong} {ui.retryShortLabel}
+                      </button>
+                    )}
                   <button
                     type="button"
                     onClick={handleReset}
@@ -1004,7 +1145,32 @@ export function StandardPatternPractice({
           )}
         </header>
 
-        <main className="mx-auto max-w-[1160px] px-4 py-6 sm:px-6 sm:py-8">
+        <main className="mx-auto max-w-[1160px] space-y-4 px-4 py-6 sm:px-6 sm:py-8">
+          {(retrySummary || (retrySession === null && statusFilter === "wrong")) && (
+            <div
+              className={cn(
+                "mx-auto",
+                isFocusNavOpen ? "max-w-[1100px]" : "max-w-[820px]",
+              )}
+            >
+              {retrySummary ? (
+                <PracticeRetryBanner
+                  summary={retrySummary}
+                  wrongUnitLabel={ui.retryFullLabel}
+                  perfectLabel={ui.isTkpScoring ? "mendapat skor 5" : "terjawab benar"}
+                  onRetryRemaining={startRetryForIds}
+                  onExitRetry={() => handleStatusFilterChange("all")}
+                />
+              ) : (
+                <PracticeWrongFilterBanner
+                  wrongCount={statusCounts.wrong}
+                  wrongUnitLabel={ui.retryFullLabel}
+                  onStartRetryAll={handleRetryWrongInScope}
+                />
+              )}
+            </div>
+          )}
+
           {filteredQuestions.length === 0 || !effectiveActiveQuestion ? (
             <section className="mx-auto max-w-2xl rounded-2xl border border-dashed border-slate-200 bg-white px-6 py-12 text-center">
               <p className="text-base font-semibold text-slate-800">
@@ -1014,7 +1180,7 @@ export function StandardPatternPractice({
                 type="button"
                 variant="outline"
                 onClick={() => {
-                  setRetryQuestionIds(null);
+                  setRetrySession(null);
                   setStatusFilter("all");
                   setSelectedSubPattern("all");
                 }}
@@ -1033,18 +1199,31 @@ export function StandardPatternPractice({
               )}
             >
               <div className="min-w-0">
-                <StandardQuestionCard
-                  index={effectiveActiveIndex + 1}
-                  question={effectiveActiveQuestion}
-                  selectedOption={selectedAnswers[effectiveActiveQuestion.id]}
-                  isReviewMode={isReviewMode}
-                  isActive
-                  isFlagged={Boolean(flaggedQuestions[effectiveActiveQuestion.id])}
-                  isHintOpen={Boolean(revealedHints[effectiveActiveQuestion.id])}
-                  onToggleFlag={() => toggleFlag(effectiveActiveQuestion.id)}
-                  onToggleHint={() => toggleHint(effectiveActiveQuestion.id)}
-                  onSelectOption={(key) => handleSelectOption(effectiveActiveQuestion.id, key)}
-                />
+                {(() => {
+                  const activeAns = effectiveSelectedAnswers[effectiveActiveQuestion.id];
+                  const canRetryActive =
+                    !isReviewMode && isNeedsImprovement(effectiveActiveQuestion, activeAns);
+                  return (
+                    <StandardQuestionCard
+                      key={effectiveActiveQuestion.id}
+                      index={effectiveActiveIndex + 1}
+                      question={effectiveActiveQuestion}
+                      selectedOption={activeAns}
+                      isReviewMode={isReviewMode}
+                      isActive
+                      isFlagged={Boolean(flaggedQuestions[effectiveActiveQuestion.id])}
+                      isHintOpen={Boolean(revealedHints[effectiveActiveQuestion.id])}
+                      onToggleFlag={() => toggleFlag(effectiveActiveQuestion.id)}
+                      onToggleHint={() => toggleHint(effectiveActiveQuestion.id)}
+                      onSelectOption={(key) => handleSelectOption(effectiveActiveQuestion.id, key)}
+                      onRetryQuestion={
+                        canRetryActive
+                          ? () => handleRetrySingleQuestion(effectiveActiveQuestion.id)
+                          : undefined
+                      }
+                    />
+                  );
+                })()}
 
                 {/* Navigasi Bawah Khusus Mode 1 Soal */}
                 <div className="mt-4 flex items-center justify-between gap-3 rounded-2xl border border-blue-100 bg-white px-4 py-3.5 shadow-sm shadow-blue-100/50 sm:px-5">
@@ -1052,7 +1231,10 @@ export function StandardPatternPractice({
                     type="button"
                     variant="outline"
                     disabled={effectiveActiveIndex <= 0}
-                    onClick={() => handleJumpToQuestion(effectiveActiveIndex - 1)}
+                    onClick={(event) => {
+                      if (event.detail > 0) event.currentTarget.blur();
+                      handleJumpToQuestion(effectiveActiveIndex - 1);
+                    }}
                     className="h-10 border-slate-200 px-4 text-xs font-semibold text-slate-700 sm:text-sm"
                   >
                     <ChevronLeft className="size-4" aria-hidden />
@@ -1062,7 +1244,10 @@ export function StandardPatternPractice({
                   <div className="flex items-center gap-2">
                     <button
                       type="button"
-                      onClick={() => toggleFlag(effectiveActiveQuestion.id)}
+                      onClick={(event) => {
+                        if (event.detail > 0) event.currentTarget.blur();
+                        toggleFlag(effectiveActiveQuestion.id);
+                      }}
                       className={cn(
                         "inline-flex h-10 items-center gap-1.5 rounded-lg border px-3 text-xs font-semibold transition-colors sm:text-sm",
                         flaggedQuestions[effectiveActiveQuestion.id]
@@ -1091,7 +1276,10 @@ export function StandardPatternPractice({
                   <Button
                     type="button"
                     disabled={effectiveActiveIndex >= filteredQuestions.length - 1}
-                    onClick={() => handleJumpToQuestion(effectiveActiveIndex + 1)}
+                    onClick={(event) => {
+                      if (event.detail > 0) event.currentTarget.blur();
+                      handleJumpToQuestion(effectiveActiveIndex + 1);
+                    }}
                     className="h-10 bg-blue-600 px-4 text-xs font-semibold text-white hover:bg-blue-700 sm:text-sm"
                   >
                     Selanjutnya
@@ -1116,7 +1304,7 @@ export function StandardPatternPractice({
                     isTkpScoring={ui.isTkpScoring}
                     ariaLabel={ui.navigatorAriaLabel}
                     questions={filteredQuestions}
-                    selectedAnswers={selectedAnswers}
+                    selectedAnswers={effectiveSelectedAnswers}
                     flaggedQuestions={flaggedQuestions}
                     activeQuestionId={effectiveActiveQuestionId}
                     activeQuestionIndex={effectiveActiveIndex}
@@ -1161,7 +1349,7 @@ export function StandardPatternPractice({
                 ariaLabel={ui.navigatorAriaLabel}
                 inDrawer
                 questions={filteredQuestions}
-                selectedAnswers={selectedAnswers}
+                selectedAnswers={effectiveSelectedAnswers}
                 flaggedQuestions={flaggedQuestions}
                 activeQuestionId={effectiveActiveQuestionId}
                 activeQuestionIndex={effectiveActiveIndex}
@@ -1394,45 +1582,45 @@ export function StandardPatternPractice({
 
               {/* Filter Status */}
               {allPatternQuestions.length > 0 &&
-                (hasPatternProgress || retryQuestionIds !== null) && (
+                (hasPatternProgress || retrySession !== null) && (
                   <div className="mt-3 flex flex-wrap items-center justify-between gap-2 rounded-xl bg-slate-50/90 px-3.5 py-2.5">
                     <div className="flex flex-wrap items-center gap-1.5">
                       <span className="mr-1 text-xs font-medium text-slate-500">
                         Tampilkan:
                       </span>
                       <PracticeStatusChip
-                        active={retryQuestionIds === null && statusFilter === "all"}
+                        active={retrySession === null && statusFilter === "all"}
                         label={`Semua (${statusCounts.all})`}
                         onClick={() => handleStatusFilterChange("all")}
                       />
                       <PracticeStatusChip
-                        active={retryQuestionIds === null && statusFilter === "unanswered"}
+                        active={retrySession === null && statusFilter === "unanswered"}
                         label={`Belum Diisi (${statusCounts.unanswered})`}
                         onClick={() => handleStatusFilterChange("unanswered")}
                       />
                       {statusCounts.wrong > 0 && (
                         <PracticeStatusChip
-                          active={retryQuestionIds === null && statusFilter === "wrong"}
+                          active={retrySession === null && statusFilter === "wrong"}
                           label={`${ui.wrongChipLabel} (${statusCounts.wrong})`}
                           onClick={() => handleStatusFilterChange("wrong")}
                         />
                       )}
                       {statusCounts.flagged > 0 && (
                         <PracticeStatusChip
-                          active={retryQuestionIds === null && statusFilter === "flagged"}
+                          active={retrySession === null && statusFilter === "flagged"}
                           label={`Ragu-ragu (${statusCounts.flagged})`}
                           onClick={() => handleStatusFilterChange("flagged")}
                         />
                       )}
-                      {retryQuestionIds !== null && (
+                      {retrySession !== null && (
                         <span className="rounded-md bg-rose-700 px-2.5 py-1 text-xs font-semibold text-white">
-                          Ulang ({filteredQuestions.length})
+                          Ulang ({retrySummary?.completedCount ?? 0}/{filteredQuestions.length})
                         </span>
                       )}
                     </div>
 
                     <div className="flex flex-wrap items-center gap-3">
-                      {retryQuestionIds !== null && (
+                      {retrySession !== null && (
                         <button
                           type="button"
                           onClick={() => handleStatusFilterChange("all")}
@@ -1441,20 +1629,40 @@ export function StandardPatternPractice({
                           Kembali ke semua soal
                         </button>
                       )}
-                      {statusCounts.wrong > 0 && !isReviewMode && (
-                        <button
-                          type="button"
-                          onClick={handleRetryWrongInScope}
-                          className="inline-flex items-center gap-1.5 text-xs font-semibold text-rose-700 hover:text-rose-800 hover:underline"
-                        >
-                          <RotateCcw className="size-3" aria-hidden />
-                          Ulangi {statusCounts.wrong} {ui.retryFullLabel}
-                        </button>
-                      )}
+                      {statusCounts.wrong > 0 &&
+                        !(retrySession && retrySession.pendingIds.length > 0) && (
+                          <button
+                            type="button"
+                            onClick={handleRetryWrongInScope}
+                            className="inline-flex items-center gap-1.5 text-xs font-semibold text-rose-700 hover:text-rose-800 hover:underline"
+                          >
+                            <RotateCcw className="size-3" aria-hidden />
+                            Ulangi {statusCounts.wrong} {ui.retryFullLabel}
+                          </button>
+                        )}
                     </div>
                   </div>
                 )}
             </section>
+
+            {retrySummary ? (
+              <PracticeRetryBanner
+                summary={retrySummary}
+                wrongUnitLabel={ui.retryFullLabel}
+                perfectLabel={ui.isTkpScoring ? "mendapat skor 5" : "terjawab benar"}
+                onRetryRemaining={startRetryForIds}
+                onExitRetry={() => handleStatusFilterChange("all")}
+              />
+            ) : (
+              retrySession === null &&
+              statusFilter === "wrong" && (
+                <PracticeWrongFilterBanner
+                  wrongCount={statusCounts.wrong}
+                  wrongUnitLabel={ui.retryFullLabel}
+                  onStartRetryAll={handleRetryWrongInScope}
+                />
+              )
+            )}
 
             {/* Daftar Kartu Soal */}
             {filteredQuestions.length === 0 ? (
@@ -1470,7 +1678,7 @@ export function StandardPatternPractice({
                     type="button"
                     variant="outline"
                     onClick={() => {
-                      setRetryQuestionIds(null);
+                      setRetrySession(null);
                       setStatusFilter("all");
                       setSelectedSubPattern("all");
                     }}
@@ -1483,22 +1691,42 @@ export function StandardPatternPractice({
             ) : (
               <>
                 <div className="space-y-5">
-                  {paginatedQuestions.map((question, index) => (
-                    <StandardQuestionCard
-                      key={question.id}
-                      index={pageStartIndex + index + 1}
-                      question={question}
-                      selectedOption={selectedAnswers[question.id]}
-                      isReviewMode={isReviewMode}
-                      isActive={effectiveActiveQuestionId === question.id}
-                      isFlagged={Boolean(flaggedQuestions[question.id])}
-                      isHintOpen={Boolean(revealedHints[question.id])}
-                      onToggleFlag={() => toggleFlag(question.id)}
-                      onToggleHint={() => toggleHint(question.id)}
-                      onSelectOption={(key) => handleSelectOption(question.id, key)}
-                    />
-                  ))}
+                  {paginatedQuestions.map((question, index) => {
+                    const questionAns = effectiveSelectedAnswers[question.id];
+                    const canRetryQuestion =
+                      !isReviewMode && isNeedsImprovement(question, questionAns);
+                    return (
+                      <StandardQuestionCard
+                        key={question.id}
+                        index={pageStartIndex + index + 1}
+                        question={question}
+                        selectedOption={questionAns}
+                        isReviewMode={isReviewMode}
+                        isActive={effectiveActiveQuestionId === question.id}
+                        isFlagged={Boolean(flaggedQuestions[question.id])}
+                        isHintOpen={Boolean(revealedHints[question.id])}
+                        onToggleFlag={() => toggleFlag(question.id)}
+                        onToggleHint={() => toggleHint(question.id)}
+                        onSelectOption={(key) => handleSelectOption(question.id, key)}
+                        onRetryQuestion={
+                          canRetryQuestion
+                            ? () => handleRetrySingleQuestion(question.id)
+                            : undefined
+                        }
+                      />
+                    );
+                  })}
                 </div>
+
+                {retrySummary?.isComplete && (
+                  <PracticeRetryBanner
+                    summary={retrySummary}
+                    wrongUnitLabel={ui.retryFullLabel}
+                    perfectLabel={ui.isTkpScoring ? "mendapat skor 5" : "terjawab benar"}
+                    onRetryRemaining={startRetryForIds}
+                    onExitRetry={() => handleStatusFilterChange("all")}
+                  />
+                )}
 
                 {totalPages > 1 && (
                   <PracticePaginationBar
@@ -1516,7 +1744,7 @@ export function StandardPatternPractice({
             isTkpScoring={ui.isTkpScoring}
             ariaLabel={ui.navigatorAriaLabel}
             questions={filteredQuestions}
-            selectedAnswers={selectedAnswers}
+            selectedAnswers={effectiveSelectedAnswers}
             flaggedQuestions={flaggedQuestions}
             activeQuestionId={effectiveActiveQuestionId}
             activeQuestionIndex={effectiveActiveIndex}
@@ -1543,6 +1771,7 @@ function StandardQuestionCard({
   onToggleFlag,
   onToggleHint,
   onSelectOption,
+  onRetryQuestion,
 }: {
   index: number;
   question: Question;
@@ -1554,6 +1783,7 @@ function StandardQuestionCard({
   onToggleFlag: () => void;
   onToggleHint: () => void;
   onSelectOption: (key: OptionKey) => void;
+  onRetryQuestion?: () => void;
 }) {
   const difficulty = DIFFICULTY_META[question.difficulty];
   const hasAnswered = selectedOption !== undefined;
@@ -1595,7 +1825,10 @@ function StandardQuestionCard({
             <button
               type="button"
               aria-pressed={isHintOpen}
-              onClick={onToggleHint}
+              onClick={(event) => {
+                if (event.detail > 0) event.currentTarget.blur();
+                onToggleHint();
+              }}
               className={cn(
                 "inline-flex items-center gap-1 rounded-md border px-2.5 py-1 text-xs font-semibold transition-colors",
                 isHintOpen
@@ -1610,7 +1843,10 @@ function StandardQuestionCard({
           <button
             type="button"
             aria-pressed={isFlagged}
-            onClick={onToggleFlag}
+            onClick={(event) => {
+              if (event.detail > 0) event.currentTarget.blur();
+              onToggleFlag();
+            }}
             className={cn(
               "inline-flex items-center gap-1 rounded-md border px-2.5 py-1 text-xs font-semibold transition-colors",
               isFlagged
@@ -1656,7 +1892,10 @@ function StandardQuestionCard({
               key={option.key}
               type="button"
               disabled={isReviewMode || hasAnswered}
-              onClick={() => onSelectOption(option.key)}
+              onClick={(event) => {
+                if (event.detail > 0) event.currentTarget.blur();
+                onSelectOption(option.key);
+              }}
               className={cn(
                 "flex w-full items-start gap-3 rounded-xl border px-3.5 py-3 text-left text-sm transition-all sm:px-4 sm:text-[15px]",
                 showOptimal
@@ -1712,13 +1951,28 @@ function StandardQuestionCard({
 
       {shouldShowExplanation && (
         <div className="mt-5 rounded-xl border border-blue-100 bg-blue-50/60 p-4 text-sm leading-6 text-slate-800">
-          <p className="font-semibold text-blue-950">
-            {isTkp
-              ? selectedTkpScore !== null
-                ? `Pilihan Anda: ${selectedOption} (${selectedTkpScore} Poin) • Skor Tertinggi (5 Poin): ${question.answer}`
-                : `Skor Tertinggi (5 Poin): Opsi ${question.answer}`
-              : `Kunci Jawaban: ${question.answer}`}
-          </p>
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <p className="font-semibold text-blue-950">
+              {isTkp
+                ? selectedTkpScore !== null
+                  ? `Pilihan Anda: ${selectedOption} (${selectedTkpScore} Poin) • Skor Tertinggi (5 Poin): ${question.answer}`
+                  : `Skor Tertinggi (5 Poin): Opsi ${question.answer}`
+                : `Kunci Jawaban: ${question.answer}`}
+            </p>
+            {onRetryQuestion && (
+              <button
+                type="button"
+                onClick={(event) => {
+                  if (event.detail > 0) event.currentTarget.blur();
+                  onRetryQuestion();
+                }}
+                className="inline-flex items-center gap-1.5 rounded-md border border-rose-200 bg-white px-2.5 py-1 text-xs font-semibold text-rose-700 transition hover:bg-rose-50"
+              >
+                <RotateCcw className="size-3" aria-hidden />
+                Ulangi soal ini
+              </button>
+            )}
+          </div>
           <p className="mt-1 leading-6 text-slate-700">{question.explanation}</p>
         </div>
       )}

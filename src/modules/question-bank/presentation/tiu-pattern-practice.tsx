@@ -50,6 +50,15 @@ import {
   shuffleQuestionOptions,
 } from "@/modules/question-bank/domain/question-shuffle";
 import {
+  commitRetryAnswer,
+  getRetryEffectiveAnswers,
+  getRetryEffectiveSeed,
+  startRetrySession,
+  startSingleQuestionRetry,
+  summarizeRetrySession,
+  type RetrySession,
+} from "@/modules/question-bank/domain/retry-session";
+import {
   fetchCloudTiuProgress,
   isOptionKey,
   isTiuPatternId,
@@ -61,6 +70,10 @@ import {
   type ViewMode,
 } from "@/modules/question-bank/infrastructure/tiu-progress-sync";
 import { APP_ROUTES } from "@/shared/constants/app";
+import {
+  PracticeRetryBanner,
+  PracticeWrongFilterBanner,
+} from "./practice-ui-primitives";
 
 type TiuPatternPracticeProps = {
   initialPattern?: TiuPatternId;
@@ -106,7 +119,7 @@ export function TiuPatternPractice({
     Partial<Record<TiuPatternId, number>>
   >({});
   const [questionSeeds, setQuestionSeeds] = useState<Record<string, number>>({});
-  const [retryQuestionIds, setRetryQuestionIds] = useState<string[] | null>(null);
+  const [retrySession, setRetrySession] = useState<RetrySession | null>(null);
   const [activeQuestionId, setActiveQuestionId] = useState<string | null>(null);
   const [isLocalHydrated, setIsLocalHydrated] = useState<boolean>(false);
   const [cloudSyncState, setCloudSyncState] = useState<CloudSyncState>("idle");
@@ -118,6 +131,9 @@ export function TiuPatternPractice({
   const hasHydratedRef = useRef<boolean>(false);
   const cloudSyncedUserIdRef = useRef<string | null>(null);
   const cloudSchemaMissingRef = useRef<boolean>(false);
+  const pendingCloudPayloadRef = useRef<ReturnType<typeof sanitizePracticeProgress> | null>(
+    null,
+  );
 
   // Hydrate progress, random seeds, & pattern deep-link on client mount
   useEffect(() => {
@@ -160,7 +176,7 @@ export function TiuPatternPractice({
         setActivePattern(nextPattern);
         setSelectedSubPattern("all");
         setStatusFilter("all");
-        setRetryQuestionIds(null);
+        setRetrySession(null);
         setCurrentPage(1);
         setActiveQuestionId(null);
       }
@@ -284,7 +300,9 @@ export function TiuPatternPractice({
       return;
     }
 
+    pendingCloudPayloadRef.current = payload;
     const timer = window.setTimeout(() => {
+      pendingCloudPayloadRef.current = null;
       setCloudSyncState("syncing");
       saveCloudTiuProgress(payload)
         .then((res) => {
@@ -311,11 +329,30 @@ export function TiuPatternPractice({
     user?.id,
   ]);
 
+  // Pastikan perubahan yang tertunda tetap tersimpan ke server saat berpindah halaman
+  useEffect(() => {
+    return () => {
+      const pendingPayload = pendingCloudPayloadRef.current;
+      if (
+        pendingPayload &&
+        cloudSyncedUserIdRef.current &&
+        !cloudSchemaMissingRef.current
+      ) {
+        pendingCloudPayloadRef.current = null;
+        void saveCloudTiuProgress(pendingPayload, { keepalive: true });
+      }
+    };
+  }, []);
+
   const patternStats = useMemo(() => getPatternStats(), []);
   const activeMeta = TIU_PATTERNS[activePattern];
   const rawPatternQuestions = useMemo(
     () => getQuestionsByPattern(activePattern),
     [activePattern],
+  );
+  const rawQuestionById = useMemo(
+    () => new Map(rawPatternQuestions.map((question) => [question.id, question])),
+    [rawPatternQuestions],
   );
 
   const activePatternSeed = patternSeeds[activePattern] ?? 0;
@@ -344,11 +381,29 @@ export function TiuPatternPractice({
     [allPatternQuestions, selectedSubPattern],
   );
 
+  const effectiveSelectedAnswers = useMemo(
+    () => getRetryEffectiveAnswers(retrySession, selectedAnswers),
+    [retrySession, selectedAnswers],
+  );
+
   // Final filtered questions including retry queue or status filter (all / unanswered / wrong / flagged)
   const filteredQuestions = useMemo(() => {
-    if (retryQuestionIds !== null) {
-      const retrySet = new Set(retryQuestionIds);
-      return subPatternScopedQuestions.filter((q) => retrySet.has(q.id));
+    if (retrySession !== null) {
+      const retrySet = new Set(retrySession.questionIds);
+      const pendingSet = new Set(retrySession.pendingIds);
+      return subPatternScopedQuestions
+        .filter((q) => retrySet.has(q.id))
+        .map((q) => {
+          if (!pendingSet.has(q.id)) return q;
+          const rawQ = rawQuestionById.get(q.id) ?? q;
+          const tempSeed = getRetryEffectiveSeed(
+            retrySession,
+            q.id,
+            questionSeeds[q.id],
+            activePatternSeed,
+          );
+          return tempSeed ? shuffleQuestionOptions(rawQ, tempSeed) : rawQ;
+        });
     }
     if (statusFilter === "all") return subPatternScopedQuestions;
     return subPatternScopedQuestions.filter((q) => {
@@ -359,12 +414,26 @@ export function TiuPatternPractice({
       return true;
     });
   }, [
-    retryQuestionIds,
+    retrySession,
     subPatternScopedQuestions,
+    rawQuestionById,
+    questionSeeds,
+    activePatternSeed,
     statusFilter,
     selectedAnswers,
     flaggedQuestions,
   ]);
+
+  const retrySummary = useMemo(
+    () =>
+      summarizeRetrySession(
+        retrySession,
+        subPatternScopedQuestions,
+        selectedAnswers,
+        (q, ans) => ans !== undefined && ans !== q.answer,
+      ),
+    [retrySession, subPatternScopedQuestions, selectedAnswers],
+  );
 
   const statusCounts = useMemo(() => {
     let unanswered = 0;
@@ -425,8 +494,8 @@ export function TiuPatternPractice({
   const effectiveActiveQuestionId = effectiveActiveQuestion?.id ?? null;
 
   const firstUnansweredIndex = useMemo(
-    () => filteredQuestions.findIndex((q) => selectedAnswers[q.id] === undefined),
-    [filteredQuestions, selectedAnswers],
+    () => filteredQuestions.findIndex((q) => effectiveSelectedAnswers[q.id] === undefined),
+    [filteredQuestions, effectiveSelectedAnswers],
   );
 
   useEffect(() => {
@@ -450,7 +519,7 @@ export function TiuPatternPractice({
     setActivePattern(patternId);
     setSelectedSubPattern("all");
     setStatusFilter("all");
-    setRetryQuestionIds(null);
+    setRetrySession(null);
     setCurrentPage(1);
     setActiveQuestionId(null);
     setPatternSeeds((prev) =>
@@ -463,7 +532,7 @@ export function TiuPatternPractice({
   const handleSubPatternChange = useCallback((subPattern: string) => {
     setSelectedSubPattern(subPattern);
     setStatusFilter("all");
-    setRetryQuestionIds(null);
+    setRetrySession(null);
     setCurrentPage(1);
     setActiveQuestionId(null);
     pendingScrollIdRef.current = null;
@@ -471,7 +540,7 @@ export function TiuPatternPractice({
 
   const handleStatusFilterChange = useCallback((nextStatus: StatusFilter) => {
     setStatusFilter(nextStatus);
-    setRetryQuestionIds(null);
+    setRetrySession(null);
     setCurrentPage(1);
     setActiveQuestionId(null);
     pendingScrollIdRef.current = null;
@@ -531,18 +600,29 @@ export function TiuPatternPractice({
   const handleSelectOption = useCallback(
     (questionId: string, optionKey: OptionKey) => {
       if (isReviewMode) return;
+      const isPendingRetry = Boolean(retrySession?.pendingIds.includes(questionId));
+      const committedSeed = getRetryEffectiveSeed(
+        retrySession,
+        questionId,
+        questionSeeds[questionId],
+        activePatternSeed,
+      );
+
       setActiveQuestionId(questionId);
       setQuestionSeeds((prev) => {
-        if (prev[questionId] !== undefined || !activePatternSeed) {
+        if (!isPendingRetry && (prev[questionId] !== undefined || !activePatternSeed)) {
+          return prev;
+        }
+        if (!committedSeed) {
           return prev;
         }
         return {
           ...prev,
-          [questionId]: activePatternSeed,
+          [questionId]: committedSeed,
         };
       });
       setSelectedAnswers((prev) => {
-        if (prev[questionId] !== undefined) {
+        if (!isPendingRetry && prev[questionId] !== undefined) {
           return prev;
         }
         return {
@@ -550,11 +630,42 @@ export function TiuPatternPractice({
           [questionId]: optionKey,
         };
       });
+      if (isPendingRetry) {
+        setRetrySession((prev) => commitRetryAnswer(prev, questionId).nextSession);
+      }
     },
-    [activePatternSeed, isReviewMode],
+    [activePatternSeed, isReviewMode, questionSeeds, retrySession],
   );
 
-  // Retry wrong questions: clears wrong answers, re-shuffles ONLY those questions' options, and focuses view on them
+  const startRetryForIds = useCallback(
+    (targetIds: readonly string[]) => {
+      const nextSession = startRetrySession(
+        targetIds,
+        questionSeeds,
+        activePatternSeed,
+      );
+      if (!nextSession) return;
+
+      const targetSet = new Set(nextSession.questionIds);
+      setRevealedHints((prev) => {
+        const next = { ...prev };
+        for (const id of targetSet) {
+          delete next[id];
+        }
+        return next;
+      });
+      setIsReviewMode(false);
+      setRetrySession(nextSession);
+      setStatusFilter("all");
+      setCurrentPage(1);
+      setActiveQuestionId(nextSession.questionIds[0] ?? null);
+      pendingScrollIdRef.current = null;
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    },
+    [activePatternSeed, questionSeeds],
+  );
+
+  // Retry wrong questions: opens focused retry mode with freshly shuffled options while keeping old answers intact until re-answered
   const handleRetryWrongInScope = useCallback(() => {
     const wrongIds = subPatternScopedQuestions
       .filter((q) => {
@@ -563,69 +674,56 @@ export function TiuPatternPractice({
       })
       .map((q) => q.id);
 
-    if (wrongIds.length === 0) return;
+    startRetryForIds(wrongIds);
+  }, [subPatternScopedQuestions, selectedAnswers, startRetryForIds]);
 
-    const wrongSet = new Set(wrongIds);
-    const retryBatchSeed = createRandomSeed();
-
-    setSelectedAnswers((prev) => {
-      const next = { ...prev };
-      for (const id of wrongSet) {
-        delete next[id];
-      }
-      return next;
-    });
-    setQuestionSeeds((prev) => {
-      const next = { ...prev };
-      for (const id of wrongSet) {
-        const currentSeed = next[id] ?? activePatternSeed;
-        let nextSeed = hashStringWithSeed(`retry:${id}`, retryBatchSeed);
-        if (nextSeed === currentSeed) {
-          nextSeed = ((nextSeed + 1) >>> 0) || 1;
-        }
-        next[id] = nextSeed;
-      }
-      return next;
-    });
-    setRevealedHints((prev) => {
-      const next = { ...prev };
-      for (const id of wrongSet) {
-        delete next[id];
-      }
-      return next;
-    });
-    setRetryQuestionIds(wrongIds);
-    setStatusFilter("all");
-    setCurrentPage(1);
-    setActiveQuestionId(wrongIds[0] ?? null);
-    pendingScrollIdRef.current = null;
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  }, [activePatternSeed, subPatternScopedQuestions, selectedAnswers]);
+  const handleRetrySingleQuestion = useCallback(
+    (questionId: string) => {
+      setIsReviewMode(false);
+      setRevealedHints((prev) => {
+        if (!prev[questionId]) return prev;
+        const next = { ...prev };
+        delete next[questionId];
+        return next;
+      });
+      setRetrySession((prev) =>
+        startSingleQuestionRetry(
+          prev,
+          questionId,
+          questionSeeds[questionId] ?? activePatternSeed,
+        ),
+      );
+      setStatusFilter("all");
+      setCurrentPage(1);
+      setActiveQuestionId(questionId);
+      pendingScrollIdRef.current = null;
+    },
+    [activePatternSeed, questionSeeds],
+  );
 
   // Reset pattern: clears pattern progress and generates a new random seed to re-shuffle all questions & options
   const handleReset = useCallback(() => {
     const patternIds = new Set(rawPatternQuestions.map((q) => q.id));
-    setSelectedAnswers((prev) => {
-      const next = { ...prev };
-      for (const id of patternIds) {
-        delete next[id];
-      }
-      return next;
-    });
-    setQuestionSeeds((prev) => {
-      const next = { ...prev };
-      for (const id of patternIds) {
-        delete next[id];
-      }
-      return next;
-    });
-    setFlaggedQuestions((prev) => {
-      const next = { ...prev };
-      for (const id of patternIds) {
-        delete next[id];
-      }
-      return next;
-    });
+    const nextSelectedAnswers = { ...selectedAnswers };
+    for (const id of patternIds) {
+      delete nextSelectedAnswers[id];
+    }
+    const nextQuestionSeeds = { ...questionSeeds };
+    for (const id of patternIds) {
+      delete nextQuestionSeeds[id];
+    }
+    const nextFlaggedQuestions = { ...flaggedQuestions };
+    for (const id of patternIds) {
+      delete nextFlaggedQuestions[id];
+    }
+    const nextPatternSeeds = {
+      ...patternSeeds,
+      [activePattern]: createRandomSeed(),
+    };
+
+    setSelectedAnswers(nextSelectedAnswers);
+    setQuestionSeeds(nextQuestionSeeds);
+    setFlaggedQuestions(nextFlaggedQuestions);
     setRevealedHints((prev) => {
       const next = { ...prev };
       for (const id of patternIds) {
@@ -633,15 +731,35 @@ export function TiuPatternPractice({
       }
       return next;
     });
-    setPatternSeeds((prev) => ({
-      ...prev,
-      [activePattern]: createRandomSeed(),
-    }));
-    setRetryQuestionIds(null);
+    setPatternSeeds(nextPatternSeeds);
+    setRetrySession(null);
     setStatusFilter("all");
     setCurrentPage(1);
     setActiveQuestionId(null);
-  }, [activePattern, rawPatternQuestions]);
+
+    if (cloudSyncedUserIdRef.current && !cloudSchemaMissingRef.current) {
+      const resetPayload = sanitizePracticeProgress({
+        selectedAnswers: nextSelectedAnswers,
+        flaggedQuestions: nextFlaggedQuestions,
+        viewMode,
+        lastPattern: activePattern,
+        patternSeeds: nextPatternSeeds,
+        questionSeeds: nextQuestionSeeds,
+      });
+      pendingCloudPayloadRef.current = null;
+      void saveCloudTiuProgress(resetPayload, { keepalive: true }).then((res) => {
+        setCloudSyncState(res.ok ? "synced" : "error");
+      });
+    }
+  }, [
+    activePattern,
+    flaggedQuestions,
+    patternSeeds,
+    questionSeeds,
+    rawPatternQuestions,
+    selectedAnswers,
+    viewMode,
+  ]);
 
   const toggleHint = useCallback((questionId: string) => {
     setActiveQuestionId(questionId);
@@ -698,7 +816,8 @@ export function TiuPatternPractice({
 
         const canAdvance =
           effectiveActiveQuestion !== null &&
-          (isReviewMode || selectedAnswers[effectiveActiveQuestion.id] !== undefined);
+          (isReviewMode ||
+            effectiveSelectedAnswers[effectiveActiveQuestion.id] !== undefined);
 
         if (canAdvance && effectiveActiveIndex < filteredQuestions.length - 1) {
           event.preventDefault();
@@ -727,7 +846,10 @@ export function TiuPatternPractice({
 
       const upperKey = event.key.toUpperCase();
       if (isOptionKey(upperKey)) {
-        if (!isReviewMode && selectedAnswers[effectiveActiveQuestion.id] === undefined) {
+        if (
+          !isReviewMode &&
+          effectiveSelectedAnswers[effectiveActiveQuestion.id] === undefined
+        ) {
           event.preventDefault();
           handleSelectOption(effectiveActiveQuestion.id, upperKey);
         }
@@ -735,7 +857,8 @@ export function TiuPatternPractice({
       }
 
       if (upperKey === "H" && effectiveActiveQuestion.tip) {
-        const hasAnswered = selectedAnswers[effectiveActiveQuestion.id] !== undefined;
+        const hasAnswered =
+          effectiveSelectedAnswers[effectiveActiveQuestion.id] !== undefined;
         if (!isReviewMode && !hasAnswered) {
           event.preventDefault();
           toggleHint(effectiveActiveQuestion.id);
@@ -754,12 +877,12 @@ export function TiuPatternPractice({
   }, [
     effectiveActiveIndex,
     effectiveActiveQuestion,
+    effectiveSelectedAnswers,
     filteredQuestions.length,
     handleJumpToQuestion,
     handleSelectOption,
     isFocusNavOpen,
     isReviewMode,
-    selectedAnswers,
     toggleFlag,
     toggleHint,
     viewMode,
@@ -960,24 +1083,24 @@ export function TiuPatternPractice({
           >
             <div className="min-w-0 space-y-4">
               {allPatternQuestions.length > 0 &&
-                (hasPatternProgress || retryQuestionIds !== null) && (
+                (hasPatternProgress || retrySession !== null) && (
                   <div className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-blue-100 bg-white px-3.5 py-2 shadow-xs">
                     <div className="flex flex-wrap items-center gap-1.5">
                       <StatusChip
-                        active={retryQuestionIds === null && statusFilter === "all"}
+                        active={retrySession === null && statusFilter === "all"}
                         label={`Semua (${statusCounts.all})`}
                         onClick={() => handleStatusFilterChange("all")}
                       />
                       <StatusChip
                         active={
-                          retryQuestionIds === null && statusFilter === "unanswered"
+                          retrySession === null && statusFilter === "unanswered"
                         }
                         label={`Belum (${statusCounts.unanswered})`}
                         onClick={() => handleStatusFilterChange("unanswered")}
                       />
                       {statusCounts.wrong > 0 && (
                         <StatusChip
-                          active={retryQuestionIds === null && statusFilter === "wrong"}
+                          active={retrySession === null && statusFilter === "wrong"}
                           label={`Salah (${statusCounts.wrong})`}
                           onClick={() => handleStatusFilterChange("wrong")}
                         />
@@ -985,21 +1108,22 @@ export function TiuPatternPractice({
                       {statusCounts.flagged > 0 && (
                         <StatusChip
                           active={
-                            retryQuestionIds === null && statusFilter === "flagged"
+                            retrySession === null && statusFilter === "flagged"
                           }
                           label={`Ragu (${statusCounts.flagged})`}
                           onClick={() => handleStatusFilterChange("flagged")}
                         />
                       )}
-                      {retryQuestionIds !== null && (
+                      {retrySession !== null && (
                         <span className="rounded-md bg-rose-700 px-2.5 py-1 text-xs font-semibold text-white">
-                          Ulang Salah ({filteredQuestions.length})
+                          Ulang Salah ({retrySummary?.completedCount ?? 0}/
+                          {filteredQuestions.length})
                         </span>
                       )}
                     </div>
 
                     <div className="flex flex-wrap items-center gap-3">
-                      {retryQuestionIds !== null && (
+                      {retrySession !== null && (
                         <button
                           type="button"
                           onClick={() => handleStatusFilterChange("all")}
@@ -1008,19 +1132,39 @@ export function TiuPatternPractice({
                           Kembali ke semua
                         </button>
                       )}
-                      {statusCounts.wrong > 0 && !isReviewMode && (
-                        <button
-                          type="button"
-                          onClick={handleRetryWrongInScope}
-                          className="inline-flex items-center gap-1 text-xs font-semibold text-rose-700 hover:underline"
-                        >
-                          <RotateCcw className="size-3" aria-hidden />
-                          Ulangi {statusCounts.wrong} salah
-                        </button>
-                      )}
+                      {statusCounts.wrong > 0 &&
+                        !(retrySession && retrySession.pendingIds.length > 0) && (
+                          <button
+                            type="button"
+                            onClick={handleRetryWrongInScope}
+                            className="inline-flex items-center gap-1 text-xs font-semibold text-rose-700 hover:underline"
+                          >
+                            <RotateCcw className="size-3" aria-hidden />
+                            Ulangi {statusCounts.wrong} salah
+                          </button>
+                        )}
                     </div>
                   </div>
                 )}
+
+              {retrySummary ? (
+                <PracticeRetryBanner
+                  summary={retrySummary}
+                  wrongUnitLabel="soal salah"
+                  perfectLabel="terjawab benar"
+                  onRetryRemaining={startRetryForIds}
+                  onExitRetry={() => handleStatusFilterChange("all")}
+                />
+              ) : (
+                retrySession === null &&
+                statusFilter === "wrong" && (
+                  <PracticeWrongFilterBanner
+                    wrongCount={statusCounts.wrong}
+                    wrongUnitLabel="soal salah"
+                    onStartRetryAll={handleRetryWrongInScope}
+                  />
+                )
+              )}
 
               {allPatternQuestions.length === 0 ? (
                 <section className="rounded-2xl border border-dashed border-blue-200 bg-white px-6 py-16 text-center">
@@ -1043,7 +1187,7 @@ export function TiuPatternPractice({
                     type="button"
                     variant="outline"
                     onClick={() => {
-                      setRetryQuestionIds(null);
+                      setRetrySession(null);
                       setStatusFilter("all");
                       setSelectedSubPattern("all");
                     }}
@@ -1054,21 +1198,35 @@ export function TiuPatternPractice({
                 </section>
               ) : (
                 <>
-                  <QuestionCard
-                    key={effectiveActiveQuestion.id}
-                    index={effectiveActiveIndex + 1}
-                    question={effectiveActiveQuestion}
-                    selectedOption={selectedAnswers[effectiveActiveQuestion.id]}
-                    isReviewMode={isReviewMode}
-                    isActive={false}
-                    isFlagged={Boolean(flaggedQuestions[effectiveActiveQuestion.id])}
-                    isHintOpen={Boolean(revealedHints[effectiveActiveQuestion.id])}
-                    onToggleFlag={() => toggleFlag(effectiveActiveQuestion.id)}
-                    onToggleHint={() => toggleHint(effectiveActiveQuestion.id)}
-                    onSelectOption={(key) =>
-                      handleSelectOption(effectiveActiveQuestion.id, key)
-                    }
-                  />
+                  {(() => {
+                    const activeAns = effectiveSelectedAnswers[effectiveActiveQuestion.id];
+                    const canRetryActive =
+                      !isReviewMode &&
+                      activeAns !== undefined &&
+                      activeAns !== effectiveActiveQuestion.answer;
+                    return (
+                      <QuestionCard
+                        key={effectiveActiveQuestion.id}
+                        index={effectiveActiveIndex + 1}
+                        question={effectiveActiveQuestion}
+                        selectedOption={activeAns}
+                        isReviewMode={isReviewMode}
+                        isActive={false}
+                        isFlagged={Boolean(flaggedQuestions[effectiveActiveQuestion.id])}
+                        isHintOpen={Boolean(revealedHints[effectiveActiveQuestion.id])}
+                        onToggleFlag={() => toggleFlag(effectiveActiveQuestion.id)}
+                        onToggleHint={() => toggleHint(effectiveActiveQuestion.id)}
+                        onSelectOption={(key) =>
+                          handleSelectOption(effectiveActiveQuestion.id, key)
+                        }
+                        onRetryQuestion={
+                          canRetryActive
+                            ? () => handleRetrySingleQuestion(effectiveActiveQuestion.id)
+                            : undefined
+                        }
+                      />
+                    );
+                  })()}
 
                   <div className="flex flex-wrap items-center justify-between gap-2.5 rounded-2xl border border-blue-100 bg-white px-4 py-3.5 shadow-sm shadow-blue-100/50 sm:px-5">
                     <Button
@@ -1152,7 +1310,7 @@ export function TiuPatternPractice({
               <div className="hidden lg:block">
                 <QuestionNumberNavigator
                   questions={filteredQuestions}
-                  selectedAnswers={selectedAnswers}
+                  selectedAnswers={effectiveSelectedAnswers}
                   flaggedQuestions={flaggedQuestions}
                   activeQuestionId={effectiveActiveQuestionId}
                   activeQuestionIndex={effectiveActiveIndex}
@@ -1194,7 +1352,7 @@ export function TiuPatternPractice({
               <QuestionNumberNavigator
                 inDrawer
                 questions={filteredQuestions}
-                selectedAnswers={selectedAnswers}
+                selectedAnswers={effectiveSelectedAnswers}
                 flaggedQuestions={flaggedQuestions}
                 activeQuestionId={effectiveActiveQuestionId}
                 activeQuestionIndex={effectiveActiveIndex}
@@ -1426,45 +1584,46 @@ export function TiuPatternPractice({
 
           {/* Baris 3 (Hanya tampil jika sudah ada progres/flag atau sedang mengulang soal salah): Filter Status Jawaban */}
           {allPatternQuestions.length > 0 &&
-            (hasPatternProgress || retryQuestionIds !== null) && (
+            (hasPatternProgress || retrySession !== null) && (
               <div className="mt-3 flex flex-wrap items-center justify-between gap-2 rounded-xl bg-slate-50/90 px-3.5 py-2.5">
                 <div className="flex flex-wrap items-center gap-1.5">
                   <span className="mr-1 text-xs font-medium text-slate-500">
                     Tampilkan:
                   </span>
                   <StatusChip
-                    active={retryQuestionIds === null && statusFilter === "all"}
+                    active={retrySession === null && statusFilter === "all"}
                     label={`Semua (${statusCounts.all})`}
                     onClick={() => handleStatusFilterChange("all")}
                   />
                   <StatusChip
-                    active={retryQuestionIds === null && statusFilter === "unanswered"}
+                    active={retrySession === null && statusFilter === "unanswered"}
                     label={`Belum Diisi (${statusCounts.unanswered})`}
                     onClick={() => handleStatusFilterChange("unanswered")}
                   />
                   {statusCounts.wrong > 0 && (
                     <StatusChip
-                      active={retryQuestionIds === null && statusFilter === "wrong"}
+                      active={retrySession === null && statusFilter === "wrong"}
                       label={`Salah (${statusCounts.wrong})`}
                       onClick={() => handleStatusFilterChange("wrong")}
                     />
                   )}
                   {statusCounts.flagged > 0 && (
                     <StatusChip
-                      active={retryQuestionIds === null && statusFilter === "flagged"}
+                      active={retrySession === null && statusFilter === "flagged"}
                       label={`Ragu-ragu (${statusCounts.flagged})`}
                       onClick={() => handleStatusFilterChange("flagged")}
                     />
                   )}
-                  {retryQuestionIds !== null && (
+                  {retrySession !== null && (
                     <span className="rounded-md bg-rose-700 px-2.5 py-1 text-xs font-semibold text-white">
-                      Ulang Salah ({filteredQuestions.length})
+                      Ulang Salah ({retrySummary?.completedCount ?? 0}/
+                      {filteredQuestions.length})
                     </span>
                   )}
                 </div>
 
                 <div className="flex flex-wrap items-center gap-3">
-                  {retryQuestionIds !== null && (
+                  {retrySession !== null && (
                     <button
                       type="button"
                       onClick={() => handleStatusFilterChange("all")}
@@ -1473,20 +1632,40 @@ export function TiuPatternPractice({
                       Kembali ke semua soal
                     </button>
                   )}
-                  {statusCounts.wrong > 0 && !isReviewMode && (
-                    <button
-                      type="button"
-                      onClick={handleRetryWrongInScope}
-                      className="inline-flex items-center gap-1.5 text-xs font-semibold text-rose-700 hover:text-rose-800 hover:underline"
-                    >
-                      <RotateCcw className="size-3" aria-hidden />
-                      Ulangi {statusCounts.wrong} soal salah
-                    </button>
-                  )}
+                  {statusCounts.wrong > 0 &&
+                    !(retrySession && retrySession.pendingIds.length > 0) && (
+                      <button
+                        type="button"
+                        onClick={handleRetryWrongInScope}
+                        className="inline-flex items-center gap-1.5 text-xs font-semibold text-rose-700 hover:text-rose-800 hover:underline"
+                      >
+                        <RotateCcw className="size-3" aria-hidden />
+                        Ulangi {statusCounts.wrong} soal salah
+                      </button>
+                    )}
                 </div>
               </div>
             )}
         </section>
+
+        {retrySummary ? (
+          <PracticeRetryBanner
+            summary={retrySummary}
+            wrongUnitLabel="soal salah"
+            perfectLabel="terjawab benar"
+            onRetryRemaining={startRetryForIds}
+            onExitRetry={() => handleStatusFilterChange("all")}
+          />
+        ) : (
+          retrySession === null &&
+          statusFilter === "wrong" && (
+            <PracticeWrongFilterBanner
+              wrongCount={statusCounts.wrong}
+              wrongUnitLabel="soal salah"
+              onStartRetryAll={handleRetryWrongInScope}
+            />
+          )
+        )}
 
         {/* Empty state or question list */}
         {allPatternQuestions.length === 0 ? (
@@ -1520,7 +1699,7 @@ export function TiuPatternPractice({
                 type="button"
                 variant="outline"
                 onClick={() => {
-                  setRetryQuestionIds(null);
+                  setRetrySession(null);
                   setStatusFilter("all");
                   setSelectedSubPattern("all");
                 }}
@@ -1533,22 +1712,44 @@ export function TiuPatternPractice({
         ) : (
           <>
             <div className="space-y-5">
-              {paginatedQuestions.map((question, index) => (
-                <QuestionCard
-                  key={question.id}
-                  index={pageStartIndex + index + 1}
-                  question={question}
-                  selectedOption={selectedAnswers[question.id]}
-                  isReviewMode={isReviewMode}
-                  isActive={effectiveActiveQuestionId === question.id}
-                  isFlagged={Boolean(flaggedQuestions[question.id])}
-                  isHintOpen={Boolean(revealedHints[question.id])}
-                  onToggleFlag={() => toggleFlag(question.id)}
-                  onToggleHint={() => toggleHint(question.id)}
-                  onSelectOption={(key) => handleSelectOption(question.id, key)}
-                />
-              ))}
+              {paginatedQuestions.map((question, index) => {
+                const questionAns = effectiveSelectedAnswers[question.id];
+                const canRetryQuestion =
+                  !isReviewMode &&
+                  questionAns !== undefined &&
+                  questionAns !== question.answer;
+                return (
+                  <QuestionCard
+                    key={question.id}
+                    index={pageStartIndex + index + 1}
+                    question={question}
+                    selectedOption={questionAns}
+                    isReviewMode={isReviewMode}
+                    isActive={effectiveActiveQuestionId === question.id}
+                    isFlagged={Boolean(flaggedQuestions[question.id])}
+                    isHintOpen={Boolean(revealedHints[question.id])}
+                    onToggleFlag={() => toggleFlag(question.id)}
+                    onToggleHint={() => toggleHint(question.id)}
+                    onSelectOption={(key) => handleSelectOption(question.id, key)}
+                    onRetryQuestion={
+                      canRetryQuestion
+                        ? () => handleRetrySingleQuestion(question.id)
+                        : undefined
+                    }
+                  />
+                );
+              })}
             </div>
+
+            {retrySummary?.isComplete && (
+              <PracticeRetryBanner
+                summary={retrySummary}
+                wrongUnitLabel="soal salah"
+                perfectLabel="terjawab benar"
+                onRetryRemaining={startRetryForIds}
+                onExitRetry={() => handleStatusFilterChange("all")}
+              />
+            )}
 
             {totalPages > 1 && (
               <PaginationBar
@@ -1564,7 +1765,7 @@ export function TiuPatternPractice({
       {/* Sidebar Kanan: Navigasi Nomor Soal */}
       <QuestionNumberNavigator
         questions={filteredQuestions}
-        selectedAnswers={selectedAnswers}
+        selectedAnswers={effectiveSelectedAnswers}
         flaggedQuestions={flaggedQuestions}
         activeQuestionId={effectiveActiveQuestionId}
         activeQuestionIndex={effectiveActiveIndex}
@@ -1591,6 +1792,7 @@ function QuestionCard({
   onToggleFlag,
   onToggleHint,
   onSelectOption,
+  onRetryQuestion,
 }: {
   index: number;
   question: Question;
@@ -1602,6 +1804,7 @@ function QuestionCard({
   onToggleFlag: () => void;
   onToggleHint: () => void;
   onSelectOption: (key: OptionKey) => void;
+  onRetryQuestion?: () => void;
 }) {
   const hasAnswered = selectedOption !== undefined;
   const showSolution = isReviewMode || hasAnswered;
@@ -1748,19 +1951,36 @@ function QuestionCard({
 
       {showSolution && (
         <div className="mt-5 rounded-xl border border-blue-100 bg-[#f8fbff] p-4 text-sm">
-          <p className="font-semibold text-slate-950">
-            {isReviewMode ? (
-              <>Kunci Jawaban: {question.answer}</>
-            ) : selectedOption === question.answer ? (
-              <span className="text-emerald-700">
-                Benar! Jawaban tepat adalah {question.answer}.
-              </span>
-            ) : (
-              <span className="text-rose-700">
-                Kurang tepat — jawaban yang benar adalah {question.answer}.
-              </span>
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <p className="font-semibold text-slate-950">
+              {isReviewMode ? (
+                <>Kunci Jawaban: {question.answer}</>
+              ) : selectedOption === question.answer ? (
+                <span className="text-emerald-700">
+                  Benar! Jawaban tepat adalah {question.answer}.
+                </span>
+              ) : (
+                <span className="text-rose-700">
+                  Kurang tepat — jawaban yang benar adalah {question.answer}.
+                </span>
+              )}
+            </p>
+            {onRetryQuestion && (
+              <button
+                type="button"
+                onClick={(event) => {
+                  if (event.detail > 0) {
+                    event.currentTarget.blur();
+                  }
+                  onRetryQuestion();
+                }}
+                className="inline-flex items-center gap-1.5 rounded-md border border-rose-200 bg-white px-2.5 py-1 text-xs font-semibold text-rose-700 transition hover:bg-rose-50"
+              >
+                <RotateCcw className="size-3" aria-hidden />
+                Ulangi soal ini
+              </button>
             )}
-          </p>
+          </div>
           <p className="mt-1.5 leading-6 text-slate-700">{question.explanation}</p>
           {question.tip && (
             <p className="mt-2.5 flex items-start gap-2 rounded-lg bg-amber-50/90 px-3 py-2 text-xs font-medium text-amber-900">

@@ -1,9 +1,10 @@
 import Link from "next/link";
-import { ArrowLeft, ChevronLeft, ChevronRight } from "lucide-react";
+import { ArrowLeft, CheckCircle2, ChevronLeft, ChevronRight, RotateCcw } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import type { QuestionSubtest } from "@/modules/question-bank/domain/question";
+import type { RetrySessionSummary } from "@/modules/question-bank/domain/retry-session";
 import { APP_ROUTES } from "@/shared/constants/app";
 
 const UPPERCASE_TOKENS = new Set(["asn", "nkri", "uud", "tiu", "twk", "tkp", "svg", "tik", "sop", "ai"]);
@@ -223,3 +224,145 @@ export function PracticePaginationBar({
     </nav>
   );
 }
+
+/**
+ * Menampilkan ringkasan progres serta hasil akhir sesi ulang soal yang salah.
+ */
+export function PracticeRetryBanner({
+  summary,
+  wrongUnitLabel = "soal salah",
+  perfectLabel = "terjawab benar",
+  onRetryRemaining,
+  onExitRetry,
+}: {
+  summary: RetrySessionSummary;
+  wrongUnitLabel?: string;
+  perfectLabel?: string;
+  onRetryRemaining: (ids: readonly string[]) => void;
+  onExitRetry: () => void;
+}) {
+  const allSolved = summary.isComplete && summary.stillWrongIds.length === 0;
+  const hasRemainingWrong = summary.isComplete && summary.stillWrongIds.length > 0;
+
+  return (
+    <div
+      role="status"
+      className={cn(
+        "flex flex-wrap items-center justify-between gap-3 rounded-2xl border px-4 py-3.5 text-xs shadow-xs sm:px-5 sm:text-sm",
+        allSolved
+          ? "border-emerald-200 bg-emerald-50/90 text-emerald-950"
+          : hasRemainingWrong
+            ? "border-amber-200 bg-amber-50/90 text-amber-950"
+            : "border-rose-200 bg-rose-50/80 text-rose-950",
+      )}
+    >
+      <div className="flex min-w-0 items-start gap-2.5">
+        {allSolved ? (
+          <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-emerald-600" aria-hidden />
+        ) : (
+          <RotateCcw
+            className={cn(
+              "mt-0.5 size-4 shrink-0",
+              hasRemainingWrong ? "text-amber-700" : "text-rose-600",
+            )}
+            aria-hidden
+          />
+        )}
+        <div className="space-y-0.5">
+          {allSolved ? (
+            <>
+              <p className="font-semibold">
+                Selesai! Semua {summary.total} soal pada sesi ulang ini sudah {perfectLabel}.
+              </p>
+              <p className="text-xs text-emerald-800">
+                Jawaban baru dan pengacakan opsi telah tersimpan ke progres Anda.
+              </p>
+            </>
+          ) : summary.isComplete ? (
+            <>
+              <p className="font-semibold">
+                Sesi ulang selesai ({summary.total} soal): {summary.improvedCount} {perfectLabel},{" "}
+                {summary.stillWrongIds.length} masih perlu diulang.
+              </p>
+              <p className="text-xs text-amber-900">
+                Klik tombol ulang di samping untuk langsung melatih ulang{" "}
+                {summary.stillWrongIds.length} {wrongUnitLabel} yang tersisa.
+              </p>
+            </>
+          ) : (
+            <>
+              <p className="font-semibold">
+                Mode Ulang Soal ({summary.completedCount}/{summary.total} dikerjakan)
+              </p>
+              <p className="text-xs text-rose-800">
+                Urutan opsi A–E diacak ulang khusus sesi ini. Jawaban sebelumnya tetap aman sampai
+                Anda memilih jawaban baru.
+              </p>
+            </>
+          )}
+        </div>
+      </div>
+
+      <div className="flex flex-wrap items-center gap-2">
+        {hasRemainingWrong && (
+          <Button
+            type="button"
+            size="sm"
+            onClick={() => onRetryRemaining(summary.stillWrongIds)}
+            className="h-8 bg-rose-600 px-3 text-xs font-semibold text-white hover:bg-rose-700"
+          >
+            <RotateCcw className="size-3.5" aria-hidden />
+            Ulangi {summary.stillWrongIds.length} {wrongUnitLabel}
+          </Button>
+        )}
+        <Button
+          type="button"
+          size="sm"
+          variant={allSolved ? "default" : "outline"}
+          onClick={onExitRetry}
+          className={cn(
+            "h-8 px-3 text-xs font-semibold",
+            allSolved
+              ? "bg-emerald-600 text-white hover:bg-emerald-700"
+              : "border-slate-300 bg-white text-slate-700 hover:bg-slate-50",
+          )}
+        >
+          Kembali ke Semua Soal
+        </Button>
+      </div>
+    </div>
+  );
+}
+
+/**
+ * Ajakan cepat untuk memulai sesi ulang ketika pengguna sedang memfilter soal salah/belum optimal.
+ */
+export function PracticeWrongFilterBanner({
+  wrongCount,
+  wrongUnitLabel = "soal salah",
+  onStartRetryAll,
+}: {
+  wrongCount: number;
+  wrongUnitLabel?: string;
+  onStartRetryAll: () => void;
+}) {
+  if (wrongCount <= 0) return null;
+
+  return (
+    <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-rose-200 bg-rose-50/75 px-4 py-3 text-xs text-rose-950 sm:px-5 sm:text-sm">
+      <p className="font-medium">
+        Menampilkan <strong>{wrongCount}</strong> {wrongUnitLabel} beserta pembahasannya.
+      </p>
+      <Button
+        type="button"
+        size="sm"
+        onClick={onStartRetryAll}
+        className="h-8 bg-rose-600 px-3 text-xs font-semibold text-white hover:bg-rose-700"
+      >
+        <RotateCcw className="size-3.5" aria-hidden />
+        Ulangi {wrongCount} {wrongUnitLabel}
+      </Button>
+    </div>
+  );
+}
+
