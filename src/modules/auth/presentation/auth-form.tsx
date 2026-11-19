@@ -66,8 +66,11 @@ export function AuthForm({ mode, initialNext, initialError }: AuthFormProps) {
 
     setIsSubmittingGoogle(true);
     try {
+      // Simpan tujuan redirect di cookie agar redirectTo OAuth bersih tanpa query string
+      const secureFlag = window.location.protocol === "https:" ? "; Secure" : "";
+      document.cookie = `wa_auth_next=${encodeURIComponent(nextPath)}; Path=/; Max-Age=600; SameSite=Lax${secureFlag}`;
+
       const callbackUrl = new URL(APP_ROUTES.authCallback, window.location.origin);
-      callbackUrl.searchParams.set("next", nextPath);
 
       const { error } = await supabase.auth.signInWithOAuth({
         provider: "google",

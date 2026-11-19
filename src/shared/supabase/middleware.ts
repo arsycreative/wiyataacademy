@@ -62,6 +62,18 @@ export async function updateSupabaseSession(request: NextRequest) {
 
   const { pathname, search } = request.nextUrl;
 
+  // Jika Supabase OAuth mem-fallback redirect ke "/" membawa ?code= atau error OAuth,
+  // teruskan otomatis ke Route Handler /auth/callback agar token ditukar di server.
+  if (
+    pathname === "/" &&
+    (request.nextUrl.searchParams.has("code") ||
+      request.nextUrl.searchParams.has("error_description"))
+  ) {
+    const callbackUrl = request.nextUrl.clone();
+    callbackUrl.pathname = APP_ROUTES.authCallback;
+    return NextResponse.redirect(callbackUrl);
+  }
+
   if (!user && isPathMatch(pathname, PROTECTED_PATHS)) {
     const loginUrl = request.nextUrl.clone();
     loginUrl.pathname = APP_ROUTES.login;
