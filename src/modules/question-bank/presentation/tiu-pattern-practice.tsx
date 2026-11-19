@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
 import {
   BookOpen,
@@ -7,6 +8,7 @@ import {
   ChevronLeft,
   ChevronRight,
   ClipboardList,
+  Cloud,
   Compass,
   Eye,
   EyeOff,
@@ -18,130 +20,47 @@ import {
 
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { useSupabaseAuth } from "@/modules/auth/presentation/use-supabase-auth";
 import {
   getPatternStats,
   getQuestionsByPattern,
 } from "@/modules/question-bank/data/tiu";
 import {
-  OPTION_KEYS,
-  TIU_PATTERN_IDS,
   TIU_PATTERNS,
   type OptionKey,
   type Question,
   type TiuPatternId,
 } from "@/modules/question-bank/domain/question";
+import {
+  createInitialPatternSeeds,
+  createRandomSeed,
+  hashStringWithSeed,
+  seededShuffle,
+  shuffleQuestionOptions,
+} from "@/modules/question-bank/domain/question-shuffle";
+import {
+  fetchCloudTiuProgress,
+  isOptionKey,
+  isTiuPatternId,
+  mergePracticeProgress,
+  readLocalTiuProgress,
+  sanitizePracticeProgress,
+  saveCloudTiuProgress,
+  writeLocalTiuProgress,
+  type ViewMode,
+} from "@/modules/question-bank/infrastructure/tiu-progress-sync";
+import { APP_ROUTES } from "@/shared/constants/app";
 
 type TiuPatternPracticeProps = {
   initialPattern?: TiuPatternId;
 };
 
-type ViewMode = "list" | "single";
 type StatusFilter = "all" | "unanswered" | "wrong" | "flagged";
-
-type StoredPracticeProgress = {
-  selectedAnswers?: Record<string, OptionKey>;
-  flaggedQuestions?: Record<string, boolean>;
-  viewMode?: ViewMode;
-  lastPattern?: TiuPatternId;
-  patternSeeds?: Partial<Record<TiuPatternId, number>>;
-  questionSeeds?: Record<string, number>;
-};
+type CloudSyncState = "idle" | "syncing" | "synced" | "schema-missing" | "error";
 
 const PAGE_SIZE = 25;
 const NAV_CHUNK_SIZE = 50;
-const STORAGE_KEY = "wiyata-tiu-practice-progress-v1";
 const DEFAULT_PATTERN: TiuPatternId = "sinonim-antonim-akronim";
-
-function isTiuPatternId(value: unknown): value is TiuPatternId {
-  return (
-    typeof value === "string" &&
-    (TIU_PATTERN_IDS as readonly string[]).includes(value)
-  );
-}
-
-function isOptionKey(value: unknown): value is OptionKey {
-  return (
-    typeof value === "string" &&
-    (OPTION_KEYS as readonly string[]).includes(value)
-  );
-}
-
-function createRandomSeed(): number {
-  return ((Date.now() ^ Math.floor(Math.random() * 0x7fffffff)) >>> 0) || 1;
-}
-
-function createInitialPatternSeeds(
-  existing?: Partial<Record<TiuPatternId, number>>,
-): Record<TiuPatternId, number> {
-  const result = {} as Record<TiuPatternId, number>;
-  for (const id of TIU_PATTERN_IDS) {
-    const saved = existing?.[id];
-    result[id] =
-      typeof saved === "number" && Number.isFinite(saved) && saved > 0
-        ? saved >>> 0
-        : createRandomSeed();
-  }
-  return result;
-}
-
-function hashStringWithSeed(str: string, seed: number): number {
-  let h = (seed ^ 0x811c9dc5) >>> 0;
-  for (let i = 0; i < str.length; i += 1) {
-    h ^= str.charCodeAt(i);
-    h = Math.imul(h, 0x01000193) >>> 0;
-  }
-  return (h >>> 0) || 1;
-}
-
-function createSeededRng(seed: number): () => number {
-  let state = (seed >>> 0) || 1;
-  return () => {
-    state = (state + 0x6d2b79f5) >>> 0;
-    let t = Math.imul(state ^ (state >>> 15), 1 | state);
-    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
-    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-  };
-}
-
-function seededShuffle<T>(items: readonly T[], seed: number): T[] {
-  const copy = [...items];
-  const rng = createSeededRng(seed);
-  for (let i = copy.length - 1; i > 0; i -= 1) {
-    const j = Math.floor(rng() * (i + 1));
-    const temp = copy[i];
-    copy[i] = copy[j];
-    copy[j] = temp;
-  }
-  return copy;
-}
-
-/**
- * Mengacak urutan opsi jawaban A–E untuk satu soal berdasarkan seed,
- * sekaligus memperbarui kunci `answer` ke posisi huruf yang baru.
- */
-function shuffleQuestionOptions(question: Question, optionSeed: number): Question {
-  if (!optionSeed) return question;
-  const perQuestionSeed = hashStringWithSeed(`opt:${question.id}`, optionSeed);
-  const shuffledRawOptions = seededShuffle(question.options, perQuestionSeed);
-
-  let nextAnswer: OptionKey = question.answer;
-  const remappedOptions = shuffledRawOptions.map((opt, idx) => {
-    const newKey = OPTION_KEYS[idx];
-    if (opt.key === question.answer) {
-      nextAnswer = newKey;
-    }
-    return {
-      key: newKey,
-      text: opt.text,
-    };
-  });
-
-  return {
-    ...question,
-    options: remappedOptions,
-    answer: nextAnswer,
-  };
-}
 
 function syncPatternUrl(patternId: TiuPatternId) {
   if (typeof window === "undefined") return;
@@ -171,9 +90,16 @@ export function TiuPatternPractice({
   const [questionSeeds, setQuestionSeeds] = useState<Record<string, number>>({});
   const [retryQuestionIds, setRetryQuestionIds] = useState<string[] | null>(null);
   const [activeQuestionId, setActiveQuestionId] = useState<string | null>(null);
+  const [isLocalHydrated, setIsLocalHydrated] = useState<boolean>(false);
+  const [cloudSyncState, setCloudSyncState] = useState<CloudSyncState>("idle");
+
+  const { user, isLoading: isAuthLoading, isConfigured: isAuthConfigured } =
+    useSupabaseAuth();
 
   const pendingScrollIdRef = useRef<string | null>(null);
   const hasHydratedRef = useRef<boolean>(false);
+  const cloudSyncedUserIdRef = useRef<string | null>(null);
+  const cloudSchemaMissingRef = useRef<boolean>(false);
 
   // Hydrate progress, random seeds, & pattern deep-link on client mount
   useEffect(() => {
@@ -182,66 +108,31 @@ export function TiuPatternPractice({
       const urlPatternRaw = searchParams.get("pattern") ?? searchParams.get("pola");
       const urlPattern = isTiuPatternId(urlPatternRaw) ? urlPatternRaw : initialPattern;
 
-      try {
-        const raw = window.localStorage.getItem(STORAGE_KEY);
-        if (raw) {
-          const parsed = JSON.parse(raw) as StoredPracticeProgress;
+      const parsed = readLocalTiuProgress();
+      if (parsed) {
+        setSelectedAnswers(parsed.selectedAnswers);
+        setFlaggedQuestions(parsed.flaggedQuestions);
+        setViewMode(parsed.viewMode);
+        setPatternSeeds(createInitialPatternSeeds(parsed.patternSeeds));
+        setQuestionSeeds(parsed.questionSeeds);
 
-          if (parsed.selectedAnswers && typeof parsed.selectedAnswers === "object") {
-            const validAnswers: Record<string, OptionKey> = {};
-            for (const [qId, ans] of Object.entries(parsed.selectedAnswers)) {
-              if (isOptionKey(ans)) {
-                validAnswers[qId] = ans;
-              }
-            }
-            setSelectedAnswers(validAnswers);
-          }
-
-          if (parsed.flaggedQuestions && typeof parsed.flaggedQuestions === "object") {
-            const validFlags: Record<string, boolean> = {};
-            for (const [qId, flagged] of Object.entries(parsed.flaggedQuestions)) {
-              if (flagged === true) {
-                validFlags[qId] = true;
-              }
-            }
-            setFlaggedQuestions(validFlags);
-          }
-
-          if (parsed.viewMode === "list" || parsed.viewMode === "single") {
-            setViewMode(parsed.viewMode);
-          }
-
-          setPatternSeeds(createInitialPatternSeeds(parsed.patternSeeds));
-
-          if (parsed.questionSeeds && typeof parsed.questionSeeds === "object") {
-            const validQuestionSeeds: Record<string, number> = {};
-            for (const [qId, qSeed] of Object.entries(parsed.questionSeeds)) {
-              if (typeof qSeed === "number" && Number.isFinite(qSeed) && qSeed > 0) {
-                validQuestionSeeds[qId] = qSeed >>> 0;
-              }
-            }
-            setQuestionSeeds(validQuestionSeeds);
-          }
-
-          if (urlPattern) {
-            setActivePattern(urlPattern);
-            syncPatternUrl(urlPattern);
-          } else if (isTiuPatternId(parsed.lastPattern)) {
-            setActivePattern(parsed.lastPattern);
-            syncPatternUrl(parsed.lastPattern);
-          }
+        if (urlPattern) {
+          setActivePattern(urlPattern);
+          syncPatternUrl(urlPattern);
         } else {
-          setPatternSeeds(createInitialPatternSeeds());
-          if (urlPattern) {
-            setActivePattern(urlPattern);
-            syncPatternUrl(urlPattern);
-          }
+          setActivePattern(parsed.lastPattern);
+          syncPatternUrl(parsed.lastPattern);
         }
-      } catch {
+      } else {
         setPatternSeeds(createInitialPatternSeeds());
+        if (urlPattern) {
+          setActivePattern(urlPattern);
+          syncPatternUrl(urlPattern);
+        }
       }
 
       hasHydratedRef.current = true;
+      setIsLocalHydrated(true);
     });
 
     const handlePopState = () => {
@@ -264,22 +155,134 @@ export function TiuPatternPractice({
     };
   }, [initialPattern]);
 
-  // Auto-save progress & seeds to localStorage whenever state updates
+  // Sinkronisasi awal dengan backend API ketika user sudah login
+  useEffect(() => {
+    if (!isLocalHydrated || !user?.id) {
+      cloudSyncedUserIdRef.current = null;
+      cloudSchemaMissingRef.current = false;
+      return;
+    }
+
+    let isCancelled = false;
+    const userId = user.id;
+
+    fetchCloudTiuProgress()
+      .then((result) => {
+        if (isCancelled) return;
+        if (result.schemaMissing) {
+          cloudSyncedUserIdRef.current = userId;
+          cloudSchemaMissingRef.current = true;
+          setCloudSyncState("schema-missing");
+          return;
+        }
+        cloudSchemaMissingRef.current = false;
+        if (result.error) {
+          cloudSyncedUserIdRef.current = userId;
+          setCloudSyncState("error");
+          return;
+        }
+
+        const currentLocal =
+          readLocalTiuProgress() ?? sanitizePracticeProgress({});
+
+        const merged = mergePracticeProgress(currentLocal, result.data);
+        const resolvedPatternSeeds = createInitialPatternSeeds(merged.patternSeeds);
+        const mergedWithSeeds = {
+          ...merged,
+          patternSeeds: resolvedPatternSeeds,
+        };
+
+        setSelectedAnswers(mergedWithSeeds.selectedAnswers);
+        setFlaggedQuestions(mergedWithSeeds.flaggedQuestions);
+        setQuestionSeeds(mergedWithSeeds.questionSeeds);
+        setPatternSeeds(resolvedPatternSeeds);
+        setViewMode(mergedWithSeeds.viewMode);
+
+        const searchParams = new URLSearchParams(window.location.search);
+        const hasUrlPattern =
+          isTiuPatternId(searchParams.get("pattern") ?? searchParams.get("pola")) ||
+          Boolean(initialPattern);
+        if (!hasUrlPattern && result.data?.lastPattern) {
+          setActivePattern(result.data.lastPattern);
+          syncPatternUrl(result.data.lastPattern);
+        }
+
+        writeLocalTiuProgress(mergedWithSeeds);
+        cloudSyncedUserIdRef.current = userId;
+
+        const remoteEmpty = !result.data;
+        const localHasData =
+          Object.keys(currentLocal.selectedAnswers).length > 0 ||
+          Object.keys(currentLocal.flaggedQuestions).length > 0;
+
+        if (remoteEmpty || localHasData) {
+          saveCloudTiuProgress(mergedWithSeeds)
+            .then((saveRes) => {
+              if (isCancelled) return;
+              if (saveRes.schemaMissing) {
+                cloudSchemaMissingRef.current = true;
+                setCloudSyncState("schema-missing");
+                return;
+              }
+              setCloudSyncState(saveRes.ok ? "synced" : "error");
+            })
+            .catch(() => {
+              if (!isCancelled) setCloudSyncState("error");
+            });
+        } else {
+          setCloudSyncState("synced");
+        }
+      })
+      .catch(() => {
+        if (!isCancelled) {
+          cloudSyncedUserIdRef.current = userId;
+          setCloudSyncState("error");
+        }
+      });
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [isLocalHydrated, user?.id, initialPattern]);
+
+  // Auto-save progress & seeds ke localStorage + debounced save ke /api/tiu/progress saat login
   useEffect(() => {
     if (!hasHydratedRef.current) return;
-    try {
-      const payload: StoredPracticeProgress = {
-        selectedAnswers,
-        flaggedQuestions,
-        viewMode,
-        lastPattern: activePattern,
-        patternSeeds,
-        questionSeeds,
-      };
-      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
-    } catch {
-      // Ignore storage write quota/privacy errors
+    const payload = sanitizePracticeProgress({
+      selectedAnswers,
+      flaggedQuestions,
+      viewMode,
+      lastPattern: activePattern,
+      patternSeeds,
+      questionSeeds,
+    });
+    writeLocalTiuProgress(payload);
+
+    if (
+      !user?.id ||
+      cloudSyncedUserIdRef.current !== user.id ||
+      cloudSchemaMissingRef.current
+    ) {
+      return;
     }
+
+    const timer = window.setTimeout(() => {
+      setCloudSyncState("syncing");
+      saveCloudTiuProgress(payload)
+        .then((res) => {
+          if (res.schemaMissing) {
+            cloudSchemaMissingRef.current = true;
+            setCloudSyncState("schema-missing");
+            return;
+          }
+          setCloudSyncState(res.ok ? "synced" : "error");
+        })
+        .catch(() => {
+          setCloudSyncState("error");
+        });
+    }, 800);
+
+    return () => window.clearTimeout(timer);
   }, [
     selectedAnswers,
     flaggedQuestions,
@@ -287,6 +290,7 @@ export function TiuPatternPractice({
     activePattern,
     patternSeeds,
     questionSeeds,
+    user?.id,
   ]);
 
   const patternStats = useMemo(() => getPatternStats(), []);
@@ -807,6 +811,31 @@ export function TiuPatternPractice({
                     {Math.round((correctInView / answeredInView.length) * 100)}%)
                   </span>
                 )}
+                {user ? (
+                  cloudSyncState === "synced" ? (
+                    <Link
+                      href={APP_ROUTES.account}
+                      className="inline-flex items-center gap-1 rounded-md bg-blue-50/80 px-2 py-0.5 text-[11px] font-medium text-blue-700 hover:bg-blue-100"
+                    >
+                      <Cloud className="size-3" aria-hidden />
+                      Tersinkron ke akun
+                    </Link>
+                  ) : cloudSyncState === "syncing" ? (
+                    <span className="inline-flex items-center gap-1 rounded-md bg-slate-100 px-2 py-0.5 text-[11px] font-medium text-slate-600">
+                      <Cloud className="size-3 animate-pulse" aria-hidden />
+                      Menyimpan...
+                    </span>
+                  ) : null
+                ) : !isAuthLoading && isAuthConfigured ? (
+                  <Link
+                    href={`${APP_ROUTES.login}?next=${encodeURIComponent(
+                      APP_ROUTES.tiuPatternPractice(activePattern),
+                    )}`}
+                    className="inline-flex items-center gap-1 rounded-md border border-blue-200 bg-white px-2 py-0.5 text-[11px] font-semibold text-blue-700 hover:bg-blue-50"
+                  >
+                    Masuk untuk simpan ke akun
+                  </Link>
+                ) : null}
               </div>
 
               <h2 className="mt-1.5 text-xl font-semibold text-slate-950 sm:text-2xl">

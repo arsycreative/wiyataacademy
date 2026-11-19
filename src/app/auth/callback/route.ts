@@ -1,0 +1,104 @@
+import type { EmailOtpType } from "@supabase/supabase-js";
+import { NextResponse, type NextRequest } from "next/server";
+
+import {
+  mapAuthErrorMessage,
+  sanitizeRedirectPath,
+} from "@/modules/auth/domain/auth-schema";
+import {
+  createProfileRepository,
+  getAuthenticatedUser,
+} from "@/modules/auth/infrastructure/profile-repository.server";
+import { APP_ROUTES } from "@/shared/constants/app";
+import { createSupabaseServerClient } from "@/shared/supabase/server";
+
+function getSafeOrigin(request: NextRequest, fallbackOrigin: string): string {
+  const forwardedHost = request.headers.get("x-forwarded-host");
+  const isLocalEnv = process.env.NODE_ENV === "development";
+  if (!isLocalEnv && forwardedHost) {
+    const forwardedProto = request.headers.get("x-forwarded-proto") ?? "https";
+    return `${forwardedProto}://${forwardedHost}`;
+  }
+  return fallbackOrigin;
+}
+
+async function syncPortableUserProfile() {
+  try {
+    const authUser = await getAuthenticatedUser();
+    if (!authUser) return;
+    const profileRepo = createProfileRepository();
+    await profileRepo.upsert({
+      id: authUser.id,
+      email: authUser.email,
+      fullName:
+        authUser.fullName ||
+        (authUser.email ? authUser.email.split("@")[0] : null),
+      avatarUrl: authUser.avatarUrl,
+    });
+  } catch {
+    // Tetap lanjutkan login meski tabel profil belum dimigrasi
+  }
+}
+
+export async function GET(request: NextRequest) {
+  const { searchParams, origin } = new URL(request.url);
+  const code = searchParams.get("code");
+  const tokenHash = searchParams.get("token_hash");
+  const type = searchParams.get("type") as EmailOtpType | null;
+  const oauthError =
+    searchParams.get("error_description") ?? searchParams.get("error");
+  const nextPath = sanitizeRedirectPath(
+    searchParams.get("next"),
+    APP_ROUTES.tiuPractice,
+  );
+
+  const safeOrigin = getSafeOrigin(request, origin);
+
+  if (oauthError) {
+    const errorUrl = new URL(APP_ROUTES.login, safeOrigin);
+    errorUrl.searchParams.set("error", mapAuthErrorMessage(oauthError));
+    return NextResponse.redirect(errorUrl);
+  }
+
+  const supabase = await createSupabaseServerClient();
+  if (!supabase) {
+    const errorUrl = new URL(APP_ROUTES.login, safeOrigin);
+    errorUrl.searchParams.set(
+      "error",
+      "Konfigurasi Supabase belum tersedia di server.",
+    );
+    return NextResponse.redirect(errorUrl);
+  }
+
+  if (code) {
+    const { error } = await supabase.auth.exchangeCodeForSession(code);
+    if (!error) {
+      await syncPortableUserProfile();
+      return NextResponse.redirect(new URL(nextPath, safeOrigin));
+    }
+    const errorUrl = new URL(APP_ROUTES.login, safeOrigin);
+    errorUrl.searchParams.set("error", mapAuthErrorMessage(error.message));
+    return NextResponse.redirect(errorUrl);
+  }
+
+  if (tokenHash && type) {
+    const { error } = await supabase.auth.verifyOtp({
+      type,
+      token_hash: tokenHash,
+    });
+    if (!error) {
+      await syncPortableUserProfile();
+      return NextResponse.redirect(new URL(nextPath, safeOrigin));
+    }
+    const errorUrl = new URL(APP_ROUTES.login, safeOrigin);
+    errorUrl.searchParams.set("error", mapAuthErrorMessage(error.message));
+    return NextResponse.redirect(errorUrl);
+  }
+
+  const fallbackUrl = new URL(APP_ROUTES.login, safeOrigin);
+  fallbackUrl.searchParams.set(
+    "error",
+    "Tautan autentikasi tidak valid atau sudah kedaluwarsa.",
+  );
+  return NextResponse.redirect(fallbackUrl);
+}
