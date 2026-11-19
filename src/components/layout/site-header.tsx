@@ -17,6 +17,7 @@ const navLinks = [
   { href: APP_ROUTES.programs, label: "Program Bimbel" },
   { href: APP_ROUTES.twkPractice, label: "Bank Soal TWK" },
   { href: APP_ROUTES.tiuPractice, label: "Bank Soal TIU" },
+  { href: APP_ROUTES.tkpPractice, label: "Bank Soal TKP" },
   { href: APP_ROUTES.testimonials, label: "Testimoni" },
   { href: APP_ROUTES.faq, label: "FAQ" },
 ] as const;
@@ -72,7 +73,7 @@ export function SiteHeader() {
 
         <nav
           aria-label="Navigasi utama"
-          className="hidden items-center gap-5 whitespace-nowrap text-sm font-medium text-blue-950 md:flex lg:gap-7"
+          className="hidden items-center gap-4 whitespace-nowrap text-xs font-medium text-blue-950 lg:flex xl:gap-6 xl:text-sm"
         >
           {navLinks.map((item) => (
             <Link
@@ -85,7 +86,7 @@ export function SiteHeader() {
           ))}
         </nav>
 
-        <div className="hidden items-center gap-2.5 md:flex">
+        <div className="hidden items-center gap-2.5 lg:flex">
           <Button
             asChild
             variant="outline"
@@ -152,14 +153,14 @@ export function SiteHeader() {
           aria-label={mobileMenuOpen ? "Tutup menu navigasi" : "Buka menu navigasi"}
           aria-expanded={mobileMenuOpen}
           onClick={() => setMobileMenuOpen((open) => !open)}
-          className="inline-flex size-10 items-center justify-center rounded-lg border border-blue-100 text-blue-950 hover:bg-blue-50 md:hidden"
+          className="inline-flex size-10 items-center justify-center rounded-lg border border-blue-100 text-blue-950 hover:bg-blue-50 lg:hidden"
         >
           {mobileMenuOpen ? <X className="size-5" aria-hidden /> : <Menu className="size-5" aria-hidden />}
         </button>
       </div>
 
       {mobileMenuOpen && (
-        <div className="border-t border-blue-100 bg-white px-5 py-4 md:hidden">
+        <div className="border-t border-blue-100 bg-white px-5 py-4 lg:hidden">
           <nav aria-label="Navigasi mobile" className="grid gap-1 text-sm font-medium text-blue-950">
             {navLinks.map((item) => (
               <Link

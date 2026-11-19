@@ -11,7 +11,14 @@ Aplikasi web bimbingan belajar persiapan seleksi **SKD CPNS (TWK, TIU, TKP)** da
 - **Katalog Program Bimbel Interaktif**: carousel program utama (*Intensif SKD CPNS*), pratinjau cepat via modal detail, serta halaman detail kurikulum & silabus lengkap.
 - **Testimoni Alumni & FAQ**: informasi terstruktur seputar persiapan seleksi CASN.
 
-### 2. Latihan Soal Terpisah TWK & TIU SKD CPNS (`/latihan/twk` & `/latihan/tiu`)
+### 2. Latihan Soal Terpisah TWK, TIU & TKP SKD CPNS (`/latihan/twk`, `/latihan/tiu`, & `/latihan/tkp`)
+- **Bank Soal TKP Terpisah per Aspek (240 Soal Tervalidasi — Skor Bertingkat 1–5 per Opsi, 6 Aspek SKD × 40 Soal)**:
+  1. **Pelayanan Publik** — 40 soal (Empati & Pengendalian Emosi, Kepatuhan SOP, Layanan Inklusif, Bebas Pungli, Evaluasi Keluhan)
+  2. **Jejaring Kerja** — 40 soal (Koordinasi Lintas Unit, Kepercayaan Mitra, Kolaborasi Tim, Berbagi Ilmu, Mediasi Konflik)
+  3. **Sosial Budaya** — 40 soal (Adaptasi Kearifan Lokal, Toleransi Keberagaman, Komunikasi Lintas Bahasa, Gotong Royong, Antidiskriminasi)
+  4. **Teknologi Informasi & Komunikasi (TIK)** — 40 soal (Adaptasi Sistem/AI, Keamanan Siber & Antiphishing, Efisiensi TIK, Cek Fakta, Etika Daring)
+  5. **Profesionalisme** — 40 soal (Skala Prioritas, Integritas Kerja, Tangguh di Bawah Tekanan, Etika Birokrasi & Netralitas, Pengembangan Diri)
+  6. **Anti-Radikalisme** — 40 soal (Deteksi Dini Konten Ekstrem, Moderasi Beragama, Kesetiaan Pancasila-UUD-NKRI, Hoaks Kebencian, Pelaporan Prosedural)
 - **Bank Soal TWK Terpisah per Pilar (200 Soal Tervalidasi — 5 Pilar SKD Lengkap, masing-masing 40 soal / 5 sub-topik × 8 soal)**:
   1. **Nasionalisme** — 40 soal (Sejarah & Sumpah Pemuda, Produk Dalam Negeri, Toleransi, Budaya Global, Netralitas ASN)
   2. **Integritas** — 40 soal (Antikorupsi & Gratifikasi, Kejujuran, Kode Etik & BerAKHLAK, Konflik Kepentingan, Whistleblowing)
@@ -56,7 +63,8 @@ src/
 │   │   ├── page.tsx                  # Beranda Wiyata Academy
 │   │   ├── courses/[slug]/page.tsx   # Detail program bimbel
 │   │   ├── latihan/tiu/page.tsx      # Latihan adaptif bank soal TIU
-│   │   └── latihan/twk/page.tsx      # Latihan terpisah 5 pilar TWK
+│   │   ├── latihan/twk/page.tsx      # Latihan terpisah 5 pilar TWK
+│   │   └── latihan/tkp/page.tsx      # Latihan skor 1–5 6 aspek TKP
 │   └── layout.tsx
 ├── components/
 │   ├── layout/                       # Header, Footer, BrandLogo, ToastContainer
@@ -64,10 +72,11 @@ src/
 ├── modules/
 │   ├── catalog/                      # Domain, application, infrastructure & presentation katalog
 │   └── question-bank/
-│       ├── domain/question.ts        # Skema Zod & metadata 9 pola TIU + 5 pilar TWK
+│       ├── domain/question.ts        # Skema Zod & metadata TIU, TWK & TKP
 │       ├── data/tiu/                 # Bank soal TIU per pola & sub-pola + unit test
 │       ├── data/twk/                 # Bank soal TWK 5 pilar + unit test
-│       └── presentation/             # UI latihan adaptif & mode CAT
+│       ├── data/tkp/                 # Bank soal TKP 6 aspek + unit test
+│       └── presentation/             # UI latihan terpisah & mode CAT
 └── shared/                           # Konstanta rute, helper Result, store toast, validasi
 ```
 

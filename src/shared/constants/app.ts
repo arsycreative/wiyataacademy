@@ -12,6 +12,9 @@ export const APP_ROUTES = {
   twkPractice: "/latihan/twk",
   twkPatternPractice: (pattern: string) =>
     `/latihan/twk?pattern=${encodeURIComponent(pattern)}`,
+  tkpPractice: "/latihan/tkp",
+  tkpPatternPractice: (pattern: string) =>
+    `/latihan/tkp?pattern=${encodeURIComponent(pattern)}`,
   courseDetail: (slug: string) => `/courses/${slug}`,
   login: "/masuk",
   register: "/daftar",

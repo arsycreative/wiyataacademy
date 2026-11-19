@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteHeader } from "@/components/layout/site-header";
 import { getPatternStats } from "@/modules/question-bank/data/tiu";
+import { ALL_TKP_QUESTIONS } from "@/modules/question-bank/data/tkp";
 import { ALL_TWK_QUESTIONS } from "@/modules/question-bank/data/twk";
 import {
   TWK_PATTERN_IDS,
@@ -42,6 +43,7 @@ export default async function TwkPracticePage({
 
   const tiuTotal = getPatternStats().reduce((total, item) => total + item.total, 0);
   const twkTotal = ALL_TWK_QUESTIONS.length;
+  const tkpTotal = ALL_TKP_QUESTIONS.length;
 
   const pageIntro = (
     <SubtestPracticeIntro
@@ -50,6 +52,7 @@ export default async function TwkPracticePage({
       description="Latih penalaran HOTS dan penguasaan materi 5 pilar Tes Wawasan Kebangsaan: Nasionalisme, Integritas, Bela Negara, Pilar Negara, serta Bahasa Indonesia sesuai kisi-kisi terbaru."
       tiuTotal={tiuTotal}
       twkTotal={twkTotal}
+      tkpTotal={tkpTotal}
     />
   );
 

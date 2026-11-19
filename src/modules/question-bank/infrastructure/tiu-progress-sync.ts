@@ -2,14 +2,17 @@ import {
   ALL_PATTERN_IDS,
   OPTION_KEYS,
   TIU_PATTERN_IDS,
+  TKP_PATTERN_IDS,
   TWK_PATTERN_IDS,
   type OptionKey,
   type PracticePatternId,
   type QuestionSubtest,
   type TiuPatternId,
+  type TkpPatternId,
   type TwkPatternId,
 } from "@/modules/question-bank/domain/question";
 import { TIU_QUESTION_BANKS } from "@/modules/question-bank/data/tiu";
+import { TKP_QUESTION_BANKS } from "@/modules/question-bank/data/tkp";
 import { TWK_QUESTION_BANKS } from "@/modules/question-bank/data/twk";
 
 export type ViewMode = "list" | "single";
@@ -46,6 +49,11 @@ for (const patternId of TWK_PATTERN_IDS) {
     QUESTION_TO_PATTERN.set(question.id, patternId);
   }
 }
+for (const patternId of TKP_PATTERN_IDS) {
+  for (const question of TKP_QUESTION_BANKS[patternId]) {
+    QUESTION_TO_PATTERN.set(question.id, patternId);
+  }
+}
 
 export function isTiuPatternId(value: unknown): value is TiuPatternId {
   return (
@@ -58,6 +66,13 @@ export function isTwkPatternId(value: unknown): value is TwkPatternId {
   return (
     typeof value === "string" &&
     (TWK_PATTERN_IDS as readonly string[]).includes(value)
+  );
+}
+
+export function isTkpPatternId(value: unknown): value is TkpPatternId {
+  return (
+    typeof value === "string" &&
+    (TKP_PATTERN_IDS as readonly string[]).includes(value)
   );
 }
 
@@ -190,6 +205,7 @@ export function readLocalSubtestPattern(
     const raw = window.localStorage.getItem(`wiyata-last-pattern-${subtest.toLowerCase()}-v1`);
     if (!raw) return null;
     if (subtest === "TWK") return isTwkPatternId(raw) ? raw : null;
+    if (subtest === "TKP") return isTkpPatternId(raw) ? raw : null;
     return isTiuPatternId(raw) ? raw : null;
   } catch {
     return null;

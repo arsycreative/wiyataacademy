@@ -126,5 +126,30 @@ describe("tiu-progress-sync", () => {
     expect(merged.patternSeeds.nasionalisme).toBe(777);
     expect(merged.flaggedQuestions["twk-nas-001"]).toBe(true);
   });
+
+  it("preserves TKP question answers and aspect seeds alongside TIU and TWK", () => {
+    const local = sanitizePracticeProgress({
+      selectedAnswers: {
+        "tkp-pel-001": "D",
+      },
+      flaggedQuestions: { "tkp-pel-001": true },
+      patternSeeds: {
+        "pelayanan-publik": 9911,
+        "anti-radikalisme": 2233,
+      },
+      questionSeeds: {
+        "tkp-pel-001": 9911,
+      },
+    });
+
+    expect(local.patternSeeds).toEqual({
+      "pelayanan-publik": 9911,
+      "anti-radikalisme": 2233,
+    });
+
+    const merged = mergePracticeProgress(local, null);
+    expect(merged.selectedAnswers["tkp-pel-001"]).toBe("D");
+    expect(merged.questionSeeds["tkp-pel-001"]).toBe(9911);
+  });
 });
 

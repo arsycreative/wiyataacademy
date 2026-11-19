@@ -20,7 +20,10 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { profileSchema } from "@/modules/auth/domain/auth-schema";
 import { summarizeTiuProgress } from "@/modules/question-bank/domain/question-shuffle";
-import { summarizeTwkProgress } from "@/modules/question-bank/domain/subtest-summary";
+import {
+  summarizeTkpProgress,
+  summarizeTwkProgress,
+} from "@/modules/question-bank/domain/subtest-summary";
 import {
   mergePracticeProgress,
   readLocalTiuProgress,
@@ -97,6 +100,17 @@ export function AccountDashboard({
   const twkSummary = useMemo(
     () =>
       summarizeTwkProgress(
+        progressState.selectedAnswers,
+        progressState.flaggedQuestions,
+        progressState.patternSeeds,
+        progressState.questionSeeds,
+      ),
+    [progressState],
+  );
+
+  const tkpSummary = useMemo(
+    () =>
+      summarizeTkpProgress(
         progressState.selectedAnswers,
         progressState.flaggedQuestions,
         progressState.patternSeeds,
@@ -236,6 +250,16 @@ export function AccountDashboard({
             </Button>
             <Button
               asChild
+              variant="outline"
+              className="border-blue-200 font-semibold text-blue-700 hover:bg-blue-50 hover:text-blue-800"
+            >
+              <Link href={APP_ROUTES.tkpPractice}>
+                <BookOpen className="size-4" aria-hidden />
+                Latihan TKP
+              </Link>
+            </Button>
+            <Button
+              asChild
               className="bg-blue-600 font-semibold text-white hover:bg-blue-700"
             >
               <Link href={APP_ROUTES.tiuPatternPractice(progressState.lastPattern)}>
@@ -368,8 +392,15 @@ export function AccountDashboard({
           </div>
         </section>
 
-        {/* Ringkasan Progres TWK (5 Pilar) & TIU (9 Pola) */}
+        {/* Ringkasan Progres TKP (6 Aspek), TWK (5 Pilar) & TIU (9 Pola) */}
         <div className="space-y-6 lg:col-span-7">
+          <SubtestSummaryCard
+            title="Ringkasan Latihan TKP (6 Aspek)"
+            subtitle="Pantau progres pengerjaan dan capaian skor 1–5 poin dari 6 aspek TKP SKD CPNS."
+            summary={tkpSummary}
+            buildPracticeHref={APP_ROUTES.tkpPatternPractice}
+            isTkpPoints
+          />
           <SubtestSummaryCard
             title="Ringkasan Latihan TWK (5 Pilar)"
             subtitle="Pantau progres pengerjaan dan akurasi dari 5 pilar Tes Wawasan Kebangsaan."
@@ -395,6 +426,8 @@ type SummaryItem = {
   totalQuestions: number;
   answeredCount: number;
   correctCount: number;
+  earnedPoints?: number;
+  maxAnsweredPoints?: number;
 };
 
 function SubtestSummaryCard({
@@ -402,6 +435,7 @@ function SubtestSummaryCard({
   subtitle,
   summary,
   buildPracticeHref,
+  isTkpPoints = false,
 }: {
   title: string;
   subtitle: string;
@@ -409,12 +443,20 @@ function SubtestSummaryCard({
     totalQuestions: number;
     totalAnswered: number;
     totalCorrect: number;
+    totalEarnedPoints?: number;
+    totalMaxAnsweredPoints?: number;
     patterns: readonly SummaryItem[];
   };
   buildPracticeHref: (patternId: string) => string;
+  isTkpPoints?: boolean;
 }) {
-  const accuracyPct =
-    summary.totalAnswered > 0
+  const accuracyPct = isTkpPoints
+    ? (summary.totalMaxAnsweredPoints ?? 0) > 0
+      ? Math.round(
+          ((summary.totalEarnedPoints ?? 0) / (summary.totalMaxAnsweredPoints ?? 1)) * 100,
+        )
+      : 0
+    : summary.totalAnswered > 0
       ? Math.round((summary.totalCorrect / summary.totalAnswered) * 100)
       : 0;
 
@@ -434,8 +476,14 @@ function SubtestSummaryCard({
             </p>
           </div>
           <div className="rounded-xl border border-emerald-100 bg-emerald-50/70 px-3 py-1.5 text-center">
-            <p className="text-[11px] font-medium text-emerald-700">Akurasi</p>
-            <p className="text-sm font-bold text-emerald-950">{accuracyPct}%</p>
+            <p className="text-[11px] font-medium text-emerald-700">
+              {isTkpPoints ? "Skor Poin" : "Akurasi"}
+            </p>
+            <p className="text-sm font-bold text-emerald-950">
+              {isTkpPoints && summary.totalAnswered > 0
+                ? `${summary.totalEarnedPoints ?? 0}/${summary.totalMaxAnsweredPoints ?? 0} (${accuracyPct}%)`
+                : `${accuracyPct}%`}
+            </p>
           </div>
         </div>
       </div>
@@ -446,9 +494,14 @@ function SubtestSummaryCard({
             pattern.totalQuestions > 0
               ? Math.round((pattern.answeredCount / pattern.totalQuestions) * 100)
               : 0;
-          const patternAccuracy =
-            pattern.answeredCount > 0
-              ? Math.round((pattern.correctCount / pattern.answeredCount) * 100)
+          const patternAccuracy = isTkpPoints
+            ? pattern.answeredCount > 0 && (pattern.maxAnsweredPoints ?? 0) > 0
+              ? `${pattern.earnedPoints ?? 0}/${pattern.maxAnsweredPoints ?? 0} poin (${Math.round(
+                  ((pattern.earnedPoints ?? 0) / (pattern.maxAnsweredPoints ?? 1)) * 100,
+                )}%)`
+              : null
+            : pattern.answeredCount > 0
+              ? `${Math.round((pattern.correctCount / pattern.answeredCount) * 100)}% benar`
               : null;
 
           return (
@@ -481,7 +534,7 @@ function SubtestSummaryCard({
                   </div>
                   <span className="shrink-0 text-xs font-medium text-slate-600">
                     {pattern.answeredCount}/{pattern.totalQuestions}
-                    {patternAccuracy !== null ? ` • ${patternAccuracy}% benar` : ""}
+                    {patternAccuracy !== null ? ` • ${patternAccuracy}` : ""}
                   </span>
                 </div>
               </div>

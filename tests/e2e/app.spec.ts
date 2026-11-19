@@ -45,3 +45,15 @@ test("renders TWK separated pillar practice page and switches pillars", async ({
   await page.getByRole("button", { name: /bela negara/i }).click();
   await expect(page.getByRole("heading", { name: /^bela negara$/i })).toBeVisible();
 });
+
+test("renders TKP separated aspect practice page with 1–5 scoring and switches aspects", async ({ page }) => {
+  await page.goto("/latihan/tkp");
+
+  await expect(
+    page.getByRole("heading", { level: 1, name: /latihan soal tkp/i }),
+  ).toBeVisible();
+  await expect(page.getByRole("heading", { name: /^pelayanan publik$/i })).toBeVisible();
+
+  await page.getByRole("button", { name: /anti-radikalisme/i }).click();
+  await expect(page.getByRole("heading", { name: /^anti-radikalisme$/i })).toBeVisible();
+});

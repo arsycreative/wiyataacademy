@@ -132,7 +132,7 @@ export const TIU_PATTERNS: Record<TiuPatternId, TiuPatternMeta> = {
   },
 };
 
-export const SUBTEST_IDS = ["TIU", "TWK"] as const;
+export const SUBTEST_IDS = ["TIU", "TWK", "TKP"] as const;
 export type QuestionSubtest = (typeof SUBTEST_IDS)[number];
 
 export const TWK_PATTERN_IDS = [
@@ -226,8 +226,128 @@ export const TWK_PATTERNS: Record<TwkPatternId, TwkPatternMeta> = {
   },
 };
 
-export const ALL_PATTERN_IDS = [...TIU_PATTERN_IDS, ...TWK_PATTERN_IDS] as const;
+export const TKP_PATTERN_IDS = [
+  "pelayanan-publik",
+  "jejaring-kerja",
+  "sosial-budaya",
+  "tik",
+  "profesionalisme",
+  "anti-radikalisme",
+] as const;
+
+export type TkpPatternId = (typeof TKP_PATTERN_IDS)[number];
+
+export type TkpPatternMeta = {
+  id: TkpPatternId;
+  order: number;
+  label: string;
+  description: string;
+  subPatterns: readonly string[];
+};
+
+export const TKP_PATTERNS: Record<TkpPatternId, TkpPatternMeta> = {
+  "pelayanan-publik": {
+    id: "pelayanan-publik",
+    order: 1,
+    label: "Pelayanan Publik",
+    description:
+      "Keramahan, empati, ketanggapan, kepatuhan SOP, akses inklusif kelompok rentan, layanan bebas pungli, dan perbaikan mutu keluhan.",
+    subPatterns: [
+      "sikap-ramah-empati-dan-pengendalian-emosi",
+      "solusi-cepat-dan-kepatuhan-sop",
+      "pelayanan-inklusif-dan-kelompok-rentan",
+      "transparansi-standar-dan-bebas-pungli",
+      "penanganan-keluhan-dan-evaluasi-mutu",
+    ],
+  },
+  "jejaring-kerja": {
+    id: "jejaring-kerja",
+    order: 2,
+    label: "Jejaring Kerja",
+    description:
+      "Koordinasi lintas unit/instansi, kepercayaan kemitraan profesional, pembagian peran tim, berbagi pengetahuan, serta mediasi konflik kerja.",
+    subPatterns: [
+      "koordinasi-lintas-unit-dan-instansi",
+      "membangun-kepercayaan-dan-relasi-profesional",
+      "kolaborasi-tim-dan-pembagian-peran",
+      "berbagi-pengetahuan-dan-keterbukaan-informasi",
+      "resolusi-konflik-kerja-dan-mediasi",
+    ],
+  },
+  "sosial-budaya": {
+    id: "sosial-budaya",
+    order: 3,
+    label: "Sosial Budaya",
+    description:
+      "Adaptasi kearifan lokal, toleransi keberagaman agama dan budaya, komunikasi lintas dialek, kepekaan gotong royong, dan antiprimordialisme.",
+    subPatterns: [
+      "adaptasi-lingkungan-dan-kearifan-lokal",
+      "toleransi-antarumat-dan-keberagaman-budaya",
+      "komunikasi-lintas-budaya-dan-bahasa",
+      "kepekaan-sosial-dan-gotong-royong",
+      "menolak-diskriminasi-dan-primordialisme",
+    ],
+  },
+  tik: {
+    id: "tik",
+    order: 4,
+    label: "Teknologi Informasi & Komunikasi",
+    description:
+      "Adaptasi sistem digital dan AI terverifikasi, keamanan data dan antiphishing, efisiensi kerja berbasis TIK, literasi cek fakta, dan etika daring.",
+    subPatterns: [
+      "adaptasi-sistem-digital-dan-otomatisasi-ai",
+      "keamanan-informasi-privasi-dan-anti-phishing",
+      "pemanfaatan-tik-untuk-efisiensi-kinerja",
+      "literasi-digital-dan-verifikasi-informasi",
+      "etika-komunikasi-daring-dan-pelayanan-elektronik",
+    ],
+  },
+  profesionalisme: {
+    id: "profesionalisme",
+    order: 5,
+    label: "Profesionalisme",
+    description:
+      "Manajemen prioritas dan tenggat, integritas pertanggungjawaban kerja, resiliensi di bawah tekanan, netralitas birokrasi, dan perbaikan diri.",
+    subPatterns: [
+      "skala-prioritas-dan-manajemen-tenggat",
+      "tanggung-jawab-dan-integritas-kerja",
+      "ketangguhan-di-bawah-tekanan-dan-fleksibilitas",
+      "disiplin-etika-birokrasi-dan-netralitas",
+      "pengembangan-diri-dan-inisiatif-kualitas",
+    ],
+  },
+  "anti-radikalisme": {
+    id: "anti-radikalisme",
+    order: 6,
+    label: "Anti-Radikalisme",
+    description:
+      "Deteksi dini propaganda ekstrem, moderasi beragama, kesetiaan pada Pancasila-UUD 1945-NKRI, pencegahan hoaks kebencian, dan pelaporan prosedural.",
+    subPatterns: [
+      "deteksi-dini-dan-respons-konten-ekstrem",
+      "moderasi-beragama-dan-penolakan-intoleransi",
+      "kesetiaan-ideologi-pancasila-uud-nkri",
+      "pencegahan-radikalisme-digital-dan-hoaks-kebencian",
+      "pendekatan-persuasif-edukatif-dan-pelaporan-prosedural",
+    ],
+  },
+};
+
+export const ALL_PATTERN_IDS = [
+  ...TIU_PATTERN_IDS,
+  ...TWK_PATTERN_IDS,
+  ...TKP_PATTERN_IDS,
+] as const;
 export type PracticePatternId = (typeof ALL_PATTERN_IDS)[number];
+
+export const optionScoresSchema = z.object({
+  A: z.number().int().min(1).max(5),
+  B: z.number().int().min(1).max(5),
+  C: z.number().int().min(1).max(5),
+  D: z.number().int().min(1).max(5),
+  E: z.number().int().min(1).max(5),
+});
+
+export type OptionScores = z.infer<typeof optionScoresSchema>;
 
 export const questionOptionSchema = z.object({
   key: z.enum(OPTION_KEYS),
@@ -244,6 +364,7 @@ export const questionSchema = z
     prompt: z.string().trim().min(1),
     options: z.array(questionOptionSchema).length(OPTION_KEYS.length),
     answer: z.enum(OPTION_KEYS),
+    optionScores: optionScoresSchema.optional(),
     explanation: z.string().trim().min(1),
     tip: z.string().trim().min(1).optional(),
     reviewStatus: z.enum(REVIEW_STATUSES),
@@ -268,8 +389,13 @@ export const questionSchema = z
       });
     }
 
-    const isTwk = question.subtest === "TWK";
-    const allowedPatterns: readonly string[] = isTwk ? TWK_PATTERN_IDS : TIU_PATTERN_IDS;
+    const subtestPatterns: Record<QuestionSubtest, readonly string[]> = {
+      TIU: TIU_PATTERN_IDS,
+      TWK: TWK_PATTERN_IDS,
+      TKP: TKP_PATTERN_IDS,
+    };
+
+    const allowedPatterns = subtestPatterns[question.subtest];
     if (!allowedPatterns.includes(question.pattern)) {
       ctx.addIssue({
         code: "custom",
@@ -279,15 +405,46 @@ export const questionSchema = z
       return;
     }
 
-    const allowedSubPatterns = isTwk
-      ? TWK_PATTERNS[question.pattern as TwkPatternId].subPatterns
-      : TIU_PATTERNS[question.pattern as TiuPatternId].subPatterns;
+    const allowedSubPatterns =
+      question.subtest === "TWK"
+        ? TWK_PATTERNS[question.pattern as TwkPatternId].subPatterns
+        : question.subtest === "TKP"
+          ? TKP_PATTERNS[question.pattern as TkpPatternId].subPatterns
+          : TIU_PATTERNS[question.pattern as TiuPatternId].subPatterns;
     if (allowedSubPatterns.length > 0 && !allowedSubPatterns.includes(question.subPattern)) {
       ctx.addIssue({
         code: "custom",
         message: `Sub-pola "${question.subPattern}" tidak terdaftar untuk pola ${question.pattern}`,
         path: ["subPattern"],
       });
+    }
+
+    if (question.subtest === "TKP") {
+      if (!question.optionScores) {
+        ctx.addIssue({
+          code: "custom",
+          message: "Soal TKP wajib menyertakan optionScores (skor 1–5 untuk opsi A–E)",
+          path: ["optionScores"],
+        });
+      } else {
+        const sortedScores = OPTION_KEYS.map((k) => question.optionScores![k]).sort(
+          (a, b) => a - b,
+        );
+        if (sortedScores.join(",") !== "1,2,3,4,5") {
+          ctx.addIssue({
+            code: "custom",
+            message: "optionScores soal TKP harus memetakan nilai unik 1, 2, 3, 4, dan 5",
+            path: ["optionScores"],
+          });
+        }
+        if (question.optionScores[question.answer] !== 5) {
+          ctx.addIssue({
+            code: "custom",
+            message: "Kunci answer utama pada soal TKP harus menunjuk opsi berskor 5",
+            path: ["answer"],
+          });
+        }
+      }
     }
   });
 
@@ -373,6 +530,63 @@ export function buildTwkPatternQuestions(
     (subPattern) => getDefaultTwkHint(pattern, subPattern),
     reviewStatus,
   );
+}
+
+export type TkpQuestionDraft = QuestionDraft & {
+  readonly optionScores: readonly [number, number, number, number, number];
+};
+
+/**
+ * Menghasilkan petunjuk cepat non-spoiler untuk soal TKP ketika draft belum memiliki tip khusus.
+ */
+export function getDefaultTkpHint(pattern: TkpPatternId, subPattern: string): string {
+  switch (pattern) {
+    case "pelayanan-publik":
+      return "Cari tindakan yang paling ramah, proaktif memandu solusi nyata, inklusif, dan tetap patuh pada SOP tanpa pungli.";
+    case "jejaring-kerja":
+      return "Utamakan kolaborasi terbuka lintas pihak, komunikasi konstruktif win-win, dan kesediaan berbagi ilmu dengan tim.";
+    case "sosial-budaya":
+      return "Pilih sikap toleransi aktif, peka terhadap kearifan lokal tanpa diskriminasi, dan menjaga keharmonisan lintas golongan.";
+    case "tik":
+      return "Prioritaskan adaptasi teknologi secara antusias sekaligus menjaga keamanan data, verifikasi informasi, dan etika digital.";
+    case "profesionalisme":
+      if (subPattern === "skala-prioritas-dan-manajemen-tenggat") {
+        return "Dahulukan tugas paling berdampak dengan tenggat terdekat sambil menjaga ketelitian dan komunikasi jadwal.";
+      }
+      return "Pilih komitmen kerja berintegritas, akuntabel tanpa manipulasi, tangguh saat tertekan, dan berinisiatif mutu.";
+    case "anti-radikalisme":
+      return "Pilih sikap menolak tegas intoleransi dan ekstremisme secara santun, edukatif-dialogis, dan sesuai prosedur pelaporan resmi.";
+  }
+}
+
+/**
+ * Membangun array Question bertipe subtes TKP lengkap dengan peta skor 1–5 per opsi A–E.
+ */
+export function buildTkpPatternQuestions(
+  pattern: TkpPatternId,
+  drafts: readonly TkpQuestionDraft[],
+  reviewStatus: ReviewStatus = "draft",
+): Question[] {
+  const baseQuestions = buildSubtestQuestions(
+    "TKP",
+    pattern,
+    drafts,
+    (subPattern) => getDefaultTkpHint(pattern, subPattern),
+    reviewStatus,
+  );
+  return baseQuestions.map((question, index) => {
+    const scores = drafts[index].optionScores;
+    return {
+      ...question,
+      optionScores: {
+        A: scores[0],
+        B: scores[1],
+        C: scores[2],
+        D: scores[3],
+        E: scores[4],
+      },
+    };
+  });
 }
 
 function getDefaultHint(pattern: TiuPatternId, subPattern: string): string {
