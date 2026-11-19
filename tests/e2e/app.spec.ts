@@ -33,3 +33,15 @@ test("renders CPNS program detail page", async ({ page }) => {
   await expect(page.getByRole("heading", { name: /silabus & rangkaian materi/i })).toBeVisible();
   await expect(page.getByRole("button", { name: /daftar program ini/i }).first()).toBeVisible();
 });
+
+test("renders TWK separated pillar practice page and switches pillars", async ({ page }) => {
+  await page.goto("/latihan/twk");
+
+  await expect(
+    page.getByRole("heading", { level: 1, name: /latihan soal twk/i }),
+  ).toBeVisible();
+  await expect(page.getByRole("heading", { name: /^nasionalisme$/i })).toBeVisible();
+
+  await page.getByRole("button", { name: /bela negara/i }).click();
+  await expect(page.getByRole("heading", { name: /^bela negara$/i })).toBeVisible();
+});

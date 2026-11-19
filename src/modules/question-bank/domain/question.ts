@@ -132,6 +132,103 @@ export const TIU_PATTERNS: Record<TiuPatternId, TiuPatternMeta> = {
   },
 };
 
+export const SUBTEST_IDS = ["TIU", "TWK"] as const;
+export type QuestionSubtest = (typeof SUBTEST_IDS)[number];
+
+export const TWK_PATTERN_IDS = [
+  "nasionalisme",
+  "integritas",
+  "bela-negara",
+  "pilar-negara",
+  "bahasa-indonesia",
+] as const;
+
+export type TwkPatternId = (typeof TWK_PATTERN_IDS)[number];
+
+export type TwkPatternMeta = {
+  id: TwkPatternId;
+  order: number;
+  label: string;
+  description: string;
+  subPatterns: readonly string[];
+};
+
+export const TWK_PATTERNS: Record<TwkPatternId, TwkPatternMeta> = {
+  nasionalisme: {
+    id: "nasionalisme",
+    order: 1,
+    label: "Nasionalisme",
+    description:
+      "Kesadaran berbangsa, sejarah perjuangan & Sumpah Pemuda, cinta produk dalam negeri, toleransi, budaya global, serta netralitas ASN.",
+    subPatterns: [
+      "sumpah-pemuda-dan-sejarah-perjuangan",
+      "cinta-tanah-air-dan-produk-dalam-negeri",
+      "toleransi-dan-persatuan-dalam-keberagaman",
+      "budaya-dan-identitas-nasional-di-era-global",
+      "kepentingan-bangsa-dan-netralitas-asn",
+    ],
+  },
+  integritas: {
+    id: "integritas",
+    order: 2,
+    label: "Integritas",
+    description:
+      "Antikorupsi dan gratifikasi, konsistensi kejujuran, kode etik ASN BerAKHLAK, konflik kepentingan, serta akuntabilitas dan whistleblowing.",
+    subPatterns: [
+      "antikorupsi-gratifikasi-dan-suap",
+      "konsistensi-kejujuran-dan-keteladanan",
+      "kode-etik-dan-nilai-dasar-asn",
+      "konflik-kepentingan-dan-penyalahgunaan-wewenang",
+      "whistleblowing-transparansi-dan-akuntabilitas",
+    ],
+  },
+  "bela-negara": {
+    id: "bela-negara",
+    order: 3,
+    label: "Bela Negara",
+    description:
+      "Landasan hukum bela negara, ancaman militer-nirmiliter-hibrida, pertahanan siber & literasi digital, pengabdian profesi, dan kedaulatan wilayah.",
+    subPatterns: [
+      "dasar-hukum-dan-nilai-bela-negara",
+      "ancaman-militer-nirmiliter-dan-hibrida",
+      "bela-negara-di-ruang-siber-dan-literasi-digital",
+      "bela-negara-melalui-profesi-dan-kesiapsiagaan-bencana",
+      "pertahanan-semesta-dan-kedaulatan-wilayah",
+    ],
+  },
+  "pilar-negara": {
+    id: "pilar-negara",
+    order: 4,
+    label: "Pilar Negara",
+    description:
+      "Nilai dan pengamalan Pancasila, UUD 1945 dan lembaga negara, NKRI dan otonomi daerah, Bhinneka Tunggal Ika, serta sejarah perumusan dasar negara.",
+    subPatterns: [
+      "pancasila-nilai-dan-pengamalan",
+      "uud-1945-hak-kewajiban-dan-lembaga-negara",
+      "nkri-otonomi-daerah-dan-ketatanegaraan",
+      "bhinneka-tunggal-ika-dan-kerukunan",
+      "perumusan-pancasila-dan-dasar-negara",
+    ],
+  },
+  "bahasa-indonesia": {
+    id: "bahasa-indonesia",
+    order: 5,
+    label: "Bahasa Indonesia",
+    description:
+      "Kaidah EYD Edisi V, kalimat efektif, ide pokok dan penalaran wacana, diksi dan kata baku KBBI, serta tata naskah dinas dan bahasa negara.",
+    subPatterns: [
+      "ejaan-dan-tanda-baca",
+      "kalimat-efektif-dan-struktur-kalimat",
+      "ide-pokok-paragraf-dan-penalaran-wacana",
+      "diksi-kata-baku-dan-imbuhan",
+      "naskah-dinas-dan-bahasa-negara",
+    ],
+  },
+};
+
+export const ALL_PATTERN_IDS = [...TIU_PATTERN_IDS, ...TWK_PATTERN_IDS] as const;
+export type PracticePatternId = (typeof ALL_PATTERN_IDS)[number];
+
 export const questionOptionSchema = z.object({
   key: z.enum(OPTION_KEYS),
   text: z.string().trim().min(1),
@@ -140,8 +237,8 @@ export const questionOptionSchema = z.object({
 export const questionSchema = z
   .object({
     id: z.string().regex(/^[a-z0-9-]+$/, "ID hanya boleh huruf kecil, angka, dan tanda hubung"),
-    subtest: z.literal("TIU"),
-    pattern: z.enum(TIU_PATTERN_IDS),
+    subtest: z.enum(SUBTEST_IDS),
+    pattern: z.enum(ALL_PATTERN_IDS),
     subPattern: z.string().trim().min(1),
     difficulty: z.enum(DIFFICULTIES),
     prompt: z.string().trim().min(1),
@@ -171,7 +268,20 @@ export const questionSchema = z
       });
     }
 
-    const allowedSubPatterns = TIU_PATTERNS[question.pattern].subPatterns;
+    const isTwk = question.subtest === "TWK";
+    const allowedPatterns: readonly string[] = isTwk ? TWK_PATTERN_IDS : TIU_PATTERN_IDS;
+    if (!allowedPatterns.includes(question.pattern)) {
+      ctx.addIssue({
+        code: "custom",
+        message: `Pola/pilar "${question.pattern}" tidak termasuk subtes ${question.subtest}`,
+        path: ["pattern"],
+      });
+      return;
+    }
+
+    const allowedSubPatterns = isTwk
+      ? TWK_PATTERNS[question.pattern as TwkPatternId].subPatterns
+      : TIU_PATTERNS[question.pattern as TiuPatternId].subPatterns;
     if (allowedSubPatterns.length > 0 && !allowedSubPatterns.includes(question.subPattern)) {
       ctx.addIssue({
         code: "custom",
@@ -196,19 +306,73 @@ export type QuestionDraft = {
   tip?: string;
 };
 
+function buildSubtestQuestions<TPattern extends PracticePatternId>(
+  subtest: QuestionSubtest,
+  pattern: TPattern,
+  drafts: readonly QuestionDraft[],
+  resolveHint: (subPattern: string) => string,
+  reviewStatus: ReviewStatus,
+): Question[] {
+  return drafts.map((draft) => ({
+    ...draft,
+    subtest,
+    pattern,
+    reviewStatus,
+    tip: draft.tip ?? resolveHint(draft.subPattern),
+    options: draft.options.map((text, index) => ({ key: OPTION_KEYS[index], text })),
+  }));
+}
+
 export function buildPatternQuestions(
   pattern: TiuPatternId,
   drafts: readonly QuestionDraft[],
   reviewStatus: ReviewStatus = "draft",
 ): Question[] {
-  return drafts.map((draft) => ({
-    ...draft,
-    subtest: "TIU",
+  return buildSubtestQuestions(
+    "TIU",
     pattern,
+    drafts,
+    (subPattern) => getDefaultHint(pattern, subPattern),
     reviewStatus,
-    tip: draft.tip ?? getDefaultHint(pattern, draft.subPattern),
-    options: draft.options.map((text, index) => ({ key: OPTION_KEYS[index], text })),
-  }));
+  );
+}
+
+/**
+ * Menghasilkan petunjuk cepat non-spoiler untuk soal TWK ketika draft belum memiliki tip khusus.
+ */
+export function getDefaultTwkHint(pattern: TwkPatternId, subPattern: string): string {
+  switch (pattern) {
+    case "nasionalisme":
+      return "Identifikasi tindakan yang mendahulukan kepentingan bangsa, persatuan dalam keberagaman, dan netralitas aparatur.";
+    case "integritas":
+      return "Uji setiap pilihan terhadap kepatuhan hukum, transparansi, antikorupsi, dan pencegahan konflik kepentingan.";
+    case "bela-negara":
+      return "Cocokkan konteks kasus dengan nilai dasar bela negara, ketahanan digital, pengabdian profesi, dan kedaulatan NKRI.";
+    case "pilar-negara":
+      if (subPattern === "uud-1945-hak-kewajiban-dan-lembaga-negara") {
+        return "Perhatikan kewenangan konstitusional tiap lembaga negara pasca-amandemen dan keseimbangan hak serta kewajiban warga.";
+      }
+      return "Hubungkan kasus dengan nilai Pancasila, norma konstitusional UUD 1945, NKRI, dan prinsip Bhinneka Tunggal Ika.";
+    case "bahasa-indonesia":
+      return "Periksa struktur subjek-predikat, kaidah EYD V, kehematan diksi KBBI, dan kelaziman ragam resmi bahasa Indonesia.";
+  }
+}
+
+/**
+ * Membangun array Question bertipe subtes TWK dari kumpulan draft soal per pilar.
+ */
+export function buildTwkPatternQuestions(
+  pattern: TwkPatternId,
+  drafts: readonly QuestionDraft[],
+  reviewStatus: ReviewStatus = "draft",
+): Question[] {
+  return buildSubtestQuestions(
+    "TWK",
+    pattern,
+    drafts,
+    (subPattern) => getDefaultTwkHint(pattern, subPattern),
+    reviewStatus,
+  );
 }
 
 function getDefaultHint(pattern: TiuPatternId, subPattern: string): string {

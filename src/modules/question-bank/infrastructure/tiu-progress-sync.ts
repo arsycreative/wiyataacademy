@@ -1,10 +1,16 @@
 import {
+  ALL_PATTERN_IDS,
   OPTION_KEYS,
   TIU_PATTERN_IDS,
+  TWK_PATTERN_IDS,
   type OptionKey,
+  type PracticePatternId,
+  type QuestionSubtest,
   type TiuPatternId,
+  type TwkPatternId,
 } from "@/modules/question-bank/domain/question";
 import { TIU_QUESTION_BANKS } from "@/modules/question-bank/data/tiu";
+import { TWK_QUESTION_BANKS } from "@/modules/question-bank/data/twk";
 
 export type ViewMode = "list" | "single";
 
@@ -13,7 +19,7 @@ export type StoredPracticeProgress = {
   flaggedQuestions?: Record<string, boolean>;
   viewMode?: ViewMode;
   lastPattern?: TiuPatternId;
-  patternSeeds?: Partial<Record<TiuPatternId, number>>;
+  patternSeeds?: Partial<Record<PracticePatternId, number>>;
   questionSeeds?: Record<string, number>;
 };
 
@@ -22,16 +28,21 @@ export type SanitizedPracticeProgress = {
   flaggedQuestions: Record<string, boolean>;
   viewMode: ViewMode;
   lastPattern: TiuPatternId;
-  patternSeeds: Partial<Record<TiuPatternId, number>>;
+  patternSeeds: Partial<Record<PracticePatternId, number>>;
   questionSeeds: Record<string, number>;
 };
 
 export const TIU_PROGRESS_STORAGE_KEY = "wiyata-tiu-practice-progress-v1";
 const TIU_PROGRESS_API_PATH = "/api/tiu/progress";
 
-const QUESTION_TO_PATTERN = new Map<string, TiuPatternId>();
+const QUESTION_TO_PATTERN = new Map<string, PracticePatternId>();
 for (const patternId of TIU_PATTERN_IDS) {
   for (const question of TIU_QUESTION_BANKS[patternId]) {
+    QUESTION_TO_PATTERN.set(question.id, patternId);
+  }
+}
+for (const patternId of TWK_PATTERN_IDS) {
+  for (const question of TWK_QUESTION_BANKS[patternId]) {
     QUESTION_TO_PATTERN.set(question.id, patternId);
   }
 }
@@ -40,6 +51,20 @@ export function isTiuPatternId(value: unknown): value is TiuPatternId {
   return (
     typeof value === "string" &&
     (TIU_PATTERN_IDS as readonly string[]).includes(value)
+  );
+}
+
+export function isTwkPatternId(value: unknown): value is TwkPatternId {
+  return (
+    typeof value === "string" &&
+    (TWK_PATTERN_IDS as readonly string[]).includes(value)
+  );
+}
+
+export function isPracticePatternId(value: unknown): value is PracticePatternId {
+  return (
+    typeof value === "string" &&
+    (ALL_PATTERN_IDS as readonly string[]).includes(value)
   );
 }
 
@@ -74,9 +99,9 @@ export function sanitizePracticeProgress(
     }
   }
 
-  const patternSeeds: Partial<Record<TiuPatternId, number>> = {};
+  const patternSeeds: Partial<Record<PracticePatternId, number>> = {};
   if (input.patternSeeds && typeof input.patternSeeds === "object") {
-    for (const patternId of TIU_PATTERN_IDS) {
+    for (const patternId of ALL_PATTERN_IDS) {
       const seed = input.patternSeeds[patternId];
       if (typeof seed === "number" && Number.isFinite(seed) && seed > 0) {
         patternSeeds[patternId] = seed >>> 0;
@@ -122,7 +147,7 @@ export function mergePracticeProgress(
     ...local.flaggedQuestions,
     ...remote.flaggedQuestions,
   };
-  const mergedPatternSeeds: Partial<Record<TiuPatternId, number>> = {
+  const mergedPatternSeeds: Partial<Record<PracticePatternId, number>> = {
     ...local.patternSeeds,
     ...remote.patternSeeds,
   };
@@ -157,12 +182,40 @@ export function mergePracticeProgress(
   };
 }
 
-export function readLocalTiuProgress(): SanitizedPracticeProgress | null {
+export function readLocalSubtestPattern(
+  subtest: QuestionSubtest,
+): PracticePatternId | null {
+  if (typeof window === "undefined") return null;
+  try {
+    const raw = window.localStorage.getItem(`wiyata-last-pattern-${subtest.toLowerCase()}-v1`);
+    if (!raw) return null;
+    if (subtest === "TWK") return isTwkPatternId(raw) ? raw : null;
+    return isTiuPatternId(raw) ? raw : null;
+  } catch {
+    return null;
+  }
+}
+
+export function writeLocalSubtestPattern(
+  subtest: QuestionSubtest,
+  patternId: PracticePatternId,
+): void {
+  if (typeof window === "undefined") return;
+  try {
+    window.localStorage.setItem(`wiyata-last-pattern-${subtest.toLowerCase()}-v1`, patternId);
+  } catch {
+    // Abaikan error penyimpanan browser
+  }
+}
+
+export function readLocalTiuProgress(
+  fallbackPattern?: TiuPatternId,
+): SanitizedPracticeProgress | null {
   if (typeof window === "undefined") return null;
   try {
     const raw = window.localStorage.getItem(TIU_PROGRESS_STORAGE_KEY);
     if (!raw) return null;
-    return sanitizePracticeProgress(JSON.parse(raw));
+    return sanitizePracticeProgress(JSON.parse(raw), fallbackPattern);
   } catch {
     return null;
   }

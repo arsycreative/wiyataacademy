@@ -9,6 +9,9 @@ export const APP_ROUTES = {
   tiuPractice: "/latihan/tiu",
   tiuPatternPractice: (pattern: string) =>
     `/latihan/tiu?pattern=${encodeURIComponent(pattern)}`,
+  twkPractice: "/latihan/twk",
+  twkPatternPractice: (pattern: string) =>
+    `/latihan/twk?pattern=${encodeURIComponent(pattern)}`,
   courseDetail: (slug: string) => `/courses/${slug}`,
   login: "/masuk",
   register: "/daftar",

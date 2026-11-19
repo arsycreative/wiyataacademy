@@ -88,5 +88,43 @@ describe("tiu-progress-sync", () => {
     expect(merged.viewMode).toBe("single");
     expect(merged.lastPattern).toBe("silogisme");
   });
+
+  it("preserves TWK question answers and pattern seeds without disrupting TIU lastPattern", () => {
+    const local = sanitizePracticeProgress({
+      selectedAnswers: {
+        "twk-nas-001": "B",
+        "tiu-sin-001": "A",
+      },
+      flaggedQuestions: { "twk-nas-001": true },
+      lastPattern: "nasionalisme",
+      patternSeeds: {
+        nasionalisme: 777,
+        integritas: 888,
+      },
+      questionSeeds: {
+        "twk-nas-001": 777,
+      },
+    });
+
+    expect(local.lastPattern).toBe("sinonim-antonim-akronim");
+    expect(local.patternSeeds).toEqual({
+      nasionalisme: 777,
+      integritas: 888,
+    });
+
+    const remote = sanitizePracticeProgress({
+      selectedAnswers: { "tiu-sin-001": "C" },
+      lastPattern: "silogisme",
+      patternSeeds: { silogisme: 555 },
+      questionSeeds: { "tiu-sin-001": 555 },
+    });
+
+    const merged = mergePracticeProgress(local, remote);
+    expect(merged.lastPattern).toBe("silogisme");
+    expect(merged.selectedAnswers["twk-nas-001"]).toBe("B");
+    expect(merged.questionSeeds["twk-nas-001"]).toBe(777);
+    expect(merged.patternSeeds.nasionalisme).toBe(777);
+    expect(merged.flaggedQuestions["twk-nas-001"]).toBe(true);
+  });
 });
 

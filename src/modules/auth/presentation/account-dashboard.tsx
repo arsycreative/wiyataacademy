@@ -20,6 +20,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { profileSchema } from "@/modules/auth/domain/auth-schema";
 import { summarizeTiuProgress } from "@/modules/question-bank/domain/question-shuffle";
+import { summarizeTwkProgress } from "@/modules/question-bank/domain/subtest-summary";
 import {
   mergePracticeProgress,
   readLocalTiuProgress,
@@ -93,10 +94,16 @@ export function AccountDashboard({
     [progressState],
   );
 
-  const accuracyPct =
-    tiuSummary.totalAnswered > 0
-      ? Math.round((tiuSummary.totalCorrect / tiuSummary.totalAnswered) * 100)
-      : 0;
+  const twkSummary = useMemo(
+    () =>
+      summarizeTwkProgress(
+        progressState.selectedAnswers,
+        progressState.flaggedQuestions,
+        progressState.patternSeeds,
+        progressState.questionSeeds,
+      ),
+    [progressState],
+  );
 
   const formattedJoinDate = useMemo(() => {
     try {
@@ -217,6 +224,16 @@ export function AccountDashboard({
           </div>
 
           <div className="flex flex-wrap items-center gap-2.5">
+            <Button
+              asChild
+              variant="outline"
+              className="border-blue-200 font-semibold text-blue-700 hover:bg-blue-50 hover:text-blue-800"
+            >
+              <Link href={APP_ROUTES.twkPractice}>
+                <BookOpen className="size-4" aria-hidden />
+                Latihan TWK
+              </Link>
+            </Button>
             <Button
               asChild
               className="bg-blue-600 font-semibold text-white hover:bg-blue-700"
@@ -351,91 +368,135 @@ export function AccountDashboard({
           </div>
         </section>
 
-        {/* Ringkasan Progres 9 Pola TIU */}
-        <section className="rounded-2xl border border-blue-100 bg-white p-6 shadow-sm shadow-blue-100/60 lg:col-span-7">
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <div>
-              <h2 className="text-base font-semibold text-slate-950">
-                Ringkasan Latihan TIU (9 Pola)
-              </h2>
-              <p className="mt-0.5 text-xs text-slate-600">
-                Pantau progres pengerjaan dan akurasi dari setiap pola TIU SKD CPNS.
-              </p>
-            </div>
-
-            <div className="flex items-center gap-2">
-              <div className="rounded-xl border border-blue-100 bg-blue-50/70 px-3 py-1.5 text-center">
-                <p className="text-[11px] font-medium text-blue-700">Terjawab</p>
-                <p className="text-sm font-bold text-blue-950">
-                  {tiuSummary.totalAnswered}/{tiuSummary.totalQuestions}
-                </p>
-              </div>
-              <div className="rounded-xl border border-emerald-100 bg-emerald-50/70 px-3 py-1.5 text-center">
-                <p className="text-[11px] font-medium text-emerald-700">Akurasi</p>
-                <p className="text-sm font-bold text-emerald-950">{accuracyPct}%</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="mt-5 divide-y divide-slate-100">
-            {tiuSummary.patterns.map((pattern) => {
-              const completionPct =
-                pattern.totalQuestions > 0
-                  ? Math.round((pattern.answeredCount / pattern.totalQuestions) * 100)
-                  : 0;
-              const patternAccuracy =
-                pattern.answeredCount > 0
-                  ? Math.round((pattern.correctCount / pattern.answeredCount) * 100)
-                  : null;
-
-              return (
-                <div
-                  key={pattern.patternId}
-                  className="flex flex-col gap-2 py-3.5 first:pt-0 last:pb-0 sm:flex-row sm:items-center sm:justify-between"
-                >
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-2">
-                      <span className="flex size-6 shrink-0 items-center justify-center rounded-md bg-blue-50 text-xs font-semibold text-blue-700">
-                        {pattern.order}
-                      </span>
-                      <p className="truncate text-sm font-semibold text-slate-900">
-                        {pattern.label}
-                      </p>
-                      {completionPct === 100 && (
-                        <CheckCircle2
-                          className="size-4 shrink-0 text-emerald-600"
-                          aria-label="Selesai"
-                        />
-                      )}
-                    </div>
-
-                    <div className="mt-2 flex items-center gap-3 pl-8">
-                      <div className="h-2 flex-1 overflow-hidden rounded-full bg-slate-100">
-                        <div
-                          className="h-full rounded-full bg-blue-600 transition-all"
-                          style={{ width: `${completionPct}%` }}
-                        />
-                      </div>
-                      <span className="shrink-0 text-xs font-medium text-slate-600">
-                        {pattern.answeredCount}/{pattern.totalQuestions}
-                        {patternAccuracy !== null ? ` • ${patternAccuracy}% benar` : ""}
-                      </span>
-                    </div>
-                  </div>
-
-                  <Link
-                    href={APP_ROUTES.tiuPatternPractice(pattern.patternId)}
-                    className="ml-8 inline-flex shrink-0 items-center gap-1 text-xs font-semibold text-blue-700 hover:text-blue-800 hover:underline sm:ml-4"
-                  >
-                    Latih
-                    <ArrowRight className="size-3.5" aria-hidden />
-                  </Link>
-                </div>
-              );
-            })}
-          </div>
-        </section>
+        {/* Ringkasan Progres TWK (5 Pilar) & TIU (9 Pola) */}
+        <div className="space-y-6 lg:col-span-7">
+          <SubtestSummaryCard
+            title="Ringkasan Latihan TWK (5 Pilar)"
+            subtitle="Pantau progres pengerjaan dan akurasi dari 5 pilar Tes Wawasan Kebangsaan."
+            summary={twkSummary}
+            buildPracticeHref={APP_ROUTES.twkPatternPractice}
+          />
+          <SubtestSummaryCard
+            title="Ringkasan Latihan TIU (9 Pola)"
+            subtitle="Pantau progres pengerjaan dan akurasi dari setiap pola TIU SKD CPNS."
+            summary={tiuSummary}
+            buildPracticeHref={APP_ROUTES.tiuPatternPractice}
+          />
+        </div>
       </div>
     </div>
+  );
+}
+
+type SummaryItem = {
+  patternId: string;
+  label: string;
+  order: number;
+  totalQuestions: number;
+  answeredCount: number;
+  correctCount: number;
+};
+
+function SubtestSummaryCard({
+  title,
+  subtitle,
+  summary,
+  buildPracticeHref,
+}: {
+  title: string;
+  subtitle: string;
+  summary: {
+    totalQuestions: number;
+    totalAnswered: number;
+    totalCorrect: number;
+    patterns: readonly SummaryItem[];
+  };
+  buildPracticeHref: (patternId: string) => string;
+}) {
+  const accuracyPct =
+    summary.totalAnswered > 0
+      ? Math.round((summary.totalCorrect / summary.totalAnswered) * 100)
+      : 0;
+
+  return (
+    <section className="rounded-2xl border border-blue-100 bg-white p-6 shadow-sm shadow-blue-100/60">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <h2 className="text-base font-semibold text-slate-950">{title}</h2>
+          <p className="mt-0.5 text-xs text-slate-600">{subtitle}</p>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <div className="rounded-xl border border-blue-100 bg-blue-50/70 px-3 py-1.5 text-center">
+            <p className="text-[11px] font-medium text-blue-700">Terjawab</p>
+            <p className="text-sm font-bold text-blue-950">
+              {summary.totalAnswered}/{summary.totalQuestions}
+            </p>
+          </div>
+          <div className="rounded-xl border border-emerald-100 bg-emerald-50/70 px-3 py-1.5 text-center">
+            <p className="text-[11px] font-medium text-emerald-700">Akurasi</p>
+            <p className="text-sm font-bold text-emerald-950">{accuracyPct}%</p>
+          </div>
+        </div>
+      </div>
+
+      <div className="mt-5 divide-y divide-slate-100">
+        {summary.patterns.map((pattern) => {
+          const completionPct =
+            pattern.totalQuestions > 0
+              ? Math.round((pattern.answeredCount / pattern.totalQuestions) * 100)
+              : 0;
+          const patternAccuracy =
+            pattern.answeredCount > 0
+              ? Math.round((pattern.correctCount / pattern.answeredCount) * 100)
+              : null;
+
+          return (
+            <div
+              key={pattern.patternId}
+              className="flex flex-col gap-2 py-3.5 first:pt-0 last:pb-0 sm:flex-row sm:items-center sm:justify-between"
+            >
+              <div className="min-w-0 flex-1">
+                <div className="flex items-center gap-2">
+                  <span className="flex size-6 shrink-0 items-center justify-center rounded-md bg-blue-50 text-xs font-semibold text-blue-700">
+                    {pattern.order}
+                  </span>
+                  <p className="truncate text-sm font-semibold text-slate-900">
+                    {pattern.label}
+                  </p>
+                  {completionPct === 100 && (
+                    <CheckCircle2
+                      className="size-4 shrink-0 text-emerald-600"
+                      aria-label="Selesai"
+                    />
+                  )}
+                </div>
+
+                <div className="mt-2 flex items-center gap-3 pl-8">
+                  <div className="h-2 flex-1 overflow-hidden rounded-full bg-slate-100">
+                    <div
+                      className="h-full rounded-full bg-blue-600 transition-all"
+                      style={{ width: `${completionPct}%` }}
+                    />
+                  </div>
+                  <span className="shrink-0 text-xs font-medium text-slate-600">
+                    {pattern.answeredCount}/{pattern.totalQuestions}
+                    {patternAccuracy !== null ? ` • ${patternAccuracy}% benar` : ""}
+                  </span>
+                </div>
+              </div>
+
+              <Link
+                href={buildPracticeHref(pattern.patternId)}
+                className="ml-8 inline-flex shrink-0 items-center gap-1 text-xs font-semibold text-blue-700 hover:text-blue-800 hover:underline sm:ml-4"
+              >
+                Latih
+                <ArrowRight className="size-3.5" aria-hidden />
+              </Link>
+            </div>
+          );
+        })}
+      </div>
+    </section>
   );
 }

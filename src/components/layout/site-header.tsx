@@ -15,6 +15,7 @@ import { useToastStore } from "@/shared/stores/toast-store";
 const navLinks = [
   { href: APP_ROUTES.method, label: "Metode Belajar" },
   { href: APP_ROUTES.programs, label: "Program Bimbel" },
+  { href: APP_ROUTES.twkPractice, label: "Bank Soal TWK" },
   { href: APP_ROUTES.tiuPractice, label: "Bank Soal TIU" },
   { href: APP_ROUTES.testimonials, label: "Testimoni" },
   { href: APP_ROUTES.faq, label: "FAQ" },
@@ -71,13 +72,13 @@ export function SiteHeader() {
 
         <nav
           aria-label="Navigasi utama"
-          className="hidden items-center gap-7 text-sm font-medium text-blue-950 md:flex"
+          className="hidden items-center gap-5 whitespace-nowrap text-sm font-medium text-blue-950 md:flex lg:gap-7"
         >
           {navLinks.map((item) => (
             <Link
               key={item.href}
               href={item.href}
-              className="transition-colors hover:text-blue-700"
+              className="whitespace-nowrap transition-colors hover:text-blue-700"
             >
               {item.label}
             </Link>

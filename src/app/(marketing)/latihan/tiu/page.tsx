@@ -1,16 +1,15 @@
 import type { Metadata } from "next";
-import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
 
 import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteHeader } from "@/components/layout/site-header";
-import { Button } from "@/components/ui/button";
+import { getPatternStats } from "@/modules/question-bank/data/tiu";
+import { ALL_TWK_QUESTIONS } from "@/modules/question-bank/data/twk";
 import {
   TIU_PATTERN_IDS,
   type TiuPatternId,
 } from "@/modules/question-bank/domain/question";
+import { SubtestPracticeIntro } from "@/modules/question-bank/presentation/practice-ui-primitives";
 import { TiuPatternPractice } from "@/modules/question-bank/presentation/tiu-pattern-practice";
-import { APP_ROUTES } from "@/shared/constants/app";
 
 export const metadata: Metadata = {
   title: "Latihan Soal TIU — SKD CPNS",
@@ -41,31 +40,17 @@ export default async function TiuPracticePage({
     parsePatternParam(resolvedParams?.pattern) ??
     parsePatternParam(resolvedParams?.pola);
 
+  const tiuTotal = getPatternStats().reduce((total, item) => total + item.total, 0);
+  const twkTotal = ALL_TWK_QUESTIONS.length;
+
   const pageIntro = (
-    <div className="mb-8 flex flex-col gap-4 border-b border-blue-100 pb-6 sm:flex-row sm:items-end sm:justify-between">
-      <div>
-        <Button
-          asChild
-          variant="ghost"
-          className="-ml-2 mb-3 text-blue-700 hover:bg-blue-50 hover:text-blue-800"
-        >
-          <Link href={APP_ROUTES.home}>
-            <ArrowLeft className="size-4" aria-hidden />
-            Kembali ke Beranda
-          </Link>
-        </Button>
-        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-blue-700">
-          Bank Soal Terpisah • SKD CPNS
-        </p>
-        <h1 className="mt-2 text-2xl font-semibold tracking-tight text-slate-950 sm:text-4xl">
-          Latihan Soal TIU — SKD CPNS
-        </h1>
-        <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-600 sm:text-base">
-          Pilih satu pola soal untuk fokus berlatih atau aktifkan Mode Review untuk melihat
-          kunci jawaban dan pembahasan semua soal sekaligus.
-        </p>
-      </div>
-    </div>
+    <SubtestPracticeIntro
+      activeSubtest="TIU"
+      title="Latihan Soal TIU — SKD CPNS"
+      description="Pilih satu pola soal untuk fokus berlatih atau aktifkan Mode Review untuk melihat kunci jawaban dan pembahasan semua soal sekaligus."
+      tiuTotal={tiuTotal}
+      twkTotal={twkTotal}
+    />
   );
 
   return (
