@@ -100,10 +100,11 @@ export function CourseCatalogBrowser({
     const skdSlide: CarouselSlide = {
       kind: "program",
       id: skdCourse.slug,
-      badge: "Program Utama",
+      badge: "Learning Path Interaktif",
       visualCode: "SKD",
       title: skdCourse.title,
-      summary: "Penguasaan penuh TWK, TIU, dan TKP dari dasar hingga siap ujian.",
+      summary:
+        "Roadmap belajar 5 tahap: tes diagnostik, 2.100 soal TWK/TIU/TKP per pola, hingga Tryout CAT 110 soal.",
       gradient: slideGradients[skdCourse.theme],
       course: skdCourse,
     };
@@ -316,7 +317,7 @@ export function CourseCatalogBrowser({
                             className="h-11 bg-blue-600 px-5 text-white hover:bg-blue-700"
                           >
                             <Link href={`/courses/${slide.course.slug}`}>
-                              Lihat Program
+                              Buka Roadmap SKD
                               <ArrowRight className="size-4" aria-hidden />
                             </Link>
                           </Button>

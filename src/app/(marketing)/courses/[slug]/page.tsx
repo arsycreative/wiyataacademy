@@ -19,6 +19,7 @@ import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteHeader } from "@/components/layout/site-header";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { getAuthenticatedUser } from "@/modules/auth/infrastructure/profile-repository.server";
 import { createCourseRepository } from "@/modules/catalog/infrastructure/course-repository.server";
 import {
   courseThemeClasses,
@@ -26,6 +27,9 @@ import {
   type CourseDetail,
 } from "@/modules/catalog/presentation/course-catalog-content";
 import { ProgramEnrollButton } from "@/modules/catalog/presentation/program-enroll-button";
+import { SkdLearningPathView } from "@/modules/catalog/presentation/skd-learning-path-view";
+import { createTiuProgressRepository } from "@/modules/question-bank/infrastructure/tiu-progress-repository.server";
+import type { SanitizedPracticeProgress } from "@/modules/question-bank/infrastructure/tiu-progress-sync";
 import { APP_ROUTES } from "@/shared/constants/app";
 
 type CoursePageProps = {
@@ -60,7 +64,21 @@ export default async function CoursePage({ params }: CoursePageProps) {
 
   const catalogCourse = toCatalogCourse(course);
   const { detail } = catalogCourse;
+  const isSkdRoadmap = slug === "intensif-skd-cpns";
   const testimonials = getCourseTestimonials(detail.label);
+
+  let initialCloudProgress: SanitizedPracticeProgress | null = null;
+  if (isSkdRoadmap) {
+    try {
+      const user = await getAuthenticatedUser();
+      if (user) {
+        const res = await createTiuProgressRepository().findByUserId(user.id);
+        initialCloudProgress = res.data;
+      }
+    } catch {
+      initialCloudProgress = null;
+    }
+  }
 
   return (
     <div className="flex min-h-screen flex-col bg-[#f8fbff] text-slate-900">
@@ -118,6 +136,10 @@ export default async function CoursePage({ params }: CoursePageProps) {
       <main className="mx-auto w-full max-w-[1280px] flex-1 px-5 py-10 sm:px-8 lg:px-10">
         <div className="grid gap-8 lg:grid-cols-[1fr_360px]">
           <div className="min-w-0 space-y-6">
+            {isSkdRoadmap && (
+              <SkdLearningPathView initialCloudProgress={initialCloudProgress} />
+            )}
+
             <section className="rounded-xl border border-blue-100 bg-white p-6 shadow-sm shadow-blue-100/50">
               <h2 className="text-xl font-bold text-slate-950">Yang akan kamu pelajari</h2>
               <ul className="mt-4 grid gap-3">
@@ -136,7 +158,7 @@ export default async function CoursePage({ params }: CoursePageProps) {
             </section>
 
             <section className="rounded-xl border border-blue-100 bg-white p-6 shadow-sm shadow-blue-100/50">
-              <h2 className="text-xl font-bold text-slate-950">Tentang program ini</h2>
+              <h2 className="text-xl font-bold text-slate-950">Tentang roadmap ini</h2>
               <div className="mt-4 space-y-3 text-sm leading-relaxed text-slate-700 sm:text-base">
                 {detail.about.map((paragraph) => (
                   <p key={paragraph}>{paragraph}</p>
@@ -144,30 +166,32 @@ export default async function CoursePage({ params }: CoursePageProps) {
               </div>
             </section>
 
-            <section className="rounded-xl border border-blue-100 bg-white p-6 shadow-sm shadow-blue-100/50">
-              <h2 className="text-xl font-bold text-slate-950">Silabus &amp; Rangkaian Materi</h2>
-              <ol className="mt-4 grid gap-3">
-                {detail.syllabus.map((section, index) => (
-                  <li
-                    key={section.title}
-                    className="grid gap-3 rounded-lg border border-slate-100 bg-slate-50/70 p-4 sm:grid-cols-[2.75rem_1fr_auto] sm:items-start"
-                  >
-                    <span className="flex size-9 items-center justify-center rounded-full bg-blue-600 text-sm font-semibold text-white">
-                      {index + 1}
-                    </span>
-                    <div>
-                      <h3 className="font-semibold text-slate-950">{section.title}</h3>
-                      <p className="mt-1 text-sm leading-relaxed text-slate-600">
-                        {section.description}
-                      </p>
-                    </div>
-                    <span className="w-fit rounded-md bg-white px-3 py-1.5 text-xs font-semibold text-blue-700 shadow-sm shadow-blue-100/50">
-                      {section.lessons}
-                    </span>
-                  </li>
-                ))}
-              </ol>
-            </section>
+            {!isSkdRoadmap && (
+              <section className="rounded-xl border border-blue-100 bg-white p-6 shadow-sm shadow-blue-100/50">
+                <h2 className="text-xl font-bold text-slate-950">Silabus &amp; Rangkaian Materi</h2>
+                <ol className="mt-4 grid gap-3">
+                  {detail.syllabus.map((section, index) => (
+                    <li
+                      key={section.title}
+                      className="grid gap-3 rounded-lg border border-slate-100 bg-slate-50/70 p-4 sm:grid-cols-[2.75rem_1fr_auto] sm:items-start"
+                    >
+                      <span className="flex size-9 items-center justify-center rounded-full bg-blue-600 text-sm font-semibold text-white">
+                        {index + 1}
+                      </span>
+                      <div>
+                        <h3 className="font-semibold text-slate-950">{section.title}</h3>
+                        <p className="mt-1 text-sm leading-relaxed text-slate-600">
+                          {section.description}
+                        </p>
+                      </div>
+                      <span className="w-fit rounded-md bg-white px-3 py-1.5 text-xs font-semibold text-blue-700 shadow-sm shadow-blue-100/50">
+                        {section.lessons}
+                      </span>
+                    </li>
+                  ))}
+                </ol>
+              </section>
+            )}
 
             <section className="rounded-xl border border-blue-100 bg-white p-6 shadow-sm shadow-blue-100/50">
               <div className="flex items-center gap-2">
@@ -197,11 +221,13 @@ export default async function CoursePage({ params }: CoursePageProps) {
           <aside className="space-y-6">
             <div className="rounded-xl border border-blue-100 bg-white p-6 shadow-md shadow-blue-100/40 lg:sticky lg:top-24 lg:self-start">
               <p className="text-xs font-semibold uppercase tracking-wider text-blue-600">
-                Ringkasan Program
+                {isSkdRoadmap ? "Ringkasan Learning Path" : "Ringkasan Program"}
               </p>
               <h3 className="mt-2 text-xl font-bold text-slate-950">{detail.title}</h3>
               <p className="mt-2 text-xs text-slate-500">
-                Program persiapan terstruktur untuk seleksi periode berjalan
+                {isSkdRoadmap
+                  ? "Progres seluruh pilar, pola, aspek, dan simulasi CAT tersimpan otomatis."
+                  : "Program persiapan terstruktur untuk seleksi periode berjalan"}
               </p>
 
               <div className="my-5 h-px bg-slate-100" />

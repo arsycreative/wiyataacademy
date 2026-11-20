@@ -6,6 +6,7 @@ export type CourseSyllabusSection = {
   title: string;
   description: string;
   lessons: string;
+  href?: string;
 };
 
 export type CourseFaq = {
@@ -65,28 +66,39 @@ export const courseThemeClasses: Record<CourseTheme, string> = {
 
 export const skdIntensifSyllabus: readonly CourseSyllabusSection[] = [
   {
-    title: "Pemetaan Kisi-Kisi & Diagnostik Awal SKD",
+    title: "Tahap 1: Diagnostik Awal & Pengenalan CAT",
     description:
-      "Pahami aturan passing grade KemenPAN-RB, bobot nilai TWK/TIU/TKP, dan ukur skor awal lewat tes diagnostik.",
-    lessons: "4 materi + 1 diagnostik",
+      "Pahami ambang batas resmi BKN (TWK 65, TIU 80, TKP 166) dan ukur skor awal lewat simulasi CAT berbatas waktu.",
+    lessons: "Tryout CAT",
+    href: "/tryout",
   },
   {
-    title: "TWK: Nasionalisme, Integritas & Bela Negara",
+    title: "Tahap 2: TWK — 5 Pilar Kebangsaan",
     description:
-      "Latih soal studi kasus implementasi Pancasila, UUD 1945, Bhinneka Tunggal Ika, dan pilar kebangsaan berbasis penalaran.",
-    lessons: "10 materi + 2 kuis",
+      "Latih soal studi kasus implementasi Nasionalisme, Integritas, Bela Negara, Pilar Negara, dan Bahasa Negara.",
+    lessons: "5 pilar • 200 soal",
+    href: "/latihan/twk",
   },
   {
-    title: "TIU: Verbal, Numerik, Silogisme & Figural",
+    title: "Tahap 3: TIU — 9 Pola Verbal, Numerik & Figural",
     description:
-      "Kuasai pola deret, perbandingan kuantitatif, aritmatika sosial, penarikan kesimpulan, dan rotasi bangun ruang secara cepat.",
-    lessons: "12 materi + 3 drill",
+      "Kuasai sinonim/antonim, analogi, silogisme, hitung cepat, perbandingan, penalaran analitis, deret, analisis tabel, dan figural.",
+    lessons: "9 pola • 1.660 soal",
+    href: "/latihan/tiu",
   },
   {
-    title: "TKP: Strategi Memilih Opsi Skor 5",
+    title: "Tahap 4: TKP — 6 Aspek Strategi Skor 5",
     description:
-      "Bedah 6 aspek TKP (Pelayanan Publik, Jejaring Kerja, Sosial Budaya, TIK, Profesionalisme, Anti-Radikalisme) agar tidak terjebak skor 3–4.",
-    lessons: "10 materi + 4 simulasi CAT",
+      "Bedah Pelayanan Publik, Jejaring Kerja, Sosial Budaya, TIK, Profesionalisme, dan Anti-Radikalisme agar konsisten meraih poin 5.",
+    lessons: "6 aspek • 240 soal",
+    href: "/latihan/tkp",
+  },
+  {
+    title: "Tahap 5: Simulasi Tryout CAT Resmi (110 Soal)",
+    description:
+      "Uji kesiapan akhir 110 soal dalam 100 menit lengkap dengan evaluasi kelulusan passing grade dan pemetaan 4 pola terlemah.",
+    lessons: "110 soal • 100 menit",
+    href: "/tryout",
   },
 ];
 
@@ -211,45 +223,45 @@ const detailBySlug: Record<string, CourseDetail> = {
   "intensif-skd-cpns": {
     slug: "intensif-skd-cpns",
     title: "Intensif SKD CPNS (TWK, TIU & TKP)",
-    label: "SKD CPNS",
-    level: "Pemula",
-    price: "Rp 279.000",
-    instructors: "Tim Mentor ASN Wiyata Academy",
+    label: "Roadmap SKD CPNS",
+    level: "Pemula – Lanjutan",
+    price: "Akses Terbuka",
+    instructors: "Tim Kurikulum SKD Wiyata Academy",
     description:
-      "Program terstruktur dari nol untuk menembus ambang batas dan meraih skor tinggi SKD CPNS berbasis CAT BKN.",
-    duration: "8 minggu",
-    lessons: "36 materi",
-    practiceTests: "8 Tryout CAT BKN",
+      "Roadmap belajar interaktif 5 tahap untuk menembus ambang batas dan meraih skor tinggi SKD CPNS berbasis CAT BKN.",
+    duration: "5 tahap terstruktur",
+    lessons: "20 modul • 2.100 soal",
+    practiceTests: "Tryout CAT 110 Soal + Mini 35 Soal",
     bannerLabel: "SKD CPNS 2026",
     bannerTheme: "blue",
     bannerUrl: "/images/courses/asn-cpns-banner.svg",
     outcomes: [
-      "Menguasai seluruh kisi-kisi terbaru TWK, TIU, dan TKP sesuai standar KemenPAN-RB.",
-      "Meningkatkan kecepatan berhitung TIU dan ketajaman analisis soal TWK berbasis penalaran.",
-      "Menerapkan strategi pemeringkatan opsi TKP untuk konsisten meraih skor 4–5.",
-      "Mengelola waktu 100 menit untuk 110 soal CAT tanpa panik di akhir sesi.",
+      "Menguasai 5 pilar TWK (200 soal), 9 pola TIU (1.660 soal), dan 6 aspek TKP (240 soal) sesuai kisi-kisi terbaru.",
+      "Memantau progres pengerjaan dan akurasi tiap modul secara langsung pada roadmap belajar interaktif.",
+      "Menerapkan strategi pemeringkatan opsi TKP untuk konsisten meraih poin 5 di atas pengecoh skor 4.",
+      "Mengelola ritme 100 menit untuk 110 soal pada simulasi CAT resmi lengkap dengan evaluasi ambang batas BKN.",
     ],
     about: [
-      "Intensif SKD CPNS dirancang bagi peserta yang ingin membangun fondasi kuat sekaligus berlatih soal-soal HOTS terbaru secara sistematis.",
-      "Setiap modul disusun ringkas dengan rangkuman konsep, contoh soal bertingkat, trik penyelesaian cepat, serta catatan evaluasi kesalahan (error log).",
-      "Dilengkapi simulasi CAT BKN agar Anda terbiasa dengan alur pengerjaan, manajemen waktu per subtes, dan target skor aman di atas passing grade.",
+      "Intensif SKD CPNS kini berbentuk Learning Path interaktif yang menyatukan seluruh bank soal dan simulasi CAT Wiyata Academy ke dalam 5 tahap belajar berurutan.",
+      "Setiap tahap menampilkan progres nyata pengerjaan, persentase akurasi atau skor poin, serta tautan langsung ke setiap pilar TWK, pola TIU, aspek TKP, dan paket Tryout CAT.",
+      "Masuk dengan akun Anda agar progres bank soal tersinkronisasi lintas perangkat dan riwayat skor simulasi mudah dipantau hingga hari ujian.",
     ],
     syllabus: skdIntensifSyllabus,
     faqs: [
       {
-        question: "Apakah materi sudah sesuai kisi-kisi CPNS terbaru?",
+        question: "Apakah materi dan bank soal sudah sesuai kisi-kisi CPNS terbaru?",
         answer:
-          "Ya, seluruh materi TWK penalaran, TIU, dan TKP disusun mengacu pada kisi-kisi resmi seleksi CASN terbaru.",
+          "Ya, seluruh 2.100 soal TWK, TIU, dan TKP beserta ambang batas CAT (TWK 65, TIU 80, TKP 166) mengacu pada standar seleksi SKD CPNS terbaru.",
       },
       {
-        question: "Apakah cocok untuk peserta yang baru pertama kali ikut CPNS?",
+        question: "Apakah harus menyelesaikan tahap secara berurutan?",
         answer:
-          "Sangat cocok. Modul dimulai dari pengenalan sistem CAT, ambang batas nilai, hingga latihan soal bertahap.",
+          "Roadmap memberi rekomendasi langkah berikutnya secara otomatis, tetapi Anda tetap bebas langsung membuka pilar, pola, aspek, atau simulasi Tryout CAT mana pun.",
       },
       {
-        question: "Berapa lama akses materi dan tryout berlaku?",
+        question: "Bagaimana progres belajar saya disimpan?",
         answer:
-          "Akses modul dan bank soal berlaku penuh hingga rangkaian seleksi CPNS periode berjalan selesai.",
+          "Progres latihan otomatis tersimpan di browser dan tersinkronisasi ke akun Anda ketika masuk melalui halaman Akun.",
       },
     ],
   },

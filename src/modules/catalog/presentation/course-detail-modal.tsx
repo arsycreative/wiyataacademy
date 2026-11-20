@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useCallback, useEffect, useId, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import {
+  ArrowRight,
   Award,
   BarChart3,
   BookOpenCheck,
@@ -22,7 +23,6 @@ import {
   type CourseDetail,
 } from "@/modules/catalog/presentation/course-catalog-content";
 import { APP_ROUTES } from "@/shared/constants/app";
-import { useToastStore } from "@/shared/stores/toast-store";
 
 const MODAL_ANIMATION_MS = 560;
 
@@ -36,7 +36,6 @@ export function CourseDetailModal({ course, onClose }: CourseDetailModalProps) {
   const isClosingRef = useRef(false);
   const closeTimeoutRef = useRef<number | null>(null);
   const titleId = useId();
-  const addToast = useToastStore((state) => state.addToast);
 
   const closeModal = useCallback(() => {
     if (isClosingRef.current) {
@@ -96,14 +95,6 @@ export function CourseDetailModal({ course, onClose }: CourseDetailModalProps) {
   if (!course) {
     return null;
   }
-
-  const handleInterest = () => {
-    addToast(
-      `Program "${course.title}" dipilih. Informasi pendaftaran akan tersedia segera.`,
-      "success",
-    );
-    closeModal();
-  };
 
   return createPortal(
     <div
@@ -173,19 +164,12 @@ export function CourseDetailModal({ course, onClose }: CourseDetailModalProps) {
 
               <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
                 <Button
-                  type="button"
-                  onClick={handleInterest}
-                  className="h-12 min-w-44 bg-white text-blue-700 shadow-lg shadow-blue-950/20 hover:bg-blue-50"
-                >
-                  Daftar Sekarang
-                </Button>
-                <Button
                   asChild
-                  variant="outline"
-                  className="h-12 border-white/40 bg-white/10 text-white hover:bg-white/20 hover:text-white"
+                  className="h-12 min-w-48 bg-white font-semibold text-blue-700 shadow-lg shadow-blue-950/20 hover:bg-blue-50"
                 >
-                  <Link href={APP_ROUTES.tiuPractice} onClick={closeModal}>
-                    Buka Latihan Soal TIU
+                  <Link href={APP_ROUTES.courseDetail(course.slug)} onClick={closeModal}>
+                    Buka Roadmap Interaktif
+                    <ArrowRight className="size-4" aria-hidden />
                   </Link>
                 </Button>
                 <Button
@@ -193,8 +177,8 @@ export function CourseDetailModal({ course, onClose }: CourseDetailModalProps) {
                   variant="outline"
                   className="h-12 border-white/40 bg-white/10 text-white hover:bg-white/20 hover:text-white"
                 >
-                  <Link href={`/courses/${course.slug}`} onClick={closeModal}>
-                    Lihat Halaman Penuh
+                  <Link href={APP_ROUTES.tryout} onClick={closeModal}>
+                    Mulai Tryout CAT 110 Soal
                   </Link>
                 </Button>
               </div>
@@ -244,27 +228,45 @@ export function CourseDetailModal({ course, onClose }: CourseDetailModalProps) {
                 </div>
               </InfoPanel>
 
-              <InfoPanel title="Silabus Materi & Latihan">
+              <InfoPanel title="Alur Roadmap & Latihan">
                 <ol className="grid gap-3">
-                  {course.syllabus.map((section, index) => (
-                    <li
-                      key={section.title}
-                      className="grid gap-3 rounded-lg border border-slate-100 bg-slate-50/80 p-4 sm:grid-cols-[2.75rem_1fr_auto] sm:items-start"
-                    >
-                      <span className="flex size-9 items-center justify-center rounded-full bg-blue-600 text-sm font-semibold text-white">
-                        {index + 1}
-                      </span>
-                      <div>
-                        <h4 className="font-semibold text-slate-950">{section.title}</h4>
-                        <p className="mt-1 text-sm leading-6 text-slate-600">
-                          {section.description}
-                        </p>
-                      </div>
-                      <span className="w-fit rounded-md bg-white px-3 py-1.5 text-xs font-semibold text-blue-700 shadow-sm shadow-blue-100">
-                        {section.lessons}
-                      </span>
-                    </li>
-                  ))}
+                  {course.syllabus.map((section, index) => {
+                    const inner = (
+                      <>
+                        <span className="flex size-9 items-center justify-center rounded-full bg-blue-600 text-sm font-semibold text-white">
+                          {index + 1}
+                        </span>
+                        <div>
+                          <h4 className="font-semibold text-slate-950">{section.title}</h4>
+                          <p className="mt-1 text-sm leading-6 text-slate-600">
+                            {section.description}
+                          </p>
+                        </div>
+                        <span className="inline-flex w-fit items-center gap-1 rounded-md bg-white px-3 py-1.5 text-xs font-semibold text-blue-700 shadow-sm shadow-blue-100">
+                          {section.lessons}
+                          {section.href && <ArrowRight className="size-3.5" aria-hidden />}
+                        </span>
+                      </>
+                    );
+
+                    return (
+                      <li key={section.title}>
+                        {section.href ? (
+                          <Link
+                            href={section.href}
+                            onClick={closeModal}
+                            className="grid gap-3 rounded-lg border border-slate-100 bg-slate-50/80 p-4 transition hover:border-blue-200 hover:bg-blue-50/40 sm:grid-cols-[2.75rem_1fr_auto] sm:items-start"
+                          >
+                            {inner}
+                          </Link>
+                        ) : (
+                          <div className="grid gap-3 rounded-lg border border-slate-100 bg-slate-50/80 p-4 sm:grid-cols-[2.75rem_1fr_auto] sm:items-start">
+                            {inner}
+                          </div>
+                        )}
+                      </li>
+                    );
+                  })}
                 </ol>
               </InfoPanel>
 
@@ -301,19 +303,21 @@ export function CourseDetailModal({ course, onClose }: CourseDetailModalProps) {
                 <CourseFact icon={Users} label="Mentor" value={course.instructors} />
               </dl>
               <Button
-                type="button"
-                onClick={handleInterest}
-                className="mt-6 h-12 w-full bg-blue-600 shadow-lg shadow-blue-100 hover:bg-blue-700"
+                asChild
+                className="mt-6 h-12 w-full bg-blue-600 font-semibold text-white shadow-lg shadow-blue-100 hover:bg-blue-700"
               >
-                Daftar Program Ini
+                <Link href={APP_ROUTES.courseDetail(course.slug)} onClick={closeModal}>
+                  Buka Roadmap Interaktif
+                  <ArrowRight className="size-4" aria-hidden />
+                </Link>
               </Button>
               <Button
                 asChild
                 variant="outline"
-                className="mt-2.5 h-11 w-full border-blue-200 text-blue-700 hover:bg-blue-50"
+                className="mt-2.5 h-11 w-full border-slate-300 bg-slate-900 font-semibold text-white hover:bg-slate-800 hover:text-white"
               >
-                <Link href={APP_ROUTES.tiuPractice} onClick={closeModal}>
-                  Buka Latihan Soal TIU
+                <Link href={APP_ROUTES.tryout} onClick={closeModal}>
+                  Mulai Tryout CAT 110 Soal
                 </Link>
               </Button>
             </aside>
