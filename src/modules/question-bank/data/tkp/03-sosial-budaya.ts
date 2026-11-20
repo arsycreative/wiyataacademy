@@ -11,21 +11,21 @@ const sosialBudayaDrafts: readonly TkpQuestionDraft[] = [
     "difficulty": "mudah",
     "prompt": "Anda baru ditempatkan di kecamatan yang tradisi pergaulannya sangat menjunjung tinggi sapaan adat dan tata cara bertamu yang berbeda dari kota asal Anda. Sikap awal Anda dalam beradaptasi adalah ...",
     "options": [
-      "Mempelajari tata krama dan kearifan lokal setempat dengan tulus, menyapa warga dengan hormat, dan menyesuaikan perilaku pergaulan tanpa meninggalkan profesionalitas",
-      "Menunggu warga sekitar menyesuaikan diri lebih dahulu dengan kebiasaan gaya kota besar Anda karena standar kantor bersifat nasional",
-      "Hanya bergaul rapat dengan sesama pegawai perantau yang berasal dari wilayah provinsi sama dengan Anda",
-      "Mengkritik tradisi sapaan warga sekitar sebagai kebiasaan lambat yang tidak sesuai efisiensi zaman modern",
-      "Segera mengajukan permohonan mutasi ke daerah asal pada minggu kedua penempatan karena merasa budaya lokal terlalu asing"
+      "Mempelajari tata krama lokal secara tulus, menyapa warga ramah, dan menyesuaikan diri di lingkungan baru.",
+      "Tetap mempertahankan gaya pergaulan kota asal secara kaku karena menganggap sapaan adat daerah kurang praktis.",
+      "Lebih banyak bergaul akrab bersama sesama pegawai perantau yang berasal dari daerah sama karena merasa lebih nyaman.",
+      "Menyapa warga sekadarnya saat berpapasan di jalan sambil memusatkan perhatian pada penyelesaian tugas rutin kantor.",
+      "Menjaga tutur kata sopan saat bertemu warga setempat, sambil tetap membawa kebiasaan pergaulan kota asal secara wajar."
     ],
     "optionScores": [
       5,
-      3,
-      2,
       1,
+      2,
+      3,
       4
     ],
     "answer": "A",
-    "explanation": "Adaptasi sosial budaya terbaik (skor 5) ditunjukkan lewat keingintahuan positif mempelajari tata krama lokal secara tulus dan membangun keharmonisan sejak hari-hari pertama tanpa menutup diri ataupun merendahkan tradisi setempat.",
+    "explanation": "Skor 5 menunjukkan adaptasi aktif dengan mempelajari tata krama lokal secara tulus tanpa merendahkan tradisi baru. Pilihan skor 4 sebenarnya sudah sopan dalam pergaulan dengan warga, tetapi masih bertahan pada kebiasaan asal tanpa inisiatif memahami sapaan adat setempat.",
     "tip": "Di lingkungan penempatan baru, pelajari kearifan lokal secara hormat dan terbuka agar diterima warga tanpa kehilangan etika kerja."
   },
   {
@@ -34,21 +34,21 @@ const sosialBudayaDrafts: readonly TkpQuestionDraft[] = [
     "difficulty": "mudah",
     "prompt": "Saat Anda tinggal di lingkungan perumahan baru, warga setempat rutin mengadakan musyawarah kampung sekaligus pertemuan perkenalan penghuni baru setiap awal bulan pada Sabtu pagi. Langkah Anda adalah ...",
     "options": [
-      "Tidak hadir dan mengunci pagar rumah agar tetap tenang beristirahat karena merasa tidak wajib mengenal tetangga",
-      "Menyempatkan hadir dengan ramah, memperkenalkan diri serta bersedia berkontribusi sesuai kemampuan dalam kegiatan lingkungan sebagai wujud keakraban bertetangga",
-      "Mengirimkan bingkisan makanan lewat petugas keamanan saja supaya warga tahu rumah Anda sudah berpenghuni tanpa hadir secara langsung",
-      "Hanya menyapa tetangga terdekat kanan-kiri rumah bila bertemu di jalan sambil menghindari agenda kumpul warga",
-      "Menilai kegiatan pertemuan warga tersebut membuang waktu sehingga lebih baik berkomunikasi hanya lewat grup pesan elektronik"
+      "Menghadiri pertemuan warga secara tulus untuk memperkenalkan diri, namun memilih menyimak pasif tanpa menawarkan peran.",
+      "Menyempatkan hadir dengan ramah di pertemuan warga, memperkenalkan diri, serta siap berkontribusi sesuai kemampuan.",
+      "Menyampaikan pesan izin berhalangan secara sopan kepada pengurus RT sambil menitipkan salam perkenalan bagi warga sekitar.",
+      "Hanya menyapa tetangga terdekat kanan-kiri rumah saat berpapasan karena merasa agenda kumpul warga menyita akhir pekan.",
+      "Tidak menghadiri pertemuan karena menganggap hubungan bertetangga tidak perlu melibatkan rapat rutin kampung."
     ],
     "optionScores": [
-      1,
+      4,
       5,
       3,
-      4,
-      2
+      2,
+      1
     ],
     "answer": "B",
-    "explanation": "Hadir secara langsung dengan sikap ramah dan terlibat aktif dalam kehidupan sosial tetangga membangun ikatan harmonis dan modal sosial yang kuat di lingkungan tinggal baru (skor 5).",
+    "explanation": "Skor 5 membangun modal sosial sejak awal melalui kehadiran ramah dan kesediaan berkontribusi nyata dalam lingkungan baru. Pilihan skor 4 sudah menunjukkan itikad baik hadir dan memperkenalkan diri secara tulus, tetapi berhenti pada sikap pasif tanpa keterlibatan aktif.",
     "tip": "Keterlibatan aktif dan ramah pada forum perkenalan warga membangun harmoni bertetangga sejak awal."
   },
   {
@@ -57,21 +57,21 @@ const sosialBudayaDrafts: readonly TkpQuestionDraft[] = [
     "difficulty": "sedang",
     "prompt": "Dalam kunjungan penyuluhan program pertanian modern ke kampung adat, Anda melihat warga menolak langsung jadwal tanam serentak karena masih berpegang teguh pada tradisi syukuran awal panen menurut hitungan tetua adat. Pendekatan terbaik Anda adalah ...",
     "options": [
-      "Memaksa warga mengikuti kalender penyuluhan dinas dengan ancaman penghentian penyaluran bibit subsidi besok pagi",
-      "Membiarkan warga berjalan sendiri tanpa pendampingan teknis apa pun agar dinas tidak dituduh ikut campur urusan adat",
-      "Menghormati kearifan adat setempat, berdialog dengan tetua adat secara santun untuk memahami jadwal lokal mereka, lalu menyelaraskan penyuluhan teknis tanpa menabrak nilai adat yang positif",
-      "Mengatakan secara terbuka bahwa hitungan tradisional leluhur tidak ilmiah dan harus segera ditinggalkan petani muda",
-      "Menyampaikan laporan penolakan warga apa adanya tanpa menjajaki pertemuan lanjutan bersama tokoh masyarakat"
+      "Membagikan brosur tanam modern kepada petani muda sambil membiarkan warga menjalankan kalender adat seperti biasa.",
+      "Menghormati alasan penolakan warga dengan santun serta mencatat pertimbangan tradisi lokal itu untuk dilaporkan ke pimpinan.",
+      "Berdialog hormat dengan tetua adat memahami hitungan lokal, lalu menyelaraskan jadwal penyuluhan tanpa menabrak adat.",
+      "Mewajibkan warga mengikuti jadwal tanam resmi dinas bila ingin tetap memperoleh jatah bantuan bibit pertanian.",
+      "Menjelaskan secara sepihak bahwa metode dinas jauh lebih menguntungkan ketimbang mengikuti hitungan tradisi tetua adat."
     ],
     "optionScores": [
-      1,
       3,
+      4,
       5,
-      2,
-      4
+      1,
+      2
     ],
     "answer": "C",
-    "explanation": "Mengintegrasikan ilmu modern dengan kearifan lokal melalui dialog hormat bersama tetua adat menghasilkan penerimaan program jauh lebih tinggi dan berkelanjutan dibandingkan pemaksaan otoritatif (skor 5).",
+    "explanation": "Skor 5 memadukan dialog hormat bersama tetua adat dan penyelarasan program teknis agar diterima berkelanjutan oleh warga. Pilihan skor 4 sudah menghormati suara masyarakat secara santun dan tertib melapor ke pimpinan, namun belum proaktif menjembatani kesepakatan jadwal bersama.",
     "tip": "Program pemerintah akan diterima efektif di masyarakat adat bila dibahas bersama tokoh adat untuk menyelaraskan kearifan lokal."
   },
   {
@@ -80,21 +80,21 @@ const sosialBudayaDrafts: readonly TkpQuestionDraft[] = [
     "difficulty": "sedang",
     "prompt": "Di daerah penempatan baru Anda, sebagian besar warga terbiasa mengonsumsi makanan khas daerah dengan bumbu tajam serta menyajikan jamuan ramah saat menerima tamu dinas dari kabupaten, sedangkan perut Anda belum terbiasa dengan jenis bumbu tersebut. Sikap santun Anda saat dijamu warga adalah ...",
     "options": [
-      "Menolak seluruh jamuan di depan warga sambil menunjukkan ekspresi kurang suka terhadap aroma masakan lokal",
-      "Menyuruh warga memasakkan menu terpisah dari daerah asal Anda setiap kali melakukan kunjungan lapangan",
-      "Diam-diam membuang hidangan tersebut ke luar jendela setelah tuan rumah menoleh agar terlihat sudah menghabiskan",
-      "Menghargai tulus keramahan tuan rumah, mencicipi seperlunya secara sopan, serta menyampaikan kondisi kesehatan/lambung dengan santun dan ramah tanpa menyinggung perasaan mereka",
-      "Tidak pernah menerima ajakan minum maupun duduk bersama warga selama bertugas di seluruh desa wilayah kecamatan"
+      "Menolak langsung sajian berbumbu tajam di meja sambil meminta warga menyediakan masakan netral bagi tamu dari dinas.",
+      "Menghindari setiap jamuan makan bersama warga selama bertugas di desa demi menjaga kondisi pencernaan pribadi.",
+      "Mengapresiasi tulus keramahan tuan rumah dengan duduk akrab bersama warga, namun hanya meminum teh sambil beralasan sudah kenyang.",
+      "Menghargai keramahan warga dengan mencicipi hidangan secukupnya secara sopan, lalu menjelaskan kondisi lambung secara halus.",
+      "Menerima jamuan yang disediakan warga dengan ramah, lalu hanya menyantap nasi putih tanpa menjelaskan kendala perut."
     ],
     "optionScores": [
       2,
       1,
-      3,
+      4,
       5,
-      4
+      3
     ],
     "answer": "D",
-    "explanation": "Menghormati niat baik tuan rumah merupakan adab sosial penting; mencicipi sopan dan menjelaskan kendala fisik secara halus menghindarkan ketersinggungan tanpa memaksakan kesehatan sendiri (skor 5).",
+    "explanation": "Skor 5 menjaga kehormatan tuan rumah lewat apresiasi nyata mencicipi sajian sedikit serta komunikasi jujur dan halus tentang kondisi lambung. Pilihan skor 4 tetap tulus dan akrab saat bertamu bersama warga, tetapi menolak mencicipi hidangan dengan alasan sudah kenyang berisiko memicu salah paham berulang.",
     "tip": "Hormati keramahan lokal dengan apresiasi tulus dan komunikasi sopan jika ada keterbatasan kesehatan pribadi."
   },
   {
@@ -103,21 +103,21 @@ const sosialBudayaDrafts: readonly TkpQuestionDraft[] = [
     "difficulty": "sedang",
     "prompt": "Sekolah di daerah penempatan Anda masih memiliki tradisi luhur budaya gotong royong serta seni musik tradisional yang mulai jarang diminati remaja akibat dominasi gim daring. Sebagai pegawai muda bidang kebudayaan dan pendidikan, inisiatif adaptif Anda bersama komunitas lokal adalah ...",
     "options": [
-      "Melarang seluruh pelajar memiliki telepon genggam selama bersekolah agar mereka kembali berlatih musik tradisional tiap sore",
-      "Membiarkan kesenian tradisi punah perlahan karena selera zaman generasi muda dianggap mustahil diarahkan lagi",
-      "Mewajibkan penampilan seni tradisi monoton dalam rapat kantor setiap minggu meskipun tanpa melibatkan minat siswa",
-      "Membuat pameran tunggal tertutup berisi alat musik lama di gedung dinas tanpa mengajak sekolah dan seniman lokal berinteraksi",
-      "Berinisiatif berkolaborasi bersama seniman daerah dan pelajar mengemas pertunjukan kearifan lokal ke format kreatif serta festival sekolah yang relevan bagi generasi muda"
+      "Membiarkan seni tradisional tergeser hiburan digital karena selera remaja dianggap sulit diarahkan kembali.",
+      "Mewajibkan pelajar mengikuti latihan musik tradisional setelah jam sekolah meskipun minat remaja belum terbentuk.",
+      "Mendukung ekstrakurikuler musik daerah yang sudah ada dengan rutin menghadiri pentas tahunan sekolah binaan.",
+      "Mengusulkan lomba pentas seni tradisional rutin antarsekolah agar pelajar memiliki panggung melestarikan budaya daerah.",
+      "Mengajak seniman lokal dan pelajar berkolaborasi mengemas musik tradisional menjadi pertunjukan kreatif di festival sekolah."
     ],
     "optionScores": [
-      2,
       1,
+      2,
       3,
       4,
       5
     ],
     "answer": "E",
-    "explanation": "Melestarikan budaya di tengah arus globalisasi paling efektif lewat pendekatan partisipatif dan kreatif bersama komunitas pemilik tradisi serta generasi muda, bukan pelarangan kaku atau sikap pasrah (skor 5).",
+    "explanation": "Skor 5 menghidupkan pelestarian budaya secara partisipatif dengan memadukan seniman daerah dan kreativitas pelajar sesuai minat zaman. Pilihan skor 4 sudah berinisiatif positif melalui lomba pentas tradisional, namun masih memakai pola kompetitif biasa tanpa pembaruan kolaboratif bersama seniman lokal.",
     "tip": "Sinergikan tokoh budaya lokal dengan kreativitas generasi muda untuk menghidupkan kembali kearifan lokal secara relevan."
   },
   {
@@ -126,21 +126,21 @@ const sosialBudayaDrafts: readonly TkpQuestionDraft[] = [
     "difficulty": "sedang",
     "prompt": "Rekan kerja asli daerah setempat tampak kurang nyaman saat Anda menggunakan kata ganti sapaan yang lazim di daerah asal Anda tetapi di daerah baru ternyata bermakna kurang sopan secara lokal. Begitu mengetahui informasi tersebut, respons Anda adalah ...",
     "options": [
-      "Berterima kasih tulus kepada rekan yang mengingatkan, segera meminta maaf, menyesuaikan kosakata sapaan sesuai tata krama daerah penempatan, serta lebih cermat belajar ungkapan setempat",
-      "Membela diri bahwa di kota asal kata tersebut bermakna akrab sehingga rekan setempat tidak semestinya mudah tersinggung",
-      "Mengurangi berbicara dengan rekan kerja tersebut di kantor agar tidak salah ucap lagi di masa mendatang",
-      "Meminta rekan tersebut memaklumi terus-menerus karena usia Anda dan masa kerja di daerah baru masih singkat",
-      "Tetap memakai sapaan lama sesekali sambil menanyakan apakah bahasa daerah asal Anda akan segera dipahami rekan kantor"
+      "Berterima kasih atas koreksinya, meminta maaf tulus, dan langsung menyesuaikan sapaan sesuai etika lokal.",
+      "Meminta maaf dengan sopan kepada rekan tersebut lalu berupaya memakai bahasa Indonesia formal saat berbincang.",
+      "Menghentikan pemakaian kata sapaan itu mulai esok hari tanpa membahasnya lagi bersama rekan kerja di ruangan.",
+      "Menjelaskan bahwa sapaan tersebut bernada akrab di kota asal agar rekan setempat memaklumi kebiasaan Anda.",
+      "Tetap sesekali memakai sapaan itu dalam obrolan santai karena menganggap beda makna antarbahasa daerah hal biasa."
     ],
     "optionScores": [
       5,
-      2,
-      3,
       4,
+      3,
+      2,
       1
     ],
     "answer": "A",
-    "explanation": "Kepekaan budaya (cultural humility) tampak dari kesediaan rendah hati menerima koreksi, meminta maaf tulus tanpa defensif, dan langsung belajar menyesuaikan norma kesantunan bahasa setempat (skor 5).",
+    "explanation": "Skor 5 mencerminkan kerendahan hati budaya lewat rasa terima kasih, permintaan maaf tulus, dan kemauan belajar etika sapaan lokal. Pilihan skor 4 memang sopan meminta maaf dan beralih ke bahasa formal, tetapi kurang aktif mempelajari kesantunan setempat agar makin akrab.",
     "tip": "Jika tidak sengaja melanggar etiket lokal, berterima kasih atas koreksinya, minta maaf tulus, dan segera adaptasi."
   },
   {
@@ -149,21 +149,21 @@ const sosialBudayaDrafts: readonly TkpQuestionDraft[] = [
     "difficulty": "sulit",
     "prompt": "Pemerintah daerah merencanakan pembangunan kawasan wisata di pesisir, tetapi nelayan lokal khawatir zona tangkap tradisional dan ritual laut tahunan mereka akan tersingkir oleh hotel komersial. Sebagai perwakilan tim perencanaan tata ruang daerah, pendekatan sosial budaya paling tepat Anda tawarkan adalah ...",
     "options": [
-      "Meneruskan proyek zona wisata komersial seutuhnya karena pendapatan pajak daerah dari investor jauh lebih besar daripada nilai tradisi",
-      "Membuka forum partisipatif bersama tokoh nelayan dan dinas terkait guna mengintegrasikan zona lindung nelayan tradisional, kalender ritual laut sebagai daya tarik wisata berkelanjutan, dan pelibatan ekonomi warga pesisir",
-      "Membatalkan total seluruh rencana pengembangan kawasan wisata pesisir meskipun warga butuh peluang ekonomi tambahan",
-      "Menjanjikan ganti rugi uang tunai sekali bayar kepada nelayan agar bersedia berpindah profesi tanpa dialog tata ruang bersama",
-      "Membiarkan pengembang hotel bernegosiasi sendiri-sendiri secara tertutup dengan kepala dusun di luar pengetahuan pemerintah"
+      "Mencatat seluruh aspirasi warga nelayan ke dalam berita acara rapat resmi untuk dibahas pada tahap kajian teknis lanjutan.",
+      "Menggelar dialog bersama nelayan dan dinas terkait guna melindungi zona tangkap dan ritual laut sebagai aset wisata.",
+      "Mengusulkan penyediaan koridor akses perahu nelayan tradisional di sisi pantai dekat kawasan hotel sebagai bentuk perhatian.",
+      "Meneruskan rancangan kawasan hotel komersial seutuhnya karena lahan pesisir dinilai lebih produktif untuk wisata.",
+      "Menjelaskan kepada warga bahwa pembangunan proyek hotel perlu berjalan penuh demi meningkatkan pendapatan pajak daerah."
     ],
     "optionScores": [
-      2,
-      5,
       3,
+      5,
       4,
-      1
+      1,
+      2
     ],
     "answer": "B",
-    "explanation": "Pembangunan berkelanjutan menyatukan kesejahteraan ekonomi dengan perlindungan ruang hidup masyarakat adat/tradisional: menata zonasi adil, menghargai kearifan bahari sebagai aset budaya bersama, dan melibatkan warga dalam rantai nilai ekonomi (skor 5).",
+    "explanation": "Skor 5 menyatukan pembangunan wisata dan perlindungan ruang hidup nelayan melalui dialog partisipatif yang menjaga zona tangkap sekaligus tradisi laut. Pilihan skor 4 menunjukkan empati lewat usulan akses perahu, namun belum melindungi ruang ritual dan pelibatan ekonomi warga secara utuh.",
     "tip": "Solusi tata ruang berkelanjutan menyelaraskan pembangunan modern dengan perlindungan ruang sosial-budaya masyarakat lokal."
   },
   {
@@ -172,11 +172,11 @@ const sosialBudayaDrafts: readonly TkpQuestionDraft[] = [
     "difficulty": "sulit",
     "prompt": "Di suatu daerah pegunungan yang Anda bina, terdapat norma adat pembagian hutan larangan (hutan keramat desa) yang ternyata secara ilmiah sangat efektif menjaga mata air desa dari kekeringan, namun belum tercantum dalam peta tata kelola lingkungan kabupaten. Langkah strategis Anda adalah ...",
     "options": [
-      "Mengabaikan tradisi hutan larangan tersebut karena peraturan kehutanan modern hanya mengakui peta terbitan kementerian pusat",
-      "Meminta warga membuka sebagian hutan larangan tersebut menjadi lahan parkir wisata berbayar agar kas desa meningkat cepat",
-      "Mengapresiasi peran konservasi adat tersebut, memfasilitasi pemetaan partisipatif untuk mengintegrasikan zona lindung adat ke dokumen perencanaan daerah bersama dinas terkait agar terlindungi secara hukum positif",
-      "Menyampaikan pujian seremonial saat kunjungan saja tanpa mengupayakan pengakuan tata kelola dalam regulasi daerah",
-      "Mengambil alih pengelolaan hutan larangan sepenuhnya dari tetua adat tanpa berkonsultasi mengenai tata cara penjagaan tradisional"
+      "Mengusulkan agar pengelolaan hutan adat tersebut diambil alih penuh oleh dinas daerah demi keseragaman administrasi lingkungan.",
+      "Menganggap aturan hutan keramat bersifat mistis sehingga tidak dimasukkan dalam peta tata kelola wilayah daerah.",
+      "Memfasilitasi pemetaan partisipatif bersama tetua adat dan dinas terkait agar hutan larangan diakui dalam regulasi daerah.",
+      "Memberikan apresiasi tinggi atas kearifan warga menjaga mata air dan mendokumentasikan tradisi itu di laporan pembinaan dinas.",
+      "Mendorong warga desa tetap melestarikan aturan hutan larangan secara swadaya sambil menunggu arahan dinas kabupaten."
     ],
     "optionScores": [
       2,
@@ -186,7 +186,7 @@ const sosialBudayaDrafts: readonly TkpQuestionDraft[] = [
       3
     ],
     "answer": "C",
-    "explanation": "Mengawinkan kearifan ekologis lokal (hutan adat penjaga mata air) dengan perlindungan hukum tata ruang formal kabupaten melestarikan lingkungan sekaligus menghormati hak masyarakat hukum adat (skor 5).",
+    "explanation": "Skor 5 memadukan kearifan ekologis lokal ke dalam perlindungan hukum formal daerah secara partisipatif bersama tokoh adat. Pilihan skor 4 sudah menghargai nilai konservasi warga dan mencatatnya di laporan, tetapi belum mengambil langkah strategis melembagakannya ke tata kelola kabupaten.",
     "tip": "Kearifan ekologis adat yang positif layak diadvokasi masuk ke perlindungan perencanaan formal daerah secara partisipatif."
   },
   {
@@ -195,21 +195,21 @@ const sosialBudayaDrafts: readonly TkpQuestionDraft[] = [
     "difficulty": "mudah",
     "prompt": "Saat menyusun jadwal acara malam keakraban dan rapat kerja luar kota kantor, Anda menyadari waktunya beririsan dengan hari besar ibadah sebagian pegawai dari agama minoritas di unit tersebut. Sebagai koordinator panitia, tindakan Anda adalah ...",
     "options": [
-      "Tetap menjalankan jadwal lama karena mayoritas pegawai tidak merayakan hari besar tersebut pada akhir pekan",
-      "Meminta pegawai yang merayakan hari besar ibadah tetap ikut kegiatan kantor dulu dan merayakan ibadahnya minggu depan saja",
-      "Mencabut nama pegawai tersebut dari daftar peserta rapat kerja tanpa mengajak berdiskusi agar jadwal kelompok lain aman",
-      "Menggeser jadwal rapat kerja ke tanggal lain yang tidak berbenturan serta memastikan waktu ibadah tetap difasilitasi agar semua pegawai berpartisipasi setara tanpa hambatan",
-      "Menjadwalkan acara berlangsung sambil mengizinkan mereka pulang cepat sendiri di tengah rapat penting kantor"
+      "Tetap menggelar agenda rapat luar kota sesuai jadwal panitia karena pegawai yang beribadah hanya berjumlah sangat sedikit.",
+      "Meminta pegawai yang merayakan hari besar tetap mengikuti pembukaan rapat sebentar sebelum pulang menjalankan ibadahnya.",
+      "Membagikan rancangan jadwal acara kepada seluruh unit dan mempersilakan pegawai berhalangan mengajukan izin tidak hadir.",
+      "Mengusulkan pergeseran tanggal rapat ke hari lain dan memastikan fasilitas ibadah tersedia agar tiap pegawai hadir setara.",
+      "Menjalankan jadwal acara sesuai kesepakatan mayoritas pegawai, namun memberi izin dispensasi penuh bagi rekan yang merayakan ibadah."
     ],
     "optionScores": [
-      2,
       1,
+      2,
       3,
       5,
       4
     ],
     "answer": "D",
-    "explanation": "Toleransi aktif di tempat kerja menghormati hari raya semua pemeluk agama dengan merancang jadwal kerja dan fasilitas ruang ibadah yang inklusif bagi seluruh pegawai tanpa mengorbankan hak salah satu pihak (skor 5).",
+    "explanation": "Skor 5 mewujudkan toleransi inklusif dengan memilih tanggal netral agar seluruh pegawai dapat beribadah tenang sekaligus ikut rapat kerja setara. Pilihan skor 4 sudah menghormati hak ibadah lewat dispensasi penuh, tetapi tetap membuat pegawai minoritas tersisih dari kegiatan kebersamaan unit.",
     "tip": "Pastikan jadwal kegiatan bersama kantor menghormati hari besar dan waktu ibadah seluruh unsur pegawai."
   },
   {
@@ -218,21 +218,21 @@ const sosialBudayaDrafts: readonly TkpQuestionDraft[] = [
     "difficulty": "mudah",
     "prompt": "Salah satu rekan satu ruangan Anda sedang menjalankan ibadah puasa sesuai keyakinannya, sementara Anda dan beberapa rekan lain tidak berpuasa. Etika toleransi harian di ruang kerja yang paling tepat adalah ...",
     "options": [
-      "Sengaja makan siang dan minum kopi beraroma tajam tepat di samping meja kerjanya sambil bercanda mengenai puasanya",
-      "Menuntut seluruh rekan yang tidak berpuasa untuk ikut dilarang makan dan minum di dalam gedung kantor seharian penuh",
-      "Menegur rekan yang sedang berpuasa jika terlihat sedikit lambat di sore hari agar tidak menjadikan ibadah sebagai alasan",
-      "Tetap makan di ruang meja kerja seperti biasa tetapi tidak mengajaknya berbincang selama jam kerja berlangsung",
-      "Menjaga sikap saling menghormati dengan makan atau minum secara wajar di area pantri atau tempat makan, serta tidak membuat candaan yang menyinggung ibadahnya"
+      "Memilih makan siang dengan sopan di kantin gedung, namun membatasi interaksi santai agar tidak mengganggu ibadahnya.",
+      "Tetap makan siang di luar ruangan kerja seperti kebiasaan harian agar suasana kantor terasa nyaman bagi semua pihak.",
+      "Makan siang seperti biasa di meja kerja sendiri dengan pandangan bahwa ibadah puasa merupakan urusan pribadi masing-masing.",
+      "Mengajak rekan lain makan makanan beraroma tajam di sebelah mejanya karena ibadah dianggap urusan pribadi.",
+      "Menjaga tenggang rasa dengan makan secara wajar di area pantri, sekaligus memelihara obrolan akrab yang menghormati puasanya."
     ],
     "optionScores": [
-      1,
+      4,
       3,
       2,
-      4,
+      1,
       5
     ],
     "answer": "E",
-    "explanation": "Toleransi timbal balik bersifat proporsional dan santun: tidak memaksakan kewajiban agama kepada pemeluk lain, namun secara sukarela menjaga tenggang rasa makan di area pantri/makan dan memelihara ucapan yang hormat (skor 5).",
+    "explanation": "Skor 5 menampilkan tenggang rasa proporsional di pantri tanpa menciptakan jarak sosial di ruang kerja bersama. Pilihan skor 4 sudah beritikad baik menyingkir ke kantin dengan sopan saat makan siang, namun membatasi obrolan santai justru membuat suasana pergaulan terasa kaku.",
     "tip": "Wujud toleransi kerja yang hangat: menjaga tenggang rasa ruang dan ucapan secara wajar tanpa paksaan sepihak."
   },
   {
@@ -241,21 +241,21 @@ const sosialBudayaDrafts: readonly TkpQuestionDraft[] = [
     "difficulty": "sedang",
     "prompt": "Pada acara jamuan makan bersama saat pelatihan nasional lintas provinsi, beberapa peserta dari latar belakang agama dan kebiasaan berbeda memiliki pantangan makanan tertentu (seperti vegetarian maupun kehalalan makanan). Sebagai panitia konsumsi, tindakan terbaik Anda adalah ...",
     "options": [
-      "Menyediakan pilihan menu yang jelas terjamin kehalalan dan opsi khusus pantangan (seperti menu nabati) lengkap dengan label informasi bahan yang transparan agar semua peserta makan tenang bersama",
-      "Menyediakan satu jenis menu seragam saja sambil meminta peserta yang memiliki pantangan mencari makan sendiri di luar hotel",
-      "Membeli makanan secara acak dari katering terdekat tanpa memberi label keterangan bahan sehingga peserta menebak-nebak sendiri",
-      "Memisahkan ruangan makan peserta yang memiliki pantangan ke lantai berbeda jauh dari ruang makan utama",
-      "Mengatakan kepada peserta agar sementara melonggarkan aturan pantangan makanan demi kelancaran acara tiga hari"
+      "Menyediakan menu halal dan nabati lengkap dengan label bahan yang jelas agar para peserta makan tenang bersama.",
+      "Memesan hidangan katering standar acara sambil mempersilakan peserta memilih sendiri lauk yang sesuai aturan makannya.",
+      "Memastikan menu utama aman bagi mayoritas serta memesan kotak khusus bagi peserta berpantang untuk diantar ke meja masing-masing.",
+      "Mengimbau seluruh peserta menyesuaikan selera sementara selama tiga hari demi kelancaran jadwal konsumsi pelatihan.",
+      "Menyajikan satu menu seragam demi efisiensi anggaran dan menyarankan peserta dengan pantangan mencari makan di sekitar hotel."
     ],
     "optionScores": [
       5,
-      2,
       3,
       4,
-      1
+      1,
+      2
     ],
     "answer": "A",
-    "explanation": "Layanan acara inklusif menghormati keyakinan pangan semua peserta lewat transparansi label bahan, variasi menu aman halal/nabati, dan kebersamaan makan di meja yang sama (skor 5).",
+    "explanation": "Skor 5 menjamin kenyamanan pangan lintas keyakinan lewat variasi menu halal maupun nabati yang berlabel transparan di meja bersama. Pilihan skor 4 tetap memenuhi kebutuhan pantangan peserta melalui pesanan khusus, tetapi kurang transparan pada label bahan dan memisahkan penyajiannya.",
     "tip": "Dalam acara majemuk, tunjukkan penghormatan inklusif melalui kejelasan label dan akomodasi kebutuhan dasar peserta."
   },
   {
@@ -264,21 +264,21 @@ const sosialBudayaDrafts: readonly TkpQuestionDraft[] = [
     "difficulty": "sedang",
     "prompt": "Di kompleks tempat tinggal Anda, warga tengah mempersiapkan perayaan hari keagamaan salah satu umat yang diperkirakan menimbulkan kepadatan parkir sementara selama tiga jam pada Minggu pagi. Sikap bertetangga yang paling menyejukkan adalah ...",
     "options": [
-      "Langsung menuliskan keluhan pedas di grup warga agar kegiatan keagamaan dilarang memakai fasilitas jalan lingkungan",
-      "Bersikap terbuka dan ikut membantu koordinasi pengaturan parkir warga supaya kegiatan berjalan khidmat, aman, serta akses jalan tetangga lain tetap lancar",
-      "Menutup akses jalan depan rumah dengan pot batu besar supaya tamu perayaan tidak lewat di dekat pagar rumah Anda",
-      "Mengunci gerbang rumah sambil memutar musik sangat keras pada jam pelaksanaan ibadah tetangga berlangsung",
-      "Diam di dalam rumah dengan rasa kesal dan memutuskan menolak menyapa pengurus warga selama sebulan penuh"
+      "Menyampaikan keberatan ke pengurus RT agar kegiatan ibadah tidak memakai bahu jalan di depan deretan rumah warga lainnya.",
+      "Bersikap terbuka dan membantu mengatur parkir warga agar ibadah khidmat dan akses jalan tetangga tetap lancar.",
+      "Memasang penghalang di depan pagar rumah sambil menulis keluhan soal kemacetan jalan di grup percakapan warga.",
+      "Memaklumi kepadatan jalan sementara dengan lapang dada serta memindahkan kendaraan pribadi agar tidak mengganggu parkir tamu.",
+      "Menghormati kelancaran acara dengan tetap beraktivitas tenang di dalam rumah tanpa mencampuri pengaturan parkir warga."
     ],
     "optionScores": [
       2,
       5,
-      3,
       1,
-      4
+      4,
+      3
     ],
     "answer": "B",
-    "explanation": "Gotong royong lintas iman dalam menjaga kelancaran perayaan tetangga sambil mengatur ketertiban akses jalan merupakan teladan hidup toleransi aktif di Indonesia (skor 5).",
+    "explanation": "Skor 5 mempraktikkan toleransi aktif dan gotong royong bertetangga demi kelancaran ibadah sekaligus ketertiban akses bersama. Pilihan skor 4 sudah berempati secara pribadi dengan memaklumi situasi dan menyingkirkan kendaraan, tetapi masih pasif tanpa membantu koordinasi warga.",
     "tip": "Kerukunan bertetangga diperkuat oleh dukungan koordinasi ketertiban bersama saat ada kegiatan warga lintas agama."
   },
   {
@@ -287,21 +287,21 @@ const sosialBudayaDrafts: readonly TkpQuestionDraft[] = [
     "difficulty": "sedang",
     "prompt": "Seorang rekan kerja baru memiliki tradisi berbusana khas budaya daerah maupun atribut keyakinannya yang sesuai aturan seragam kedinasan instansi, tetapi dua rekan lain melontarkan komentar stereotip di balik meja. Sebagai pegawai di unit yang sama, sikap Anda adalah ...",
     "options": [
-      "Ikut menertawakan komentar stereotip tersebut sekadar sebagai bahan pencair suasana istirahat kantor",
-      "Membisu saja dan mulai menghindari duduk berdekatan dengan rekan baru tersebut supaya tidak terseret omongan",
-      "Menyapa dan merangkul rekan baru dengan hangat agar ia merasa diterima, sekaligus mengingatkan kedua rekan secara santun bahwa atribut yang sah dilindungi aturan serta saling menghormati memperkokoh kenyamanan kerja",
-      "Meminta rekan baru menanggalkan seluruh ciri khas pribadinya di rumah agar rekan kantor tidak membicarakannya lagi",
-      "Langsung menyebarkan tuduhan intoleransi di media sosial kantor tanpa menegur dan mengajak bicara kedua rekan lebih dulu"
+      "Ikut tertawa kecil menanggapi komentar stereotip tersebut sekadar menjaga keakraban suasana istirahat dengan kedua rekan lama.",
+      "Menyarankan rekan baru mengenakan busana yang lebih netral agar tidak lagi menjadi bahan pembicaraan rekan sekantor.",
+      "Menyapa dan merangkul rekan baru dengan ramah sambil mengingatkan kedua rekan secara santun untuk saling menghormati.",
+      "Tidak ikut menanggapi komentar mereka dan tetap berinteraksi ramah dengan rekan baru saat membahas urusan kantor.",
+      "Menegur kedua rekan secara sopan di luar ruangan agar menghentikan komentar itu, meski belum menyapa rekan baru tersebut."
     ],
     "optionScores": [
       1,
-      3,
-      5,
       2,
+      5,
+      3,
       4
     ],
     "answer": "C",
-    "explanation": "Toleransi aktif melindungi ruang nyaman bagi ekspresi identitas yang sah, merangkul rekan baru, dan meluruskan stereotip rekan secara santun namun jelas (skor 5).",
+    "explanation": "Skor 5 melindungi martabat rekan baru dengan merangkulnya ramah sekaligus meluruskan candaan stereotip rekan lain secara santun. Pilihan skor 4 berani menegur sopan perilaku stereotip tersebut, namun luput menguatkan dan menyambut rekan baru agar tidak merasa terasing.",
     "tip": "Tolak ejekan/stereotip berbasis identitas secara santun namun jelas, sekaligus rangkul pihak yang rentan tersisih."
   },
   {
@@ -310,21 +310,21 @@ const sosialBudayaDrafts: readonly TkpQuestionDraft[] = [
     "difficulty": "sedang",
     "prompt": "Dalam panitia acara peresmian gedung layanan baru daerah, beberapa tokoh mengusulkan rangkaian doa pembuka dipimpin satu pemuka agama saja sesuai agama mayoritas sementara tamu undangan mencakup beragam pemeluk agama. Usulan bijak Anda dalam rapat persiapan adalah ...",
     "options": [
-      "Meniadakan sesi doa bersama sama sekali supaya tidak memunculkan perdebatan panjang selama rapat persiapan acara",
-      "Membiarkan usulan panitia berjalan satu agama saja dengan anggapan tokoh agama lain cukup mengikuti diam dari kursi masing-masing",
-      "Meminta acara doa diganti sambutan bebas berdurasi panjang mengenai sejarah pembangunan fisik gedung",
-      "Mengusulkan format doa lintas iman atau doa bersama secara serempak menurut keyakinan masing-masing (atau perwakilan bergantian sesuai protokol) agar seluruh hadirin merasa dihormati dalam kebersamaan",
-      "Memisahkan jam pelaksanaan peresmian menjadi beberapa kali berdasarkan latar belakang agama undangan"
+      "Mengusulkan doa pembuka dipimpin satu pemuka agama saja sembari mempersilakan tamu berkeyakinan lain berdoa dalam hati masing-masing.",
+      "Mengikuti keputusan suara terbanyak dalam rapat panitia secara sopan karena sesi doa hanya berlangsung sebentar.",
+      "Mengusulkan peniadaan sesi doa dari susunan acara resmi agar rapat panitia tidak berdebat soal perwakilan agama.",
+      "Mengusulkan doa hening secara serempak menurut keyakinan tiap tamu atau perwakilan lintas iman agar semua pihak dihormati.",
+      "Mendukung doa satu agama mayoritas tanpa penyesuaian karena sebagian besar tamu menganut keyakinan tersebut."
     ],
     "optionScores": [
-      3,
       4,
+      3,
       2,
       5,
       1
     ],
     "answer": "D",
-    "explanation": "Protokol acara kenegaraan dan instansi publik di Indonesia yang majemuk menjunjung prinsip keadilan keberagaman melalui format doa inklusif (hening cipta/doa masing-masing atau perwakilan lintas iman sesuai konteks resmi) sehingga seluruh warga merasa menjadi bagian utuh (skor 5).",
+    "explanation": "Skor 5 menghadirkan keadilan dalam forum publik majemuk melalui doa inklusif yang memberi ruang setara bagi seluruh pemeluk agama. Pilihan skor 4 sudah berniat baik mempersilakan tamu lain berdoa dalam hati, namun tetap menonjolkan tata cara satu agama saja pada panggung resmi.",
     "tip": "Rancang acara publik bersama agar inklusif dan menghargai keyakinan seluruh peserta yang hadir."
   },
   {
@@ -333,21 +333,21 @@ const sosialBudayaDrafts: readonly TkpQuestionDraft[] = [
     "difficulty": "sulit",
     "prompt": "Sekelompok oknum warga menyebarkan selebaran penolakan terhadap rencana pembukaan rumah singgah sosial bagi pasien kurang mampu di lingkungan perumahan karena isu kecemasan tak berdasar terhadap asal-usul pasien luar daerah. Sebagai aparatur pembina wilayah yang menjunjung keadilan sosial dan kebinekaan, langkah penyelesaian Anda adalah ...",
     "options": [
-      "Langsung menghentikan rencana pendirian rumah singgah walaupun seluruh standar kesehatan dan izin lingkungan telah lengkap terpenuhi",
-      "Membiarkan pengelola rumah singgah menghadapi unjuk rasa warga seorang diri karena bangunan tersebut dikelola lembaga yayasan sosial",
-      "Mengeluarkan surat peringatan pemidanaan instan kepada seluruh warga sekitar tanpa dialog tatap muka dan verifikasi informasi kesehatan",
-      "Meminta pasien dari luar daerah mencari pengobatan ke kabupaten lain agar lingkungan kompleks perumahan tetap tenang",
-      "Berkoordinasi dengan tokoh masyarakat, dinas kesehatan, dan aparat setempat menggelar dialog fakta terbuka yang menjamin standar kebersihan-keamanan medis sekaligus mengedukasi empati sosial lintas asal daerah"
+      "Melaporkan peredaran selebaran penolakan itu kepada pimpinan wilayah sambil menunggu instruksi langkah penanganan resmi.",
+      "Mengajak pengurus RT memeriksa izin resmi rumah singgah serta meminta pengelola memberi penjelasan tertulis ke warga.",
+      "Meminta pengelola memindahkan lokasi rumah singgah ke kelurahan lain agar ketenteraman penghuni kompleks tetap terjaga.",
+      "Menyarankan yayasan menunda pembukaan rumah singgah sementara waktu hingga kecemasan warga di perumahan mereda sendiri.",
+      "Menggelar dialog terbuka bersama tokoh warga dan dinas kesehatan guna menjamin standar medis aman sekaligus merawat empati sosial."
     ],
     "optionScores": [
-      2,
       3,
       4,
       1,
+      2,
       5
     ],
     "answer": "E",
-    "explanation": "Penolakan berbasis prasangka/stigma harus dilawan dengan dialog terbuka berbasis fakta medis/keamanan yang menenangkan kekhawatiran wajar warga, sambil mempertahankan jaminan hak layanan kemanusiaan tanpa tunduk pada diskriminasi asal daerah (skor 5).",
+    "explanation": "Skor 5 meredam kecemasan warga dengan dialog terbuka berbasis fakta kesehatan sekaligus melindungi hak pasien tanpa tunduk pada stigma asal daerah. Pilihan skor 4 sudah tertib menempuh jalur administratif izin dan klarifikasi tertulis, namun kurang efektif membangun empati tatap muka.",
     "tip": "Atasi penolakan sosial berbasis stigma dengan edukasi fakta bersama tokoh wilayah sembari melindungi hak kemanusiaan yang sah."
   },
   {
@@ -356,21 +356,21 @@ const sosialBudayaDrafts: readonly TkpQuestionDraft[] = [
     "difficulty": "sulit",
     "prompt": "Di unit kerja Anda muncul perbedaan pendapat internal: sebagian pegawai mengusulkan pembiasaan doa pagi bersama secara seragam mengikuti tata cara agama tertentu saja setiap hari di ruang umum kantor, sementara pegawai dari keyakinan lain merasa canggung dan mulai menarik diri saat apel pagi. Sikap paling tepat Anda usulkan ke pimpinan unit adalah ...",
     "options": [
-      "Mengusulkan format doa bersama dengan mengheningkan sejenak agar tiap pegawai berdoa menurut agama dan kepercayaannya masing-masing, serta menyediakan ruang rohani tiap agama secara setara",
-      "Mewajibkan seluruh pegawai tanpa terkecuali mengucapkan tata cara doa satu agama mayoritas agar terlihat kompak sebagai satu unit",
-      "Melarang pegawai menyampaikan doa pribadi apa pun di gedung kantor termasuk pada jam istirahat masing-masing",
-      "Membiarkan pegawai berbeda agama duduk terpisah di luar ruangan selama acara apel pagi kantor berlangsung setiap hari",
-      "Menyampaikan keluhan pribadi secara terbuka bahwa pegawai minoritas tidak menghargai tradisi mayoritas di kantor tersebut"
+      "Mengusulkan doa apel secara hening menurut keyakinan tiap pegawai serta menyediakan ruang rohani yang setara.",
+      "Menyarankan rekan yang merasa keberatan agar berdoa sendiri di meja kerjanya sebelum apel pagi kantor dimulai.",
+      "Mendukung doa satu agama tertentu sebagai pembiasaan rutin dengan harapan rekan lain perlahan ikut menyesuaikan diri.",
+      "Menghormati perbedaan iman rekan kantor dengan mengizinkan mereka menyusul bergabung setelah sesi doa bersama selesai.",
+      "Mengikuti keputusan mayoritas unit sambil tetap bersikap ramah dan menghargai rekan yang memilih absen saat doa."
     ],
     "optionScores": [
       5,
-      1,
       2,
-      3,
-      4
+      1,
+      4,
+      3
     ],
     "answer": "A",
-    "explanation": "Sesuai semangat Pancasila dan toleransi ruang kerja ASN, kegiatan korps bersama sepatutnya memakai format inklusif ('berdoa menurut agama dan kepercayaan masing-masing') sementara pembinaan rohani khusus tiap agama berjalan di ruang/komunitas agamanya masing-masing secara adil (skor 5).",
+    "explanation": "Skor 5 merawat kebersamaan apel pagi lewat doa hening inklusif sekaligus memfasilitasi pembinaan iman tiap agama secara adil. Pilihan skor 4 menghormati keyakinan berbeda dengan memberi kelonggaran menyusul masuk, namun tetap memisahkan kebersamaan pegawai saat apel pagi.",
     "tip": "Acara resmi instansi publik bersifat inklusif untuk semua pemeluk agama; ruang spiritual khusus disediakan setara bagi tiap kelompok iman."
   },
   {
@@ -379,21 +379,21 @@ const sosialBudayaDrafts: readonly TkpQuestionDraft[] = [
     "difficulty": "mudah",
     "prompt": "Seorang warga lanjut usia di loket pelayanan tampak hanya fasih berbahasa daerah setempat dan kesulitan menyusun kalimat dalam bahasa Indonesia saat menjelaskan keperluannya. Tindakan paling efektif dan hormat adalah ...",
     "options": [
-      "Menyuruhnya pulang terlebih dahulu untuk belajar bahasa Indonesia atau membawa surat pernyataan bertandatangan kepala desa",
-      "Menunjukkan kesabaran, menyimak dengan saksama, menggunakan bahasa Indonesia paling sederhana dibantu isyarat sopan, atau meminta bantuan rekan/petugas yang menguasai bahasa daerah beliau agar maksudnya tepat terpenuhi",
-      "Berbicara bahasa Indonesia lebih cepat dan bernada tinggi supaya beliau terpaksa memahami penjelasan aturan kantor",
-      "Langsung memproses dokumen berdasarkan tebakan sendiri tanpa mengonfirmasi keakuratan keperluan beliau",
-      "Mengabaikan pertanyaannya sambil melayani nomor antrean berikutnya yang lebih lancar berbahasa Indonesia"
+      "Berbicara lebih cepat memakai bahasa Indonesia resmi agar beliau segera memahami alur syarat di loket pelayanan.",
+      "Menyimak sabar dengan bahasa sederhana lalu meminta bantuan rekan yang fasih bahasa daerah beliau agar maksudnya tepat.",
+      "Mengarahkan beliau duduk sebentar untuk menelepon kerabatnya sebagai penerjemah supaya antrean warga di belakang tetap lancar.",
+      "Memproses berkas sebatas bagian yang dimengerti sambil menyarankan beliau agar lain kali datang didampingi anggota keluarga.",
+      "Mendengarkan penjelasan beliau dengan ramah dan sabar, lalu menulis kata sederhana di kertas agar maksudnya bisa dipahami."
     ],
     "optionScores": [
-      2,
-      5,
       1,
+      5,
+      2,
       3,
       4
     ],
     "answer": "B",
-    "explanation": "Komunikasi lintas bahasa yang empatik dan bermartabat memastikan hambatan bahasa tidak menghalangi hak warga memperoleh layanan publik yang akurat (skor 5).",
+    "explanation": "Skor 5 memastikan warga lansia memperoleh layanan tepat dengan menyimak sabar dan melibatkan rekan yang menguasai bahasa daerahnya. Pilihan skor 4 juga ramah, sabar, dan berusaha membantu lewat tulisan sederhana, namun berisiko kurang akurat dibanding menghadirkan jembatan bahasa daerah.",
     "tip": "Jembatani kendala bahasa warga dengan kesabaran, bahasa sederhana, serta bantuan penerjemah internal bila tersedia."
   },
   {
@@ -402,21 +402,21 @@ const sosialBudayaDrafts: readonly TkpQuestionDraft[] = [
     "difficulty": "mudah",
     "prompt": "Dalam rapat tim yang diikuti pegawai dari berbagai suku bangsa Indonesia, dua rekan dari daerah berbeda asyik mengobrol memakai bahasa daerah mereka berdua tentang materi pekerjaan rapat, membuat rekan dari daerah lain bingung tidak ikut memahami. Sebagai anggota rapat, sikap bijak Anda adalah ...",
     "options": [
-      "Langsung memotong pembicaraan dengan marah karena menuduh mereka berdua sedang membicarakan hal negatif tentang tim",
-      "Ikut membalas berbicara memakai bahasa daerah asal Anda sendiri supaya rapat menjadi semakin ramai",
-      "Mengingatkan dengan ramah dan senyum agar pembahasan pekerjaan rapat kembali memakai bahasa persatuan bahasa Indonesia sehingga seluruh anggota dapat memahami dan berkontribusi setara",
-      "Membiarkannya berlangsung sepanjang rapat dan hanya menyimak keputusan akhir yang dituliskan notulis",
-      "Meninggalkan ruang rapat sementara sampai kedua rekan tersebut berhenti berbicara bahasa daerahnya"
+      "Mengajukan pertanyaan dalam bahasa Indonesia kepada keduanya agar bahasan materi rapat kembali dapat diikuti seluruh tim.",
+      "Memilih diam menyimak catatan sambil menunggu kedua rekan tersebut kembali memakai bahasa Indonesia saat rapat.",
+      "Mengingatkan ramah dengan senyum agar diskusi kerja kembali memakai bahasa Indonesia supaya semua anggota terlibat.",
+      "Menegur kedua rekan tersebut dengan nada kaku bahwa berbicara bahasa daerah di rapat resmi melanggar tata tertib kantor.",
+      "Ikut berbicara menggunakan bahasa daerah Anda sendiri supaya suasana diskusi dengan rekan sedaerah terasa akrab."
     ],
     "optionScores": [
-      1,
-      2,
-      5,
       4,
-      3
+      3,
+      5,
+      2,
+      1
     ],
     "answer": "C",
-    "explanation": "Bahasa Indonesia berfungsi sebagai bahasa pemersatu komunikasi lintas daerah dalam forum resmi. Mengingatkan secara ramah agar diskusi tim memakai bahasa Indonesia menjaga inklusivitas tanpa merendahkan bahasa daerah (skor 5).",
+    "explanation": "Skor 5 menjaga inklusivitas forum lintas suku dengan mengingatkan ramah agar memakai bahasa Indonesia tanpa menyudutkan bahasa daerah. Pilihan skor 4 berupaya sopan mengalihkan topik lewat pertanyaan bahasa Indonesia, tetapi belum membangun kesadaran bersama tentang etika bahasa rapat.",
     "tip": "Gunakan bahasa persatuan bahasa Indonesia di forum lintas daerah secara santun agar seluruh anggota tim terlibat setara."
   },
   {
@@ -425,21 +425,21 @@ const sosialBudayaDrafts: readonly TkpQuestionDraft[] = [
     "difficulty": "sedang",
     "prompt": "Anda berasal dari budaya yang terbiasa menyampaikan koreksi secara lugas dan blak-blakan, namun kini bekerja bersama mayoritas rekan dari budaya yang sangat menjaga kehalusan rasa dan penyampaian tidak langsung. Agar masukan kerja tetap tersampaikan jelas tanpa melukai hubungan, penyesuaian Anda adalah ...",
     "options": [
-      "Berhenti memberi koreksi atau saran teknis apa pun kepada tim supaya tidak dianggap pegawai yang terlalu keras",
-      "Tetap berbicara blak-blakan dengan suara keras karena kejujuran menurut Anda tidak perlu mempedulikan perasaan orang",
-      "Menyampaikan keluhan tidak langsung lewat status sindiran di media sosial pribadi alih-alih bicara di kantor",
-      "Menyampaikan masukan tetap objektif dan jujur berdasarkan fakta kerja dengan memilih waktu tepat, pilihan kata yang santun, serta menghargai martabat lawan bicara",
-      "Menuntut rekan sekantor wajib mengubah karakter budaya komunikasi mereka agar mirip dengan gaya Anda"
+      "Menahan penyampaian koreksi langsung dan sesekali menitipkan masukan lewat atasan supaya tidak memicu gesekan pribadi.",
+      "Menyampaikan koreksi teknis lewat pesan tertulis dengan bahasa santun agar rekan kerja tidak merasa canggung secara langsung.",
+      "Tetap menyampaikan kritik secara blak-blakan di forum terbuka karena kejujuran kerja dianggap lebih utama dari rasa.",
+      "Menyampaikan masukan objektif berbasis fakta kerja dengan pilihan kata halus pada waktu tepat demi menjaga martabat rekan.",
+      "Menghindari memberi kritik pekerjaan kepada rekan satu tim demi menjaga keharmonisan hubungan sehari-hari di kantor."
     ],
     "optionScores": [
       3,
-      2,
+      4,
       1,
       5,
-      4
+      2
     ],
     "answer": "D",
-    "explanation": "Kecerdasan budaya (cultural intelligence) menjaga substansi objektivitas pesan (tidak menjadi permisif) sambil mengemas cara penyampaian secara santun dan tepat konteks budaya agar pesan diterima efektif (skor 5).",
+    "explanation": "Skor 5 menjaga ketepatan substansi masukan berbasis fakta sembari menyesuaikan diksi halus dan waktu agar hubungan tetap harmonis. Pilihan skor 4 sudah berhati-hati memakai bahasa santun lewat pesan tertulis, tetapi kurang efektif dibanding komunikasi langsung penuh empati.",
     "tip": "Jaga ketegasan substansi kerja dengan membungkus penyampaiannya memakai diksi santun yang menghormati konteks budaya lokal."
   },
   {
@@ -448,21 +448,21 @@ const sosialBudayaDrafts: readonly TkpQuestionDraft[] = [
     "difficulty": "sedang",
     "prompt": "Ketika melayani warga dari daerah berlogat intonasi tinggi yang terdengar seperti sedang membentak padahal sebenarnya cara bicaranya sehari-hari memang tegas, reaksi profesional Anda adalah ...",
     "options": [
-      "Langsung terpancing emosi dan membalas dengan suara keras karena merasa petugas dilecehkan oleh cara bicaranya",
-      "Menolak melayani permohonan sebelum pemohon meminta maaf terlebih dahulu atas volume suaranya yang keras",
-      "Mempercepat pelayanan secara asal tanpa mau menjawab pertanyaan lanjutannya supaya cepat pergi dari meja loket",
-      "Mengeluh di grup pesan kantor bahwa pengunjung dari daerah tertentu selalu bersikap kasar kepada petugas",
-      "Memahami latar belakang perbedaan intonasi budaya tanpa berprasangka buruk, tetap bersikap tenang, ramah, serta fokus menyelesaikan keperluannya sesuai aturan"
+      "Meminta pemohon di loket menurunkan volume suara terlebih dahulu sebelum pemeriksaan dokumen pengajuannya dilanjutkan.",
+      "Merespons warga tersebut dengan intonasi suara sama tingginya karena menganggap petugas tidak dihormati di meja layanan.",
+      "Menjaga suara tetap pelan dan sopan selama melayani warga tersebut walau merasa kurang nyaman dengan nada kerasnya.",
+      "Menyelesaikan layanan berkas warga tersebut secara ramah dan cepat tanpa memperpanjang obrolan di meja loket.",
+      "Memahami perbedaan intonasi budaya tanpa prasangka, tetap tenang mendengarkan, dan melayani keperluan warga hingga tuntas."
     ],
     "optionScores": [
-      1,
       2,
-      3,
+      1,
       4,
+      3,
       5
     ],
     "answer": "E",
-    "explanation": "Kepekaan lintas budaya membedakan gaya suara/intonasi khas daerah dari niat bermusuhan. Tetap tenang, tidak tersulut prasangka, dan melayani ramah menjaga kualitas interaksi publik (skor 5).",
+    "explanation": "Skor 5 menunjukkan kepekaan budaya yang membedakan gaya bicara daerah dengan niat emosi, sehingga layanan tetap tenang dan tuntas. Pilihan skor 4 berhasil mengendalikan tutur kata agar tetap sopan di luar, namun masih menyimpan ketidaknyamanan dan prasangka terhadap logat warga.",
     "tip": "Bedakan gaya intonasi suara khas suatu daerah dengan niat emosi; tanggapi tetap tenang dan fokus pada solusi."
   },
   {
@@ -471,21 +471,21 @@ const sosialBudayaDrafts: readonly TkpQuestionDraft[] = [
     "difficulty": "sedang",
     "prompt": "Kantor Anda menyelenggarakan sosialisasi program digitalisasi bagi warga lintas kecamatan yang memiliki beragam dialek serta istilah asing teknis seperti 'unggah PDF', 'verifikasi OTP', dan 'autentikasi'. Untuk memastikan informasi dipahami merata, pendekatan komunikasi terbaik adalah ...",
     "options": [
-      "Menerjemahkan istilah teknis menjadi bahasa Indonesia sehari-hari yang konkret (misalnya kata 'kirim foto dokumen' atau 'kode angka lewat SMS'), dilengkapi ilustrasi visual langkah demi langkah dan sesi tanya jawab akrab",
-      "Membagikan buku manual setebal seratus halaman berisi istilah bahasa Inggris teknologi secara langsung tanpa presentasi visual",
-      "Tetap berpidato menggunakan bahasa teknis penuh agar masyarakat tahu bahwa instansi memakai sistem sangat canggih",
-      "Meminta peserta muda di barisan depan menjelaskan sendiri kepada warga sepuh setelah acara selesai di luar aula",
-      "Menyampaikan materi secepat mungkin lalu langsung membagikan tautan QR code di layar sebelum peserta siap mencoba"
+      "Menerjemahkan istilah teknis ke bahasa sehari-hari dengan peraga visual langkah nyata dan sesi tanya jawab.",
+      "Tetap memakai istilah teknologi berbahasa Inggris agar peserta sosialisasi terbiasa mengikuti perkembangan sistem.",
+      "Menyampaikan seluruh materi sesuai paparan modul pusat lalu membuka sesi tanya jawab singkat di akhir pertemuan.",
+      "Meminta perangkat desa membantu warga lansia belakangan karena istilah aplikasi digital sulit diubah ke bahasa lokal.",
+      "Menjelaskan alur layanan secara perlahan memakai bahasa resmi lalu membagikan buku panduan bergambar usai acara."
     ],
     "optionScores": [
       5,
-      2,
       1,
-      4,
-      3
+      3,
+      2,
+      4
     ],
     "answer": "A",
-    "explanation": "Komunikasi publik yang inklusif menyesuaikan bahasa teknis birokrasi/TI ke istilah keseharian warga disertai alat bantu visual nyata agar tidak menciptakan jurang informasi bagi warga akar rumput (skor 5).",
+    "explanation": "Skor 5 menembus batas istilah teknis dengan menerjemahkannya ke bahasa warga sehari-hari disertai peraga visual interaktif. Pilihan skor 4 sudah berupaya ramah lewat tempo bicara perlahan dan panduan bergambar, tetapi masih mempertahankan istilah resmi yang sulit dicerna sebagian warga.",
     "tip": "Sederhanakan jargon birokrasi/TI menjadi bahasa membumi dan peraga visual agar dipahami semua lapisan masyarakat."
   },
   {
@@ -494,21 +494,21 @@ const sosialBudayaDrafts: readonly TkpQuestionDraft[] = [
     "difficulty": "sedang",
     "prompt": "Seorang tamu mitra internasional datang meninjau program unggulan layanan terpadu daerah Anda dan mengajak berdialog mengenai inovasi pelayanan, sementara rekan staf lain tampak canggung berkomunikasi dalam bahasa asing. Sebagai pegawai yang menguasai bahasa Indonesia baik dan cukup cakap berbahasa Inggris dasar, sikap Anda adalah ...",
     "options": [
-      "Membiarkan tamu internasional kebingungan mencari jawaban sendiri agar rekan lain sadar pentingnya belajar bahasa asing",
-      "Menyambut tamu dengan ramah serta santun, membantu menjembatani komunikasi lintas bahasa secara akurat dalam batas keahlian, dan tetap memelihara wibawa budaya bangsa maupun keterlibatan rekan tim lain dalam dialog",
-      "Berbicara terus-menerus memonopoli tamu tersebut guna memamerkan kefasihan bahasa asing tanpa mengenalkan kontribusi rekan kantor lain",
-      "Memakai kosakata campuran bahasa asing secara berlebihan saat rapat internal kantor selanjutnya bersama rekan lokal",
-      "Menghindar dari ruang penerimaan tamu karena khawatir melakukan satu dua kesalahan tata bahasa Inggris"
+      "Menyambut ramah tamu mitra dengan sangat sopan lalu mengambil alih seluruh dialog bahasa Inggris agar agenda berjalan lancar.",
+      "Menyambut tamu mitra dengan hangat, menjembatani dialog lintas bahasa secara akurat, dan melibatkan rekan tim lain.",
+      "Menyerahkan dokumen profil program berbahasa Inggris kepada tamu mitra supaya diskusi lisan tidak perlu berlangsung lama.",
+      "Menjaga jarak dari meja penerimaan tamu karena khawatir keliru tata bahasa Inggris di hadapan rekan sekantor.",
+      "Menjawab pertanyaan tamu mitra secara singkat sesuai kosakata yang dikuasai sambil menantikan pimpinan mengambil alih."
     ],
     "optionScores": [
-      1,
+      4,
       5,
-      3,
       2,
-      4
+      1,
+      3
     ],
     "answer": "B",
-    "explanation": "Menerapkan prinsip Trigatra Bangun Bahasa (utamakan bahasa Indonesia, lestarikan bahasa daerah, kuasai bahasa asing) berarti siap menjadi jembatan komunikasi global secara rendah hati tanpa meremehkan rekan ataupun mengagung-agungkan bahasa asing dalam forum domestik (skor 5).",
+    "explanation": "Skor 5 memaksimalkan kecakapan bahasa asing secara rendah hati sebagai jembatan kolaborasi sambil tetap melibatkan kontribusi rekan tim. Pilihan skor 4 memang sigap, ramah, dan sopan melayani tamu mitra, tetapi memonopoli dialog sehingga rekan kerja lain tetap pasif tersisih.",
     "tip": "Jadikan kemampuan bahasa asing sebagai jembatan inklusif kolaborasi tim dengan tetap bermartabat dan melibatkan rekan kerja."
   },
   {
@@ -517,21 +517,21 @@ const sosialBudayaDrafts: readonly TkpQuestionDraft[] = [
     "difficulty": "sulit",
     "prompt": "Saat menyusun kampanye komunikasi publik pencegahan stunting untuk seluruh wilayah kabupaten yang terdiri dari masyarakat pesisir, pegunungan, dan perkotaan, materi promosi sebelumnya ternyata hanya memakai contoh menu pangan modern kota yang sulit ditemui dan mahal bagi warga pegunungan serta pesisir. Perbaikan materi komunikasi paling tepat adalah ...",
     "options": [
-      "Mewajibkan seluruh keluarga pegunungan membeli bahan makanan kemasan kota agar sesuai standar visual buku saku dinas",
-      "Menyebarkan materi kota lama sambil menambahkan catatan kaki singkat bahwa warga desa bisa menyesuaikan sendiri sebisanya",
-      "Menyesuaikan pesan gizi dalam kampanye komunikasi dengan memanfaatkan pangan lokal khas pesisir dan pegunungan (ikan tangkapan lokal, kelor, umbi, kacang lokal) dalam bahasa akrab setempat agar tepat konteks serta mudah diterapkan",
-      "Mengurangi pembagian materi penyuluhan ke wilayah gunung supaya anggaran cetak cukup bagi warga kota saja",
-      "Meminta relawan membuat materi promosi terpisah tanpa mengoordinasikan keakuratan standar gizinya bersama ahli kesehatan"
+      "Tetap membagikan materi kampanye yang sudah tercetak sambil menjadwalkan revisi contoh menu untuk tahun anggaran baru.",
+      "Mempertahankan contoh menu standar kota karena dianggap telah mencerminkan pedoman gizi nasional yang seragam.",
+      "Menyesuaikan pesan kampanye dengan contoh pangan lokal pesisir dan gunung dalam bahasa akrab agar mudah diterapkan.",
+      "Menambahkan keterangan pada materi lama bahwa warga desa boleh mengganti contoh menu kota dengan bahan di pasar lokal.",
+      "Meminta kader desa menyesuaikan contoh menu secara lisan di posyandu tanpa mengubah desain materi promosi cetak."
     ],
     "optionScores": [
-      1,
       3,
+      1,
       5,
-      2,
-      4
+      4,
+      2
     ],
     "answer": "C",
-    "explanation": "Komunikasi lintas budaya yang cerdas melokalkan contoh praktis (contextual localization) agar sejalan dengan kekayaan sumber daya dan budaya pangan tiap subwilayah tanpa mengubah standar ilmiah gizi (skor 5).",
+    "explanation": "Skor 5 melokalkan contoh menu gizi dengan bahan pangan pesisir maupun pegunungan dan bahasa akrab agar langsung bisa dipraktikkan warga. Pilihan skor 4 menyadari perlunya bahan lokal lewat catatan tambahan, namun tetap menjadikan menu kota sebagai acuan utama yang kurang relevan.",
     "tip": "Sesuaikan contoh pesan kebijakan publik dengan konteks budaya dan potensi lokal agar efektif dilaksanakan masyarakat."
   },
   {
@@ -540,21 +540,21 @@ const sosialBudayaDrafts: readonly TkpQuestionDraft[] = [
     "difficulty": "sulit",
     "prompt": "Di forum dialog terbuka antara pemerintah daerah dan komunitas nelayan mengenai pengaturan alat tangkap ramah lingkungan, ketegangan memuncak karena istilah regulasi teknis kementerian terdengar seperti ancaman menutup mata pencaharian nelayan. Sebagai fasilitator dialog yang ditugaskan meredam situasi, pendekatan komunikasi paling tepat adalah ...",
     "options": [
-      "Membacakan pasal sanksi pidana undang-undang dengan suara lantang agar para nelayan langsung takut dan menyetujui aturan",
-      "Membubarkan dialog seketika dan menyerahkan sosialisasi aturan lanjutan lewat papan pengumuman pelabuhan saja",
-      "Mengatakan secara sepihak bahwa peraturan tersebut kemungkinan tidak akan pernah ditegakkan di lapangan agar nelayan cepat pulang",
-      "Mengubah gaya bicara menjadi dialog dua arah yang berempati pada nafkah nelayan, menjelaskan manfaat lestari untuk anak cucu dengan bahasa membumi, dan menampung usulan transisi bantuan alat tangkap",
-      "Menyampaikan bahwa pemerintah daerah sebenarnya tidak setuju dengan kebijakan pusat demi mengambil simpati sesaat"
+      "Menegaskan bahwa aturan kementerian wajib dipatuhi seluruh daerah karena pelanggaran alat tangkap berisiko sanksi hukum.",
+      "Menunda pembahasan pasal aturan teknis dengan tenang dan mendengarkan seluruh keluhan nelayan penuh santun untuk dicatat resmi.",
+      "Menjelaskan ulang tujuan pelestarian laut secara singkat lalu meminta nelayan mengirim masukan tertulis usai forum.",
+      "Mengubah pendekatan menjadi dialog empatik dengan bahasa sederhana soal hasil laut jangka panjang dan usulan transisi alat.",
+      "Menghentikan sementara dialog terbuka di lokasi dan meneruskan sosialisasi aturan melalui papan pengumuman pelabuhan."
     ],
     "optionScores": [
       2,
-      1,
+      4,
       3,
       5,
-      4
+      1
     ],
     "answer": "D",
-    "explanation": "Komunikasi kebijakan lintas subkultur membumikan rasionalitas regulasi ke sudut pandang kebutuhan hidup masyarakat (keterjaminan hasil tangkapan jangka panjang) sekaligus menghadirkan empati dan solusi transisi tanpa melanggar aturan pusat (skor 5).",
+    "explanation": "Skor 5 meredam ketegangan dengan bahasa membumi tentang keberlanjutan nafkah nelayan sekaligus menampung solusi transisi secara empatik. Pilihan skor 4 mampu mendinginkan suasana dengan mendengarkan keluhan penuh santun, tetapi belum menjembatani tujuan aturan dan langkah transisinya.",
     "tip": "Terjemahkan bahasa aturan teknis ke nilai manfaat nyata bagi kehidupan warga sambil membangun empati dan solusi transisi."
   },
   {
@@ -563,21 +563,21 @@ const sosialBudayaDrafts: readonly TkpQuestionDraft[] = [
     "difficulty": "mudah",
     "prompt": "Di pagi hari saat Anda tiba di kantor, hujan semalaman menyebabkan saluran pembuangan air di halaman samping tersumbat sampah dan menggenangi akses jalan warga yang datang ke loket layanan, sementara petugas kebersihan sedang sakit izin mendadak. Sikap Anda adalah ...",
     "options": [
-      "Melangkahi genangan air sambil masuk ruang ber-AC dan menunggu petugas kebersihan sembuh minggu depan",
-      "Mengambil foto genangan air itu untuk diunggah di akun media sosial pribadi sambil mengkritik bagian umum kantor",
-      "Meminta warga pemohon layanan yang datang di awal antrean membersihkan saluran air bersama supaya halaman kembali kering",
-      "Menghubungi kepala kantor lewat surat resmi terlebih dahulu tanpa berbuat apa-apa di lapangan sepanjang pagi",
-      "Mengajak rekan pegawai yang sudah hadir bergotong royong menyingkirkan sumbatan daun agar akses warga bersih dan melaporkannya ke bagian umum"
+      "Membiarkan genangan air di halaman karena pembersihan saluran bukan termasuk tugas pokok jabatan pelayanan Anda.",
+      "Segera melaporkan genangan air akibat saluran tersumbat ke bagian umum agar dicarikan petugas kebersihan pengganti.",
+      "Melangkah hati-hati melewati pinggir genangan menuju ruang kerja sambil berharap air segera surut menjelang siang.",
+      "Memasang penanda lantai licin dan mengarahkan warga lewat jalur kering sembari menghubungi petugas bagian umum kantor.",
+      "Mengajak rekan yang sudah datang bergotong royong membersihkan sumbatan saluran air agar akses warga lancar lalu melapor."
     ],
     "optionScores": [
-      2,
       1,
       3,
+      2,
       4,
       5
     ],
     "answer": "E",
-    "explanation": "Kepekaan sosial dan semangat gotong royong tidak terpaku pada batas deskripsi jabatan kaku saat kondisi kebersamaan darurat memengaruhi kenyamanan layanan masyarakat (skor 5).",
+    "explanation": "Skor 5 menunjukkan kepekaan sosial dan gotong royong langsung mengatasi kendala lapangan demi kelancaran akses warga. Pilihan skor 4 sudah peduli keselamatan warga dengan memasang penanda dan mengarahkan jalur kering, namun hanya menunggu petugas alih-alih bergerak membersihkan bersama.",
     "tip": "Tunjukkan kepedulian nyata dan inisiatif gotong royong ketika kendala lapangan mengganggu kenyamanan publik."
   },
   {
@@ -586,21 +586,21 @@ const sosialBudayaDrafts: readonly TkpQuestionDraft[] = [
     "difficulty": "mudah",
     "prompt": "Keluarga salah satu petugas keamanan kantor mengalami musibah kebakaran rumah pada malam hari hingga seluruh pakaian kerja serta perabot rumahnya habis. Sebagai rekan di lingkungan kerja yang sama, langkah solidaritas terbaik adalah ...",
     "options": [
-      "Menginisiasi penggalangan bantuan sukarela secara transparan bersama rekan sekantor, membantu kebutuhan mendesak keluarga korban, dan menjenguk langsung memberi dukungan moral",
-      "Menunggu adanya instruksi surat edaran sumbangan resmi dari pimpinan puncak baru bersedia ikut menyisihkan dana",
-      "Mengirimkan pesan singkat belasungkawa di grup kantor saja lalu melupakannya keesokan hari",
-      "Membagikan foto rumah korban kebakaran ke status media sosial pribadi agar banyak orang luar menaruh simpati tanpa ikut membantu nyata",
-      "Mengusulkan pemotongan gaji paksa dalam jumlah sangat besar kepada rekan kerja tanpa musyawarah sukarela"
+      "Menggalang bantuan sukarela secara transparan bersama tim, memenuhi kebutuhan mendesak, dan menjenguk korban.",
+      "Menyisihkan donasi pribadi lalu mengajak beberapa rekan dekat ikut menitipkan bantuan ke rumah petugas keamanan itu.",
+      "Mengusulkan pemotongan tunjangan pegawai secara otomatis lewat bendahara agar bantuan sosial cepat terkumpul besar.",
+      "Sekadar membagikan kabar musibah kebakaran itu ke media sosial pribadi dengan harapan pihak luar membantu tanpa turun langsung.",
+      "Mengirimkan ucapan belasungkawa di grup kantor sambil menunggu arahan resmi koordinator jika ada penggalangan dana."
     ],
     "optionScores": [
       5,
       4,
-      3,
+      2,
       1,
-      2
+      3
     ],
     "answer": "A",
-    "explanation": "Solidaritas kemanusiaan diwujudkan dengan inisiatif penggalangan bantuan yang sukarela-transparan serta dukungan moril langsung bagi sesama yang tertimpa musibah (skor 5).",
+    "explanation": "Skor 5 menghidupkan solidaritas kerja secara proaktif, sukarela, transparan, dan menghadirkan dukungan moral langsung ke keluarga korban. Pilihan skor 4 sudah menunjukkan kepedulian pribadi bersama rekan dekat, tetapi skalanya terbatas dan belum menggerakkan kebersamaan seluruh unit.",
     "tip": "Respons musibah sosial dengan solidaritas proaktif, sukarela, transparan, dan empati nyata."
   },
   {
@@ -609,21 +609,21 @@ const sosialBudayaDrafts: readonly TkpQuestionDraft[] = [
     "difficulty": "sedang",
     "prompt": "Menjelang musim hujan ekstrem, lingkungan RT tempat tinggal Anda mengagendakan kerja bakti bersih selokan dan pemangkasan dahan pohon rawan tumbang tepat pada hari Minggu pagi saat Anda berniat berolahraga santai bersama keluarga. Tindakan Anda adalah ...",
     "options": [
-      "Tetap berangkat olahraga keluar kota pagi-pagi buta tanpa menitipkan kabar atau berkontribusi apa pun kepada pengurus RT",
-      "Menyesuaikan waktu pribadi, turut hadir aktif bergotong royong membersihkan selokan bersama tetangga sambil tetap menjaga keakraban, dan menyempatkan waktu berkualitas bersama keluarga sesudahnya",
-      "Membayar tukang harian pengganti diri Anda dari awal hingga akhir tanpa mau turun menyapa warga di lingkungan sendiri",
-      "Hadir sepuluh menit hanya untuk menandatangani daftar hadir kerja bakti lalu segera kembali ke dalam rumah",
-      "Menyampaikan keluhan bahwa saluran air seharusnya menjadi tugas penuh petugas dinas kota tanpa perlu kerja bakti warga"
+      "Menitipkan iuran konsumsi ke pengurus RT sebagai pengganti kehadiran karena rencana olahraga keluarga sudah dijadwalkan.",
+      "Menyesuaikan jadwal olahraga keluarga agar tetap terlibat aktif bergotong royong membersihkan selokan bersama warga.",
+      "Tetap berangkat berolahraga pagi tanpa memberi kabar karena menganggap pembersihan selokan tugas petugas kota.",
+      "Mengirimkan makanan ringan untuk warga yang bekerja bakti serta mampir menyapa hangat sebentar sebelum pergi berolahraga.",
+      "Mengusulkan ke pengurus RT agar kerja bakti dijadwalkan di luar Minggu pagi supaya waktu olahraga warga tak terganggu."
     ],
     "optionScores": [
-      2,
-      5,
-      4,
       3,
-      1
+      5,
+      1,
+      4,
+      2
     ],
     "answer": "B",
-    "explanation": "Gotong royong mitigasi lingkungan bersama masyarakat adalah bentuk kepedulian sosial sekaligus kebersamaan warga; menyelaraskan jadwal pribadi agar ikut hadir aktif memperkuat solidaritas komunitas (skor 5).",
+    "explanation": "Skor 5 mengutamakan kebersamaan gotong royong mitigasi banjir lewat keterlibatan langsung sambil tetap mengatur ulang waktu olahraga keluarga. Pilihan skor 4 beritikad baik menyumbang konsumsi dan menyapa hangat warga, namun melewatkan kerja fisik bersama yang mempererat solidaritas.",
     "tip": "Kehadiran dan keterlibatan langsung dalam kerja bakti warga memperkuat rasa kebersamaan sekaligus mitigasi lingkungan."
   },
   {
@@ -632,21 +632,21 @@ const sosialBudayaDrafts: readonly TkpQuestionDraft[] = [
     "difficulty": "sedang",
     "prompt": "Saat perjalanan pulang kerja, Anda melihat seorang pengendara lanjut usia terjatuh di pinggir jalan akibat jalan berlubang dan barang belanjaannya berserakan sementara warga sekitar awalnya hanya menonton ragu-ragu. Tindakan tepat Anda adalah ...",
     "options": [
-      "Meneruskan perjalanan cepat pulang agar tidak terjebak macet lalu lintas sore hari",
-      "Berhenti sebentar untuk merekam peristiwa itu supaya diunggah agar dinas terkait segera memperbaiki jalan berlubang",
-      "Segera menepi dengan aman, memeriksa kondisi pengendara, membantunya menepi bersama barangnya ke tempat aman, menghubungi keluarga atau layanan kesehatan bila cedera, serta mengajak pengguna jalan lain membantu mengatur arus lalu lintas",
-      "Membantu mengumpulkan barang belanjaannya dari jauh sambil meneriaki pengendara lain agar lebih berhati-hati",
-      "Menunggu hingga ada ambulans melintas di jalan tersebut tanpa turun menolong atau menghubungi bantuan darurat"
+      "Mencatat lokasi jalan berlubang untuk dilaporkan lewat aplikasi pengaduan setelah tiba di rumah tanpa berhenti di jalan.",
+      "Segera menepi aman untuk membantu pengendara tersebut bangkit berdiri dan mengamankan seluruh barang belanjaannya ke trotoar.",
+      "Segera menepi aman, memeriksa kondisi korban, merapikan barangnya, dan mengajak warga mengatur jalan serta panggil bantuan.",
+      "Memperlambat laju kendaraan guna memastikan warga pinggir jalan sudah bergerak menolong sebelum melanjutkan perjalanan pulang.",
+      "Terus melaju pulang agar kendaraan Anda tidak ikut menyebabkan kemacetan arus lalu lintas di jam pulang kerja sore."
     ],
     "optionScores": [
       2,
-      1,
+      4,
       5,
       3,
-      4
+      1
     ],
     "answer": "C",
-    "explanation": "Kepekaan sosial menuntut respons kemanusiaan sigap pada keselamatan sesama (menolong korban menepi aman, memberi pertolongan awal atau memanggil layanan darurat, serta menggerakkan bantuan sekitar secara tertib) (skor 5).",
+    "explanation": "Skor 5 memberi pertolongan darurat yang utuh mulai dari memeriksa kondisi fisik korban, memanggil bantuan, hingga menggerakkan warga menjaga keamanan lalu lintas. Pilihan skor 4 sigap membantu korban berdiri dan menepikan barang, tetapi belum memastikan kebutuhan medis lanjutan maupun pengamanan arus jalan.",
     "tip": "Pada kondisi darurat sosial di ruang publik, utamakan keselamatan korban dan tindakan pertolongan langsung yang aman."
   },
   {
@@ -655,21 +655,21 @@ const sosialBudayaDrafts: readonly TkpQuestionDraft[] = [
     "difficulty": "sedang",
     "prompt": "Program Jumat Berbagi atau kegiatan sosial sukarela kantor kerap sepi partisipasi karena sebagian pegawai menganggap sumbangan selalu harus berupa dana besar dan dikelola rumit. Jika Anda ingin membangkitkan kembali semangat gotong royong di kantor, gagasan praktis Anda adalah ...",
     "options": [
-      "Mewajibkan iuran bulanan minimal tinggi bagi seluruh pegawai tanpa pengecualian dan mengumumkan nama yang belum membayar",
-      "Menghentikan kegiatan sosial sukarela seluruhnya karena tidak tercantum di dalam target kerja individu tahunan",
-      "Menjalankan kegiatan tersebut sendirian secara diam-diam sepanjang tahun tanpa mengajak rekan kerja mana pun",
-      "Menggagas skema partisipasi ringan, transparan, dan variatif (misalnya berbagi buku bacaan layak, bahan pokok, atau tenaga relawan sebulan sekali) dengan pelaporan terbuka agar semua pegawai merasa ringan ikut berkontribusi",
-      "Mengusulkan kantor memakai dana operasional perjalanan dinas secara diam-diam guna membiayai kegiatan sosial pribadi pegawai"
+      "Menghentikan sementara kegiatan sosial sukarela karena kesibukan kerja dinilai menyulitkan partisipasi pegawai.",
+      "Tetap menjalankan program sosial itu secara rutin bersama segelintir rekan yang mau tanpa mengubah pola penggalangan.",
+      "Mengusulkan jadwal giliran iuran wajib tiap bidang per bulan agar kontribusi pegawai terlihat merata.",
+      "Menggagas partisipasi ringan berupa buku, sembako, atau tenaga sukarela dengan laporan terbuka agar semua ikut ringan.",
+      "Menyusun rincian laporan penggunaan dana kegiatan secara rapi lalu menempelkannya di papan pengumuman untuk menarik kepercayaan."
     ],
     "optionScores": [
-      2,
       1,
-      4,
+      3,
+      2,
       5,
-      3
+      4
     ],
     "answer": "D",
-    "explanation": "Gotong royong tumbuh kuat saat bersifat sukarela, mudah diakses semua kalangan (bukan cuma uang besar), serta akuntabel dalam penyaluran (skor 5).",
+    "explanation": "Skor 5 menghidupkan gotong royong dengan membuka ruang sumbangan beragam yang ringan, sukarela, dan transparan bagi seluruh pegawai. Pilihan skor 4 sudah berupaya membangun kepercayaan lewat laporan dana yang rapi, namun belum memperluas cara berpartisipasi selain uang.",
     "tip": "Tumbuhkan gotong royong melalui cara berpartisipasi yang ringan, terbuka, variatif, dan transparan penyalurannya."
   },
   {
@@ -678,21 +678,21 @@ const sosialBudayaDrafts: readonly TkpQuestionDraft[] = [
     "difficulty": "sedang",
     "prompt": "Anda bertugas di tim pendampingan desa pascabencana gempa bumi. Meski tugas utama Anda mendata kerusakan bangunan kantor desa, Anda mendapati posko pengungsian ibu dan balita kekurangan relawan pengelola logistik popok dan makanan bayi sore itu. Tindakan Anda adalah ...",
     "options": [
-      "Fokus menyelesaikan foto gedung kantor desa lebih awal lalu langsung pulang ke penginapan kota karena bagian logistik balita tugas seksi lain",
-      "Mengambil alih seluruh posko logistik balita dengan mengabaikan tenggat laporan pendataan gedung desa tanpa melapor koordinator",
-      "Mengirimkan keluhan di grup pimpinan bahwa bagian sosial bekerja lamban menyiapkan relawan di desa pengungsian",
-      "Menunggu perintah tertulis resmi pimpinan kabupaten keesokan harinya sebelum berani menyentuh kardus bantuan balita di posko",
-      "Menuntaskan pendataan bangunan desa sesuai rencana prioritas, lalu berkoordinasi dengan koordinator posko meluangkan tenaga membantu penyortiran dan penyaluran logistik darurat ibu-balita bersama relawan"
+      "Menyelesaikan pendataan kantor desa tepat waktu lalu menghubungi posko induk kecamatan meminta tambahan relawan logistik.",
+      "Langsung beralih menyalurkan logistik posko balita dan menunda pendataan kerusakan gedung tanpa melapor kepada koordinator.",
+      "Menyampaikan keluhan soal minimnya relawan posko ibu dan balita dalam rapat evaluasi malam agar panitia segera berbenah.",
+      "Berfokus menuntaskan pemeriksaan bangunan desa hingga selesai karena pengelolaan logistik balita menjadi tugas bidang lain.",
+      "Menuntaskan pendataan bangunan desa sesuai target, lalu segera berkoordinasi ikut menyortir logistik darurat ibu dan balita."
     ],
     "optionScores": [
-      3,
+      4,
       2,
       1,
-      4,
+      3,
       5
     ],
     "answer": "E",
-    "explanation": "Kepekaan sosial terbaik menjaga keseimbangan: menuntaskan amanah tugas utama secara cepat dan disiplin, lalu segera mengulurkan tangan pada kebutuhan darurat kemanusiaan warga secara terkoordinasi (skor 5).",
+    "explanation": "Skor 5 memadukan kedisiplinan amanah tugas utama dengan solidaritas cepat terjun membantu posko balita secara terkoordinasi. Pilihan skor 4 sudah bertanggung jawab menuntaskan pendataan dan melaporkan kebutuhan relawan, tetapi menunda pertolongan lapangan sambil menunggu bantuan luar datang.",
     "tip": "Dalam kondisi bencana, tuntaskan kewajiban utama lalu segera ulurkan tenaga pada posko kemanusiaan secara terkoordinasi."
   },
   {
@@ -701,21 +701,21 @@ const sosialBudayaDrafts: readonly TkpQuestionDraft[] = [
     "difficulty": "sulit",
     "prompt": "Di unit tempat Anda bekerja, ada seorang rekan kerja yang belakangan sering tampak murung, menyendiri, dan performanya menurun drastis. Setelah rekan lain mulai menggosipkannya sebagai pemalas, kepekaan sosial yang paling bijaksana untuk Anda lakukan adalah ...",
     "options": [
-      "Mendekatinya secara personal dalam suasana tenang penuh empati untuk mendengarkan tanpa menghakimi, membantunya menemukan dukungan profesional (konseling/Biro SDM atau pembagian beban wajar) bila diperlukan, dan tidak ikut menyebar gosip",
-      "Ikut menjaga jarak sosial agar Anda tidak ikut terbebani masalah pribadi keluarga rekan tersebut",
-      "Menegurnya di depan rapat evaluasi mingguan bahwa masalah keluarga tidak pantas dibawa-bawa menurunkan angka kinerja tim",
-      "Melaporkan langsung kepada pimpinan agar rekan tersebut diberi surat peringatan pertama tanpa berbicara empat mata lebih dahulu",
-      "Menanyakan rincian masalah pribadinya secara memaksa saat jam makan siang bersama di hadapan banyak rekan lain"
+      "Mendekatinya empat mata penuh empati, mendengar tanpa menghakimi, mengarahkan bantuan, dan meredam gosip.",
+      "Tidak ikut menyebarkan gosip yang beredar sambil membiarkan rekan tersebut menenangkan masalah pribadinya sendiri.",
+      "Menjaga jarak pergaulan dengannya karena khawatir sikap menyendirinya memengaruhi suasana kerja seluruh anggota tim.",
+      "Menegur halus rekan lain agar berhenti bergosip dan menyapa rekan murung itu lebih ramah di sela jam kerja.",
+      "Melaporkan penurunan kinerjanya langsung kepada atasan agar pembagian tugas di unit segera ditata ulang pekan ini."
     ],
     "optionScores": [
       5,
       3,
-      2,
+      1,
       4,
-      1
+      2
     ],
     "answer": "A",
-    "explanation": "Kepedulian sosial mencakup kesehatan mental dan kemanusiaan sesama rekan kerja. Mendengarkan tulus tanpa menghakimi secara privat, menolak gosip, dan mengarahkan ke bantuan yang tepat membantu pemulihan rekan sekaligus menjaga performa tim (skor 5).",
+    "explanation": "Skor 5 merawat kesehatan sosial rekan lewat pendekatan privat yang empatik, meredam gosip, dan mengarahkan ke dukungan tepat. Pilihan skor 4 sudah baik menghentikan gosip dan bersikap ramah di luar, namun belum menggali dukungan personal yang dibutuhkan rekan tersebut.",
     "tip": "Tangani perubahan perilaku rekan lewat pendekatan pribadi yang empatik dan menjaga privasi, bukan gosip atau vonis."
   },
   {
@@ -724,21 +724,21 @@ const sosialBudayaDrafts: readonly TkpQuestionDraft[] = [
     "difficulty": "sulit",
     "prompt": "Sebuah daerah padat permukiman menghadapi persoalan menumpuknya sampah plastik di bantaran sungai setiap kali banjir kecil datang. Warga saling menyalahkan antar-RW hulu dan hilir tanpa aksi nyata. Sebagai anggota tim pelestarian lingkungan kelurahan yang dipercaya warga, langkah kolaborasi gotong royong paling berkelanjutan adalah ...",
     "options": [
-      "Menentukan secara sepihak denda tinggi bagi RW hulu tanpa menyediakan fasilitas tempat sampah sementara yang layak",
-      "Mempertemukan tokoh RW hulu dan hilir secara dialogis untuk menyepakati jadwal aksi bersih berkala bersama, membangun sistem bank sampah bernilai ekonomi di hulu, dan memantau titik rawan bersama-sama",
-      "Mengirimkan satu kali truk pengangkut sampah saja menjelang kunjungan penilaian kebersihan kota tiap tahun",
-      "Membiarkan warga RW hilir terus mengumpulkan sampah kiriman sendiri karena posisi wilayah mereka lebih rendah",
-      "Mengusulkan pemasangan pagar seng tinggi di pinggir sungai agar warga tidak melihat tumpukan sampah di bantaran"
+      "Mendorong pengurus RW membuat aturan larangan membuang sampah ke sungai disertai sanksi denda sosial bagi pelanggarnya.",
+      "Mempertemukan warga hulu dan hilir menyepakati aksi bersih berkala, bank sampah produktif, dan pemantauan rutin.",
+      "Mengajak kelompok pemuda RW hilir yang terdampak banjir menggelar aksi bersih rutin di bantaran sungai setiap akhir pekan.",
+      "Mengajukan penambahan jadwal truk kebersihan kelurahan agar tumpukan plastik di bantaran sungai lebih sering terangkut.",
+      "Membiarkan tiap pengurus RW mengurus wilayahnya karena sulit menyatukan kesadaran warga hulu dan hilir."
     ],
     "optionScores": [
       2,
       5,
+      4,
       3,
-      1,
-      4
+      1
     ],
     "answer": "B",
-    "explanation": "Mengakhiri siklus saling menyalahkan butuh penyatuan dialog lintas wilayah (hulu-hilir), perbaikan hulu berbasis nilai tambah (bank sampah), serta aksi gotong royong berkelanjutan dengan pemantauan bersama (skor 5).",
+    "explanation": "Skor 5 mengakhiri saling menyalahkan dengan menyatukan RW hulu dan hilir dalam gotong royong berkelanjutan serta sistem bank sampah produktif. Pilihan skor 4 menggerakkan kerja bakti pemuda secara nyata, tetapi baru menjangkau wilayah hilir tanpa membenahi sumber sampah di hulu.",
     "tip": "Pecahkan masalah sosial lintas warga dengan menyatukan pihak hulu dan hilir dalam sistem gotong royong bernilai guna."
   },
   {
@@ -747,21 +747,21 @@ const sosialBudayaDrafts: readonly TkpQuestionDraft[] = [
     "difficulty": "mudah",
     "prompt": "Ketika membentuk kelompok tim kecil panitia peringatan hari kemerdekaan di kantor, salah satu rekan mengajak Anda memilih anggota khusus dari suku dan almamater yang sama saja agar cepat akrab dan gampang sepakat. Sikap Anda adalah ...",
     "options": [
-      "Menyetujui ajakan itu secara diam-diam supaya koordinasi panitia memang terasa lebih santai dan seragam",
-      "Meminta rekan tersebut membagi dua kelompok: satu panitia inti dari golongan sendiri dan satu lagi panitia pelengkap dari luar",
-      "Menolak pengelompokan berdasarkan suku maupun almamater secara ramah, dan mengajak menyusun tim panitia beragam berdasarkan minat, kemampuan teknis, serta keterwakilan unit kerja agar inklusif dan kompak",
-      "Mengundurkan diri dari kepanitiaan acara kemerdekaan secara mendadak tanpa memberikan alasan kepada tim",
-      "Melaporkan ajakan rekan tersebut langsung sebagai pelanggaran disiplin berat tanpa memberi pemahaman inklusif lebih dulu"
+      "Menyetujui usulan memilih rekan sedaerah saja agar rapat persiapan acara kemerdekaan cepat akrab dan lancar.",
+      "Menyarankan agar penentuan panitia diacak berdasarkan daftar hadir pegawai tanpa memandang latar belakang anggota.",
+      "Menolak usulan itu dengan ramah lalu mengajak menyusun panitia beragam sesuai minat, keahlian, dan perwakilan unit.",
+      "Mengakomodasi sebagian usulan rekan demi kekompakan inti sambil menambah dua orang dari bagian lain sebagai pelengkap.",
+      "Menolak santun pemilihan anggota berdasarkan kesamaan asal lalu mengusulkan agar atasan menunjuk tim panitia secara netral."
     ],
     "optionScores": [
       1,
-      2,
-      5,
       3,
+      5,
+      2,
       4
     ],
     "answer": "C",
-    "explanation": "Menolak primordialisme dengan hangat dan mengarahkan pembentukan tim berdasarkan kompetensi dan inklusivitas mencerminkan jiwa persatuan kebinekaan di tempat kerja (skor 5).",
+    "explanation": "Skor 5 menolak primordialisme dengan ramah dan mendorong pembentukan tim inklusif berbasis keahlian serta keterwakilan unit kerja. Pilihan skor 4 juga menolak sikap pilih kasih secara santun, tetapi melemparkan keputusan ke atasan tanpa mengupayakan keterlibatan lintas bagian secara adil.",
     "tip": "Hindari pengkotak-kotakan tim berdasar suku, agama, atau almamater; bangun tim berdasarkan kompetensi dan keterbukaan."
   },
   {
@@ -770,21 +770,21 @@ const sosialBudayaDrafts: readonly TkpQuestionDraft[] = [
     "difficulty": "mudah",
     "prompt": "Seorang pemohon layanan meminta didahulukan pengurusannya hanya karena mengaku satu daerah asal kelahiran dan memiliki marga yang sama dengan Anda. Sikap profesional Anda adalah ...",
     "options": [
-      "Mendahulukannya dengan cepat diam-diam lewat pintu belakang loket agar pemohon lain di antrean tidak protes",
-      "Mengizinkannya memotong setengah antrean dengan syarat melapor setelah jam istirahat siang selesai",
-      "Menegurnya dengan suara keras di hadapan seluruh warga agar malu membawa-bawa identitas daerah asal",
-      "Menyambutnya ramah dengan penuh hormat sebagai sesama warga negara, tetapi tetap menjelaskan secara tegas dan santun bahwa semua pemohon dilayani adil sesuai nomor urut antrean serta SOP berlaku",
-      "Meminta rekan petugas loket sebelah bertukar kursi sementara supaya tidak enak hati langsung dengannya"
+      "Tetap melayaninya secara adil sesuai nomor urut antrean tanpa hak khusus, meski berbicara singkat untuk menghindari canggung.",
+      "Membantu meneliti berkasnya lebih dulu sebelum antreannya tiba, asalkan tetap menunggu giliran panggilan akhir.",
+      "Mendahulukan pengurusan berkasnya secara diam-diam sebagai bentuk rasa persaudaraan sesama perantau satu daerah.",
+      "Menyambut hangat sebagai sesama warga, lalu menjelaskan tegas namun sopan bahwa layanan adil mengikuti nomor antrean.",
+      "Meminta rekan petugas di loket sebelah menangani permohonannya dengan ramah agar Anda tidak merasa sungkan."
     ],
     "optionScores": [
-      1,
+      4,
       2,
-      3,
+      1,
       5,
-      4
+      3
     ],
     "answer": "D",
-    "explanation": "Pelayanan publik yang berkeadilan memisahkan ikatan kekerabatan/daerah asal dari objektivitas antrean dan prosedur hukum, disampaikan tetap hangat namun tegas (skor 5).",
+    "explanation": "Skor 5 menyeimbangkan keramahan sebagai sesama warga dengan ketegasan menjaga keadilan antrean tanpa memihak asal daerah. Pilihan skor 4 sudah menegakkan aturan antrean secara adil, namun sikap singkat dan terburu-buru masih kurang mencerminkan pelayanan publik yang hangat.",
     "tip": "Jawab permintaan hak istimewa berdasar kesamaan asal daerah secara hangat namun tegas berpegang pada keadilan antrean."
   },
   {
@@ -793,21 +793,21 @@ const sosialBudayaDrafts: readonly TkpQuestionDraft[] = [
     "difficulty": "sedang",
     "prompt": "Dalam diskusi penilaian kandidat pelamar tenaga pendukung administrasi kantor, salah satu penilai berkomentar bahwa pelamar perempuan atau lulusan daerah tertentu sebaiknya tidak usah diprioritaskan karena dikhawatirkan cepat mengajukan cuti atau kurang terbiasa ritme kota. Sikap tegas Anda dalam rapat adalah ...",
     "options": [
-      "Mengangguk menyetujui pertimbangan penilai tersebut agar proses seleksi selesai tepat sebelum pukul empat sore",
-      "Diam tidak berkomentar meski di dalam hati tidak setuju demi menghindari ketegangan dengan penilai senior",
-      "Meminta penilai tersebut dicabut hak suaranya di tengah sidang seleksi tanpa memberi alasan objektif rapat",
-      "Menunda seluruh pengumuman kelulusan selama dua bulan sambil menunggu seluruh penilai pensiun",
-      "Menyampaikan keberatan secara santun berbasis fakta serta peraturan nondiskriminasi, lalu mengajak tim menyeleksi seluruh kandidat murni berdasarkan skor kompetensi, integritas, dan hasil wawancara objektif"
+      "Mengalihkan pembicaraan rapat ke daftar pertanyaan wawancara teknis tanpa mengomentari pendapat penilai tersebut.",
+      "Menyetujui kekhawatiran penilai tersebut sebagai pertimbangan praktis demi menjaga kestabilan tim administrasi kantor.",
+      "Tetap mengisi lembar skor kandidat secara objektif sesuai hasil tes tanpa terpengaruh komentar bias anggota penilai lain.",
+      "Mencatat pertimbangan kesiapan ritme kerja sebagai catatan pelengkap selain memeriksa nilai kemampuan administrasi pelamar.",
+      "Menyatakan keberatan secara sopan berdasar aturan nondiskriminasi lalu mengajak menilai para pelamar dari kompetensi objektif."
     ],
     "optionScores": [
-      1,
       3,
+      1,
       4,
       2,
       5
     ],
     "answer": "E",
-    "explanation": "Sistem merit menuntut penolakan tegas terhadap diskriminasi gender maupun asal daerah dalam rekrutmen. Menyuarakan prinsip objektivitas kompetensi secara santun melindungi hak kandidat sekaligus mutu SDM instansi (skor 5).",
+    "explanation": "Skor 5 menegakkan sistem merit dengan berani meluruskan bias gender maupun asal daerah secara sopan agar penilaian tim tetap adil. Pilihan skor 4 menjaga integritas nilai pribadi dari bias rekan, namun berdiam diri dalam forum berisiko merugikan kandidat pada skor penilai lain.",
     "tip": "Tegakkan prinsip nondiskriminasi dan meritokrasi dengan berani menyuarakan objektivitas kompetensi dalam rapat seleksi."
   },
   {
@@ -816,21 +816,21 @@ const sosialBudayaDrafts: readonly TkpQuestionDraft[] = [
     "difficulty": "sedang",
     "prompt": "Ketika menerima pengaduan sengketa fasilitas umum antardua warga, Anda menyadari salah seorang di antara mereka adalah teman akrab organisasi mahasiswa Anda dahulu sedangkan pihak lainnya warga kurang mampu yang tidak Anda kenal. Bagaimana Anda menangani kasus ini?",
     "options": [
-      "Menjaga objektivitas penuh dengan memeriksa seluruh bukti dan aturan secara imparsial tanpa memberi keistimewaan kepada teman lama, atau mundur mendelegasikan penanganan bila berisiko menimbulkan persepsi konflik kepentingan",
-      "Memberikan nasihat tertutup kepada teman lama saja sebelum sidang mediasi dimulai supaya argumennya menang",
-      "Mencondongkan keputusan sedikit kepada warga kurang mampu secara emosional meskipun tanpa memeriksa bukti ketentuan tata ruang",
-      "Mengulur jadwal mediasi berkali-kali dengan harapan kedua belah pihak lelah dan mencabut laporannya",
-      "Membantu teman lama dengan mencari celah kelengkapan administrasi milik lawannya agar aduan warga ditolak"
+      "Menilai bukti secara imparsial tanpa memihak, atau mendelegasikan kasus guna hindari konflik kepentingan.",
+      "Memberikan penjelasan awal tentang tata cara penyusunan bukti kepada teman lama supaya mediasi berlangsung lancar.",
+      "Memeriksa seluruh berkas keduanya secara adil sesuai aturan sambil menjaga jarak komunikasi pribadi dengan teman lama.",
+      "Meminta teman lama melengkapi dokumen sesuai prosedur biasa agar proses penanganan tetap berjalan adil menurut aturan.",
+      "Melonggarkan sebagian verifikasi berkas pengaduan karena sudah mengenal baik sifat jujur teman lama sejak mahasiswa."
     ],
     "optionScores": [
       5,
       2,
-      3,
       4,
+      3,
       1
     ],
     "answer": "A",
-    "explanation": "Imparsialitas adalah jantung keadilan sosial: menilai semata berbasis fakta & regulasi tanpa memihak teman maupun bertindak bias, serta mendeklarasikan/menghindari konflik kepentingan bila kedekatan personal berpotensi mengaburkan kepercayaan publik (skor 5).",
+    "explanation": "Skor 5 menjaga objektivitas penuh berbasis bukti sekaligus mengantisipasi persepsi konflik kepentingan dengan opsi delegasi penanganan kasus. Pilihan skor 4 sudah berupaya memproses berkas secara adil dan menjaga jarak, namun kurang peka terhadap potensi keraguan publik atas netralitas.",
     "tip": "Tangani sengketa dengan imparsialitas penuh berbasis bukti; hindari konflik kepentingan meski menyangkut kawan lama."
   },
   {
@@ -839,21 +839,21 @@ const sosialBudayaDrafts: readonly TkpQuestionDraft[] = [
     "difficulty": "sedang",
     "prompt": "Di kantor Anda beredar anggapan tidak tertulis bahwa peluang penugasan perjalanan dinas luar kota dan pelatihan bergengsi selalu lebih mudah didapatkan oleh anggota kelompok informal yang sering berkumpul bersama satu pemimpin bidang asal almamater tertentu. Langkah paling konstruktif yang dapat Anda usulkan untuk membangun sistem adil adalah ...",
     "options": [
-      "Berusaha ikut masuk ke kelompok informal tersebut agar Anda juga memperoleh bagian tugas ke luar kota",
-      "Mengusulkan sistem rotasi penugasan serta kriteria seleksi pelatihan berbasis keterbutuhan kompetensi jabatan yang transparan dan diumumkan terbuka kepada seluruh staf",
-      "Mengumpulkan bukti foto kegiatan makan siang kelompok tersebut untuk disebarluaskan di forum pegawai anonim",
-      "Mengajak rekan lain yang tidak termasuk kelompok tersebut mogok mengikuti program pelatihan lokal apa pun",
-      "Berpasrah diri menerima ketimpangan tersebut karena sudah menjadi pola umum di banyak tempat kerja mana pun"
+      "Menganggap kedekatan informal itu hal lumrah karena atasan wajar menugaskan rekan yang paling dikenal akrab.",
+      "Mengusulkan rotasi penugasan dan kriteria pelatihan berbasis kompetensi jabatan yang transparan bagi seluruh staf.",
+      "Berfokus menunjukkan kinerja harian terbaik dengan harapan pimpinan kelak menilai kesiapan seluruh pegawai secara adil.",
+      "Mulai ikut bergabung ke obrolan santai kelompok informal tersebut supaya informasi jadwal pelatihan lebih cepat diketahui.",
+      "Menyampaikan harapan secara halus kepada pimpinan agar staf lain di luar kelompok akrab itu juga diberi peluang berangkat."
     ],
     "optionScores": [
-      2,
-      5,
       1,
+      5,
       3,
+      2,
       4
     ],
     "answer": "B",
-    "explanation": "Primordialisme dan favoritisme internal dilawan paling efektif melalui pelembagaan sistem transparan (rotasi adil & kriteria seleksi berbasis kompetensi) yang memberi peluang setara bagi setiap pegawai (skor 5).",
+    "explanation": "Skor 5 mengatasi favoritisme almamater lewat perbaikan sistem berupa rotasi adil dan kriteria kompetensi terbuka untuk semua pegawai. Pilihan skor 4 sudah berani menyuarakan keadilan secara halus ke pimpinan, namun sebatas permintaan kasuistis tanpa membenahi mekanisme bakunya.",
     "tip": "Atasi favoritisme golongan/almamater dengan membangun mekanisme rotasi adil dan kriteria penugasan yang transparan."
   },
   {
@@ -862,21 +862,21 @@ const sosialBudayaDrafts: readonly TkpQuestionDraft[] = [
     "difficulty": "sedang",
     "prompt": "Pada suatu proyek pengembangan kawasan taman desa, seorang warga berpenampilan sederhana namun berpengalaman bertani mengajukan usulan perbaikan drainase yang sangat logis dalam musyawarah, tetapi diremehkan oleh beberapa tokoh berpengaruh yang menganggap pendapatnya kurang layak didengar. Sikap Anda sebagai fasilitator musyawarah adalah ...",
     "options": [
-      "Melanjutkan agenda musyawarah langsung ke pendapat tokoh berpengaruh saja supaya rapat berjalan mulus cepat selesai",
-      "Meminta warga sederhana itu menuliskan pendapatnya di kertas untuk dibaca panitia minggu depan setelah musyawarah tutup",
-      "Memberikan ruang bicara yang setara dan hormat bagi warga tersebut, mengajak forum mengevaluasi substansi usulannya berdasarkan kelayakan teknis tanpa memandang status sosial, dan mencatat gagasannya dalam notulen resmi",
-      "Menegur tokoh berpengaruh secara kasar di depan seluruh peserta desa hingga mempermalukan wibawa keduanya",
-      "Memisahkan rapat musyawarah kelompok tokoh desa dan kelompok warga biasa ke dalam dua hari yang berbeda"
+      "Menemui warga tersebut seusai musyawarah untuk mengapresiasi gagasannya secara ramah serta berjanji membawanya ke tim kajian.",
+      "Mengarahkan warga tersebut menulis pendapatnya di lembar aspirasi panitia agar jalannya diskusi forum tidak memanas.",
+      "Memberi ruang bicara adil, mengajak forum mengkaji nilai teknis usulannya tanpa memandang status, dan mencatat di notulen.",
+      "Memberi porsi pembahasan lebih utama kepada masukan tokoh berpengaruh demi mempercepat persetujuan proyek taman desa.",
+      "Mengucapkan terima kasih singkat atas masukannya lalu meneruskan giliran berbicara kepada peserta rapat berikutnya agar tertib."
     ],
     "optionScores": [
-      2,
-      3,
-      5,
       4,
-      1
+      2,
+      5,
+      1,
+      3
     ],
     "answer": "C",
-    "explanation": "Demokrasi permusyawaratan menghargai nilai substansi gagasan setiap warga secara setara tanpa diskriminasi status ekonomi atau gelar sosial (skor 5).",
+    "explanation": "Skor 5 menegakkan demokrasi musyawarah dengan memberi ruang setara di forum serta menilai ide berdasar kelayakan teknis tanpa melihat status sosial. Pilihan skor 4 menghargai gagasan warga secara ramah setelah rapat, namun membiarkan suara warga terpinggirkan saat musyawarah berlangsung.",
     "tip": "Nilai kualitas ide atas dasar logika dan manfaat publik, bukan dari status sosial pembicaranya."
   },
   {
@@ -885,21 +885,21 @@ const sosialBudayaDrafts: readonly TkpQuestionDraft[] = [
     "difficulty": "sulit",
     "prompt": "Suatu kebijakan pembagian bantuan modal usaha mikro daerah menyertakan syarat dokumen kependudukan lokal yang ternyata secara tidak sengaja membuat ratusan perajin lokal berstatus warga pindahan resmi dan komunitas penyandang disabilitas gagal lolos seleksi otomatis aplikasi, padahal mereka berhak secara ekonomi. Sebagai anggota tim perumus kebijakan, sikap terbaik Anda adalah ...",
     "options": [
-      "Membiarkan sistem bekerja apa adanya agar anggaran modal usaha terserap cepat kepada penerima yang lolos otomatis saja",
-      "Mengubah hasil kelulusan penerima di basis data diam-diam tanpa merevisi pedoman peraturan agar lebih praktis",
-      "Membatalkan bantuan modal usaha untuk seluruh daerah tahun ini dan mengembalikan anggarannya ke kas pusat",
-      "Mengajukan tinjauan inklusivitas atas syarat administratif tersebut bersama tim hukum dan dinas terkait agar aturan diperbaiki menjadi adil dan tidak mengecualikan warga sah yang rentan secara ekonomi maupun disabilitas",
-      "Menyalurkan sisa anggaran secara informal ke kelompok perajin terdekat tanpa melewati proses pendaftaran resmi"
+      "Mencatat kendala gagal seleksi otomatis tersebut dalam laporan evaluasi akhir program sebagai bahan perbaikan tahun depan.",
+      "Mempertahankan syarat kependudukan lokal secara ketat supaya bantuan modal daerah lebih diprioritaskan bagi warga lama.",
+      "Mengumpulkan data perajin pindahan serta penyandang disabilitas terdampak untuk diusulkan menerima bantuan sosial terpisah tanpa revisi aturan.",
+      "Mengajukan peninjauan aturan syarat bersama tim hukum dan dinas terkait agar pedoman diubah adil bagi warga pindahan dan disabilitas.",
+      "Tetap menyalurkan bantuan modal kepada pemohon yang lolos seleksi sistem agar penyerapan anggaran daerah berjalan lancar."
     ],
     "optionScores": [
-      2,
-      1,
       3,
+      1,
+      4,
       5,
-      4
+      2
     ],
     "answer": "D",
-    "explanation": "Diskriminasi tidak selalu berupa niat jahat; ia bisa muncul sebagai diskriminasi tidak langsung akibat desain regulasi administratif yang tidak peka kelompok rentan. Memperbaiki pedoman bersama tim sah menjamin keadilan substantif (skor 5).",
+    "explanation": "Skor 5 membenahi diskriminasi administratif tidak langsung dengan meninjau ulang pedoman bersama tim sah agar warga rentan terakomodasi adil. Pilihan skor 4 peduli membantu lewat jalur bantuan terpisah, namun membiarkan aturan diskriminatif tetap berlaku pada sistem seleksi utama.",
     "tip": "Waspadai diskriminasi tidak langsung dalam desain syarat sistem/regulasi dan advokasi perbaikan aturannya secara prosedural."
   },
   {
@@ -908,21 +908,21 @@ const sosialBudayaDrafts: readonly TkpQuestionDraft[] = [
     "difficulty": "sulit",
     "prompt": "Di media sosial komunitas lokal, sebuah konten viral menyebarkan generalisasi negatif bahwa penduduk pendatang dari wilayah tertentu selalu menjadi sumber masalah sosial di kota Anda, hingga memicu boikot terhadap usaha dagang kecil warga asal daerah tersebut. Sebagai aparatur negara yang menjadi teladan kebinekaan di ruang kerja dan lingkungan sosial, tindakan paling tepat Anda adalah ...",
     "options": [
-      "Ikut menghindari berbelanja di usaha warga asal daerah tersebut supaya tidak dicurigai tetangga sekitar",
-      "Membagikan ulang unggahan viral itu dengan pertanyaan provokatif untuk melihat reaksi lebih banyak warganet",
-      "Menutup akses komunikasi sosial dengan seluruh warga kota demi menghindari perdebatan mengenai isu pendatang",
-      "Mengucapkan komentar santai bahwa masalah seperti itu hal wajar terjadi di kota besar lalu membiarkannya",
-      "Menolak tegas narasi stereotip dengan tenang berbasis tanggung jawab individu bukan suku, mengajak tokoh lingkungan menjaga kerukunan, dan mendukung perlakuan ekonomi adil tanpa boikot"
+      "Mengajak tetangga menyerahkan urusan keamanan pendatang sepenuhnya kepada aparat penegak hukum tanpa banyak berkomentar.",
+      "Tetap berbelanja seperti biasa di usaha warga pendatang sebagai bentuk dukungan pribadi tanpa ikut menanggapi isu di sekitar.",
+      "Tidak ikut menyebarkan konten viral itu di media sosial serta mengingatkan kenalan dekat agar lebih bijak menyaring kabar.",
+      "Menghindari berbelanja di warung warga pendatang sementara waktu demi menjaga suasana aman dari gunjingan warga sekitar.",
+      "Menolak narasi stereotip dengan tenang berdasar tanggung jawab individu, mengajak tokoh warga menjaga kerukunan, dan mendukung usaha adil."
     ],
     "optionScores": [
-      1,
       2,
-      3,
       4,
+      3,
+      1,
       5
     ],
     "answer": "E",
-    "explanation": "Melawan stigma kolektif membutuhkan keberanian moral menolak stereotip, edukasi berbasis tanggung jawab individu (bukan pelabelan suku/daerah), dan komitmen nyata menjaga kohesi sosial serta keadilan ekonomi warga lintas asal daerah (skor 5).",
+    "explanation": "Skor 5 menentang stigma kolektif dengan menegaskan pertanggungjawaban pribadi, menggerakkan tokoh warga menjaga kerukunan, serta menolak boikot. Pilihan skor 4 sudah berprinsip adil secara pribadi dengan tetap berbelanja, namun sikap diamnya kurang membantu menghentikan penyebaran prasangka.",
     "tip": "Tolak generalisasi negatif atas suku/daerah; tekankan pertanggungjawaban individual dan jaga kohesi lintas warga."
   }
 ];

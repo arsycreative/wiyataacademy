@@ -645,55 +645,55 @@ export const analisisTabelBatch3Drafts: readonly QuestionDraft[] = [
     "id": "tiu-tab-141",
     "subPattern": "simpulan-dan-perbandingan-tabel",
     "difficulty": "sulit",
-    "prompt": "Perhatikan tabel jumlah peserta ujian per sesi berikut:\n| Kelompok | Sesi 1 | Sesi 2 | Sesi 3 |\n| Balai A | 30 | 40 | 50 |\n| Balai B | 35 | 40 | 45 |\n| Balai C | 38 | 34 | 42 |\nJika X adalah rata-rata peserta per sesi pada Balai A dan Y adalah rata-rata peserta per sesi pada Balai B, manakah hubungan yang benar antara X dan Y?",
+    "prompt": "Perhatikan tabel jumlah peserta ujian per sesi berikut:\n| Kelompok | Sesi 1 | Sesi 2 | Sesi 3 |\n| Balai A | 36 | 42 | 54 |\n| Balai B | 38 | 41 | 47 |\n| Balai C | 35 | 40 | 45 |\nJika X adalah rata-rata peserta per sesi pada Balai A dan Y adalah rata-rata peserta per sesi pada Balai B, manakah hubungan yang benar antara X dan Y?",
     "options": [
-      "X > Y",
       "X < Y",
+      "X = Y",
       "2X = 3Y",
       "Hubungan antara X dan Y tidak dapat ditentukan",
-      "X = Y"
+      "X > Y"
     ],
     "answer": "E",
-    "explanation": "Total Balai A = 30 + 40 + 50 = 120 (rata-rata X = 40). Total Balai B = 35 + 40 + 45 = 120 (rata-rata Y = 40). Maka X = Y.",
-    "tip": "Jika jumlah sesi (pembagi) sama, cukup bandingkan jumlah total barisnya atau suku tengah baris aritmetikanya."
+    "explanation": "Rata-rata Balai A (X) = (36 + 42 + 54) / 3 = 132 / 3 = 44. Rata-rata Balai B (Y) = (38 + 41 + 47) / 3 = 126 / 3 = 42. Karena 44 > 42, maka X > Y.",
+    "tip": "Cukup bandingkan total jumlah peserta masing-masing balai karena jumlah sesinya sama (3 sesi): 132 > 126 sehingga X > Y."
   },
   {
     "id": "tiu-tab-142",
     "subPattern": "simpulan-dan-perbandingan-tabel",
     "difficulty": "sulit",
-    "prompt": "Perhatikan tabel jumlah peserta ujian per sesi berikut:\n| Kelompok | Sesi 1 | Sesi 2 | Sesi 3 |\n| Unit A | 33 | 43 | 53 |\n| Unit B | 38 | 43 | 48 |\n| Unit C | 41 | 37 | 45 |\nJika X adalah rata-rata peserta per sesi pada Unit A dan Y adalah rata-rata peserta per sesi pada Unit B, manakah hubungan yang benar antara X dan Y?",
+    "prompt": "Perhatikan tabel persentase kelulusan administrasi tiga unit seleksi berikut (jumlah pendaftar awal tiap unit tidak dicantumkan):\n| Unit Seleksi | Persentase Lulus Tahap I |\n| Unit A | 65% |\n| Unit B | 80% |\n| Unit C | 72% |\nJika X adalah banyak peserta yang lulus pada Unit A dan Y adalah banyak peserta yang lulus pada Unit B, manakah hubungan yang benar antara X dan Y?",
     "options": [
-      "X = Y",
+      "Hubungan antara X dan Y tidak dapat ditentukan",
       "X > Y",
       "X < Y",
-      "2X = 3Y",
-      "Hubungan antara X dan Y tidak dapat ditentukan"
+      "X = Y",
+      "3X = 4Y"
     ],
     "answer": "A",
-    "explanation": "Total Unit A = 33 + 43 + 53 = 129 (rata-rata X = 43). Total Unit B = 38 + 43 + 48 = 129 (rata-rata Y = 43). Maka X = Y.",
-    "tip": "Jika jumlah sesi (pembagi) sama, cukup bandingkan jumlah total barisnya atau suku tengah baris aritmetikanya."
+    "explanation": "Tabel hanya memuat persentase kelulusan, tanpa mencantumkan jumlah total pendaftar pada Unit A maupun Unit B. Jika pendaftar Unit A jauh lebih banyak (misalnya 1.000 orang vs 200 orang di Unit B), maka X (650) > Y (160); tetapi jika jumlah pendaftar sama besar, maka X < Y. Jadi hubungan X dan Y tidak dapat ditentukan.",
+    "tip": "Persentase besar belum tentu menghasilkan jumlah orang lebih banyak apabila basis total populasi masing-masing kelompok tidak diketahui."
   },
   {
     "id": "tiu-tab-143",
     "subPattern": "simpulan-dan-perbandingan-tabel",
     "difficulty": "sulit",
-    "prompt": "Perhatikan tabel jumlah peserta ujian per sesi berikut:\n| Kelompok | Sesi 1 | Sesi 2 | Sesi 3 |\n| Wilayah I | 36 | 46 | 56 |\n| Wilayah II | 41 | 46 | 51 |\n| Wilayah III | 44 | 40 | 48 |\nJika X adalah rata-rata peserta per sesi pada Wilayah I dan Y adalah rata-rata peserta per sesi pada Wilayah II, manakah hubungan yang benar antara X dan Y?",
+    "prompt": "Perhatikan tabel jumlah dokumen yang diselesaikan per pekan berikut:\n| Wilayah | Pekan 1 | Pekan 2 | Pekan 3 |\n| Wilayah I | 34 | 41 | 48 |\n| Wilayah II | 40 | 45 | 50 |\n| Wilayah III | 44 | 40 | 48 |\nJika X adalah rata-rata dokumen per pekan pada Wilayah I dan Y adalah rata-rata dokumen per pekan pada Wilayah II, manakah hubungan yang benar antara X dan Y?",
     "options": [
       "X > Y",
-      "X = Y",
       "X < Y",
-      "2X = 3Y",
+      "X = Y",
+      "2X = Y",
       "Hubungan antara X dan Y tidak dapat ditentukan"
     ],
     "answer": "B",
-    "explanation": "Total Wilayah I = 36 + 46 + 56 = 138 (rata-rata X = 46). Total Wilayah II = 41 + 46 + 51 = 138 (rata-rata Y = 46). Maka X = Y.",
-    "tip": "Jika jumlah sesi (pembagi) sama, cukup bandingkan jumlah total barisnya atau suku tengah baris aritmetikanya."
+    "explanation": "Rata-rata Wilayah I (X) = (34 + 41 + 48) / 3 = 123 / 3 = 41. Rata-rata Wilayah II (Y) = (40 + 45 + 50) / 3 = 135 / 3 = 45. Karena 41 < 45, maka X < Y.",
+    "tip": "Pada barisan aritmetika 3 suku, rata-ratanya tepat sama dengan nilai suku tengahnya (41 dan 45)."
   },
   {
     "id": "tiu-tab-144",
     "subPattern": "simpulan-dan-perbandingan-tabel",
     "difficulty": "sulit",
-    "prompt": "Perhatikan tabel jumlah peserta ujian per sesi berikut:\n| Kelompok | Sesi 1 | Sesi 2 | Sesi 3 |\n| Kantor P | 39 | 49 | 59 |\n| Kantor Q | 44 | 49 | 54 |\n| Kantor R | 47 | 43 | 51 |\nJika X adalah rata-rata peserta per sesi pada Kantor P dan Y adalah rata-rata peserta per sesi pada Kantor Q, manakah hubungan yang benar antara X dan Y?",
+    "prompt": "Perhatikan tabel jumlah laporan pengawasan pada tiga kantor berikut:\n| Kantor | Triwulan I | Triwulan II | Triwulan III |\n| Kantor P | 42 | 48 | 54 |\n| Kantor Q | 44 | 48 | 52 |\n| Kantor R | 47 | 43 | 51 |\nJika X adalah rata-rata laporan per triwulan pada Kantor P dan Y adalah rata-rata laporan per triwulan pada Kantor Q, manakah hubungan yang benar antara X dan Y?",
     "options": [
       "X > Y",
       "X < Y",
@@ -702,78 +702,78 @@ export const analisisTabelBatch3Drafts: readonly QuestionDraft[] = [
       "Hubungan antara X dan Y tidak dapat ditentukan"
     ],
     "answer": "C",
-    "explanation": "Total Kantor P = 39 + 49 + 59 = 147 (rata-rata X = 49). Total Kantor Q = 44 + 49 + 54 = 147 (rata-rata Y = 49). Maka X = Y.",
-    "tip": "Jika jumlah sesi (pembagi) sama, cukup bandingkan jumlah total barisnya atau suku tengah baris aritmetikanya."
+    "explanation": "Jumlah laporan Kantor P = 42 + 48 + 54 = 144 (rata-rata X = 48). Jumlah laporan Kantor Q = 44 + 48 + 52 = 144 (rata-rata Y = 48). Maka X = Y.",
+    "tip": "Perhatikan suku tengah kedua barisan yang sama (48) dan selisih yang simetris."
   },
   {
     "id": "tiu-tab-145",
     "subPattern": "simpulan-dan-perbandingan-tabel",
     "difficulty": "sulit",
-    "prompt": "Perhatikan tabel jumlah peserta ujian per sesi berikut:\n| Kelompok | Sesi 1 | Sesi 2 | Sesi 3 |\n| Sektor 1 | 42 | 52 | 62 |\n| Sektor 2 | 47 | 52 | 57 |\n| Sektor 3 | 50 | 46 | 54 |\nJika X adalah rata-rata peserta per sesi pada Sektor 1 dan Y adalah rata-rata peserta per sesi pada Sektor 2, manakah hubungan yang benar antara X dan Y?",
+    "prompt": "Perhatikan tabel persentase kenaikan anggaran operasional pada tiga sektor tahun 2026 berikut:\n| Sektor | Kenaikan Anggaran (2026) |\n| Sektor 1 | 25% |\n| Sektor 2 | 15% |\n| Sektor 3 | 20% |\nJika X adalah besar nominal tambahan anggaran (dalam rupiah) pada Sektor 1 dan Y adalah besar nominal tambahan anggaran (dalam rupiah) pada Sektor 2, manakah hubungan yang benar?",
     "options": [
       "X > Y",
       "X < Y",
-      "2X = 3Y",
       "X = Y",
-      "Hubungan antara X dan Y tidak dapat ditentukan"
+      "Hubungan antara X dan Y tidak dapat ditentukan",
+      "X = 2Y"
     ],
     "answer": "D",
-    "explanation": "Total Sektor 1 = 42 + 52 + 62 = 156 (rata-rata X = 52). Total Sektor 2 = 47 + 52 + 57 = 156 (rata-rata Y = 52). Maka X = Y.",
-    "tip": "Jika jumlah sesi (pembagi) sama, cukup bandingkan jumlah total barisnya atau suku tengah baris aritmetikanya."
+    "explanation": "Tabel hanya menyajikan persentase kenaikan, tanpa mencantumkan pagu anggaran awal tahun 2025 untuk Sektor 1 dan Sektor 2. Tanpa nilai awal, nominal rupiah X dan Y tidak dapat dihitung sehingga hubungan X dan Y tidak dapat ditentukan.",
+    "tip": "Jangan membandingkan nominal uang hanya dari persentase pertumbuhan jika modal/pagu awalnya tidak tercantum pada tabel."
   },
   {
     "id": "tiu-tab-146",
     "subPattern": "simpulan-dan-perbandingan-tabel",
     "difficulty": "sulit",
-    "prompt": "Perhatikan tabel jumlah peserta ujian per sesi berikut:\n| Kelompok | Sesi 1 | Sesi 2 | Sesi 3 |\n| Cabang Utara | 45 | 55 | 65 |\n| Cabang Selatan | 50 | 55 | 60 |\n| Cabang Timur | 53 | 49 | 57 |\nJika X adalah rata-rata peserta per sesi pada Cabang Utara dan Y adalah rata-rata peserta per sesi pada Cabang Selatan, manakah hubungan yang benar antara X dan Y?",
+    "prompt": "Perhatikan tabel jumlah kunjungan layanan harian pada tiga cabang berikut:\n| Cabang | Senin | Selasa | Rabu |\n| Cabang Utara | 52 | 64 | 70 |\n| Cabang Selatan | 50 | 55 | 60 |\n| Cabang Timur | 53 | 49 | 57 |\nJika X adalah rata-rata kunjungan per hari pada Cabang Utara dan Y adalah rata-rata kunjungan per hari pada Cabang Selatan, manakah hubungan yang benar antara X dan Y?",
     "options": [
-      "X > Y",
       "X < Y",
+      "X = Y",
       "2X = 3Y",
       "Hubungan antara X dan Y tidak dapat ditentukan",
-      "X = Y"
+      "X > Y"
     ],
     "answer": "E",
-    "explanation": "Total Cabang Utara = 45 + 55 + 65 = 165 (rata-rata X = 55). Total Cabang Selatan = 50 + 55 + 60 = 165 (rata-rata Y = 55). Maka X = Y.",
-    "tip": "Jika jumlah sesi (pembagi) sama, cukup bandingkan jumlah total barisnya atau suku tengah baris aritmetikanya."
+    "explanation": "Rata-rata Cabang Utara (X) = (52 + 64 + 70) / 3 = 186 / 3 = 62. Rata-rata Cabang Selatan (Y) = (50 + 55 + 60) / 3 = 165 / 3 = 55. Karena 62 > 55, maka X > Y.",
+    "tip": "Setiap hari nilai Cabang Utara selalu melampaui Cabang Selatan, sehingga rata-ratanya pasti lebih besar (X > Y)."
   },
   {
     "id": "tiu-tab-147",
     "subPattern": "simpulan-dan-perbandingan-tabel",
     "difficulty": "sulit",
-    "prompt": "Perhatikan tabel jumlah peserta ujian per sesi berikut:\n| Kelompok | Sesi 1 | Sesi 2 | Sesi 3 |\n| Balai A | 48 | 58 | 68 |\n| Balai B | 53 | 58 | 63 |\n| Balai C | 56 | 52 | 60 |\nJika X adalah rata-rata peserta per sesi pada Balai A dan Y adalah rata-rata peserta per sesi pada Balai B, manakah hubungan yang benar antara X dan Y?",
+    "prompt": "Perhatikan tabel jumlah pelatihan pegawai pada tiga balai berikut:\n| Balai | Gelombang 1 | Gelombang 2 | Gelombang 3 |\n| Balai A | 48 | 50 | 52 |\n| Balai B | 54 | 58 | 62 |\n| Balai C | 56 | 52 | 60 |\nJika X adalah rata-rata peserta pada Balai A dan Y adalah rata-rata peserta pada Balai B, manakah hubungan yang benar antara X dan Y?",
     "options": [
-      "X = Y",
-      "X > Y",
       "X < Y",
-      "2X = 3Y",
+      "X > Y",
+      "X = Y",
+      "3X = 2Y",
       "Hubungan antara X dan Y tidak dapat ditentukan"
     ],
     "answer": "A",
-    "explanation": "Total Balai A = 48 + 58 + 68 = 174 (rata-rata X = 58). Total Balai B = 53 + 58 + 63 = 174 (rata-rata Y = 58). Maka X = Y.",
-    "tip": "Jika jumlah sesi (pembagi) sama, cukup bandingkan jumlah total barisnya atau suku tengah baris aritmetikanya."
+    "explanation": "Rata-rata Balai A (X) = (48 + 50 + 52) / 3 = 50. Rata-rata Balai B (Y) = (54 + 58 + 62) / 3 = 58. Karena 50 < 58, maka X < Y.",
+    "tip": "Nilai minimum pada Balai B (54) sudah lebih tinggi daripada nilai maksimum pada Balai A (52), sehingga otomatis X < Y."
   },
   {
     "id": "tiu-tab-148",
     "subPattern": "simpulan-dan-perbandingan-tabel",
     "difficulty": "sulit",
-    "prompt": "Perhatikan tabel jumlah peserta ujian per sesi berikut:\n| Kelompok | Sesi 1 | Sesi 2 | Sesi 3 |\n| Unit A | 51 | 61 | 71 |\n| Unit B | 56 | 61 | 66 |\n| Unit C | 59 | 55 | 63 |\nJika X adalah rata-rata peserta per sesi pada Unit A dan Y adalah rata-rata peserta per sesi pada Unit B, manakah hubungan yang benar antara X dan Y?",
+    "prompt": "Perhatikan tabel rentang jumlah peserta per kelas (nilai tepat per kelas hanya diketahui berada dalam interval berikut):\n| Unit | Kelas Pagi | Kelas Siang |\n| Unit A | 30–40 | 30–40 |\n| Unit B | 32–38 | 32–38 |\n| Unit C | 35 | 35 |\nJika X adalah total peserta di Unit A dan Y adalah total peserta di Unit B, manakah hubungan yang benar antara X dan Y?",
     "options": [
       "X > Y",
-      "X = Y",
+      "Hubungan antara X dan Y tidak dapat ditentukan",
       "X < Y",
-      "2X = 3Y",
-      "Hubungan antara X dan Y tidak dapat ditentukan"
+      "X = Y",
+      "X = 2Y"
     ],
     "answer": "B",
-    "explanation": "Total Unit A = 51 + 61 + 71 = 183 (rata-rata X = 61). Total Unit B = 56 + 61 + 66 = 183 (rata-rata Y = 61). Maka X = Y.",
-    "tip": "Jika jumlah sesi (pembagi) sama, cukup bandingkan jumlah total barisnya atau suku tengah baris aritmetikanya."
+    "explanation": "Total peserta Unit A (X) berada pada rentang 60 hingga 80 orang, sedangkan total peserta Unit B (Y) berada pada rentang 64 hingga 76 orang. Karena kedua interval saling bertumpuk (X bisa 60 < 64 atau 80 > 76), hubungan X dan Y tidak dapat ditentukan.",
+    "tip": "Jika rentang nilai minimum-maksimum X dan Y saling beririsan, perbandingan pastinya tidak dapat ditentukan."
   },
   {
     "id": "tiu-tab-149",
     "subPattern": "simpulan-dan-perbandingan-tabel",
     "difficulty": "sulit",
-    "prompt": "Perhatikan tabel jumlah peserta ujian per sesi berikut:\n| Kelompok | Sesi 1 | Sesi 2 | Sesi 3 |\n| Wilayah I | 54 | 64 | 74 |\n| Wilayah II | 59 | 64 | 69 |\n| Wilayah III | 62 | 58 | 66 |\nJika X adalah rata-rata peserta per sesi pada Wilayah I dan Y adalah rata-rata peserta per sesi pada Wilayah II, manakah hubungan yang benar antara X dan Y?",
+    "prompt": "Perhatikan tabel jumlah arsip digitalisasi per kuartal berikut:\n| Wilayah | Kuartal I | Kuartal II | Kuartal III |\n| Wilayah I | 54 | 64 | 74 |\n| Wilayah II | 58 | 64 | 70 |\n| Wilayah III | 62 | 58 | 66 |\nJika X adalah rata-rata arsip pada Wilayah I dan Y adalah rata-rata arsip pada Wilayah II, manakah hubungan yang benar antara X dan Y?",
     "options": [
       "X > Y",
       "X < Y",
@@ -782,23 +782,23 @@ export const analisisTabelBatch3Drafts: readonly QuestionDraft[] = [
       "Hubungan antara X dan Y tidak dapat ditentukan"
     ],
     "answer": "C",
-    "explanation": "Total Wilayah I = 54 + 64 + 74 = 192 (rata-rata X = 64). Total Wilayah II = 59 + 64 + 69 = 192 (rata-rata Y = 64). Maka X = Y.",
-    "tip": "Jika jumlah sesi (pembagi) sama, cukup bandingkan jumlah total barisnya atau suku tengah baris aritmetikanya."
+    "explanation": "Jumlah arsip Wilayah I = 54 + 64 + 74 = 192 (X = 64). Jumlah arsip Wilayah II = 58 + 64 + 70 = 192 (Y = 64). Maka X = Y.",
+    "tip": "Kedua baris simetris di sekitar 64 pada tiga kuartal sehingga rata-ratanya identik."
   },
   {
     "id": "tiu-tab-150",
     "subPattern": "simpulan-dan-perbandingan-tabel",
     "difficulty": "sulit",
-    "prompt": "Perhatikan tabel jumlah peserta ujian per sesi berikut:\n| Kelompok | Sesi 1 | Sesi 2 | Sesi 3 |\n| Kantor P | 57 | 67 | 77 |\n| Kantor Q | 62 | 67 | 72 |\n| Kantor R | 65 | 61 | 69 |\nJika X adalah rata-rata peserta per sesi pada Kantor P dan Y adalah rata-rata peserta per sesi pada Kantor Q, manakah hubungan yang benar antara X dan Y?",
+    "prompt": "Perhatikan tabel rata-rata skor dan jumlah soal benar pada dua kelompok peserta berikut:\n| Kantor | Skor Rata-Rata TIU | Jumlah Peserta Lulus |\n| Kantor P | 120 | 32 |\n| Kantor Q | 110 | 28 |\n| Kantor R | 105 | 30 |\nJika X adalah selisih skor rata-rata Kantor P dan Q, dan Y = 8 poin, manakah hubungan yang benar antara X dan Y?",
     "options": [
-      "X > Y",
       "X < Y",
-      "2X = 3Y",
       "X = Y",
+      "2X = Y",
+      "X > Y",
       "Hubungan antara X dan Y tidak dapat ditentukan"
     ],
     "answer": "D",
-    "explanation": "Total Kantor P = 57 + 67 + 77 = 201 (rata-rata X = 67). Total Kantor Q = 62 + 67 + 72 = 201 (rata-rata Y = 67). Maka X = Y.",
-    "tip": "Jika jumlah sesi (pembagi) sama, cukup bandingkan jumlah total barisnya atau suku tengah baris aritmetikanya."
+    "explanation": "Selisih skor rata-rata Kantor P dan Q adalah X = 120 - 110 = 10 poin. Karena 10 > 8, maka X > Y.",
+    "tip": "Baca kolom dengan cermat: soal meminta selisih kolom Skor Rata-Rata TIU (120 - 110 = 10), bukan selisih jumlah peserta lulus."
   }
 ];

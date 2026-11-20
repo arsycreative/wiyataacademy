@@ -26,7 +26,7 @@ export const perbandinganBatch2Drafts: readonly QuestionDraft[] = [
       "X > Y",
       "X < Y",
       "X = Y",
-      "2X = 3Y",
+      "2X = Y",
       "Hubungan X dan Y tidak dapat ditentukan"
     ],
     "answer": "C",
@@ -39,11 +39,11 @@ export const perbandinganBatch2Drafts: readonly QuestionDraft[] = [
     "difficulty": "sulit",
     "prompt": "Jika kecepatan sebuah kereta logistik dinaikkan sebesar 25% dari kecepatan normalnya, berapa persen pengurangan waktu tempuh yang diperoleh untuk jarak yang sama? Pilih persentase pengurangan waktu tempuh yang tepat.",
     "options": [
-      "15%",
+      "17,5%",
       "22,5%",
-      "25%",
+      "25,0%",
       "20%",
-      "30%"
+      "15,0%"
     ],
     "answer": "D",
     "explanation": "Kecepatan baru v' = 1,25v = (5/4)v. Karena waktu berbanding terbalik dengan kecepatan, waktu baru t' = (4/5)t = 80% dari waktu semula. Pengurangan waktu = 100% - 80% = 20%.",
@@ -55,10 +55,10 @@ export const perbandinganBatch2Drafts: readonly QuestionDraft[] = [
     "difficulty": "sulit",
     "prompt": "Sebuah pekerjaan dapat diselesaikan oleh 16 orang dalam 27 hari jika mereka bekerja 8 jam sehari. Jika pekerjaan tersebut ingin diselesaikan dalam 18 hari oleh 24 orang, berapa jam sehari mereka harus bekerja?",
     "options": [
+      "4 jam",
+      "9 jam",
       "6 jam",
       "7 jam",
-      "9 jam",
-      "10 jam",
       "8 jam"
     ],
     "answer": "E",
@@ -72,10 +72,10 @@ export const perbandinganBatch2Drafts: readonly QuestionDraft[] = [
     "prompt": "Tiga roda gigi A, B, dan C saling terhubung berurutan dengan perbandingan jumlah gerigi A : B : C = 6 : 4 : 3. Jika roda gigi A berputar 40 kali per menit, berapa kali roda gigi C berputar dalam 3 menit?",
     "options": [
       "240 kali",
+      "220 kali",
       "160 kali",
       "180 kali",
-      "200 kali",
-      "270 kali"
+      "200 kali"
     ],
     "answer": "A",
     "explanation": "Putaran berbanding terbalik dengan jumlah gerigi: n_A × 6 = n_C × 3 → 40 × 6 = n_C × 3 → n_C = 80 kali/menit. Dalam 3 menit, C berputar 80 × 3 = 240 kali.",
@@ -87,11 +87,11 @@ export const perbandinganBatch2Drafts: readonly QuestionDraft[] = [
     "difficulty": "sulit",
     "prompt": "Sebuah gedung direncanakan selesai dibangun oleh 30 pekerja dalam 50 hari. Namun jika efisiensi tiap pekerja meningkat sebesar 20%, berapa hari waktu yang dibutuhkan oleh 25 pekerja dengan efisiensi baru tersebut untuk menyelesaikan gedung yang sama?",
     "options": [
-      "40 hari",
-      "50 hari",
-      "45 hari",
       "55 hari",
-      "60 hari"
+      "50 hari",
+      "60 hari",
+      "75 hari",
+      "70 hari"
     ],
     "answer": "B",
     "explanation": "Kapasitas 25 pekerja dengan efisiensi 120% setara dengan 25 × 1,2 = 30 pekerja standar. Karena setara dengan 30 pekerja standar, waktu penyelesaiannya tetap 50 hari.",
@@ -119,11 +119,11 @@ export const perbandinganBatch2Drafts: readonly QuestionDraft[] = [
     "difficulty": "sulit",
     "prompt": "Persediaan makanan di kapal riset cukup untuk 24 peneliti selama 30 hari. Setelah berlayar 6 hari, kapal mengevakuasi 8 nelayan sehingga ikut mengonsumsi persediaan makanan dengan porsi yang sama. Berapa hari lebih cepat persediaan makanan akan habis dibandingkan jadwal semula?",
     "options": [
+      "9 hari",
+      "7 hari",
       "4 hari",
-      "5 hari",
-      "8 hari",
       "6 hari",
-      "9 hari"
+      "8 hari"
     ],
     "answer": "D",
     "explanation": "Sisa rencana awal setelah 6 hari = 24 hari (untuk 24 orang). Dengan tambahan 8 orang (total 32 orang), sisa makanan bertahan (24 × 24) / 32 = 18 hari. Makanan habis 24 - 18 = 6 hari lebih cepat.",
@@ -135,9 +135,9 @@ export const perbandinganBatch2Drafts: readonly QuestionDraft[] = [
     "difficulty": "sulit",
     "prompt": "Jika jumlah pekerja pada suatu proyek dikurangi sebesar 20%, berapa persen waktu penyelesaian proyek akan bertambah (dengan asumsi produktivitas tiap pekerja tetap)? Pilih persentase penambahan waktu yang tepat.",
     "options": [
+      "31%",
       "16%",
       "20%",
-      "24%",
       "30%",
       "25%"
     ],
@@ -154,7 +154,7 @@ export const perbandinganBatch2Drafts: readonly QuestionDraft[] = [
       "X > Y",
       "X < Y",
       "X = Y",
-      "X = 2Y",
+      "2X = 3Y",
       "Hubungan X dan Y tidak dapat ditentukan"
     ],
     "answer": "A",
@@ -167,11 +167,11 @@ export const perbandinganBatch2Drafts: readonly QuestionDraft[] = [
     "difficulty": "mudah",
     "prompt": "Raka dapat menyelesaikan penyusunan laporan bulanan dalam 6 jam, sedangkan Dinda dapat menyelesaikannya dalam 12 jam. Jika mereka bekerja bersama-sama, berapa jam waktu yang dibutuhkan untuk menyelesaikan laporan tersebut?",
     "options": [
-      "3 jam",
-      "4,5 jam",
+      "3,5 jam",
+      "2,0 jam",
       "4 jam",
-      "5 jam",
-      "6 jam"
+      "4,5 jam",
+      "3,0 jam"
     ],
     "answer": "C",
     "explanation": "Laju gabungan = 1/6 + 1/12 = 3/12 = 1/4 bagian/jam. Waktu selesai bersama = 4 jam.",
@@ -183,11 +183,11 @@ export const perbandinganBatch2Drafts: readonly QuestionDraft[] = [
     "difficulty": "mudah",
     "prompt": "Pompa A dapat mengisi penuh tangki air dalam 10 menit, sedangkan Pompa B dapat mengisi penuh tangki yang sama dalam 15 menit. Jika kedua pompa dinyalakan bersamaan dari keadaan kosong, berapa menit tangki akan penuh?",
     "options": [
-      "5 menit",
-      "7 menit",
-      "7,5 menit",
+      "4,0 menit",
+      "4,5 menit",
+      "5,0 menit",
       "6 menit",
-      "8 menit"
+      "5,5 menit"
     ],
     "answer": "D",
     "explanation": "Waktu gabungan = (10 × 15) / (10 + 15) = 150 / 25 = 6 menit.",
@@ -199,7 +199,7 @@ export const perbandinganBatch2Drafts: readonly QuestionDraft[] = [
     "difficulty": "mudah",
     "prompt": "Tim A dapat mendekorasi aula pelantikan dalam 20 jam, sedangkan Tim B dapat menyelesaikannya dalam 30 jam. Berapa jam waktu yang dibutuhkan jika Tim A dan Tim B bekerja bersama?",
     "options": [
-      "10 jam",
+      "18 jam",
       "14 jam",
       "15 jam",
       "16 jam",
@@ -217,9 +217,9 @@ export const perbandinganBatch2Drafts: readonly QuestionDraft[] = [
     "options": [
       "5 orang",
       "3 orang",
-      "4 orang",
       "6 orang",
-      "8 orang"
+      "8 orang",
+      "7 orang"
     ],
     "answer": "A",
     "explanation": "Sisa waktu efektif = 30 - 10 - 5 = 15 hari. Tambahan pekerja = (Pekerja awal × Hari berhenti) / Sisa waktu = (15 × 5) / 15 = 5 orang.",
@@ -231,11 +231,11 @@ export const perbandinganBatch2Drafts: readonly QuestionDraft[] = [
     "difficulty": "mudah",
     "prompt": "Pembangunan pos pelayanan terpadu ditargetkan selesai dalam 40 hari oleh 18 pekerja. Setelah dikerjakan 16 hari, pekerjaan dihentikan selama 6 hari. Berapa orang pekerja tambahan yang harus ditambah agar pembangunan selesai sesuai jadwal awal?",
     "options": [
-      "4 orang",
-      "6 orang",
       "5 orang",
+      "6 orang",
       "8 orang",
-      "9 orang"
+      "9 orang",
+      "4 orang"
     ],
     "answer": "B",
     "explanation": "Sisa hari efektif = 40 - 16 - 6 = 18 hari. Tambahan pekerja = (18 × 6) / 18 = 6 orang.",
@@ -247,11 +247,11 @@ export const perbandinganBatch2Drafts: readonly QuestionDraft[] = [
     "difficulty": "mudah",
     "prompt": "Mesin pemindai lama dapat memproses tumpukan berkas dalam 18 menit. Jika dibantu mesin pemindai baru, pekerjaan yang sama selesai dalam 6 menit. Berapa menit waktu yang dibutuhkan jika hanya mesin pemindai baru yang bekerja sendiri?",
     "options": [
-      "8 menit",
+      "6 menit",
       "10 menit",
       "9 menit",
-      "12 menit",
-      "15 menit"
+      "8 menit",
+      "7 menit"
     ],
     "answer": "C",
     "explanation": "1/t_baru = 1/6 - 1/18 = 2/18 = 1/9. Jadi mesin baru sendiri membutuhkan 9 menit.",
@@ -263,11 +263,11 @@ export const perbandinganBatch2Drafts: readonly QuestionDraft[] = [
     "difficulty": "mudah",
     "prompt": "Proyek instalasi listrik dijadwalkan selesai dalam 25 hari oleh 12 teknisi. Setelah bekerja 10 hari, proyek libur selama 3 hari. Berapa teknisi tambahan yang diperlukan agar proyek selesai tepat pada hari ke-25?",
     "options": [
-      "2 orang",
-      "4 orang",
       "5 orang",
+      "2 orang",
+      "1 orang",
       "3 orang",
-      "6 orang"
+      "4 orang"
     ],
     "answer": "D",
     "explanation": "Sisa hari efektif = 25 - 10 - 3 = 12 hari. Tambahan teknisi = (12 × 3) / 12 = 3 orang.",
@@ -279,10 +279,10 @@ export const perbandinganBatch2Drafts: readonly QuestionDraft[] = [
     "difficulty": "mudah",
     "prompt": "Farhan dapat mengecat pagar kantor dalam 15 jam, sedangkan Gilang dapat menyelesaikannya dalam 10 jam. Jika keduanya mengecat bersama-sama, berapa jam pagar tersebut selesai dicat?",
     "options": [
-      "5 jam",
       "6,5 jam",
-      "7 jam",
-      "8 jam",
+      "7,0 jam",
+      "8,0 jam",
+      "7,5 jam",
       "6 jam"
     ],
     "answer": "E",
@@ -296,10 +296,10 @@ export const perbandinganBatch2Drafts: readonly QuestionDraft[] = [
     "prompt": "Pekerjaan pengadaan taman kota direncanakan selesai dalam 50 hari oleh 24 pekerja. Setelah berjalan 22 hari, pekerjaan terhenti 4 hari. Berapa pekerja tambahan yang dibutuhkan agar taman selesai tepat waktu?",
     "options": [
       "4 orang",
-      "3 orang",
       "5 orang",
       "6 orang",
-      "8 orang"
+      "8 orang",
+      "3 orang"
     ],
     "answer": "A",
     "explanation": "Sisa hari efektif = 50 - 22 - 4 = 24 hari. Tambahan pekerja = (24 × 4) / 24 = 4 orang.",
@@ -311,11 +311,11 @@ export const perbandinganBatch2Drafts: readonly QuestionDraft[] = [
     "difficulty": "mudah",
     "prompt": "Tiga staf input data A, B, dan C masing-masing dapat menyelesaikan entri satu paket survei dalam 12 jam, 15 jam, dan 20 jam. Jika ketiganya mengerjakan satu paket survei tersebut bersama-sama, berapa jam waktu yang diperlukan?",
     "options": [
-      "4 jam",
-      "5 jam",
-      "4,5 jam",
       "5,5 jam",
-      "6 jam"
+      "5 jam",
+      "6,0 jam",
+      "4,0 jam",
+      "4,5 jam"
     ],
     "answer": "B",
     "explanation": "Laju gabungan = 1/12 + 1/15 + 1/20 = (5 + 4 + 3)/60 = 12/60 = 1/5 bagian/jam. Waktu selesai = 5 jam.",
@@ -327,11 +327,11 @@ export const perbandinganBatch2Drafts: readonly QuestionDraft[] = [
     "difficulty": "sedang",
     "prompt": "Keran pengisi dapat memenuhi bak penampungan air dalam 12 menit, sedangkan saluran pembuangan di dasar bak dapat mengosongkan bak penuh dalam 18 menit. Jika bak dalam keadaan kosong lalu keran pengisi dan saluran pembuangan terbuka bersamaan, berapa menit bak akan penuh?",
     "options": [
+      "40 menit",
       "24 menit",
-      "30 menit",
       "36 menit",
-      "32 menit",
-      "40 menit"
+      "30 menit",
+      "32 menit"
     ],
     "answer": "C",
     "explanation": "Laju bersih pengisian = 1/12 - 1/18 = (3 - 2)/36 = 1/36 bagian/menit. Bak penuh dalam 36 menit.",
@@ -343,11 +343,11 @@ export const perbandinganBatch2Drafts: readonly QuestionDraft[] = [
     "difficulty": "sedang",
     "prompt": "Andi dapat menyelesaikan penyusunan modul dalam 12 hari, sedangkan Bima dalam 18 hari. Andi mengerjakan sendiri selama 4 hari pertama, lalu sisanya dikerjakan bersama Bima. Berapa hari waktu yang mereka perlukan untuk menyelesaikan sisa pekerjaan tersebut bersama-sama?",
     "options": [
-      "4 hari",
+      "4,0 hari",
       "4,5 hari",
-      "5 hari",
+      "4,6 hari",
       "4.8 hari",
-      "5,4 hari"
+      "4,4 hari"
     ],
     "answer": "D",
     "explanation": "Dalam 4 hari Andi menyelesaikan 4/12 = 1/3 bagian. Sisa pekerjaan = 2/3 bagian. Laju bersama = 1/12 + 1/18 = 5/36 bagian/hari. Waktu sisa = (2/3) / (5/36) = 24/5 = 4,8 hari.",
@@ -359,9 +359,9 @@ export const perbandinganBatch2Drafts: readonly QuestionDraft[] = [
     "difficulty": "sedang",
     "prompt": "Proyek pengecoran jalan direncanakan selesai dalam 45 hari oleh 28 pekerja. Setelah dikerjakan 15 hari, proyek terhenti 6 hari karena hujan deras. Berapa jumlah seluruh pekerja yang harus bekerja pada sisa hari agar proyek selesai tepat waktu?",
     "options": [
-      "7 orang",
-      "32 orang",
-      "34 orang",
+      "42 orang",
+      "44 orang",
+      "53 orang",
       "36 orang",
       "35 orang"
     ],
@@ -376,9 +376,9 @@ export const perbandinganBatch2Drafts: readonly QuestionDraft[] = [
     "prompt": "Sinta dan Rani jika bekerja bersama dapat menyelesaikan audit inventaris dalam 8 hari. Mereka bekerja bersama selama 5 hari, kemudian Sinta ditugaskan ke luar kota sehingga Rani menyelesaikan sisanya seorang diri dalam 9 hari. Jika sejak awal Rani bekerja seorang diri, berapa hari waktu yang ia butuhkan untuk menyelesaikan seluruh audit tersebut?",
     "options": [
       "24 hari",
+      "29 hari",
+      "30 hari",
       "18 hari",
-      "20 hari",
-      "21 hari",
       "27 hari"
     ],
     "answer": "A",
@@ -391,11 +391,11 @@ export const perbandinganBatch2Drafts: readonly QuestionDraft[] = [
     "difficulty": "sedang",
     "prompt": "Tiga mesin cetak A, B, dan C bekerja bersama dapat mencetak ribuan formulir dalam 4 jam. Mesin A sendiri membutuhkan 10 jam, dan Mesin B sendiri membutuhkan 12 jam. Berapa jam waktu yang dibutuhkan jika hanya Mesin C yang digunakan untuk mencetak seluruh formulir tersebut?",
     "options": [
-      "12 jam",
+      "18 jam",
       "15 jam",
+      "12 jam",
       "14 jam",
-      "16 jam",
-      "18 jam"
+      "16 jam"
     ],
     "answer": "B",
     "explanation": "1/C = 1/4 - 1/10 - 1/12 = (15 - 6 - 5)/60 = 4/60 = 1/15. Jadi Mesin C sendiri membutuhkan 15 jam.",
@@ -410,8 +410,8 @@ export const perbandinganBatch2Drafts: readonly QuestionDraft[] = [
       "7 orang",
       "8 orang",
       "9 orang",
-      "10 orang",
-      "12 orang"
+      "5 orang",
+      "10 orang"
     ],
     "answer": "C",
     "explanation": "Sisa hari efektif = 60 - 25 - 7 = 28 hari. Tambahan pekerja = (36 × 7) / 28 = 36 / 4 = 9 orang.",
@@ -423,11 +423,11 @@ export const perbandinganBatch2Drafts: readonly QuestionDraft[] = [
     "difficulty": "sedang",
     "prompt": "Kapasitas kerja seorang teknisi senior sama dengan 2 kali kapasitas teknisi junior. Sebuah instalasi server dapat diselesaikan oleh 3 teknisi senior dalam 8 hari. Berapa hari instalasi tersebut selesai jika dikerjakan oleh 2 teknisi senior dan 4 teknisi junior secara bersama-sama?",
     "options": [
-      "4 hari",
       "5 hari",
-      "7 hari",
+      "2 hari",
+      "3 hari",
       "6 hari",
-      "8 hari"
+      "4 hari"
     ],
     "answer": "D",
     "explanation": "1 senior = 2 junior, sehingga 3 senior = 6 junior (beban kerja = 6 × 8 = 48 junior-hari). Tim baru: 2 senior + 4 junior = 4 + 4 = 8 junior setara. Waktu = 48 / 8 = 6 hari.",
@@ -439,10 +439,10 @@ export const perbandinganBatch2Drafts: readonly QuestionDraft[] = [
     "difficulty": "sedang",
     "prompt": "Sebuah kolam renang dapat diisi penuh oleh Pipa P dalam 6 jam dan oleh Pipa Q dalam 9 jam. Pipa P dibuka sendiri selama 2 jam pertama, lalu Pipa Q ikut dibuka. Berapa jam total waktu pengisian kolam sejak Pipa P pertama kali dibuka hingga kolam penuh?",
     "options": [
-      "3,6 jam",
-      "4 jam",
+      "4,6 jam",
+      "5,2 jam",
       "4,8 jam",
-      "5 jam",
+      "5,0 jam",
       "4.4 jam"
     ],
     "answer": "E",
@@ -456,10 +456,10 @@ export const perbandinganBatch2Drafts: readonly QuestionDraft[] = [
     "prompt": "Pembuatan aplikasi layanan publik dijadwalkan selesai dalam 36 hari oleh 10 programmer. Setelah bekerja 12 hari, pimpinan meminta agar aplikasi selesai 4 hari lebih cepat dari jadwal semula. Berapa programmer tambahan yang diperlukan untuk sisa waktu yang ada?",
     "options": [
       "2 orang",
+      "5 orang",
       "1 orang",
       "3 orang",
-      "4 orang",
-      "5 orang"
+      "4 orang"
     ],
     "answer": "A",
     "explanation": "Sisa beban kerja = 10 orang × (36 - 12) hari = 240 orang-hari. Sisa waktu baru karena dipercepat 4 hari = 24 - 4 = 20 hari. Programmer yang dibutuhkan = 240 / 20 = 12 orang. Tambahan = 12 - 10 = 2 orang.",
@@ -503,11 +503,11 @@ export const perbandinganBatch2Drafts: readonly QuestionDraft[] = [
     "difficulty": "sulit",
     "prompt": "Mesin A dan Mesin B bekerja bersama dapat menyelesaikan pesanan cetak dalam 12 jam. Mesin B dan Mesin C bersama selesai dalam 15 jam, sedangkan Mesin A dan Mesin C bersama selesai dalam 20 jam. Jika ketiga mesin (A, B, dan C) dioperasikan bersama-sama, berapa jam pesanan tersebut selesai?",
     "options": [
-      "8 jam",
-      "9 jam",
+      "9,5 jam",
       "10,5 jam",
+      "8,0 jam",
       "10 jam",
-      "12 jam"
+      "9,0 jam"
     ],
     "answer": "D",
     "explanation": "(1/A + 1/B) + (1/B + 1/C) + (1/A + 1/C) = 1/12 + 1/15 + 1/20 = (5 + 4 + 3)/60 = 12/60 = 1/5. Maka 2(1/A + 1/B + 1/C) = 1/5 → 1/A + 1/B + 1/C = 1/10. Waktu ketiganya bersama = 10 jam.",
@@ -519,10 +519,10 @@ export const perbandinganBatch2Drafts: readonly QuestionDraft[] = [
     "difficulty": "sulit",
     "prompt": "Sebuah pekerjaan renovasi dapat diselesaikan oleh 4 tukang ahli atau 6 tukang pemula dalam waktu 20 hari. Berapa hari pekerjaan tersebut selesai jika dikerjakan bersama oleh 6 tukang ahli dan 11 tukang pemula?",
     "options": [
+      "3 hari",
       "5 hari",
-      "7 hari",
-      "8 hari",
-      "9 hari",
+      "4 hari",
+      "2 hari",
       "6 hari"
     ],
     "answer": "E",
@@ -538,7 +538,7 @@ export const perbandinganBatch2Drafts: readonly QuestionDraft[] = [
       "X > Y",
       "X < Y",
       "X = Y",
-      "2X = Y",
+      "X + Y = 0",
       "Hubungan X dan Y tidak dapat ditentukan"
     ],
     "answer": "A",
@@ -551,11 +551,11 @@ export const perbandinganBatch2Drafts: readonly QuestionDraft[] = [
     "difficulty": "sulit",
     "prompt": "Proyek pembangunan saluran irigasi direncanakan selesai oleh 32 pekerja dalam 48 hari. Setelah bekerja 18 hari, 8 pekerja dipindahkan ke proyek lain. Berapa hari keterlambatan penyelesaian proyek dibandingkan jadwal semula?",
     "options": [
-      "6 hari",
+      "15 hari",
       "10 hari",
-      "8 hari",
-      "12 hari",
-      "15 hari"
+      "14 hari",
+      "13 hari",
+      "12 hari"
     ],
     "answer": "B",
     "explanation": "Sisa rencana setelah 18 hari = 30 hari untuk 32 pekerja (beban sisa = 32 × 30 = 960 orang-hari). Sisa pekerja = 32 - 8 = 24 orang. Waktu menyelesaikan sisa = 960 / 24 = 40 hari. Keterlambatan = 40 - 30 = 10 hari.",
@@ -567,10 +567,10 @@ export const perbandinganBatch2Drafts: readonly QuestionDraft[] = [
     "difficulty": "sulit",
     "prompt": "Sebuah tangki memiliki dua pipa pengisi (Pipa A penuh dalam 8 jam, Pipa B penuh dalam 12 jam) dan satu pipa penguras C. Jika ketiga pipa dibuka bersamaan saat tangki kosong, tangki baru penuh dalam 6 jam. Berapa jam waktu yang dibutuhkan Pipa C sendirian untuk menguras tangki yang penuh?",
     "options": [
-      "16 jam",
-      "18 jam",
+      "29 jam",
+      "36 jam",
       "24 jam",
-      "20 jam",
+      "16 jam",
       "30 jam"
     ],
     "answer": "C",
@@ -583,11 +583,11 @@ export const perbandinganBatch2Drafts: readonly QuestionDraft[] = [
     "difficulty": "sulit",
     "prompt": "Arif dan Bayu bekerja bersama dapat menyelesaikan pengecatan gedung dalam 12 hari. Jika Arif bekerja 6 hari lalu dilanjutkan Bayu selama 12 hari, pekerjaan tersebut selesai 70%. Berapa hari waktu yang dibutuhkan Arif jika ia mengerjakan seluruh pengecatan seorang diri?",
     "options": [
+      "30 hari",
       "15 hari",
       "18 hari",
-      "24 hari",
       "20 hari",
-      "30 hari"
+      "24 hari"
     ],
     "answer": "D",
     "explanation": "Arif 6 hari + Bayu 12 hari setara dengan (Arif & Bayu bersama 6 hari) + (Bayu sendiri 6 hari). Bersama 6 hari menyelesaikan 6/12 = 50%. Maka Bayu sendiri 6 hari menyelesaikan 70% - 50% = 20% (1/5 bagian), sehingga Bayu sendiri butuh 30 hari. Maka 1/Arif = 1/12 - 1/30 = (5 - 2)/60 = 3/60 = 1/20, sehingga Arif sendiri membutuhkan 20 hari.",
@@ -601,8 +601,8 @@ export const perbandinganBatch2Drafts: readonly QuestionDraft[] = [
     "options": [
       "10 orang",
       "12 orang",
+      "11 orang",
       "18 orang",
-      "20 orang",
       "15 orang"
     ],
     "answer": "E",
@@ -631,11 +631,11 @@ export const perbandinganBatch2Drafts: readonly QuestionDraft[] = [
     "difficulty": "sulit",
     "prompt": "Suatu proyek ditargetkan selesai dalam 50 hari oleh 30 pekerja. Setelah 15 hari berjalan, proyek terhenti 5 hari. Saat dilanjutkan, efisiensi seluruh pekerja menurun menjadi 87,5% (7/8) akibat cuaca buruk. Berapa pekerja tambahan (dengan efisiensi yang sama 7/8) yang diperlukan agar proyek tetap selesai tepat waktu?",
     "options": [
-      "5 orang",
+      "6 orang",
       "10 orang",
-      "8 orang",
-      "12 orang",
-      "15 orang"
+      "7 orang",
+      "5 orang",
+      "8 orang"
     ],
     "answer": "B",
     "explanation": "Sisa beban setelah 15 hari = 30 × 35 = 1050 orang-hari standar. Sisa hari efektif = 50 - 15 - 5 = 30 hari. Pekerja standar yang dibutuhkan = 1050 / 30 = 35 orang standar. Karena efisiensi menjadi 7/8, jumlah pekerja nyata yang dibutuhkan = 35 / (7/8) = 40 orang. Tambahan = 40 - 30 = 10 orang.",
@@ -647,11 +647,11 @@ export const perbandinganBatch2Drafts: readonly QuestionDraft[] = [
     "difficulty": "mudah",
     "prompt": "Kota A dan Kota B berjarak 210 km. Mobil P berangkat dari Kota A menuju Kota B dengan kecepatan 60 km/jam, dan pada saat bersamaan Mobil Q berangkat dari Kota B menuju Kota A dengan kecepatan 80 km/jam. Jika keduanya berangkat pukul 07.00, pada pukul berapa kedua mobil tersebut berpapasan?",
     "options": [
-      "08.15",
-      "08.20",
+      "08.50",
       "08.45",
+      "09.00",
       "08.30",
-      "09.00"
+      "08.40"
     ],
     "answer": "D",
     "explanation": "Waktu berpapasan = Jarak / (v_P + v_Q) = 210 / (60 + 80) = 210 / 140 = 1,5 jam (1 jam 30 menit). Berpapasan pukul 07.00 + 01.30 = 08.30.",
@@ -664,9 +664,9 @@ export const perbandinganBatch2Drafts: readonly QuestionDraft[] = [
     "prompt": "Sebuah kereta komuter menempuh jarak 96 km dalam waktu 1 jam 12 menit. Berapakah kecepatan rata-rata kereta komuter tersebut dalam satuan km/jam?",
     "options": [
       "72 km/jam",
-      "75 km/jam",
       "84 km/jam",
       "90 km/jam",
+      "100 km/jam",
       "80 km/jam"
     ],
     "answer": "E",
@@ -680,10 +680,10 @@ export const perbandinganBatch2Drafts: readonly QuestionDraft[] = [
     "prompt": "Riko bersepeda dengan kecepatan tetap 18 km/jam. Berapa meter jarak yang ditempuh Riko dalam waktu 25 detik?",
     "options": [
       "125 meter",
-      "100 meter",
       "115 meter",
       "150 meter",
-      "175 meter"
+      "175 meter",
+      "100 meter"
     ],
     "answer": "A",
     "explanation": "18 km/jam = 18 × (1000 / 3600) = 5 meter/detik. Dalam 25 detik jarak = 5 × 25 = 125 meter.",
@@ -695,11 +695,11 @@ export const perbandinganBatch2Drafts: readonly QuestionDraft[] = [
     "difficulty": "mudah",
     "prompt": "Dua pelari berdiri terpisah sejauh 450 meter. Mereka berlari saling mendekat secara bersamaan dengan kecepatan masing-masing 4 m/detik dan 5 m/detik. Setelah berapa detik kedua pelari tersebut akan berpapasan?",
     "options": [
-      "40 detik",
+      "30 detik",
       "50 detik",
-      "45 detik",
       "55 detik",
-      "60 detik"
+      "40 detik",
+      "45 detik"
     ],
     "answer": "B",
     "explanation": "Waktu berpapasan = 450 / (4 + 5) = 450 / 9 = 50 detik.",
@@ -711,11 +711,11 @@ export const perbandinganBatch2Drafts: readonly QuestionDraft[] = [
     "difficulty": "mudah",
     "prompt": "Mobil dinas berangkat pukul 06.15 menuju lokasi peninjauan sejauh 165 km dengan kecepatan rata-rata 60 km/jam. Pada pukul berapa mobil dinas tersebut tiba di lokasi jika tidak berhenti di jalan?",
     "options": [
+      "08.30",
       "08.45",
-      "08.50",
       "09.00",
-      "09.15",
-      "09.30"
+      "08.50",
+      "08.40"
     ],
     "answer": "C",
     "explanation": "Waktu tempuh = 165 / 60 = 2,75 jam = 2 jam 45 menit. Waktu tiba = 06.15 + 02.45 = 09.00.",
@@ -727,11 +727,11 @@ export const perbandinganBatch2Drafts: readonly QuestionDraft[] = [
     "difficulty": "mudah",
     "prompt": "Arman berangkat dari kantor pukul 08.00 dengan kecepatan 45 km/jam. Setengah jam kemudian, Bayu menyusul dari tempat dan rute yang sama dengan kecepatan 60 km/jam. Setelah berapa jam sejak Bayu berangkat ia berhasil menyusul Arman?",
     "options": [
-      "1 jam",
-      "1,25 jam",
-      "2 jam",
+      "2,00 jam",
+      "2,50 jam",
+      "1,75 jam",
       "1.5 jam",
-      "2,5 jam"
+      "2,25 jam"
     ],
     "answer": "D",
     "explanation": "Selisih jarak saat Bayu berangkat = 45 × 0,5 = 22,5 km. Waktu menyusul = Selisih Jarak / (v_Bayu - v_Arman) = 22,5 / (60 - 45) = 22,5 / 15 = 1,5 jam.",
@@ -743,10 +743,10 @@ export const perbandinganBatch2Drafts: readonly QuestionDraft[] = [
     "difficulty": "mudah",
     "prompt": "Sebuah kapal patroli menempuh jarak 84 mil laut dalam waktu 3,5 jam. Jika kapal tersebut mempertahankan laju yang sama, berapa mil laut yang ditempuh dalam 5 jam?",
     "options": [
-      "108 mil laut",
-      "112 mil laut",
       "125 mil laut",
       "132 mil laut",
+      "150 mil laut",
+      "108 mil laut",
       "120 mil laut"
     ],
     "answer": "E",
@@ -760,10 +760,10 @@ export const perbandinganBatch2Drafts: readonly QuestionDraft[] = [
     "prompt": "Jarak rumah Dina ke stasiun adalah 18 km. Ia berangkat pukul 06.20 menggunakan sepeda motor dengan kecepatan rata-rata 45 km/jam. Pada pukul berapa Dina tiba di stasiun?",
     "options": [
       "06.44",
-      "06.40",
-      "06.42",
       "06.45",
-      "06.48"
+      "06.48",
+      "06.40",
+      "06.42"
     ],
     "answer": "A",
     "explanation": "Waktu tempuh = (18 / 45) × 60 menit = (2 / 5) × 60 = 24 menit. Waktu tiba = 06.20 + 24 menit = 06.44.",
@@ -775,11 +775,11 @@ export const perbandinganBatch2Drafts: readonly QuestionDraft[] = [
     "difficulty": "mudah",
     "prompt": "Dua mobil berangkat dari titik yang sama menuju arah yang berlawanan (saling menjauh) dengan kecepatan masing-masing 55 km/jam dan 65 km/jam. Berapa km jarak antara kedua mobil tersebut setelah berjalan selama 2 jam 15 menit?",
     "options": [
-      "240 km",
-      "270 km",
-      "255 km",
       "280 km",
-      "300 km"
+      "270 km",
+      "240 km",
+      "255 km",
+      "260 km"
     ],
     "answer": "B",
     "explanation": "Laju saling menjauh = 55 + 65 = 120 km/jam. Dalam 2 jam 15 menit (2,25 jam), jarak keduanya = 120 × 2,25 = 270 km.",
@@ -794,8 +794,8 @@ export const perbandinganBatch2Drafts: readonly QuestionDraft[] = [
       "24 menit",
       "25 menit",
       "26 menit",
-      "28 menit",
-      "30 menit"
+      "20 menit",
+      "21 menit"
     ],
     "answer": "C",
     "explanation": "Kecepatan 15 km/jam = 15 km per 60 menit = 1 km setiap 4 menit. Untuk 6,5 km dibutuhkan 6,5 × 4 = 26 menit.",

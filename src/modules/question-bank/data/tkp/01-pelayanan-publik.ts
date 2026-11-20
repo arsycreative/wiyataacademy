@@ -11,21 +11,21 @@ const pelayananPublikDrafts: readonly TkpQuestionDraft[] = [
     "difficulty": "mudah",
     "prompt": "Anda bertugas di loket pelayanan kependudukan yang sedang padat. Seorang warga datang dengan nada bicara tinggi dan memarahi Anda karena berkas permohonannya tertunda akibat pembaruan sistem antrean daring. Sikap Anda yang paling tepat adalah ...",
     "options": [
-      "Tetap tenang, menyapa dengan ramah, mendengarkan keluhannya dengan empati, menjelaskan kendala sistem secara jelas, dan segera mencarikan solusi penyelesaian tercepat",
-      "Menjelaskan secara singkat bahwa pembaruan sistem berasal dari pusat lalu meminta warga tersebut menunggu tenang di kursi antrean belakang",
-      "Membalas dengan nada tegas agar warga lain tahu bahwa kesalahan bukan berasal dari petugas loket melainkan pembaruan server",
-      "Meminta warga tersebut menuliskan keluhannya di buku saran lalu kembali datang tiga hari berikutnya setelah antrean reda",
-      "Memanggil petugas keamanan segera agar warga tersebut dikeluarkan dari ruangan karena mengganggu kenyamanan"
+      "Menyambut warga dengan tenang, menyimak keluhannya, menjelaskan kendala sistem, dan segera memproses berkasnya.",
+      "Bersikap netral di loket dengan meminta warga meredakan suaranya agar tertib, lalu menyarankan datang kembali setelah sistem pulih.",
+      "Menanggapi keluhannya dengan sopan dan tetap tenang, menjelaskan pembaruan sistem pusat, lalu mempersilakannya menunggu giliran.",
+      "Memanggil petugas keamanan ruangan untuk mengarahkan warga keluar dari area tunggu karena nadanya dianggap mengganggu pengunjung lain.",
+      "Menjawab singkat bahwa gangguan berasal dari sistem pusat sehingga petugas loket hanya dapat menunggu hingga jaringan kembali normal."
     ],
     "optionScores": [
       5,
-      4,
-      2,
       3,
-      1
+      4,
+      1,
+      2
     ],
     "answer": "A",
-    "explanation": "Skor tertinggi (5) menampilkan pengendalian emosi, empati mendengarkan, kejelasan komunikasi, dan tindakan solutif langsung. Menjelaskan normatif lalu menyuruh menunggu (4) baik tetapi kurang mengawal solusi langsung bagi warga terdampak.",
+    "explanation": "Skor tertinggi memadukan ketenangan emosional, kesediaan menyimak, penjelasan kendala secara jelas, dan tindakan langsung menyelesaikan urusan warga. Pilihan terbaik kedua bersikap sopan dan menjelaskan aturan sistem, tetapi berhenti pada meminta warga menunggu tanpa mengupayakan penyelesaian konkret di tempat.",
     "tip": "Pada situasi warga emosi, cari respons yang tenang, empatik, komunikatif, sekaligus menawarkan penyelesaian konkret."
   },
   {
@@ -34,21 +34,21 @@ const pelayananPublikDrafts: readonly TkpQuestionDraft[] = [
     "difficulty": "mudah",
     "prompt": "Jam pelayanan resmi loket tinggal lima menit lagi berakhir, sementara masih ada seorang pemohon dari kecamatan jauh yang tampak kelelahan membawa map dokumen yang sudah lengkap. Tindakan Anda adalah ...",
     "options": [
-      "Menutup jendela loket lebih awal supaya proses rekapitulasi harian petugas tidak mundur dari jam pulang",
-      "Tetap melayani dengan senyum ramah dan memeriksa berkasnya sampai tuntas sesuai prosedur karena masih berada dalam jam layanan resmi",
-      "Menerima mapnya sambil memperlihatkan wajah lelah lalu meminta pemohon datang kembali pagi besok untuk verifikasi ulang",
-      "Mengalihkan pemohon tersebut ke meja petugas keamanan tanpa memeriksa kelengkapan berkas yang dibawa",
-      "Meminta pemohon menunggu di luar ruang layanan sampai seluruh petugas selesai membereskan berkas lain terlebih dahulu"
+      "Mengarahkan pemohon menaruh map di meja informasi tanpa pemeriksaan awal karena petugas loket sudah mulai membereskan meja kerja.",
+      "Tetap menyambut ramah dan memeriksa berkasnya hingga tuntas mengikuti prosedur karena masih berada di jam layanan resmi.",
+      "Menutup jendela loket beberapa menit lebih awal agar rekapitulasi berkas harian petugas selesai tepat waktu.",
+      "Menerima mapnya dengan sopan untuk dicek kelengkapan awal, lalu menyarankan pemohon kembali besok pagi agar proses lebih tenang.",
+      "Menyampaikan dengan tenang bahwa loket hampir tutup sehingga pengajuan berkas sebaiknya dilakukan pada hari kerja berikutnya."
     ],
     "optionScores": [
-      1,
-      5,
-      3,
       2,
-      4
+      5,
+      1,
+      4,
+      3
     ],
     "answer": "B",
-    "explanation": "Selama masih dalam jam pelayanan resmi dan dokumen sudah di meja layanan, melayani hingga tuntas dengan sikap ramah menunjukkan komitmen pelayanan prima (skor 5).",
+    "explanation": "Selama masih berada dalam jam operasional resmi dan berkas sudah lengkap di loket, melayani pemohon hingga tuntas dengan ramah menunjukkan komitmen pelayanan prima (skor 5). Memeriksa sekilas lalu menyarankan datang besok (skor 4) memang sopan, namun tetap membebani pemohon dari kecamatan jauh untuk bolak-balik.",
     "tip": "Pelayanan prima menghargai waktu dan usaha pemohon selama masih sesuai koridor jam operasional."
   },
   {
@@ -57,21 +57,21 @@ const pelayananPublikDrafts: readonly TkpQuestionDraft[] = [
     "difficulty": "sedang",
     "prompt": "Rekan satu loket Anda sedang kelelahan hingga menjawab pertanyaan seorang pemohon dengan ketus, membuat suasana di meja sebelah mulai menegang. Sebagai sesama petugas pelayanan di garis depan, sikap Anda adalah ...",
     "options": [
-      "Fokus pada pemohon di depan meja sendiri saja karena urusan loket sebelah merupakan tanggung jawab masing-masing pegawai",
-      "Ikut menegur pemohon tersebut dengan suara keras agar membela kehormatan rekan kerja di depan publik",
-      "Mengambil alih komunikasi dengan ramah untuk menenangkan situasi warga, membantu menyelesaikan keperluannya sesuai SOP, lalu memberi jeda istirahat bergilir dan masukan halus kepada rekan setelah ruang tenang",
-      "Merekam kejadian tersebut dengan ponsel diam-diam untuk dijadikan bahan evaluasi rapat akhir bulan di hadapan atasan",
-      "Mengajak rekan langsung meninggalkan loket pelayanan sejenak tanpa pemberitahuan supaya emosinya mereda terlebih dahulu"
+      "Ikut membela pernyataan rekan di hadapan pemohon agar kekompakan petugas loket tetap terjaga di ruang layanan.",
+      "Menegur rekan dengan suara terdengar di depan loket agar menjaga nada bicara supaya tidak mempermalukan unit kerja.",
+      "Mengambil alih layanan dengan ramah agar warga kembali tenang, menuntaskan urusannya sesuai prosedur, lalu memberi jeda rekan.",
+      "Menyarankan rekan beristirahat sejenak di belakang meja sambil mempersilakan pemohon menunggu panggilan loket lain di kursi ruang tunggu.",
+      "Meminta maaf kepada pemohon dengan sopan atas suasana kurang nyaman, lalu melaporkan kelelahan rekan kepada atasan agar segera digantikan."
     ],
     "optionScores": [
-      3,
       1,
-      5,
       2,
+      5,
+      3,
       4
     ],
     "answer": "C",
-    "explanation": "Skor 5 menyelamatkan citra pelayanan publik secara langsung lewat de-eskalasi ramah di tempat sekaligus menjaga kekompakan serta evaluasi etis terhadap rekan di belakang layar.",
+    "explanation": "Skor 5 langsung memulihkan kenyamanan warga dengan mengambil alih layanan hingga selesai sesuai SOP sambil menjaga rekan memperoleh jeda secara halus. Sekadar meminta maaf lalu melapor ke atasan (skor 4) menjaga prosedur dan kesopanan, namun menunda penyelesaian langsung bagi pemohon di loket.",
     "tip": "Saat tim mengalami gesekan layanan di depan publik, utamakan de-eskalasi kepada warga lalu pembinaan internal secara santun."
   },
   {
@@ -80,21 +80,21 @@ const pelayananPublikDrafts: readonly TkpQuestionDraft[] = [
     "difficulty": "sedang",
     "prompt": "Seorang warga kebingungan membaca formulir permohonan yang banyak memakai istilah teknis hukum sehingga berulang kali mengisi kolom secara keliru. Ketika ia kembali bertanya untuk ketiga kalinya, respons Anda yang paling mencerminkan pelayanan publik terbaik adalah ...",
     "options": [
-      "Menyuruh warga membaca kembali papan petunjuk di dinding ruang tunggu dengan suara sedikit tinggi agar tidak terus bertanya",
-      "Meminta warga mencari bantuan jasa pengetikan di luar gedung supaya antrean loket tidak terhambat",
-      "Tetap menerima formulirnya yang salah tanpa berkomentar supaya urusan di loket cepat berlanjut ke nomor berikutnya",
-      "Menjelaskan tiap kolom dengan bahasa sederhana secara sabar, memberi contoh pengisian langsung hingga benar, dan mencatat perlunya perbaikan redaksi formulir agar lebih mudah dipahami",
-      "Membacakan petunjuk teknis persis sesuai redaksi aturan tertulis tanpa menerjemahkannya ke bahasa sehari-hari"
+      "Membacakan panduan resmi pengisian formulir dengan sopan dari awal hingga akhir sesuai ketentuan tertulis, lalu mempersilakan pemohon mengisi ulang di bangku.",
+      "Menunjukkan contoh berkas terpasang di papan pengumuman ruang tunggu agar pemohon dapat meniru pola pengisiannya secara mandiri.",
+      "Langsung menerima formulir yang masih keliru tanpa perbaikan agar antrean loket berikutnya tidak terus tertahan lama.",
+      "Menjelaskan tiap kolom memakai bahasa sehari-hari dengan sabar, memberi contoh pengisian hingga benar, dan mencatat penyempurnaan formulir.",
+      "Menyarankan pemohon memakai jasa pengetikan di luar gedung kantor supaya pengisian kolom teknis menjadi cepat selesai."
     ],
     "optionScores": [
-      2,
-      1,
+      4,
       3,
+      2,
       5,
-      4
+      1
     ],
     "answer": "D",
-    "explanation": "Memberikan pendampingan sabar dengan bahasa membumi sekaligus menginisiasi penyederhanaan formulir bagi warga lain (skor 5) jauh lebih berdampak daripada sekadar membacakan aturan kaku (4).",
+    "explanation": "Skor 5 tidak hanya sabar membimbing pemohon dengan bahasa sederhana hingga tuntas, tetapi juga mencatat perlunya penyederhanaan formulir bagi warga lain. Membacakan panduan resmi secara sopan (skor 4) tetap membantu secara normatif, namun kurang menjembatani hambatan pemahaman istilah teknis.",
     "tip": "Pelayan publik unggul tidak hanya sabar membimbing satu pemohon, tetapi juga peka memperbaiki sumber kebingungan bagi masyarakat luas."
   },
   {
@@ -103,21 +103,21 @@ const pelayananPublikDrafts: readonly TkpQuestionDraft[] = [
     "difficulty": "sedang",
     "prompt": "Di akhir pekan ketika Anda sedang berada di sebuah fasilitas layanan umum sebagai petugas siaga darurat, seorang warga panik karena kartu akses layanan kesehatannya tertinggal sementara anaknya membutuhkan rujukan cepat. Sikap Anda yang paling tepat adalah ...",
     "options": [
-      "Meminta warga tetap pulang mengambil kartu fisik terlebih dahulu sebelum data identitasnya diperiksa petugas jaga",
-      "Menenangkan warga terlebih dahulu tanpa membuka akses sistem verifikasi karena takut melampaui kebiasaan",
-      "Menyampaikan bahwa kesalahan lupa membawa kartu merupakan kelalaian pribadi yang tidak dapat dibantu saat akhir pekan",
-      "Menyuruh warga menghubungi pusat panggilan nasional sendiri melalui ponselnya sambil menunggu giliran",
-      "Menenangkan kepanikan warga secara empatik, langsung melakukan verifikasi data digital berbasis NIK/aplikasi resmi sesuai ketentuan darurat, dan memandu langkah rujukan secepatnya"
+      "Mengarahkan warga menghubungi layanan panggilan nasional melalui ponselnya sambil tetap menunggu antrean verifikasi di meja petugas jaga.",
+      "Menenangkan warga terlebih dahulu dengan ramah, lalu segera menghubungi koordinator jaga guna meminta izin sebelum membuka verifikasi data digital.",
+      "Menyampaikan bahwa lupa membawa kartu merupakan kelalaian pribadi yang belum bisa dilayani saat bertugas pada akhir pekan.",
+      "Meminta anggota keluarga pemohon pulang mengambil kartu fisik terlebih dahulu sementara warga diminta menunggu di ruang penerimaan.",
+      "Menenangkan kepanikan warga secara penuh perhatian, memverifikasi data digital berbasis NIK mengikuti protokol darurat, dan memandu rujukan secepatnya."
     ],
     "optionScores": [
-      2,
+      3,
       4,
       1,
-      3,
+      2,
       5
     ],
     "answer": "E",
-    "explanation": "Mengombinasikan ketenangan empatik, pemanfaatan data identitas digital sah sesuai prosedur kedaruratan, dan panduan konkret memberikan pertolongan nyata tanpa melanggar aturan (skor 5).",
+    "explanation": "Pada situasi darurat akhir pekan, skor 5 memadukan ketenangan sikap, pemanfaatan jalur verifikasi digital resmi yang sudah diatur SOP darurat, dan panduan rujukan cepat. Menenangkan warga sambil menunggu izin koordinator (skor 4) berhati-hati secara hierarkis, tetapi memperlambat pertolongan yang sudah memiliki dasar prosedur.",
     "tip": "Prioritaskan ketenangan, keselamatan warga, serta pemanfaatan jalur verifikasi resmi yang tersedia."
   },
   {
@@ -126,21 +126,21 @@ const pelayananPublikDrafts: readonly TkpQuestionDraft[] = [
     "difficulty": "sedang",
     "prompt": "Seorang pemohon layanan perizinan usaha datang dengan penampilan sangat sederhana dan ragu-ragu bertanya, sementara di antrean belakang berdiri pengusaha besar yang tampak tergesa-gesa ingin didahulukan. Tindakan Anda yang sesuai prinsip keadilan pelayanan adalah ...",
     "options": [
-      "Melayani pemohon pertama secara hangat, hormat, dan setara sesuai urutan antrean sambil memberikan informasi jelas tentang estimasi waktu tunggu kepada semua pemohon",
-      "Meminta pemohon sederhana bergeser sebentar agar pengusaha dapat segera dilayani dan ruang loket tidak gaduh",
-      "Melayani pemohon pertama secukupnya secara singkat agar cepat beralih kepada antrean pengusaha yang tampak sibuk",
-      "Menunda kedua pemohon sementara waktu sampai petugas senior kembali dari ruang istirahat siang",
-      "Mengubah urutan antrean dengan mendahulukan pemohon yang nilai pengajuan modal usahanya paling besar"
+      "Melayani pemohon pertama dengan hangat menurut urutan antrean sambil memberi informasi estimasi tunggu yang jelas.",
+      "Meminta pemohon pertama bergeser sebentar memeriksa ulang berkasnya agar pengusaha di belakang dapat menyerahkan dokumen lebih dulu.",
+      "Mendahulukan pengusaha yang tampak tergesa-gesa dengan pertimbangan nilai permohonan usahanya berdampak besar bagi daerah.",
+      "Menjelaskan aturan antrean secara sopan kepada pengusaha, lalu melayani pemohon pertama dengan cukup ringkas agar antrean lekas bergerak.",
+      "Tetap memanggil nomor urut sesuai layar antrean tanpa komentar tambahan dan meminta seluruh pengunjung menunggu giliran masing-masing."
     ],
     "optionScores": [
       5,
       2,
+      1,
       4,
-      3,
-      1
+      3
     ],
     "answer": "A",
-    "explanation": "Pelayanan publik wajib memperlakukan setiap warga setara tanpa memandang penampilan maupun status ekonomi, tetap ramah, dan menjaga keadilan antrean (skor 5).",
+    "explanation": "Pelayanan publik menuntut perlakuan setara dan ramah tanpa memandang status ekonomi maupun penampilan (skor 5). Menjaga antrean dengan sopan namun tergesa mempercepat pelayanan pemohon pertama (skor 4) mengurangi kualitas pendampingan bagi warga yang sedang ragu-ragu bertanya.",
     "tip": "Pastikan pelayanan berkeadilan berlaku sama bagi semua warga tanpa diskriminasi status sosial."
   },
   {
@@ -149,21 +149,21 @@ const pelayananPublikDrafts: readonly TkpQuestionDraft[] = [
     "difficulty": "sulit",
     "prompt": "Anda melayani seorang pemohon melalui layanan konsultasi video daring yang terus mengulang komplain dengan kata-kata menyudutkan karena frustrasi permohonannya ditolak dua kali sebelumnya akibat berkas teknis tidak sesuai regulasi. Pada saat yang sama, sesi konsultasi berikutnya sudah mengantre lima menit kemudian. Langkah paling tepat adalah ...",
     "options": [
-      "Memutus sambungan video secara sepihak setelah menyampaikan alasan penolakan tertulis agar jadwal pemohon lain tidak molor",
-      "Menenangkan pemohon, merangkum bagian dokumen yang keliru secara ringkas, mengirim daftar periksa perbaikan lewat obrolan untuk pengajuan ulang, lalu menutup sesi sopan tepat waktu",
-      "Meladeni perdebatan panjang lebar mengenai ketidakefektifan aturan pusat hingga seluruh keluhan emosional pemohon habis meskipun antrean berikut terlambat",
-      "Meminta pemohon membaca kembali peraturan menteri setebal lima puluh halaman terlebih dahulu sebelum menjadwalkan ulang pertemuan",
-      "Mengirimkan tautan video keluhan pemohon ke rekan internal kantor lain supaya mereka ikut menilai sikap kurang sopan warga tersebut"
+      "Mengirim potongan rekaman komplain pemohon ke grup internal kantor agar rekan kerja melihat sikap keras warga itu.",
+      "Menenangkan pemohon, merangkum bagian keliru lewat daftar periksa perbaikan di obrolan, lalu menutup sesi tepat waktu.",
+      "Membacakan poin kekurangan berkas secara kaku lalu mengakhiri panggilan video tepat pada batas waktu demi menjaga jadwal sesi berikutnya.",
+      "Menjelaskan kembali alasan penolakan sebelumnya secara tenang, lalu mengirim tautan peraturan lengkap untuk dipelajari sebelum mendaftar ulang.",
+      "Mendengarkan seluruh keluhan emosionalnya dengan sabar dan membahas ulang detail aturan sampai tuntas meski jadwal pemohon berikut menjadi molor."
     ],
     "optionScores": [
-      2,
+      1,
       5,
-      4,
+      2,
       3,
-      1
+      4
     ],
     "answer": "B",
-    "explanation": "Skor 5 memadukan empati emosional (validasi rasa kecewa), solusi terstruktur berbasis checklist konkret sehingga kegagalan ketiga tidak berulang, dan kedisiplinan waktu demi keadilan pemohon antrean berikutnya.",
+    "explanation": "Skor 5 menyeimbangkan empati dengan keadilan jadwal antrean berikutnya sekaligus memberi daftar periksa konkret agar kegagalan tidak terulang. Meladeni keluhan hingga tuntas tanpa batas waktu (skor 4) memang sabar, namun merugikan hak waktu pemohon lain yang sudah mengantre terjadwal.",
     "tip": "Dalam layanan daring berjadwal, padukan empati, panduan perbaikan konkret (checklist), dan keadilan waktu antrean."
   },
   {
@@ -172,21 +172,21 @@ const pelayananPublikDrafts: readonly TkpQuestionDraft[] = [
     "difficulty": "sulit",
     "prompt": "Sebuah video viral di media sosial memelintir potongan kalimat Anda saat menjelaskan penolakan berkas tidak lengkap sehingga publik menuduh instansi mempersulit warga. Padahal Anda sudah menjelaskan sesuai prosedur. Dalam situasi koordinasi layanan besok harinya, sikap paling matang Anda sebagai petugas adalah ...",
     "options": [
-      "Berhenti melayani loket tatap muka sementara dan meminta cuti mendadak hingga perbincangan di media sosial menghilang",
-      "Membuat video balasan pribadi di akun sendiri yang menyalahkan balik pengunggah video pertama dengan nada sarkastik",
-      "Melaporkan kronologi lengkap disertai rekaman pendukung kepada pimpinan dan unit humas untuk klarifikasi faktual resmi yang santun, sambil tetap melayani warga di loket dengan ramah dan profesional",
-      "Menunjukkan ekspresi dingin kepada warga yang datang mengurus berkas serupa karena khawatir direkam kembali",
-      "Membatalkan penolakan berkas milik pemohon viral tersebut supaya opini warganet langsung berubah positif"
+      "Menyusun kronologi faktual lengkap bersama bukti untuk pimpinan serta humas, lalu meminta izin pindah tugas ke bagian arsip belakang sementara.",
+      "Tetap menjalankan tugas harian loket sesuai SOP seperti biasa sambil menyerahkan sepenuhnya urusan klarifikasi media sosial kepada humas.",
+      "Melaporkan kronologi lengkap ke pimpinan dan humas untuk klarifikasi resmi, sambil tetap melayani warga di loket dengan ramah.",
+      "Menjaga jarak bicara dan bersikap kaku kepada pemohon berkas serupa agar ucapannya tidak dipelintir lagi.",
+      "Mengunggah video penjelasan di akun media sosial pribadi guna membela diri dan membantah narasi pengunggah pertama."
     ],
     "optionScores": [
+      4,
       3,
-      1,
       5,
       2,
-      4
+      1
     ],
     "answer": "C",
-    "explanation": "Skor 5 menjaga ketenangan profesional: tidak terpancing emosi balik di media sosial, menyerahkan klarifikasi kelembagaan secara faktual lewat kanal resmi humas/pimpinan, dan memastikan kualitas pelayanan publik hari berikutnya tetap prima.",
+    "explanation": "Skor 5 menjaga ketenangan profesional: mengawal klarifikasi kelembagaan secara faktual melalui jalur resmi humas dan tetap hadir melayani warga secara ramah. Meminta pindah ke arsip sementara (skor 4) cukup prosedural dalam pelaporan, tetapi mengurangi ketangguhan menjaga layanan garda depan.",
     "tip": "Saat menghadapi tekanan viral, pisahkan klarifikasi faktual resmi kelembagaan dari emosi pribadi, dan pertahankan standar layanan."
   },
   {
@@ -195,21 +195,21 @@ const pelayananPublikDrafts: readonly TkpQuestionDraft[] = [
     "difficulty": "mudah",
     "prompt": "Seorang pemohon datang mengurus surat keterangan mendesak, tetapi salah satu dokumen pendukung tertinggal di rumah. Namun, ia menyimpan pindaian asli dokumen resmi tersebut dalam aplikasi identitas digital pemerintah. Sesuai ketentuan verifikasi elektronik yang berlaku di instansi Anda, tindakan Anda adalah ...",
     "options": [
-      "Tetap mewajibkan pemohon pulang mengambil fotokopi kertas meskipun aturan instansi sudah mengakui verifikasi aplikasi digital resmi",
-      "Meminta pemohon menitipkan uang jaminan sementara sampai berkas kertas fisik diserahkan esok hari",
-      "Menolak langsung seluruh permohonan tanpa memeriksa apakah dokumen digitalnya dapat diterima oleh regulasi instansi",
-      "Memeriksa keabsahan dokumen pada aplikasi digital resmi sesuai SOP dan memproses layanan saat itu juga tanpa membebani warga bolak-balik",
-      "Menunggu persetujuan rapat mingguan seluruh kepala seksi sebelum menyentuh permohonan berbantuan dokumen digital"
+      "Menyarankan pemohon mengecek kembali jika sempat pulang mengambil kertas asli atau menunggu giliran akhir jam kerja.",
+      "Memeriksa tampilan aplikasi digitalnya dengan sopan, lalu meminta persetujuan lisan atasan terlebih dahulu meski ketentuan instansi sudah membolehkannya.",
+      "Langsung menolak pengajuan surat keterangan karena pemohon tidak membawa dokumen asli berwujud kertas di lokasi loket.",
+      "Memeriksa keabsahan dokumen pada aplikasi identitas digital resmi pemerintah, lalu langsung memproses suratnya tanpa menyuruh pulang.",
+      "Tetap meminta salinan cetak fisik sesuai kebiasaan lama meja layanan walaupun aplikasi identitas digital pemerintah sudah tersedia."
     ],
     "optionScores": [
       3,
+      4,
       1,
-      2,
       5,
-      4
+      2
     ],
     "answer": "D",
-    "explanation": "Memanfaatkan jalur sah dokumen digital yang sudah diakui SOP menghilangkan birokrasi berbelit, mempercepat layanan, dan meringankan beban waktu/biaya masyarakat (skor 5).",
+    "explanation": "Menggunakan jalur verifikasi digital yang telah sah menurut SOP langsung memangkas waktu dan biaya warga (skor 5). Meminta konfirmasi atasan lagi saat aturan sudah jelas (skor 4) menunjukkan kehati-hatian, tetapi tetap memperlambat penyelesaian yang sebenarnya sudah menjadi kewenangan petugas.",
     "tip": "Utamakan solusi paling efisien yang sudah sah menurut regulasi/SOP digital instansi."
   },
   {
@@ -218,21 +218,21 @@ const pelayananPublikDrafts: readonly TkpQuestionDraft[] = [
     "difficulty": "mudah",
     "prompt": "Anda mengetahui bahwa alur persetujuan berkas di bagian Anda sebenarnya memiliki dua tahap penandatanganan ganda yang berulang sehingga memperlambat waktu layanan warga hingga tiga hari. Sebagai pelaksana layanan yang ingin memberi dampak baik, sikap Anda adalah ...",
     "options": [
-      "Mengabaikan salah satu tahap tanda tangan secara diam-diam tanpa izin atasan supaya berkas warga keluar lebih cepat",
-      "Tetap mengikuti alur lambat tersebut apa adanya tanpa pernah mengusulkan perbaikan karena sudah menjadi kebiasaan lama",
-      "Menjelaskan kepada warga bahwa keterlambatan tiga hari adalah kesalahan tim tata usaha agar pemohon tidak memprotes loket",
-      "Mengurangi jumlah antrean harian warga agar beban kerja penandatanganan ganda tidak terasa terlalu berat",
-      "Menyusun catatan analisis kendala alur beserta usulan penyederhanaan SOP kepada atasan, sambil tetap mematuhi SOP aktif selama revisi belum disahkan"
+      "Membatasi jumlah penerimaan berkas per hari agar penumpukan proses pada dua meja penandatanganan ganda tidak makin bertambah panjang.",
+      "Melewati salah satu tahap tanda tangan secara diam-diam tanpa izin pimpinan supaya berkas layanan warga dapat keluar jauh lebih cepat.",
+      "Tetap menjalankan seluruh tahap tanda tangan ganda secara tertib sesuai SOP agar tidak terjadi cacat administrasi dokumen.",
+      "Mengikuti alur persetujuan berjalan setiap hari sambil sesekali mendiskusikan keluhan lambatnya proses bersama rekan sesama pelaksana loket.",
+      "Tetap mematuhi alur SOP aktif selama belum direvisi, sambil menyusun catatan analisis hambatan dan usulan penyederhanaan prosedur kepada pimpinan."
     ],
     "optionScores": [
       2,
-      4,
       1,
+      4,
       3,
       5
     ],
     "answer": "E",
-    "explanation": "Skor 5 memadukan kepatuhan pada SOP yang berlaku saat ini (mencegah cacat administrasi) dengan inisiatif konstruktif memperbaiki sistem agar layanan jangka panjang menjadi lebih ringkas.",
+    "explanation": "Skor 5 menggabungkan kepatuhan hukum terhadap SOP yang berlaku dengan inisiatif konstruktif memperbaiki sistem demi kecepatan layanan jangka panjang. Sekadar patuh menjalankan alur lambat tanpa usulan perbaikan (skor 4) memang aman secara administrasi, namun tidak mendorong efisiensi birokrasi.",
     "tip": "Jangan melanggar SOP secara sepihak; patuhi aturan yang berjalan sembari ajukan usulan perbaikan terukur ke pimpinan."
   },
   {
@@ -241,21 +241,21 @@ const pelayananPublikDrafts: readonly TkpQuestionDraft[] = [
     "difficulty": "sedang",
     "prompt": "Sahabat lama Anda memohon bantuan agar pengajuan izin usahanya diloloskan hari ini meskipun surat rekomendasi teknis dari dinas lingkungan belum terbit, dengan janji surat akan disusulkan pekan depan. Sikap paling tepat Anda adalah ...",
     "options": [
-      "Menolak secara santun penerbitan izin sebelum syarat lengkap, menjelaskan dasar hukumnya secara objektif, dan membantu mengarahkan alur percepatan resmi ke dinas lingkungan agar pengajuan lekas memenuhi syarat",
-      "Menerima berkas tanpa memprosesnya dulu tetapi memberi kesan seolah-olah izin sudah aman diterbitkan pekan depan",
-      "Menyetujui permohonan sahabat lebih dahulu demi menjaga hubungan baik dengan membuatkan catatan janji lisan",
-      "Menyarankan sahabat memakai nama pemohon lain saja agar pemeriksaan persyaratan tidak mengaitkan kedekatan Anda",
-      "Meminta petugas staf junior yang menandatangani persetujuan awal sementara supaya tanggung jawab langsung tidak melekat pada Anda"
+      "Menolak penerbitan izin secara santun menurut syarat objektif, lalu memandu alur percepatan resmi ke dinas lingkungan.",
+      "Meloloskan penerbitan izin hari ini berbekal janji lisan sahabat bahwa surat rekomendasi teknis akan disusulkan pekan depan.",
+      "Meminta staf pelaksana lain meninjau kelengkapan berkas sahabat terlebih dahulu agar penolakan tidak terasa kaku secara pribadi.",
+      "Menerima map permohonan untuk pencatatan awal di meja administrasi dengan catatan proses verifikasi baru berjalan setelah syarat lengkap.",
+      "Menjelaskan secara sopan bahwa izin belum dapat diterbitkan sebelum rekomendasi teknis terbit, lalu memintanya kembali jika sudah lengkap."
     ],
     "optionScores": [
       5,
-      3,
-      2,
       1,
+      2,
+      3,
       4
     ],
     "answer": "A",
-    "explanation": "Skor 5 menegakkan SOP secara adil dan antinepotisme tanpa bersikap ketus, serta tetap solutif memberi panduan resmi ke instansi terkait agar pemohon cepat melengkapi syaratnya.",
+    "explanation": "Skor 5 menegakkan keadilan bebas nepotisme dengan santun sekaligus membantu pemohon menemukan jalur resmi untuk mempercepat kelengkapan syarat. Menolak secara sopan tanpa memberi panduan alur resmi ke dinas terkait (skor 4) patuh pada prosedur, tetapi kurang memfasilitasi pemecahan masalah warga.",
     "tip": "Gabungkan ketegasan menolak jalan pintas melanggar SOP dengan bantuan informasi jalur resmi yang konstruktif."
   },
   {
@@ -264,21 +264,21 @@ const pelayananPublikDrafts: readonly TkpQuestionDraft[] = [
     "difficulty": "sedang",
     "prompt": "Saat sistem jaringan internet pusat terputus mendadak selama dua jam, puluhan pemohon layanan menumpuk di ruang tunggu tanpa kepastian. Sesuai standar layanan yang responsif dan patuh aturan, langkah pertama yang paling tepat Anda lakukan adalah ...",
     "options": [
-      "Tetap diam duduk di balik kaca loket mengerjakan arsip pribadi sampai koneksi internet menyala kembali dengan sendirinya",
-      "Memberikan pengumuman terbuka secara jujur mengenai estimasi kendala, mengalihkan pekerjaan yang masih bisa diproses secara manual/luring sesuai protokol kontinjensi (pengecekan berkas & tanda terima berkas), serta berkoordinasi dengan tim TI",
-      "Memulangkan seluruh pemohon hari itu juga tanpa menerima berkas fisik maupun mencatat kontak untuk dihubungi kembali",
-      "Menyuruh warga pindah ke kantor dinas kabupaten tetangga apabila tidak bersedia menunggu tanpa batas waktu",
-      "Mengumumkan bahwa gangguan jaringan kemungkinan berlangsung hingga satu minggu ke depan supaya kerumunan langsung bubar"
+      "Memberikan pengumuman terbuka tentang gangguan jaringan secara sopan dan meminta warga menunggu sementara petugas terus menghubungi tim TI.",
+      "Mengumumkan estimasi kendala secara jujur, menjalankan pemeriksaan berkas luring dalam koridor SOP darurat, dan mengontak tim TI.",
+      "Memasang papan informasi gangguan di depan kaca loket serta mencatat nomor kontak pemohon yang bersedia dihubungi saat jaringan pulih.",
+      "Menunggu di balik loket sambil membereskan berkas arsip internal yang sudah selesai diproses hingga sambungan internet kantor pulih.",
+      "Meminta seluruh pemohon pulang hari itu juga tanpa memeriksa berkas maupun mencatat data antrean mereka."
     ],
     "optionScores": [
-      2,
+      4,
       5,
       3,
-      4,
+      2,
       1
     ],
     "answer": "B",
-    "explanation": "Pelayanan responsif mengaktifkan langkah kontinjensi resmi saat gangguan teknis terjadi: komunikasi transparan kepada warga, verifikasi berkas luring/pendataan agar warga tidak sia-sia mengantre, dan eskalasi cepat ke tim TI (skor 5).",
+    "explanation": "Pelayanan responsif saat gangguan sistem mengaktifkan prosedur kontinjensi: komunikasi terbuka, verifikasi berkas secara manual/luring agar waktu antre warga tetap produktif, dan koordinasi ke TI (skor 5). Mengumumkan kendala serta menghubungi TI sambil menyuruh warga menunggu pasif (skor 4) kurang mengoptimalkan layanan luring.",
     "tip": "Saat sistem bermasalah, aktifkan komunikasi terbuka + pemrosesan administratif luring sesuai SOP darurat + koordinasi TI."
   },
   {
@@ -287,21 +287,21 @@ const pelayananPublikDrafts: readonly TkpQuestionDraft[] = [
     "difficulty": "sedang",
     "prompt": "Seorang warga memerlukan legalisasi dokumen penting untuk syarat mendaftar beasiswa yang ditutup sore ini, padahal pejabat penandatangan utama sedang menghadiri rapat di luar kantor. Tindakan solutif terbaik yang tetap menjaga prosedur adalah ...",
     "options": [
-      "Meminta warga pasrah menerima batas waktu beasiswa karena pejabat utama baru kembali dua hari lagi",
-      "Menandatangani sendiri dokumen atas nama pejabat utama tanpa pelimpahan kewenangan resmi agar proses cepat selesai",
-      "Memeriksa kelengkapan berkas warga segera, menghubungi pejabat pelaksana harian (Plh.) yang berwenang atau meminta arahan koordinasi pengesahan kilat sesuai mekanisme delegasi resmi instansi",
-      "Menyarankan warga mencari pejabat penandatangan di luar jam rapat secara langsung ke lokasi acara tanpa konfirmasi",
-      "Mengganti cap tanggal surat menjadi kemarin agar bisa dilegalisasi minggu depan setelah rapat selesai"
+      "Menjelaskan dengan sopan bahwa pejabat penandatangan sedang dinas luar dan menawarkan pengesahan diprioritaskan esok pagi hari.",
+      "Memeriksa kelengkapan berkas pemohon secara ramah, lalu mengirim pesan kepada pejabat utama guna menunggu arahan setelah rapat usai.",
+      "Memeriksa berkas segera, lalu memproses pengesahan melalui pejabat pelaksana harian berdasarkan aturan delegasi kantor.",
+      "Menandatangani sendiri lembar legalisasi atas nama pejabat utama tanpa pelimpahan wewenang demi mengejar tenggat.",
+      "Menyarankan pemohon mendatangi langsung lokasi rapat pejabat utama di luar kantor tanpa kepastian jeda."
     ],
     "optionScores": [
       3,
-      1,
-      5,
       4,
+      5,
+      1,
       2
     ],
     "answer": "C",
-    "explanation": "Skor 5 mencari solusi cepat dalam koridor hukum tata laksana (memanfaatkan pejabat berwenang/Plh. atau koordinasi verifikasi sah), tanpa memalsukan tanda tangan atau bersikap pasif.",
+    "explanation": "Skor 5 menyelesaikan kebutuhan mendesak warga secara cepat dan sah lewat mekanisme pelaksana harian (Plh.) atau delegasi resmi instansi. Menunggu arahan dari pejabat yang sedang rapat di luar (skor 4) bersikap tertib, tetapi berisiko membuat warga kehilangan batas waktu pendaftaran beasiswa sore itu.",
     "tip": "Solusi cepat tidak pernah memalsukan wewenang; manfaatkan mekanisme delegasi/Plh. resmi demi membantu keperluan mendesak warga."
   },
   {
@@ -310,21 +310,21 @@ const pelayananPublikDrafts: readonly TkpQuestionDraft[] = [
     "difficulty": "sedang",
     "prompt": "Dalam pelayanan perizinan terpadu, Anda menemukan warga membawa dokumen persyaratan lengkap, tetapi formulir yang diisi memakai format versi bulan lalu yang baru diperbarui kemarin tanpa sosialisasi masif ke tingkat kelurahan. Sikap Anda yang paling tepat adalah ...",
     "options": [
-      "Menolak langsung formulir lama dan menyuruh warga mengetik ulang di jasa rental luar kantor dengan biaya sendiri",
-      "Menempelkan pengumuman kecil bertuliskan format baru di kaca loket lalu meminta warga kembali pekan berikutnya",
-      "Memproses saja formulir lama tanpa memindahkannya ke sistem baru sehingga berkas tertahan di tahap verifikasi berikutnya",
-      "Menjelaskan perubahan format secara ramah, membantu memindahkan data penting ke formulir terbaru di loket agar tidak bolak-balik, serta mengusulkan sosialisasi format baru ke kelurahan dan situs web",
-      "Menyalahkan perangkat kelurahan karena dianggap malas memperbarui berkas untuk warganya"
+      "Menerima dan memproses formulir versi lama apa adanya tanpa penyesuaian agar pelayanan di meja depan berjalan cepat tanpa hambatan.",
+      "Menolak langsung berkas tersebut dan mengarahkan warga mengetik ulang pada jasa penyewaan komputer di luar gedung.",
+      "Menjelaskan perubahan format dengan sopan, lalu memberikan formulir baru untuk diisi ulang warga di meja tunggu sebelum dipanggil kembali tanpa antre ulang.",
+      "Menjelaskan pembaruan format dengan ramah, membantu memindahkan data ke formulir baru di loket, dan mengusulkan sosialisasi luas ke kelurahan.",
+      "Menunjukkan tautan unduhan formulir terbaru di papan pengumuman dan meminta pemohon mengisinya kembali dari rumah untuk pengajuan berikutnya."
     ],
     "optionScores": [
       2,
-      3,
       1,
+      4,
       5,
-      4
+      3
     ],
     "answer": "D",
-    "explanation": "Karena perubahan baru terjadi dan belum tersosialisasi luas, petugas berorientasi layanan (skor 5) membantu konversi cepat di loket agar warga tidak dirugikan sekaligus menutup celah sosialisasi ke depan.",
+    "explanation": "Karena perubahan baru saja terjadi tanpa sosialisasi luas, membantu menyalin data di loket sekaligus mengusulkan perbaikan sosialisasi ke kelurahan (skor 5) mencegah warga dirugikan. Meminta warga menulis ulang sendiri meski tanpa antre ulang (skor 4) cukup toleran, tetapi membebani warga atas transisi internal.",
     "tip": "Jika kendala terjadi akibat transisi kebijakan internal yang belum tersosialisasi luas, bantulah warga di tempat dan perbaiki informasinya."
   },
   {
@@ -333,21 +333,21 @@ const pelayananPublikDrafts: readonly TkpQuestionDraft[] = [
     "difficulty": "sulit",
     "prompt": "Terjadi lonjakan pemohon dua kali lipat menjelang batas akhir program pemutihan administrasi, sementara jumlah komputer loket terbatas dan rekan Anda di bagian pengarsipan kewalahan membantu verifikasi. Langkah manajerial paling efektif yang dapat Anda inisiasi bersama tim adalah ...",
     "options": [
-      "Membatasi kuota pelayanan menjadi seperempat dari kapasitas harian dan menutup gerbang masuk sebelum pukul sepuluh pagi",
-      "Membiarkan seluruh pemohon mengantre bercampur antara yang berkasnya lengkap dan belum lengkap agar semua merasa sama-sama menunggu",
-      "Meminta setiap pemohon menulis sendiri riwayat datanya di kertas terpisah lalu memintanya memeriksa ulang saat bulan depan",
-      "Mengusulkan lembur tanpa pembagian tugas baru sehingga tiap pegawai tetap mengerjakan seluruh proses dari awal hingga akhir seorang diri",
-      "Membuka meja pra-verifikasi (triage) sederhana untuk mengecek kelengkapan berkas di awal antrean, membagi peran tim secara paralel (input vs cetak), serta menginformasikan jadwal estimasi atau opsi daftar daring resmi"
+      "Membiarkan seluruh pemohon berkas lengkap maupun belum lengkap menunggu pada satu antrean panjang sampai jam kantor berakhir.",
+      "Membatasi kuota pelayanan harian menjadi setengah dari biasanya dan menutup pengambilan nomor antrean sebelum siang hari.",
+      "Menyampaikan perkiraan waktu tunggu secara terbuka di ruang layanan supaya pemohon dapat mempertimbangkan jadwal kunjungan pada jam berikutnya.",
+      "Mengusulkan penambahan jam lembur serta perbantuan staf administrasi unit lain agar seluruh antrean tetap dilayani berurutan hingga selesai.",
+      "Membuka meja pemeriksaan awal di pangkal antrean, membagi peran tim secara paralel, dan menginformasikan estimasi tunggu maupun kanal pendaftaran daring."
     ],
     "optionScores": [
+      1,
       2,
       3,
-      1,
       4,
       5
     ],
     "answer": "E",
-    "explanation": "Skor 5 menerapkan rekayasa alur kerja layanan nyata: penyaringan kelengkapan di awal (triage), spesialisasi pembagian kerja paralel tim, dan informasi jadwal/kanal daring agar arus antrean terurai tanpa menurunkan ketelitian.",
+    "explanation": "Skor 5 menata ulang alur kerja secara nyata melalui penyaringan kelengkapan di awal (triage), pembagian tugas paralel tim, dan informasi kanal daring agar beban terurai. Mengusulkan lembur dengan alur kerja tunggal yang sama (skor 4) menunjukkan dedikasi tinggi, namun kurang efektif mengurai sumbatan sistemik.",
     "tip": "Saat antrean membeludak, cari opsi berisi perbaikan alur (triage awal, kerja paralel tim, dan informasi kanal alternatif)."
   },
   {
@@ -356,21 +356,21 @@ const pelayananPublikDrafts: readonly TkpQuestionDraft[] = [
     "difficulty": "sulit",
     "prompt": "Sebuah peraturan teknis baru menimbulkan penafsiran berbeda antara petugas verifikasi berkas dan petugas penerbitan izin hingga membuat pengajuan bantuan usaha mikro tertahan empat hari tanpa kejelasan. Sebagai koordinator teknis layanan, tindakan penyelesaian terbaik Anda adalah ...",
     "options": [
-      "Segera mengadakan rapat sinkronisasi singkat antarunit guna menyepakati pedoman tafsir operasional tertulis sesuai regulasi induk, memproses berkas yang tertahan sesuai kesepakatan sah, serta mengabari para pemohon terdampak secara proaktif",
-      "Memilih tafsiran salah satu petugas saja secara lisan pada hari itu tanpa mendokumentasikannya untuk kasus serupa berikutnya",
-      "Membiarkan berkas tertahan sementara selama sebulan sambil mengirim surat konsultasi tertulis tanpa memberi tahu kejelasan status ke pemohon",
-      "Mengembalikan seluruh berkas kepada para pelaku usaha mikro dengan alasan peraturan pusat sedang membingungkan",
-      "Menyerahkan keputusan ke masing-masing petugas meja sehingga standar tiap loket menjadi berbeda-beda"
+      "Menggelar rapat penyamaan tafsir tertulis antarunit, memproses berkas tertahan, lalu mengabari pemohon secara aktif.",
+      "Menyampaikan surat konsultasi resmi kepada instansi penyusun regulasi sambil menjelaskan secara sopan penundaan sementara kepada pemohon.",
+      "Mengikuti penafsiran petugas verifikasi yang lebih senior secara sementara agar berkas usaha mikro mendesak dapat mulai diproses.",
+      "Membiarkan tiap loket memakai pemahaman masing-masing atas aturan baru hingga jadwal rapat evaluasi bulanan diselenggarakan.",
+      "Mengembalikan seluruh berkas pengajuan pelaku usaha mikro dengan alasan pedoman teknis dari pemerintah pusat belum seragam."
     ],
     "optionScores": [
       5,
-      3,
       4,
+      3,
       2,
       1
     ],
     "answer": "A",
-    "explanation": "Skor 5 menyelesaikan akar masalah perbedaan tafsir secara institusional lewat sinkronisasi pedoman tertulis (konsisten dan akuntabel) sekaligus langsung memulihkan kepastian hak para pemohon yang sempat tertahan.",
+    "explanation": "Skor 5 menyelesaikan akar persoalan multitafsir melalui penyamaan pedoman operasional tertulis antarunit sehingga konsisten, lalu langsung memulihkan kepastian pemohon. Menunggu jawaban tertulis pusat sambil menunda seluruh berkas (skor 4) aman secara birokratis, tetapi memperpanjang kerugian pelaku usaha.",
     "tip": "Konflik multitafsir prosedur harus diselesaikan dengan penyamaan pedoman tertulis antarunit serta komunikasi proaktif ke pemohon."
   },
   {
@@ -379,21 +379,21 @@ const pelayananPublikDrafts: readonly TkpQuestionDraft[] = [
     "difficulty": "mudah",
     "prompt": "Seorang ibu hamil tua dan seorang penyandang disabilitas pengguna kursi roda datang ke ruang tunggu kantor pelayanan yang antreannya mencapai nomor seratus. Sikap Anda yang paling sesuai dengan standar pelayanan inklusif adalah ...",
     "options": [
-      "Membiarkan keduanya berdiri menunggu nomor urut seratus supaya seluruh pengunjung dinilai memperoleh nomor antrean yang sama persis",
-      "Menyapa ramah dan mengarahkan mereka ke kursi serta loket jalur prioritas kelompok rentan yang tersedia tanpa memungut biaya tambahan",
-      "Menyarankan mereka datang kembali esok hari pukul lima pagi agar mendapat nomor antrean paling awal",
-      "Meminta pengunjung lain memberi tempat duduknya secara paksa tanpa menyediakan layanan jalur prioritas kantor",
-      "Menolak melayani pengguna kursi roda di lantai dasar dan memintanya naik tangga ke lantai dua agar sesuai pembagian ruangan"
+      "Menghampiri keduanya di ruang tunggu untuk melayani pengecekan kelengkapan map berkas agar proses saat dipanggil nanti berlangsung cepat.",
+      "Menyambut ramah dan mengarahkan mereka ke kursi serta loket jalur prioritas kelompok rentan tanpa pungutan biaya.",
+      "Menyediakan kursi tunggu di baris depan secara sopan dan berjanji memanggil berkas mereka sedikit lebih awal saat sela antrean longgar.",
+      "Membiarkan keduanya menunggu hingga nomor seratus terpanggil agar antrean dinilai sama rata seluruh pengunjung.",
+      "Meminta pengunjung muda di barisan depan bersedia berdiri memberikan kursinya sementara nomor antrean tetap berjalan sesuai urutan seratus."
     ],
     "optionScores": [
-      2,
-      5,
       3,
+      5,
       4,
-      1
+      1,
+      2
     ],
     "answer": "B",
-    "explanation": "UU Pelayanan Publik mewajibkan penyelenggara menyediakan sarana serta perlakuan prioritas bagi kelompok rentan (disabilitas, lansia, ibu hamil/menyusui) secara bermartabat dan tertib (skor 5).",
+    "explanation": "Standar pelayanan inklusif mewajibkan penyediaan serta pemanfaatan jalur prioritas resmi bagi penyandang disabilitas dan ibu hamil secara bermartabat (skor 5). Memberi kursi depan dan menyelipkan panggilan saat sela longgar (skor 4) berniat baik, namun tidak memberikan hak jalur prioritas yang terstruktur.",
     "tip": "Kelompok rentan (disabilitas, lansia, ibu hamil) berhak atas akses fisik ramah dan jalur prioritas layanan resmi."
   },
   {
@@ -402,21 +402,21 @@ const pelayananPublikDrafts: readonly TkpQuestionDraft[] = [
     "difficulty": "mudah",
     "prompt": "Di anjungan layanan mandiri berbasis layar sentuh, seorang kakek berusia lanjut tampak bingung dan takut salah menekan menu hingga beberapa kali hampir pergi membatalkan urusannya. Langkah terbaik Anda adalah ...",
     "options": [
-      "Menyuruh kakek tersebut mencari cucu atau anggota keluarga muda untuk mengisikan data dari rumah",
-      "Menertawakan kebingungannya secara halus agar suasana tidak terasa tegang lalu meninggalkannya",
-      "Menghampiri dengan sopan, membantunya mengoperasikan anjungan langkah demi langkah sambil mengonfirmasi kebenaran setiap data kepada beliau, lalu menyerahkan bukti cetaknya dengan jelas",
-      "Mengisikan formulir secara cepat tanpa membacakan atau memastikan kebenaran data pribadi beliau",
-      "Meminta beliau mengantre di loket biasa yang panjang meskipun urusannya cukup selesai dalam dua menit di anjungan"
+      "Menyarankan beliau agar lain kali mengajak anggota keluarga yang lebih muda saat mengakses anjungan layar sentuh.",
+      "Membiarkan kakek membaca sendiri petunjuk di mesin anjungan supaya terbiasa memakai fasilitas digital mandiri.",
+      "Menghampiri dengan hormat, memandu pengoperasian layar tahap demi tahap sambil memastikan kebenaran data, lalu memberi bukti cetaknya.",
+      "Membantu menekan seluruh menu anjungan mandiri secara cepat supaya urusan kakek lekas selesai tanpa rasa canggung, lalu menyerahkan bukti cetaknya.",
+      "Mengarahkan kakek dengan ramah dan sopan untuk berpindah ke antrean loket manual reguler walaupun jumlah pengunjung di sana cukup padat."
     ],
     "optionScores": [
-      3,
+      2,
       1,
       5,
-      2,
-      4
+      4,
+      3
     ],
     "answer": "C",
-    "explanation": "Layanan inklusif menjembatani kesenjangan literasi digital lansia dengan pendampingan aktif yang penuh hormat serta tetap memastikan keakuratan data pemilik identitas (skor 5).",
+    "explanation": "Skor 5 menjembatani kesenjangan literasi digital lansia secara bermartabat sekaligus mengonfirmasi keakuratan data pribadi langsung bersama pemiliknya. Membantu menekan seluruh menu secara cepat tanpa verifikasi ulang bersama pemohon (skor 4) memang ramah, tetapi berisiko menimbulkan kekeliruan input data.",
     "tip": "Pendampingan teknologi bagi lansia harus dilakukan dengan sabar dan selalu mengonfirmasi keakuratan data bersama pemohon."
   },
   {
@@ -425,21 +425,21 @@ const pelayananPublikDrafts: readonly TkpQuestionDraft[] = [
     "difficulty": "sedang",
     "prompt": "Anda melayani pemohon tunarungu yang datang seorang diri dan tampak kesulitan memahami penjelasan lisan petugas di loket berkaca tebal. Sebagai petugas pelayanan publik, solusi komunikasi yang paling tepat adalah ...",
     "options": [
-      "Berbicara jauh lebih keras dan cepat sambil menunjuk papan pengumuman di ujung ruangan",
-      "Menyuruh pemohon tersebut pulang membawa penerjemah pribadi karena kantor tidak menyediakan juru bahasa",
-      "Meminta pemohon lain di antrean menanyakan keperluannya secara terbuka di depan umum",
-      "Menggunakan komunikasi tertulis yang jelas dan ramah (kertas atau papan ketik layar), isyarat visual dasar yang sopan, atau memanggil petugas terlatih/layanan aksesibel yang tersedia hingga pemohon terlayani tuntas",
-      "Langsung menerbitkan surat permohonan berdasarkan perkiraan sendiri tanpa konfirmasi keperluannya"
+      "Meminta pemohon kembali lain hari dengan membawa pendamping keluarga karena loket belum dilengkapi juru bahasa isyarat.",
+      "Berbicara jauh lebih keras dan perlahan dari balik kaca loket sambil mengulang kalimat penting agar pemohon dapat menebak gerak bibir.",
+      "Mengajak pemohon berpindah ke meja samping tanpa sekat kaca sesuai SOP supaya komunikasi tatap muka lebih terbuka dan terbaca.",
+      "Berkomunikasi memakai media tulis atau layar secara jelas dan sopan, atau memanggil petugas layanan aksesibel hingga keperluan pemohon tuntas.",
+      "Menuliskan syarat utama secara singkat pada secarik kertas dengan sopan lalu menunjuk papan alur layanan agar pemohon dapat mengikuti tahapan berikutnya."
     ],
     "optionScores": [
-      2,
       1,
+      2,
       3,
       5,
       4
     ],
     "answer": "D",
-    "explanation": "Skor 5 menghadirkan adaptasi komunikasi nyata (media tulis/layar jelas, bahasa tubuh sopan, atau pendamping khusus) sehingga penyandang disabilitas sensorik tetap terlayani setara, mandiri, dan akurat.",
+    "explanation": "Skor 5 memastikan komunikasi dua arah yang setara lewat media tertulis jelas atau petugas layanan aksesibel hingga urusan selesai penuh. Menulis ringkas lalu sekadar menunjuk papan alur (skor 4) berupaya membantu secara sopan, tetapi belum memastikan kebutuhan spesifik pemohon benar-benar dipahami.",
     "tip": "Hilangkan hambatan komunikasi disabilitas sensorik memakai media tertulis/visual jelas atau pendampingan layanan aksesibel."
   },
   {
@@ -448,21 +448,21 @@ const pelayananPublikDrafts: readonly TkpQuestionDraft[] = [
     "difficulty": "sedang",
     "prompt": "Ketika kantor Anda merenovasi gedung layanan baru, Anda melihat desain tangga masuk belum dilengkapi bidang miring (ram) maupun penanda lantai pemandu bagi penyandang tunanetra. Sebagai anggota tim perencanaan operasional gedung, sikap Anda adalah ...",
     "options": [
-      "Membiarkannya karena anggaran renovasi tidak perlu ditambah untuk kebutuhan yang jumlah penggunanya jarang datang",
-      "Menganggap fasilitas aksesibel cukup berupa papan pengumuman tulisan besar saja di pintu depan",
-      "Menunggu adanya protes komunitas penyandang disabilitas terlebih dahulu baru mengajukan usulan perubahan",
-      "Memindahkan lokasi meja layanan sementara ke halaman parkir supaya tidak melewati tangga masuk gedung",
-      "Mengusulkan penyesuaian desain agar memenuhi standar aksesibilitas fasilitas publik (ram landai, pegangan, jalur pemandu, dan toilet ramah disabilitas) sesuai amanat peraturan berlaku"
+      "Mencatat kekurangan aksesibilitas itu dalam rapat lalu mengusulkan meja layanan darurat di teras tanpa mengubah konstruksi bangunan utama.",
+      "Mengusulkan penempatan petugas keamanan khusus di area tangga depan untuk membantu mengangkat atau menuntun pengunjung disabilitas yang datang.",
+      "Mempertahankan rancangan renovasi berjalan lebih dulu dan mengevaluasi penambahan fasilitas aksesibel setelah muncul masukan dari pengunjung.",
+      "Mengabaikan jalur miring dan penanda lantai karena anggaran renovasi diprioritaskan untuk memperindah ruang loket utama yang lebih ramai.",
+      "Mengusulkan penyesuaian desain agar memenuhi standar aksesibilitas fasilitas publik berupa bidang miring landai, pegangan, dan jalur pemandu tunanetra."
     ],
     "optionScores": [
-      1,
-      2,
-      3,
       4,
+      3,
+      2,
+      1,
       5
     ],
     "answer": "E",
-    "explanation": "Membangun layanan publik yang inklusif dimulai dari perancangan infrastruktur yang aksesibel sesuai standar universal sebelum timbul hambatan bagi masyarakat (skor 5).",
+    "explanation": "Skor 5 memperjuangkan infrastruktur ramah disabilitas secara permanen sesuai standar fasilitas publik sebelum hambatan terjadi di lapangan. Menyediakan meja darurat di teras tanpa memperbaiki desain tangga gedung (skor 4) menunjukkan kepedulian, namun memisahkan kelompok rentan dari layanan utama yang layak.",
     "tip": "Inklusi disabilitas wajib diupayakan secara preventif dalam desain fasilitas umum sebelum warga dirugikan."
   },
   {
@@ -471,21 +471,21 @@ const pelayananPublikDrafts: readonly TkpQuestionDraft[] = [
     "difficulty": "sedang",
     "prompt": "Sebuah program layanan keliling pencatatan sipil dijadwalkan mengunjungi desa terpencil dengan banyak warga lanjut usia yang sakit menahun dan sulit berjalan menuju balai desa. Strategi pelayanan paling berdampak bagi Anda dan tim adalah ...",
     "options": [
-      "Tetap menjadwalkan layanan di balai desa sambil berkoordinasi dengan kader/perangkat desa melakukan layanan jemput bola (kunjungan ke rumah) khusus warga sakit berat dan lansia tidak mampu berjalan",
-      "Mewajibkan seluruh lansia sakit tetap dibawa keluarganya ke balai desa karena sistem perekaman data tidak boleh berpindah kursi",
-      "Membatalkan perekaman bagi warga yang tidak sanggup berjalan ke balai desa hingga waktu tidak ditentukan",
-      "Meminta anggota keluarga lansia menandatangani surat permohonan tanpa kehadiran maupun pemeriksaan langsung oleh petugas",
-      "Menunda kunjungan desa tersebut sampai seluruh warga sakit dinyatakan sembuh oleh puskesmas setempat"
+      "Tetap membuka pos balai desa sambil berkoordinasi dengan kader lokal untuk jemput bola ke rumah lansia sakit.",
+      "Menambah durasi pelayanan di balai desa hingga sore hari supaya keluarga memiliki waktu lebih panjang mengantar lansia sakit ke lokasi.",
+      "Menunda pencatatan kependudukan warga yang sulit berjalan hingga kondisi fisiknya pulih dan mampu datang ke kantor dinas.",
+      "Meminta kader desa mengumpulkan berkas pendahuluan lansia di balai, sementara perekaman lapangan dijadwalkan ulang pada kunjungan bulan depan.",
+      "Mewajibkan seluruh pemohon tetap hadir di balai desa karena perangkat perekaman kependudukan harus terpasang tetap di satu titik ruangan."
     ],
     "optionScores": [
       5,
-      2,
       3,
       1,
-      4
+      4,
+      2
     ],
     "answer": "A",
-    "explanation": "Layanan jemput bola berbasis data kader lokal untuk warga sakit berat/rentan adalah standar praktik terbaik pelayanan publik inklusif tanpa mengorbankan validitas verifikasi identitas (skor 5).",
+    "explanation": "Layanan jemput bola ke rumah bagi lansia sakit berat yang tidak mampu berjalan menjamin hak kependudukan terpenuhi tanpa mengorbankan validitas verifikasi (skor 5). Mengumpulkan berkas lalu menunda perekaman ke bulan berikutnya (skor 4) cukup terkoordinasi, namun memperlama pemenuhan hak warga rentan.",
     "tip": "Pelayanan inklusif di lapangan memadukan pos layanan terpusat dengan jemput bola terdata untuk kelompok berkebutuhan khusus."
   },
   {
@@ -494,21 +494,21 @@ const pelayananPublikDrafts: readonly TkpQuestionDraft[] = [
     "difficulty": "sedang",
     "prompt": "Saat melihat seorang pengunjung di ruang tunggu berbisik mengejek cara bicara pemohon penyandang disabilitas intelektual yang sedang Anda layani, tindakan paling etis yang Anda ambil adalah ...",
     "options": [
-      "Ikut tersenyum tipis supaya tidak membuat pengunjung lain merasa ditegur oleh petugas kantor",
-      "Menjaga suasana tetap bermartabat dengan melayani pemohon secara penuh perhatian, mengingatkan pengunjung ruang tunggu secara santun agar saling menghormati kenyamanan bersama, dan melindungi rasa aman pemohon",
-      "Memarahi pengunjung yang mengejek secara kasar hingga memicu keributan panjang di depan loket layanan",
-      "Mempercepat pengisian berkas pemohon disabilitas secara asal agar ia lekas keluar dari ruang tunggu",
-      "Memindahkan pemohon disabilitas ke ruangan gudang arsip sebelah supaya terhindar dari tatapan pengunjung lain"
+      "Memindahkan proses pelayanan pemohon tersebut ke ruang arsip sebelah agar terhindar dari tatapan maupun bisikan pengunjung lain di ruangan.",
+      "Melayani pemohon penuh hormat, mengingatkan pengunjung lain secara santun menjaga kenyamanan, dan melindungi rasa amannya.",
+      "Tetap fokus melayani pemohon dengan sangat ramah dan sabar tanpa menegur pengunjung lain agar suasana ruang tunggu tidak menjadi gaduh.",
+      "Menjaga sikap profesional dan menyelesaikan verifikasi berkas pemohon lebih cepat supaya ia segera dapat meninggalkan ruang tunggu dengan nyaman.",
+      "Memarahi pengunjung yang berbisik dengan suara lantang di depan loket sehingga memicu perdebatan di ruang pelayanan."
     ],
     "optionScores": [
-      1,
-      5,
-      3,
       2,
-      4
+      5,
+      4,
+      3,
+      1
     ],
     "answer": "B",
-    "explanation": "Skor 5 menegakkan etika antardiskriminasi sekaligus melindungi martabat psikologis pemohon rentan lewat teguran santun dan pelayanan fokus penuh hormat.",
+    "explanation": "Skor 5 melindungi martabat psikologis pemohon rentan lewat pelayanan penuh hormat sekaligus memberi teguran edukatif santun bagi lingkungan tunggu. Tetap ramah sambil mendiamkan ejekan terbuka (skor 4) menjaga ketenangan ruangan, namun membiarkan perilaku diskriminatif tanpa koreksi sopan.",
     "tip": "Lindungi martabat kelompok rentan secara bermartabat dan santun tanpa memicu keributan maupun mengucilkan korban."
   },
   {
@@ -517,21 +517,21 @@ const pelayananPublikDrafts: readonly TkpQuestionDraft[] = [
     "difficulty": "sulit",
     "prompt": "Instansi Anda meluncurkan situs web layanan terpadu baru, tetapi komunitas disabilitas netra melaporkan bahwa formulir daring tersebut tidak dapat dibaca perangkat lunak pembaca layar (screen reader) dan tombol kontras warnanya terlalu pudar. Sebagai penanggung jawab mutu layanan digital, respons paling tepat adalah ...",
     "options": [
-      "Menjawab keluhan bahwa pemohon tunanetra sebaiknya meminta bantuan kerabat saja saat mengisi formulir daring",
-      "Menyatakan situs web telah selesai 100% sesuai proyek tahun lalu sehingga perubahan tampilan belum dapat dikerjakan tahun ini",
-      "Menerima laporan dengan apresiasi, langsung melibatkan perwakilan komunitas disabilitas dalam uji coba aksesibilitas, lalu menugaskan tim pengembang memperbaiki struktur HTML semantik, label pembaca layar, serta kontras warna secara bertahap dan terukur",
-      "Menonaktifkan seluruh formulir daring tersebut selamanya dan mengembalikan semua warga ke antrean formulir kertas fisik",
-      "Menyediakan satu tautan kontak surel pribadi petugas untuk melayani warga tunanetra tanpa memperbaiki situs utamanya"
+      "Menjawab bahwa proyek situs web sudah selesai seratus persen tahun lalu sehingga tidak memungkinkan adanya perubahan antarmuka lagi.",
+      "Mencatat laporan kendala aksesibilitas tersebut ke daftar evaluasi tahunan untuk diusulkan dalam rencana anggaran pembaruan portal berikutnya.",
+      "Mengapresiasi laporan, mengajak perwakilan disabilitas menguji ulang, dan menugaskan tim pengembang memperbaiki struktur pembaca layar.",
+      "Menjelaskan dengan sopan bahwa portal memakai standar umum sehingga pemohon disarankan meminta bantuan kerabat.",
+      "Menyambut masukan tersebut dengan sopan lalu menyediakan jalur layanan surel khusus bagi pemohon tunanetra sambil menunda pembenahan situs utama."
     ],
     "optionScores": [
-      2,
       1,
-      5,
       3,
+      5,
+      2,
       4
     ],
     "answer": "C",
-    "explanation": "Aksesibilitas digital (web accessibility) merupakan hak kesetaraan layanan modern. Melibatkan pengguna disabilitas langsung saat perbaikan teknis dan membenahi akar masalah pada kode/antarmuka adalah solusi paling berkelanjutan dan berkeadilan (skor 5).",
+    "explanation": "Skor 5 menangani akar masalah kesetaraan layanan digital dengan melibatkan pengguna terdampak secara langsung dalam perbaikan teknis portal. Membuka kanal surel terpisah tanpa membenahi situs utama (skor 4) menunjukkan itikad baik, namun tetap mengecualikan kemandirian penyandang disabilitas di portal resmi.",
     "tip": "Prinsip layanan inklusif digital: dengar masukan komunitas terdampak, libatkan uji aksesibilitas, dan perbaiki akar desain."
   },
   {
@@ -540,21 +540,21 @@ const pelayananPublikDrafts: readonly TkpQuestionDraft[] = [
     "difficulty": "sulit",
     "prompt": "Di wilayah perbatasan dengan penduduk beragam suku dan tingkat literasi bahasa Indonesia formal yang belum merata, banyak warga asli setempat enggan mengurus dokumen legalitas karena takut merasa terasing saat diwawancarai petugas pendatang. Pendekatan pelayanan publik terbaik agar hak warga terpenuhi adalah ...",
     "options": [
-      "Menyerahkan seluruh pendataan kependudukan wilayah tersebut tanpa pendampingan kepada tokoh adat untuk dikumpulkan sendiri kapan pun siap",
-      "Tetap menggunakan istilah hukum kaku bahasa Indonesia saja karena bahasa resmi negara tidak perlu dijelaskan secara lokal",
-      "Mewajibkan seluruh warga yang belum fasih berbahasa Indonesia formal mengikuti ujian membaca dahulu sebelum dilayani",
-      "Menyediakan materi informasi visual dwibahasa yang ramah dipahami, menggandeng petugas pendamping atau tokoh lokal terpercaya sebagai penerjemah komunikasi, serta melayani penuh ketulusan tanpa nada merendahkan",
-      "Menunda program legalitas di wilayah terpencil sampai sekolah dasar di daerah tersebut berhasil meluluskan satu generasi baru"
+      "Menginstruksikan seluruh petugas loket berbicara lebih pelan dengan kalimat bahasa Indonesia sederhana dan sabar, tanpa membuat media visual atau pendamping lokal.",
+      "Tetap memakai istilah hukum baku pada seluruh formulir agar keseragaman kalimat administrasi negara terjaga utuh.",
+      "Menunda pelaksanaan layanan administrasi di wilayah perbatasan sampai tingkat pemahaman bahasa formal warga setempat dinilai memadai.",
+      "Menyediakan panduan visual dwibahasa yang mudah dipahami, menggandeng pendamping komunikasi lokal terpercaya, dan melayani tulus tanpa merendahkan.",
+      "Menyerahkan formulir kosong kepada kepala adat setempat untuk dibagikan dan dikumpulkan kembali setelah warga selesai mengisinya."
     ],
     "optionScores": [
-      3,
+      4,
       2,
       1,
       5,
-      4
+      3
     ],
     "answer": "D",
-    "explanation": "Menghadirkan informasi visual sederhana/dwibahasa dengan dukungan pendamping komunikasi lokal menjamin pesan aturan negara dipahami akurat sambil tetap menghormati masyarakat setempat (skor 5).",
+    "explanation": "Memadukan panduan visual dwibahasa dan pendamping komunikasi lokal menghilangkan hambatan bahasa sekaligus menjaga akurasi informasi (skor 5). Mengandalkan petugas berbicara pelan saja tanpa dukungan bahasa maupun materi visual (skor 4) tetap ramah, tetapi kurang efektif menjangkau warga berliterasi rendah.",
     "tip": "Atasi kendala literasi wilayah terpencil dengan pendekatan visual jelas dan pendamping lokal, tetap dalam standar sah."
   },
   {
@@ -563,21 +563,21 @@ const pelayananPublikDrafts: readonly TkpQuestionDraft[] = [
     "difficulty": "mudah",
     "prompt": "Setelah dokumen kependudukannya selesai lebih cepat dari perkiraan, seorang warga menyelipkan uang Rp100.000 ke saku jaket Anda sambil berkata \"ini sekadar ucapan terima kasih beli kopi\". Layanan tersebut sebenarnya gratis tanpa biaya apa pun. Sikap Anda adalah ...",
     "options": [
-      "Menerima uang tersebut karena pemohon memberikannya dengan tulus ikhlas setelah pelayanan benar-benar usai tanpa paksaan",
-      "Menitipkan uang itu kepada satpam pintu keluar agar seolah-olah bukan Anda yang menerimanya langsung",
-      "Menyimpannya sementara untuk membelikan camilan rekan kerja loket saat rapat istirahat siang bersama",
-      "Menolak uang itu dengan nada tersinggung dan mempermalukan pemohon di depan antrean warga lainnya",
-      "Menolak uang tersebut secara sopan namun tegas, menjelaskan bahwa seluruh layanan ini gratis sesuai ketentuan dan kepuasan warga sudah merupakan penghargaan terbaik bagi petugas"
+      "Mengucapkan terima kasih lalu memasukkan uang pemberian tersebut langsung ke kotak amal sosial kantor di hadapan warga sebagai bentuk transparansi.",
+      "Menerima uang ucapan terima kasih itu karena pelayanan sudah benar-benar tuntas dan diserahkan sukarela tanpa paksaan.",
+      "Mengembalikan uang dari saku dengan senyum sopan sambil mengatakan petugas dilarang menerima imbalan tunai, tanpa penjelasan lebih lanjut.",
+      "Menolak pemberian warga dengan nada tersinggung dan suara keras sehingga membuat pemohon merasa malu di depan pengunjung lain.",
+      "Menolak uang tersebut secara sopan namun tegas, menjelaskan bahwa seluruh layanan gratis menurut aturan, dan menyampaikan terima kasih atas apresiasinya."
     ],
     "optionScores": [
-      1,
-      2,
       3,
+      1,
       4,
+      2,
       5
     ],
     "answer": "E",
-    "explanation": "Menolak pemberian terima kasih atas layanan gratis dengan sikap santun, tegas, dan edukatif memutus budaya uang pelicin/gratifikasi tanpa menyinggung martabat warga (skor 5).",
+    "explanation": "Skor 5 menolak gratifikasi secara tegas, sopan, dan edukatif sehingga warga memahami hak layanan bebas biaya tanpa merasa dipermalukan. Mengembalikan uang secara sopan tanpa menjelaskan ketentuan layanan gratis (skor 4) menjaga integritas pribadi, tetapi kurang mengedukasi publik untuk mencegah kebiasaan serupa.",
     "tip": "Tolak setiap uang terima kasih/tip pada pelayanan publik secara santun, tegas, dan tidak mempermalukan warga."
   },
   {
@@ -586,21 +586,21 @@ const pelayananPublikDrafts: readonly TkpQuestionDraft[] = [
     "difficulty": "mudah",
     "prompt": "Menurut Anda, cara paling efektif agar masyarakat di kantor pelayanan terhindar dari praktik percaloan dan pungutan liar adalah ...",
     "options": [
-      "Memasang informasi syarat, tarif resmi, estimasi waktu layanan secara terbuka (cetak & digital), menyediakan mekanisme antrean dan lacak status transparan, serta menindak tegas calo dengan aturan jelas",
-      "Membatasi papan informasi aturan supaya hanya petugas loket yang menjelaskan isi persyaratan secara lisan bila ditanya",
-      "Menyediakan loket khusus tersembunyi untuk biro jasa perantara resmi yang mengurus berkas warga secara cepat",
-      "Menutup akses pengaduan publik agar reputasi kantor tetap tampak bersih di media sosial",
-      "Membiarkan warga memilih sendiri apakah ingin mengurus langsung lewat antrean panjang atau menggunakan perantara luar"
+      "Mempublikasikan syarat, tarif, dan waktu layanan secara terbuka, menyediakan lacak antrean, dan menindak tegas praktik percaloan.",
+      "Membatasi akses papan informasi persyaratan tertentu di ruang tunggu agar warga berkonsultasi langsung kepada petugas penerima berkas.",
+      "Menempatkan petugas keamanan di pintu masuk guna memeriksa identitas pengantar berkas serta mengimbau warga mengurus sendiri secara langsung.",
+      "Meminta seluruh petugas loket menjelaskan rincian biaya serta lama proses secara lisan dan terbuka setiap kali ada warga yang menanyakannya.",
+      "Menyediakan jalur khusus bagi biro jasa perantara berbayar supaya aktivitas pengurusan dokumen di sekitar kantor menjadi lebih teratur."
     ],
     "optionScores": [
       5,
-      3,
       2,
-      1,
-      4
+      4,
+      3,
+      1
     ],
     "answer": "A",
-    "explanation": "Calo tumbuh subur saat informasi syarat, biaya, dan durasi kabur. Keterbukaan standar layanan (maklumat pelayanan), kejelasan tarif/PNBP resmi, serta pelacakan status antrean menutup ruang gerak calo secara sistemik (skor 5).",
+    "explanation": "Calo muncul saat syarat, biaya, dan alur kerja tidak transparan; keterbukaan informasi menyeluruh disertai sistem lacak status dan penegakan aturan (skor 5) menutup celah pungli secara sistemik. Pengawasan pintu masuk oleh keamanan (skor 4) membantu pencegahan awal, tetapi tidak membenahi transparansi informasi.",
     "tip": "Obat paling ampuh melawan calo dan pungli adalah transparansi syarat, biaya, waktu, dan jejak status layanan."
   },
   {
@@ -609,21 +609,21 @@ const pelayananPublikDrafts: readonly TkpQuestionDraft[] = [
     "difficulty": "sedang",
     "prompt": "Seorang pemohon menanyakan mengapa pengajuan izinnya memakan waktu 5 hari kerja sedangkan pengajuan tetangganya yang mengurus dokumen berbeda selesai dalam 2 hari. Agar tercipta keterbukaan informasi tanpa prasangka, sikap Anda adalah ...",
     "options": [
-      "Menjawab pendek bahwa tiap orang memiliki keberuntungan antrean masing-masing yang tidak dapat dibandingkan",
-      "Menjelaskan secara transparan perbedaan klasifikasi risiko layanan sesuai standar waktu (SLA) masing-masing jenis izin, menunjukkan rincian alur di papan/situs resmi, serta memberikan nomor resi pelacakan status berkasnya",
-      "Mengalihkan pembicaraan dengan menyatakan bahwa berkasnya lebih lambat karena tulisan tangannya kurang rapi",
-      "Meminta pemohon tersebut menanyakan langsung selisih harinya ke tetangga yang bersangkutan",
-      "Berjanji memotong alur verifikasi izinnya agar bisa keluar dalam dua hari supaya pemohon tidak bertanya lagi"
+      "Menjanjikan percepatan verifikasi di luar prosedur agar izinnya terbit dalam dua hari seperti tetangganya.",
+      "Menjelaskan perbedaan standar waktu tiap izin secara terbuka, menunjukkan alurnya, dan memberi resi lacak berkas.",
+      "Mengarahkan pemohon membaca papan maklumat pelayanan di dinding lobi untuk membandingkan perkiraan durasi masing-masing jenis layanan.",
+      "Menjawab singkat bahwa proses antrean tiap pemohon bersifat internal sehingga tidak dapat dibandingkan dengan pengajuan milik warga lainnya.",
+      "Menjelaskan secara sopan bahwa tiap jenis dokumen memiliki tahapan pemeriksaan teknis berbeda dan meyakinkan berkasnya sedang diproses sesuai jadwal."
     ],
     "optionScores": [
-      2,
-      5,
       1,
+      5,
       3,
+      2,
       4
     ],
     "answer": "B",
-    "explanation": "Transparansi standar waktu (SLA) per jenis layanan disertai bukti resi pelacakan menumbuhkan kepercayaan publik bahwa instansi bekerja berdasar aturan objektif, bukan diskriminasi (skor 5).",
+    "explanation": "Transparansi standar waktu (SLA) disertai bukti resi pelacakan menumbuhkan kepercayaan bahwa pelayanan berjalan objektif sesuai risiko layanan (skor 5). Menjelaskan perbedaan secara lisan dengan sopan tanpa menunjukkan rincian alur maupun resi lacak (skor 4) belum memberi bukti keterbukaan yang dapat dipantau.",
     "tip": "Jawab kecurigaan publik dengan data standar waktu resmi (SLA) dan fasilitas pelacakan status berkas yang terbuka."
   },
   {
@@ -632,21 +632,21 @@ const pelayananPublikDrafts: readonly TkpQuestionDraft[] = [
     "difficulty": "sedang",
     "prompt": "Anda memergoki petugas honorer baru di gerbang depan menerima imbalan uang dari pemohon yang ingin dibantu mencetakkan formulir gratis padahal layanan cetak sudah disediakan kantor tanpa biaya. Langkah terbaik Anda adalah ...",
     "options": [
-      "Mendiamkannya karena petugas honorer tersebut berpenghasilan kecil dan hanya membantu mencetak dokumen",
-      "Memarahi petugas honorer tersebut di hadapan seluruh warga antrean lalu merampas uangnya untuk kas unit",
-      "Mengingatkan petugas tersebut secara personal bahwa hal itu dilarang, mengembalikan uang kepada pemohon dengan permintaan maaf dan menegaskan layanan bebas biaya, serta melaporkan temuan ke atasan untuk pembinaan disiplin dan pemasangan rambu bebas pungli",
-      "Mencatat namanya diam-diam untuk menjadikannya bahan sindiran dalam pertemuan informal staf",
-      "Meminta bagian setengah dari uang tersebut untuk membeli persediaan kertas tambahan bagi loket"
+      "Meminta petugas honorer tersebut segera mengembalikan uang kepada pemohon secara diam-diam dan mengingatkannya agar tidak mengulangi perbuatan.",
+      "Memarahi petugas honorer di depan ruang tunggu agar pengunjung serta pegawai lain jera melihat ketegasannya.",
+      "Menegur petugas secara pribadi, mengembalikan uang pemohon dengan maaf, lalu melapor atasan untuk pembinaan dan rambu biaya.",
+      "Membiarkan kejadian tersebut berlangsung karena petugas honorer baru hanya menerima imbalan kecil untuk jasa mencetak.",
+      "Mencatat kejadian tersebut untuk dilaporkan secara tertutup kepada atasan di akhir jam kerja tanpa menegur langsung petugas honorer itu."
     ],
     "optionScores": [
-      2,
-      3,
-      5,
       4,
-      1
+      2,
+      5,
+      1,
+      3
     ],
     "answer": "C",
-    "explanation": "Skor 5 mengembalikan hak warga secara bermartabat, mengedukasi etika bebas pungli secara tegas namun manusiawi, dan menutup celah berulang lewat pelaporan pembinaan serta pemasangan informasi rambu biaya resmi.",
+    "explanation": "Skor 5 memulihkan hak warga seketika, mengoreksi petugas secara bermartabat, dan menutup peluang pengulangan lewat laporan pembinaan serta rambu bebas biaya. Sekadar menyuruh mengembalikan uang diam-diam (skor 4) menyelesaikan kejadian sesaat, namun tanpa pembinaan formal dan perbaikan sistem pengawasan.",
     "tip": "Integritas pelayanan memulihkan hak warga yang dirugikan, membina pelanggar secara prosedural, dan memperkuat rambu informasi."
   },
   {
@@ -655,21 +655,21 @@ const pelayananPublikDrafts: readonly TkpQuestionDraft[] = [
     "difficulty": "sedang",
     "prompt": "Sesuai ketentuan tarif resmi layanan penerbitan dokumen, pemohon wajib membayar retribusi melalui kanal nontunai (virtual account/QRIS negara), namun seorang pemohon menyerahkan uang tunai langsung ke tangan Anda dengan alasan tidak membawa kartu ATM. Tindakan paling aman dan berintegritas adalah ...",
     "options": [
-      "Menerima uang tunainya dahulu lalu mentransferkan dari rekening pribadi Anda dengan menyisihkan selisih pembulatan untuk jasa bantuan",
-      "Menerima uang tunainya dan menyimpannya di laci meja untuk disetorkan ke bank akhir bulan bersama berkas lain",
-      "Menolak pemohon pulang tanpa memberi tahu alternatif kanal bayar yang mudah dijangkau di sekitar lokasi",
-      "Menolak penerimaan uang tunai langsung di loket secara sopan, menerbitkan kode bayar resmi sesuai tagihan, dan memandu pemohon menyetor melalui kasir bank/gerai pembayaran resmi yang terhubung langsung ke kas negara",
-      "Menggunakan kupon pembayaran milik pemohon lain agar tagihan hari itu tertutupi dahulu secara lisan"
+      "Menahan berkas permohonan di meja layanan sementara waktu sembari menyarankan pemohon menghubungi keluarganya untuk mentransferkan tagihan.",
+      "Menerima dan menyimpan uang tunai di laci meja untuk disetorkan secara kolektif ke bank pada penghujung bulan.",
+      "Menjelaskan aturan wajib pembayaran nontunai secara sopan dan meminta pemohon kembali lain waktu setelah membawa kartu ATM atau aplikasi pembayaran seluler.",
+      "Menolak penerimaan uang tunai di loket dengan sopan, menerbitkan kode bayar resmi, dan memandu warga menyetor lewat gerai terhubung kas negara.",
+      "Menerima uang tunainya sementara waktu lalu membayarkannya memakai rekening pribadi petugas agar proses layanan warga dapat segera berjalan."
     ],
     "optionScores": [
       3,
       1,
-      2,
+      4,
       5,
-      4
+      2
     ],
     "answer": "D",
-    "explanation": "Mencegah uang tunai melintas di meja petugas loket (no cash handling) menghindari potensi salah hitung maupun dugaan pungli, sembari memandu ke kanal setor resmi yang masuk kas negara secara transparan (skor 5).",
+    "explanation": "Menolak uang tunai di meja layanan sekaligus memfasilitasi kode bayar ke kanal resmi mitra kas negara (skor 5) menjaga integritas bebas pungli dan tetap memberi solusi nyata. Menjelaskan aturan nontunai secara sopan lalu menyuruh warga pulang mengambil kartu (skor 4) patuh pada aturan, namun kurang membantu warga mencari kanal setor terdekat.",
     "tip": "Hindari menerima uang tunai pribadi di loket; selalu arahkan transaksi lewat kanal pembayaran resmi langsung ke kas negara/daerah."
   },
   {
@@ -678,21 +678,21 @@ const pelayananPublikDrafts: readonly TkpQuestionDraft[] = [
     "difficulty": "sedang",
     "prompt": "Dalam pelaporan hasil survei kepuasan masyarakat (SKM) triwulanan di unit Anda, rekan tim mengusulkan menyaring hanya responden yang tampak puas agar skor unit tetap meraih predikat terbaik kabupaten. Sikap berintegritas Anda adalah ...",
     "options": [
-      "Menyetujui usulan itu khusus untuk laporan eksternal sambil menyimpan keluhan asli sebagai catatan pribadi",
-      "Membantu memilih sebagian responden yang tidak banyak berkomentar supaya pengisian survei berlangsung cepat",
-      "Membiarkan rekan melakukannya sendiri asalkan nama Anda tidak dicantumkan sebagai penanggung jawab pengumpul data",
-      "Menghapus hasil survei seluruh warga yang permohonannya ditolak supaya angka tidak terpengaruh kekecewaan pemohon",
-      "Menolak manipulasi sampel survei, memastikan pengisian SKM dilakukan terbuka acak oleh seluruh pemohon, dan menjadikan masukan kritis sebagai bahan perbaikan nyata layanan"
+      "Memilih sebagian responden yang urusannya lancar agar pengisian kuesioner berlangsung cepat tanpa menahan antrean loket berikutnya.",
+      "Menolak usulan tersebut secara halus dengan mengumpulkan data objektif dari meja sendiri, lalu membiarkan rekan menjalankan penyaringan di meja lain.",
+      "Mengusulkan agar komentar negatif dipisahkan sebagai catatan evaluasi internal saja sementara skor utama tetap dirangkum dari responden yang puas.",
+      "Menghapus seluruh hasil penilaian warga yang permohonannya ditolak supaya angka indeks kepuasan unit tidak turun oleh kekecewaan mereka.",
+      "Menolak manipulasi sampel survei, memastikan pengisian terbuka acak bagi seluruh pemohon, dan menjadikan kritik warga sebagai bahan peningkatan mutu nyata."
     ],
     "optionScores": [
-      3,
       2,
       4,
+      3,
       1,
       5
     ],
     "answer": "E",
-    "explanation": "Survei Kepuasan Masyarakat berguna memperbaiki mutu layanan publik secara jujur. Memanipulasi sampel demi citra rapor palsu merusak akuntabilitas instansi dan menutup peluang evaluasi nyata (skor 5).",
+    "explanation": "Skor 5 menjaga kejujuran data evaluasi publik agar kelemahan layanan benar-benar terdeteksi dan dibenahi. Sekadar bersikap jujur di meja sendiri tanpa mencegah manipulasi tim secara kolektif (skor 4) menjaga integritas personal, namun membiarkan pelaporan mutu instansi tetap bias.",
     "tip": "Transparansi evaluasi menuntut data objektif dan apa adanya, bukan manipulasi nilai demi citra semu."
   },
   {
@@ -701,21 +701,21 @@ const pelayananPublikDrafts: readonly TkpQuestionDraft[] = [
     "difficulty": "sulit",
     "prompt": "Seorang kontraktor rekanan lama kantor Anda menghubungi lewat pesan pribadi meminta informasi awal mengenai nilai perkiraan pemenang dan kelemahan dokumen pesaing sebelum pengumuman lelang diterbitkan resmi, sambil menjanjikan peningkatan dana bantuan kegiatan sosial pegawai akhir tahun. Sebagai bagian unit layanan pengadaan, tindakan paling berintegritas adalah ...",
     "options": [
-      "Menolak tegas permintaan tersebut sebagai informasi rahasia proses pengadaan, memutus komunikasi pribadi di luar sistem e-procurement, dan mencatat atau melaporkan upaya intervensi tersebut kepada pimpinan pengadaan/UPG agar keadilan lelang terjaga",
-      "Memberikan gambaran umum kisaran angka tanpa menyebut angka eksak supaya kontrak tidak tampak bocor",
-      "Hanya membalas pesan dengan ramah tanpa melaporkan upaya pendekatan tersebut kepada pihak pengawas mana pun",
-      "Mengizinkan rekanan tersebut melihat dokumen pesaing sebatas halaman identitas perusahaan agar persiapan lebih adil",
-      "Meminta rekanan menyalurkan dana kegiatan sosial pegawai lebih dahulu sebelum membahas peluang lelang"
+      "Menolak tegas permintaan rahasia lelang, memutus komunikasi pribadi di luar sistem, dan melapor ke pimpinan atau UPG.",
+      "Membocorkan kisaran perkiraan nilai pemenang secara rahasia asalkan dana bantuan sosial akhir tahun pegawai benar-benar disalurkan.",
+      "Membalas singkat untuk mengingatkan rekanan agar memantau seluruh informasi pengadaan hanya melalui portal resmi e-procurement instansi.",
+      "Memberikan gambaran umum mengenai kelengkapan administrasi standar secara normatif tanpa menyebut angka penawaran atau nama pesaing.",
+      "Menolak permintaan tersebut secara sopan lalu memblokir pesan pribadi kontraktor agar proses evaluasi tetap aman, tanpa melaporkannya ke UPG."
     ],
     "optionScores": [
       5,
-      2,
-      4,
+      1,
       3,
-      1
+      2,
+      4
     ],
     "answer": "A",
-    "explanation": "Membocorkan evaluasi lelang melanggar hukum pengadaan dan konflik kepentingan; menolak tegas, mengembalikan seluruh komunikasi ke jalur resmi e-procurement, dan melapor ke atasan/UPG menjamin akuntabilitas bersih (skor 5).",
+    "explanation": "Membocorkan data evaluasi lelang merusak keadilan pengadaan; menolak tegas, menutup komunikasi informal, dan melaporkan upaya intervensi ke pimpinan atau UPG menjamin akuntabilitas penuh (skor 5). Menolak secara sopan tanpa melaporkan upaya suap terselubung tersebut (skor 4) berisiko membiarkan pelaku mengulangi pendekatan ke pihak lain.",
     "tip": "Jaga kerahasiaan data tender/layanan strategis dari kontak informal, dan laporkan setiap upaya intervensi/suap terselubung."
   },
   {
@@ -724,21 +724,21 @@ const pelayananPublikDrafts: readonly TkpQuestionDraft[] = [
     "difficulty": "sulit",
     "prompt": "Pada portal keterbukaan aduan instansi, masuk laporan anonim lengkap disertai foto tanda bukti yang menuduh salah satu rekan dekat Anda memungut biaya tambahan pembuatan surat keterangan. Sebagai petugas pengelola pengaduan berintegritas, langkah tepat Anda adalah ...",
     "options": [
-      "Menghapus laporan anonim tersebut karena pengadu tidak berani mencantumkan nama lengkap dan alamat aslinya",
-      "Memverifikasi bukti aduan secara objektif tanpa memberitahu atau membela rekan sebelum diperiksa, lalu meneruskannya ke atasan pemeriksa/inspektorat internal sesuai SOP kerahasiaan pengaduan",
-      "Langsung menelepon rekan tersebut dan memberitahu rincian foto bukti agar ia bisa segera merapikan alibinya",
-      "Menyebarkan foto bukti aduan itu di grup percakapan umum pegawai sebagai bahan peringatan terbuka tanpa prosedur klarifikasi",
-      "Membiarkan tiket pengaduan berstatus menunggu tanpa tindak lanjut hingga akhir periode pelaporan tahunan"
+      "Meneruskan tiket pengaduan beserta lampiran fotonya ke atasan berwenang sesuai prosedur, setelah sebelumnya mengonfirmasi singkat kepada rekan.",
+      "Memverifikasi bukti aduan secara objektif tanpa membocorkannya ke rekan, lalu meneruskan ke inspektorat sesuai aturan.",
+      "Membagikan salinan foto tanpa identitas itu ke grup percakapan umum kantor sebagai pengingat terbuka bagi seluruh staf pelayanan.",
+      "Menghapus laporan dari portal aduan karena pengirim anonim belum memiliki dasar pertanggungjawaban hukum.",
+      "Menahan laporan anonim tersebut di daftar tunggu sampai masuk aduan kedua yang menyertakan identitas pelapor secara lebih lengkap."
     ],
     "optionScores": [
-      1,
+      4,
       5,
       2,
-      3,
-      4
+      1,
+      3
     ],
     "answer": "B",
-    "explanation": "Integritas pengelola pengaduan menuntut independensi dari relasi pribadi (konflik kepentingan), kerahasiaan pelapor dan proses bukti agar tidak dirusak pelaku, serta penyampaian ke pemeriksa berwenang secara objektif (skor 5).",
+    "explanation": "Integritas pengelola pengaduan menuntut objektivitas, kerahasiaan pelapor, serta pencegahan penghilangan barang bukti sebelum pemeriksaan resmi oleh atasan atau inspektorat (skor 5). Mengonfirmasi terlebih dahulu kepada rekan yang diadukan sebelum melapor (skor 4) berniat adil secara personal, tetapi berisiko membocorkan proses pemeriksaan.",
     "tip": "Kelola aduan terhadap rekan kerja secara independen, rahasia, dan berbasis verifikasi bukti ke unit pemeriksa berwenang."
   },
   {
@@ -747,21 +747,21 @@ const pelayananPublikDrafts: readonly TkpQuestionDraft[] = [
     "difficulty": "mudah",
     "prompt": "Seorang warga menuliskan ulasan bintang satu di portal pengaduan publik karena merasa petugas loket terlalu lama memproses permohonannya akibat sistem sempat lambat di pagi hari. Tindakan paling konstruktif dari unit Anda adalah ...",
     "options": [
-      "Mengabaikan ulasan bintang satu karena sudah biasa dalam layanan masyarakat yang jumlah pengunjungnya banyak",
-      "Meminta pengelola portal menghapus komentar negatif tersebut karena mencoreng reputasi dinas",
-      "Menanggapi ulasan secara sopan dan berterima kasih atas masukannya, menjelaskan upaya percepatan yang sudah dilakukan, lalu mengevaluasi kendala sistem pagi hari agar tidak terulang",
-      "Menghubungi nomor telepon pelapor untuk menuntutnya mengganti ulasan menjadi bintang lima",
-      "Menyalahkan jaringan penyedia telekomunikasi secara defensif dalam balasan ulasan tanpa rencana perbaikan internal"
+      "Memberikan balasan standar di portal aduan bahwa keterlambatan kerap terjadi ketika lonjakan sistem nasional pada jam sibuk pagi hari.",
+      "Menghubungi nomor pelapor secara pribadi memintanya mengubah ulasan menjadi bintang lima setelah dokumennya terbit.",
+      "Menanggapi ulasan dengan sopan disertai ucapan terima kasih, memaparkan langkah pembenahan, lalu mengevaluasi beban sistem pagi.",
+      "Membalas ulasan secara santun dengan menyampaikan permohonan maaf dan berterima kasih atas masukan warga, tanpa mengaudit kendala pagi di internal.",
+      "Mengabaikan ulasan bintang satu itu karena keluhan wajar terjadi pada unit dengan jumlah pengunjung harian tinggi."
     ],
     "optionScores": [
-      2,
+      3,
       1,
       5,
-      3,
-      4
+      4,
+      2
     ],
     "answer": "C",
-    "explanation": "Umpan balik negatif adalah bahan evaluasi perbaikan mutu. Respons santun, akuntabel, tidak defensif, dan fokus pada perbaikan akar kendala membangun kepercayaan masyarakat (skor 5).",
+    "explanation": "Skor 5 memperlakukan keluhan publik sebagai pemicu perbaikan mutu berkelanjutan: menjawab santun, akuntabel, dan mengevaluasi akar masalah sistem pagi. Memberi balasan sopan dan permintaan maaf tanpa menindaklanjuti audit internal (skor 4) meredakan kesan di permukaan, namun membiarkan gangguan berulang.",
     "tip": "Lihat keluhan sebagai data perbaikan mutu, bukan serangan pribadi; jawab dengan santun, akuntabel, dan perbaiki akarnya."
   },
   {
@@ -770,21 +770,21 @@ const pelayananPublikDrafts: readonly TkpQuestionDraft[] = [
     "difficulty": "mudah",
     "prompt": "Akibat kesalahan input pegawai loket, nama pemilik pada surat izin yang baru terbit tertulis keliru satu huruf sehingga pemohon kembali datang mengadu. Sikap paling bertanggung jawab adalah ...",
     "options": [
-      "Menyuruh pemohon memakai surat yang salah ketik dulu dengan alasan perbedaan satu huruf tidak memengaruhi isi inti dokumen",
-      "Menuduh pemohon menulis kurang jelas di formulir awal sehingga bukan kesalahan petugas loket",
-      "Meminta pemohon mendaftar ulang antrean baru dari nomor akhir dan membayar biaya administrasi cetak ulang",
-      "Segera meminta maaf secara tulus atas kekeliruan petugas, memprioritaskan perbaikan dan pencetakan ulang saat itu juga tanpa biaya, serta mengevaluasi ketelitian verifikasi ulang bersama pemohon sebelum cetak",
-      "Mencoret huruf yang salah memakai pulpen di tempat lalu membubuhkan paraf biasa tanpa menerbitkan dokumen resmi baru"
+      "Menjelaskan bahwa perbedaan satu huruf jarang menjadi kendala substantif sehingga warga disarankan tetap memakai surat yang sudah terbit.",
+      "Meminta maaf dengan sopan atas kesalahan penulisan dan menerbitkan revisi surat tanpa pungutan biaya mengikuti jadwal antrean cetak reguler dua hari.",
+      "Mencoret huruf yang salah ketik dengan rapi, membubuhkan stempel koreksi resmi dan paraf petugas agar surat tersebut dapat langsung dipergunakan.",
+      "Meminta maaf tulus atas kekeliruan petugas, memprioritaskan cetak ulang seketika tanpa biaya, dan memperketat pemeriksaan pra-cetak bersama warga.",
+      "Meminta pemohon mengambil nomor antrean baru dan menanggung biaya administrasi penggantian blanko karena draf awal telah disetujui sebelumnya."
     ],
     "optionScores": [
       2,
-      1,
+      4,
       3,
       5,
-      4
+      1
     ],
     "answer": "D",
-    "explanation": "Mengakui kesalahan instansi secara tulus, langsung memperbaiki layanan tanpa membebani warga ulang (zero-cost recovery), dan memperbaiki mekanisme cek akhir mencerminkan tanggung jawab profesional tinggi (skor 5).",
+    "explanation": "Saat kesalahan berasal dari internal, tanggung jawab terbaik adalah mengakui keliru dengan tulus, melakukan pemulihan instan tanpa biaya, dan memperbaiki titik kontrol verifikasi (skor 5). Memperbaiki secara gratis namun memasukkan ke antrean reguler dua hari (skor 4) tetap membebani waktu warga akibat kesalahan petugas.",
     "tip": "Saat kekeliruan berasal dari pihak internal, akui jujur, perbaiki cepat tanpa membebani warga lagi, dan perbaiki titik kontrolnya."
   },
   {
@@ -793,11 +793,11 @@ const pelayananPublikDrafts: readonly TkpQuestionDraft[] = [
     "difficulty": "sedang",
     "prompt": "Setiap hari Senin pagi, kotak keluhan fisik di kantor Anda selalu penuh berisi keluhan senada tentang ruang tunggu yang panas dan kurangnya petunjuk arah loket ke-3 dan ke-4. Sebagai anggota tim pelayanan, langkah perbaikan nyata yang paling tepat adalah ...",
     "options": [
-      "Mengosongkan isi kotak keluhan setiap minggu lalu menyimpannya di gudang tanpa pernah membacakannya pada rapat mingguan",
-      "Memasang kipas angin seadanya dari barang bekas gudang sambil tetap membiarkan petunjuk arah tidak lengkap",
-      "Menjelaskan kepada pemohon bahwa ruangan sempit merupakan keterbatasan gedung tua yang sulit diubah",
-      "Mengirimkan foto tumpukan keluhan itu ke bagian keuangan tanpa disertai usulan perbaikan konkret apa pun",
-      "Merekapitulasi keluhan berulang dengan data frekuensi, merancang penunjuk arah visual yang jelas sebagai solusi cepat berbiaya rendah, sekaligus mengajukan perbaikan pendingin ruang tunggu dalam rapat evaluasi pimpinan"
+      "Mengosongkan isi kotak keluhan setiap akhir pekan untuk diarsipkan di gudang tanpa membawa temuan berulangnya ke dalam rapat evaluasi unit.",
+      "Mengarahkan petugas penerima tamu berdiri lebih aktif di pintu masuk guna memandu pengunjung mencari lokasi loket tiga dan empat secara lisan.",
+      "Menyampaikan kepada pengunjung dengan ramah bahwa bangunan kantor memang berkapasitas terbatas sehingga sirkulasi udara ruang tunggu belum ideal.",
+      "Merekap seluruh isi kotak keluhan secara lengkap dalam laporan bulanan kepada kepala bagian sarana guna menunggu alokasi anggaran perbaikan gedung.",
+      "Merekap keluhan berulang dengan data frekuensi, segera memasang penunjuk arah visual sebagai solusi cepat, dan mengajukan pembenahan pendingin ruangan ke rapat."
     ],
     "optionScores": [
       1,
@@ -807,7 +807,7 @@ const pelayananPublikDrafts: readonly TkpQuestionDraft[] = [
       5
     ],
     "answer": "E",
-    "explanation": "Skor 5 memadukan pengumpulan bukti keluhan (berbasis data), perbaikan cepat yang langsung bisa dilakukan (signage/penunjuk arah), dan pengajuan solusi fasilitas secara terencana ke pimpinan.",
+    "explanation": "Skor 5 mengolah keluhan menjadi data evaluasi, langsung mengeksekusi perbaikan cepat berbiaya rendah (penunjuk arah), dan mengawal perbaikan fasilitas jangka menengah ke pimpinan. Hanya merangkum laporan bulanan sambil menunggu anggaran untuk seluruh poin (skor 4) tertib secara administratif, tetapi membiarkan kebingungan arah berlarut.",
     "tip": "Kelompokkan keluhan berulang menjadi data evaluasi, lakukan perbaikan cepat berdaya dampak langsung, dan ajukan pembenahan strukturalnya."
   },
   {
@@ -816,21 +816,21 @@ const pelayananPublikDrafts: readonly TkpQuestionDraft[] = [
     "difficulty": "sedang",
     "prompt": "Seorang pemohon mengeluhkan bahwa nomor layanan panggilan telepon kantor tidak pernah diangkat saat jam sibuk pagi, padahal instansi selalu mencantumkan nomor tersebut pada situs resminya. Tindakan korektif paling tepat agar pengaduan dan konsultasi tetap responsif adalah ...",
     "options": [
-      "Menjadwalkan piket petugas penerima panggilan secara bergilir terukur, menambahkan kanal respons otomatis terstruktur (FAQ/WhatsApp resmi) untuk pertanyaan umum, dan memantau tingkat panggilan terjawab setiap pekan",
-      "Menghapus nomor telepon resmi dari situs web instansi supaya warga tidak kecewa ketika gagal menghubungi",
-      "Membiarkan telepon berdering saat jam sibuk karena melayani pemohon tatap muka jauh lebih penting daripada penelepon",
-      "Mengalihkan nada sambung panggilan menjadi pesan suara otomatis tanpa ada petugas yang memantau balasannya",
-      "Memasang jadwal jam menelepon hanya pukul dua sampai tiga siang setiap hari Jumat saja"
+      "Mengatur jadwal piket penerima telepon bergilir, menambah FAQ atau WhatsApp resmi, dan memantau tingkat panggilan terjawab.",
+      "Menugaskan seorang staf administrasi mengangkat panggilan masuk secara bergantian saat tugas loket tatap muka sedang tidak terlalu padat.",
+      "Mengaktifkan layanan pesan suara otomatis pada saluran telepon kantor saat jam sibuk pagi tanpa jadwal pemeriksaan balasan secara berkala.",
+      "Menghapus pencantuman nomor telepon kantor dari halaman situs resmi agar masyarakat tidak lagi kecewa saat panggilan gagal terhubung.",
+      "Memperbarui keterangan pada situs resmi bahwa layanan konsultasi telepon paling optimal dihubungi pada jam kerja siang hingga sore hari."
     ],
     "optionScores": [
       5,
-      1,
-      3,
       4,
-      2
+      2,
+      1,
+      3
     ],
     "answer": "A",
-    "explanation": "Skor 5 menyelesaikan masalah ketidakterjangkauan kanal komunikasi resmi dengan tata kelola piket terukur, inovasi FAQ digital resmi, serta pemantauan kinerja layanan.",
+    "explanation": "Setiap kanal informasi resmi wajib dikelola dengan jadwal petugas jelas, dukungan FAQ digital, dan pemantauan kinerja agar responsif (skor 5). Menunjuk staf mengangkat telepon saat sela waktu senggang saja tanpa jadwal maupun evaluasi (skor 4) berpotensi tetap mengabaikan panggilan di jam puncak.",
     "tip": "Setiap kanal layanan yang dipublikasikan resmi wajib dikelola dengan penjadwalan petugas, sistem respons, dan pemantauan rutin."
   },
   {
@@ -839,21 +839,21 @@ const pelayananPublikDrafts: readonly TkpQuestionDraft[] = [
     "difficulty": "sedang",
     "prompt": "Rekan kerja di tim layanan sering menunda menutup tiket aduan masyarakat hingga berhari-hari hanya karena menunggu jawaban formal dari seksi lain yang tidak kunjung merespons, sementara pelapor terus menanyakan progresnya. Sebagai rekan sejawat dalam tim layanan, sikap paling proaktif adalah ...",
     "options": [
-      "Menutup paksa tiket pengaduan tersebut dengan keterangan selesai agar persentase kecepatan layanan tampak baik di laporan",
-      "Membantu menindaklanjuti langsung koordinasi lintas seksi guna mempercepat kepastian informasi teknis sekaligus memberikan pembaruan status berkala kepada warga pengadu agar tidak merasa diabaikan",
-      "Menyarankan rekan membiarkan tiket menumpuk hingga pimpinan sendiri yang turun tangan menegur seksi lambat tersebut",
-      "Menyampaikan keluhan kepada warga bahwa seksi teknis lain di kantor memang terkenal sangat lamban bekerja",
-      "Mengubah batas waktu penyelesaian standar pada sistem pelaporan menjadi enam puluh hari agar tiket tidak terlihat terlambat"
+      "Mengingatkan rekan sejawat secara rutin setiap akhir pekan agar menindaklanjuti tiket aduan tertunda sebelum tenggat pelaporan bulanan.",
+      "Membantu koordinasi langsung lintas seksi guna mempercepat kepastian teknis sekaligus rutin mengabari progres kepada pelapor.",
+      "Menutup tiket aduan lebih awal berstatus selesai agar grafik persentase kecepatan respons unit terlihat tinggi.",
+      "Menjaga komunikasi jujur kepada warga pelapor melalui pembaruan status berkala sambil tetap menunggu jawaban tertulis resmi dari seksi teknis.",
+      "Memperpanjang batas waktu standar penyelesaian aduan di aplikasi internal agar antrean tiket lintas seksi tidak tercatat melewati tenggat."
     ],
     "optionScores": [
-      1,
-      5,
       3,
-      2,
-      4
+      5,
+      1,
+      4,
+      2
     ],
     "answer": "B",
-    "explanation": "Skor 5 menunjukkan kepemilikan tanggung jawab layanan (ownership): memfasilitasi percepatan koordinasi lintas unit dan menjaga komunikasi status jujur kepada pemohon tanpa merusak akuntabilitas tiket maupun citra lembaga.",
+    "explanation": "Skor 5 menunjukkan tanggung jawab utuh: aktif menjembatani koordinasi lintas unit untuk mempercepat solusi teknis sekaligus menjaga transparansi progres ke warga. Memberi kabar status secara jujur namun tetap pasif menunggu respons unit lain (skor 4) menjaga komunikasi, tetapi belum memutus kemacetan penyelesaian.",
     "tip": "Jangan memanipulasi status tiket maupun menyalahkan unit lain ke publik; kejar eskalasi internal dan update jujur kepada warga."
   },
   {
@@ -862,21 +862,21 @@ const pelayananPublikDrafts: readonly TkpQuestionDraft[] = [
     "difficulty": "sedang",
     "prompt": "Dalam rapat evaluasi triwulanan, atasan meminta ide inovatif sederhana untuk menurunkan angka keluhan warga tentang ketidakpastian status berkas setelah diserahkan di loket penerimaan. Usulan terbaik yang paling mudah dijalankan dan berdampak luas adalah ...",
     "options": [
-      "Mewajibkan warga menelepon kantor setiap dua hari sekali untuk menanyakan langsung progres berkas kepada petugas",
-      "Menyeragamkan semua estimasi pengerjaan dokumen menjadi dua minggu agar tidak ada warga yang menuntut cepat",
-      "Menerapkan tanda terima berkode pelacakan daring/notifikasi pesan singkat otomatis di setiap pergantian tahap proses agar pemohon bisa memantau berkas secara mandiri tanpa perlu datang atau menebak-nebak",
-      "Menyediakan papan pengumuman tulis tangan harian di teras depan kantor untuk menempel ratusan nama pemohon",
-      "Menghapus kolom tanggal perkiraan selesai di lembar tanda terima supaya warga tidak memiliki dasar waktu untuk mengeluh"
+      "Menyeragamkan estimasi waktu penyelesaian seluruh jenis layanan menjadi dua pekan agar petugas tidak sering menerima komplain keterlambatan.",
+      "Mencantumkan tanggal perkiraan selesai secara rinci di tanda terima serta membuka nomor WhatsApp tanya status yang dijawab manual oleh petugas piket.",
+      "Menerapkan tanda terima berkode pelacakan daring dan notifikasi otomatis di tiap tahap agar pemohon memantau berkas secara mandiri.",
+      "Memasang papan daftar harian di lobi depan yang memuat daftar nomor pendaftaran berkas yang sudah selesai cetak dan siap diambil.",
+      "Menghapus kolom tanggal perkiraan selesai pada tanda terima agar pemohon tidak punya patokan menuntut keterlambatan."
     ],
     "optionScores": [
-      3,
       2,
-      5,
       4,
+      5,
+      3,
       1
     ],
     "answer": "C",
-    "explanation": "Ketidakpastian status adalah sumber utama kecemasan pemohon. Fitur lacak status mandiri dan notifikasi tahap layanan meningkatkan transparansi, mengurangi antrean pertanyaan berulang, serta menaikkan kepuasan publik (skor 5).",
+    "explanation": "Fitur lacak kode daring dan notifikasi otomatis memotong ketidakpastian status secara real-time dan mengurangi antrean pertanyaan berulang (skor 5). Memberi tanggal estimasi dan kanal tanya jawab manual via WhatsApp (skor 4) cukup membantu, namun membebani petugas menjawab pertanyaan satu per satu.",
     "tip": "Inovasi layanan terbaik selalu memotong ketidakpastian warga melalui informasi real-time atau pelacakan mandiri."
   },
   {
@@ -885,21 +885,21 @@ const pelayananPublikDrafts: readonly TkpQuestionDraft[] = [
     "difficulty": "sulit",
     "prompt": "Setelah sistem layanan daring baru berjalan sebulan, laporan menunjukkan jumlah permohonan selesai meningkat 30%, namun tingkat kepuasan warga justru turun akibat kesulitan melacak alasan penolakan berkas dan lambatnya tanggapan kotak obrolan bantu. Analisis mutu dan tindakan paling tepat adalah ...",
     "options": [
-      "Menghentikan sistem layanan daring karena terbukti kepuasan masyarakat selalu lebih tinggi saat memakai cara kertas manual",
-      "Mempertahankan sistem apa adanya karena kenaikan 30% jumlah permohonan selesai sudah membuktikan keberhasilan program sepenuhnya",
-      "Memfokuskan petugas menjawab ulasan pujian di media sosial saja sambil menunda perbaikan sistem pesan bantuan selama satu tahun",
-      "Mengevaluasi titik kegagalan pengalaman pengguna (user experience), memperjelas redaksi otomatis alasan penolakan disertai panduan koreksi spesifik, dan menjadwalkan petugas respons obrolan bantu sesuai standar waktu layanan",
-      "Membatasi jam aktif kotak obrolan bantu daring menjadi satu jam per minggu supaya beban balasan petugas berkurang drastis"
+      "Menonaktifkan sementara fitur kotak obrolan bantu pada pekan sibuk supaya tenaga petugas dapat terfokus memeriksa antrean masuk.",
+      "Menerbitkan panduan PDF berisi contoh perbaikan kesalahan umum pengunggahan berkas pada situs agar dipelajari pemohon.",
+      "Menonjolkan capaian peningkatan volume tiga puluh persen dalam laporan publik karena produktivitas berkas terbukti naik.",
+      "Mengevaluasi kendala pengalaman pengguna, memperjelas alasan penolakan beserta langkah koreksi, dan menetapkan jadwal respons obrolan bantu.",
+      "Menambah personel piket untuk mempercepat balasan pada kotak obrolan bantu di jam ramai, sambil tetap mempertahankan format alasan penolakan bawaan sistem."
     ],
     "optionScores": [
-      2,
-      3,
       1,
+      3,
+      2,
       5,
       4
     ],
     "answer": "D",
-    "explanation": "Keberhasilan layanan digital bukan hanya volume pemrosesan (kuantitas), melainkan kejelasan umpan balik dan keandalan bantuan ketika pemohon menemui kendala (kualitas pengalaman pengguna). Skor 5 membenahi tepat di kedua titik lemah tersebut.",
+    "explanation": "Mutu layanan digital tidak hanya diukur dari jumlah berkas selesai, tetapi kejelasan solusi saat pengguna terkendala (skor 5). Mempercepat balasan obrolan tanpa membenahi redaksi alasan penolakan di sistem (skor 4) hanya mengobati gejala, bukan menyembuhkan kebingungan pengguna di hulu.",
     "tip": "Evaluasi layanan publik modern harus menyandingkan capaian volume (kuantitas) dengan kemudahan dan kejelasan solusi bagi pengguna (kualitas)."
   },
   {
@@ -908,21 +908,21 @@ const pelayananPublikDrafts: readonly TkpQuestionDraft[] = [
     "difficulty": "sulit",
     "prompt": "Anda ditunjuk memimpin gugus kendali mutu pelayanan. Saat mengaudit standar operasional yang sudah berumur delapan tahun, Anda menemukan beberapa syarat berkas fotokopi yang sebenarnya datanya sudah terintegrasi antarinstansi pemerintah melalui basis data induk kependudukan. Langkah strategis jangka panjang yang paling tepat Anda tempuh adalah ...",
     "options": [
-      "Mempertahankan seluruh syarat fotokopi lama supaya pegawai tetap memiliki arsip cadangan fisik di setiap lemari gedung",
-      "Langsung menghapus kewajiban fotokopi lewat pengumuman lisan di loket besok tanpa mengubah dokumen regulasi atau menguji integrasi data",
-      "Mengusulkan syarat fotokopi dilegalisasi ganda agar keaslian berkas cetak lebih terjamin sepanjang masa",
-      "Mengganti seluruh petugas verifikasi dengan sistem otomatis penuh dalam satu malam tanpa pelatihan atau sosialisasi ke daerah",
-      "Mengusulkan revisi penyederhanaan SOP berbasis integrasi data resmi (once-only principle), menguji keandalan koneksi sinkronisasi antarsistem, serta menyiapkan masa transisi dan sosialisasi yang jelas"
+      "Mempertahankan syarat fotokopi sementara demi kepastian hukum dokumen, sembari mengajukan usulan perbaikan integrasi data untuk tahun anggaran depan.",
+      "Langsung menghapus syarat fotokopi lewat pengumuman lisan di meja loket besok pagi tanpa mengubah SOP atau menguji tautan data.",
+      "Tetap mempertahankan syarat fotokopi lengkap dengan cap legalisasi rangkap supaya seluruh seksi memiliki arsip fisik cadangan di lemari.",
+      "Mengizinkan petugas loket menerima pindaian digital sebagai pelengkap sementara menunggu terbitnya revisi pedoman layanan instansi.",
+      "Mengusulkan revisi penyederhanaan SOP berbasis prinsip sekali serah data, menguji keandalan sinkronisasi antarsistem, dan menyiapkan masa transisi jelas."
     ],
     "optionScores": [
-      2,
-      3,
-      1,
       4,
+      2,
+      1,
+      3,
       5
     ],
     "answer": "E",
-    "explanation": "Prinsip layanan modern sekali serah data (once-only principle) menuntut pemangkasan syarat kertas redundan melalui revisi SOP sah, pengujian teknis keandalan integrasi sistem, dan komunikasi masa transisi agar mutu tetap terjaga aman (skor 5).",
+    "explanation": "Skor 5 menempuh reformasi layanan berbasis integrasi data (once-only principle) secara terukur melalui revisi SOP sah, uji keandalan teknis, dan masa transisi jelas. Mengajukan kajian jangka panjang sambil terus mewajibkan fotokopi redundan (skor 4) menjaga kepastian prosedural, namun menunda pemangkasan beban warga padahal basis data sudah terintegrasi.",
     "tip": "Reformasi birokrasi pelayanan menggabungkan pemangkasan syarat berulang (once-only data), kesiapan regulasi SOP, dan uji keandalan teknis."
   }
 ];

@@ -7,11 +7,11 @@ export const analisisTabelBatch2Drafts: readonly QuestionDraft[] = [
     "difficulty": "sulit",
     "prompt": "Perhatikan tabel hasil evaluasi peserta diklat pada dua gelombang berikut:\n| Kelompok Diklat | Jumlah Peserta | Rata-rata Nilai Evaluasi |\n| Gelombang I | 20 | 75 |\n| Gelombang II | 30 | 85 |\nBerapakah rata-rata gabungan nilai evaluasi dari seluruh peserta kedua gelombang tersebut?",
     "options": [
-      "79",
+      "101",
       "81",
-      "80",
       "82",
-      "83"
+      "83",
+      "97"
     ],
     "answer": "B",
     "explanation": "Sederhanakan rasio jumlah peserta 20 : 30 menjadi 2 : 3. Rata-rata gabungan = (2 × 75 + 3 × 85) / (2 + 3) = (150 + 255) / 5 = 81.",
@@ -24,10 +24,10 @@ export const analisisTabelBatch2Drafts: readonly QuestionDraft[] = [
     "prompt": "Perhatikan tabel hasil evaluasi peserta diklat pada dua gelombang berikut:\n| Kelompok Diklat | Jumlah Peserta | Rata-rata Nilai Evaluasi |\n| Gelombang I | 20 | 76 |\n| Gelombang II | 30 | 86 |\nBerapakah rata-rata gabungan nilai evaluasi dari seluruh peserta kedua gelombang tersebut?",
     "options": [
       "80",
-      "81",
-      "82",
       "83",
-      "84"
+      "82",
+      "84",
+      "98"
     ],
     "answer": "C",
     "explanation": "Sederhanakan rasio jumlah peserta 20 : 30 menjadi 2 : 3. Rata-rata gabungan = (2 × 76 + 3 × 86) / (2 + 3) = (152 + 258) / 5 = 82.",
@@ -39,11 +39,11 @@ export const analisisTabelBatch2Drafts: readonly QuestionDraft[] = [
     "difficulty": "sulit",
     "prompt": "Perhatikan tabel hasil evaluasi peserta diklat pada dua gelombang berikut:\n| Kelompok Diklat | Jumlah Peserta | Rata-rata Nilai Evaluasi |\n| Gelombang I | 20 | 77 |\n| Gelombang II | 30 | 87 |\nBerapakah rata-rata gabungan nilai evaluasi dari seluruh peserta kedua gelombang tersebut?",
     "options": [
-      "81",
       "82",
       "84",
+      "85",
       "83",
-      "85"
+      "81"
     ],
     "answer": "D",
     "explanation": "Sederhanakan rasio jumlah peserta 20 : 30 menjadi 2 : 3. Rata-rata gabungan = (2 × 77 + 3 × 87) / (2 + 3) = (154 + 261) / 5 = 83.",
@@ -55,10 +55,10 @@ export const analisisTabelBatch2Drafts: readonly QuestionDraft[] = [
     "difficulty": "sulit",
     "prompt": "Perhatikan tabel hasil evaluasi peserta diklat pada dua gelombang berikut:\n| Kelompok Diklat | Jumlah Peserta | Rata-rata Nilai Evaluasi |\n| Gelombang I | 20 | 78 |\n| Gelombang II | 30 | 88 |\nBerapakah rata-rata gabungan nilai evaluasi dari seluruh peserta kedua gelombang tersebut?",
     "options": [
+      "63",
+      "85",
       "82",
       "83",
-      "85",
-      "86",
       "84"
     ],
     "answer": "E",
@@ -72,10 +72,10 @@ export const analisisTabelBatch2Drafts: readonly QuestionDraft[] = [
     "prompt": "Perhatikan tabel hasil evaluasi peserta diklat pada dua gelombang berikut:\n| Kelompok Diklat | Jumlah Peserta | Rata-rata Nilai Evaluasi |\n| Gelombang I | 20 | 79 |\n| Gelombang II | 30 | 89 |\nBerapakah rata-rata gabungan nilai evaluasi dari seluruh peserta kedua gelombang tersebut?",
     "options": [
       "85",
+      "68",
       "83",
       "84",
-      "86",
-      "87"
+      "64"
     ],
     "answer": "A",
     "explanation": "Sederhanakan rasio jumlah peserta 20 : 30 menjadi 2 : 3. Rata-rata gabungan = (2 × 79 + 3 × 89) / (2 + 3) = (158 + 267) / 5 = 85.",
@@ -87,11 +87,11 @@ export const analisisTabelBatch2Drafts: readonly QuestionDraft[] = [
     "difficulty": "sulit",
     "prompt": "Perhatikan tabel hasil evaluasi peserta diklat pada dua gelombang berikut:\n| Kelompok Diklat | Jumlah Peserta | Rata-rata Nilai Evaluasi |\n| Gelombang I | 20 | 80 |\n| Gelombang II | 30 | 90 |\nBerapakah rata-rata gabungan nilai evaluasi dari seluruh peserta kedua gelombang tersebut?",
     "options": [
-      "84",
-      "86",
-      "85",
       "87",
-      "88"
+      "86",
+      "88",
+      "103",
+      "108"
     ],
     "answer": "B",
     "explanation": "Sederhanakan rasio jumlah peserta 20 : 30 menjadi 2 : 3. Rata-rata gabungan = (2 × 80 + 3 × 90) / (2 + 3) = (160 + 270) / 5 = 86.",
@@ -103,11 +103,11 @@ export const analisisTabelBatch2Drafts: readonly QuestionDraft[] = [
     "difficulty": "sulit",
     "prompt": "Perhatikan tabel hasil evaluasi peserta diklat pada dua gelombang berikut:\n| Kelompok Diklat | Jumlah Peserta | Rata-rata Nilai Evaluasi |\n| Gelombang I | 20 | 81 |\n| Gelombang II | 30 | 91 |\nBerapakah rata-rata gabungan nilai evaluasi dari seluruh peserta kedua gelombang tersebut?",
     "options": [
-      "85",
-      "86",
-      "87",
       "88",
-      "89"
+      "89",
+      "87",
+      "104",
+      "85"
     ],
     "answer": "C",
     "explanation": "Sederhanakan rasio jumlah peserta 20 : 30 menjadi 2 : 3. Rata-rata gabungan = (2 × 81 + 3 × 91) / (2 + 3) = (162 + 273) / 5 = 87.",
@@ -119,11 +119,11 @@ export const analisisTabelBatch2Drafts: readonly QuestionDraft[] = [
     "difficulty": "sulit",
     "prompt": "Perhatikan tabel hasil evaluasi peserta diklat pada dua gelombang berikut:\n| Kelompok Diklat | Jumlah Peserta | Rata-rata Nilai Evaluasi |\n| Gelombang I | 20 | 82 |\n| Gelombang II | 30 | 92 |\nBerapakah rata-rata gabungan nilai evaluasi dari seluruh peserta kedua gelombang tersebut?",
     "options": [
-      "86",
-      "87",
       "89",
+      "90",
+      "86",
       "88",
-      "90"
+      "87"
     ],
     "answer": "D",
     "explanation": "Sederhanakan rasio jumlah peserta 20 : 30 menjadi 2 : 3. Rata-rata gabungan = (2 × 82 + 3 × 92) / (2 + 3) = (164 + 276) / 5 = 88.",
@@ -135,10 +135,10 @@ export const analisisTabelBatch2Drafts: readonly QuestionDraft[] = [
     "difficulty": "sulit",
     "prompt": "Perhatikan tabel hasil evaluasi peserta diklat pada dua gelombang berikut:\n| Kelompok Diklat | Jumlah Peserta | Rata-rata Nilai Evaluasi |\n| Gelombang I | 20 | 83 |\n| Gelombang II | 30 | 93 |\nBerapakah rata-rata gabungan nilai evaluasi dari seluruh peserta kedua gelombang tersebut?",
     "options": [
+      "90",
       "87",
       "88",
-      "90",
-      "91",
+      "67",
       "89"
     ],
     "answer": "E",
@@ -154,8 +154,8 @@ export const analisisTabelBatch2Drafts: readonly QuestionDraft[] = [
       "90",
       "88",
       "89",
-      "91",
-      "92"
+      "86",
+      "87"
     ],
     "answer": "A",
     "explanation": "Sederhanakan rasio jumlah peserta 20 : 30 menjadi 2 : 3. Rata-rata gabungan = (2 × 84 + 3 × 94) / (2 + 3) = (168 + 282) / 5 = 90.",
@@ -167,11 +167,11 @@ export const analisisTabelBatch2Drafts: readonly QuestionDraft[] = [
     "difficulty": "mudah",
     "prompt": "Perhatikan tabel capaian output layanan pada empat unit kerja berikut:\n| Unit Kerja | Tahun 2025 | Tahun 2026 |\n| Kantor P | 200 | 220 |\n| Kantor Q | 150 | 165 |\n| Kantor R | 180 | 198 |\n| Kantor S | 220 | 242 |\nBerapa persen kenaikan output layanan pada Kantor P dari tahun 2025 ke tahun 2026?",
     "options": [
-      "5%",
       "15%",
+      "25%",
       "10%",
-      "20%",
-      "25%"
+      "30%",
+      "20%"
     ],
     "answer": "C",
     "explanation": "Kenaikan pada Kantor P = 220 - 200 = 20. Persentase kenaikan = (20 / 200) × 100% = 10%.",
@@ -183,9 +183,9 @@ export const analisisTabelBatch2Drafts: readonly QuestionDraft[] = [
     "difficulty": "mudah",
     "prompt": "Perhatikan tabel capaian output layanan pada empat unit kerja berikut:\n| Unit Kerja | Tahun 2025 | Tahun 2026 |\n| Sektor 1 | 220 | 253 |\n| Sektor 2 | 160 | 175 |\n| Sektor 3 | 190 | 208 |\n| Sektor 4 | 230 | 252 |\nBerapa persen kenaikan output layanan pada Sektor 1 dari tahun 2025 ke tahun 2026?",
     "options": [
-      "10%",
       "20%",
       "25%",
+      "13%",
       "15%",
       "30%"
     ],
@@ -199,10 +199,10 @@ export const analisisTabelBatch2Drafts: readonly QuestionDraft[] = [
     "difficulty": "mudah",
     "prompt": "Perhatikan tabel capaian output layanan pada empat unit kerja berikut:\n| Unit Kerja | Tahun 2025 | Tahun 2026 |\n| Cabang Utara | 240 | 288 |\n| Cabang Selatan | 170 | 185 |\n| Cabang Timur | 200 | 218 |\n| Cabang Barat | 240 | 262 |\nBerapa persen kenaikan output layanan pada Cabang Utara dari tahun 2025 ke tahun 2026?",
     "options": [
-      "15%",
       "25%",
-      "30%",
-      "35%",
+      "17%",
+      "15%",
+      "40%",
       "20%"
     ],
     "answer": "E",
@@ -217,9 +217,9 @@ export const analisisTabelBatch2Drafts: readonly QuestionDraft[] = [
     "options": [
       "25%",
       "20%",
-      "30%",
-      "35%",
-      "40%"
+      "19%",
+      "15%",
+      "50%"
     ],
     "answer": "A",
     "explanation": "Kenaikan pada Balai A = 325 - 260 = 65. Persentase kenaikan = (65 / 260) × 100% = 25%.",
@@ -233,9 +233,9 @@ export const analisisTabelBatch2Drafts: readonly QuestionDraft[] = [
     "options": [
       "25%",
       "30%",
-      "35%",
-      "40%",
-      "45%"
+      "20%",
+      "10%",
+      "23%"
     ],
     "answer": "B",
     "explanation": "Kenaikan pada Unit A = 364 - 280 = 84. Persentase kenaikan = (84 / 280) × 100% = 30%.",
@@ -247,11 +247,11 @@ export const analisisTabelBatch2Drafts: readonly QuestionDraft[] = [
     "difficulty": "mudah",
     "prompt": "Perhatikan tabel capaian output layanan pada empat unit kerja berikut:\n| Unit Kerja | Tahun 2025 | Tahun 2026 |\n| Wilayah I | 300 | 405 |\n| Wilayah II | 200 | 215 |\n| Wilayah III | 230 | 248 |\n| Wilayah IV | 270 | 292 |\nBerapa persen kenaikan output layanan pada Wilayah I dari tahun 2025 ke tahun 2026?",
     "options": [
-      "30%",
-      "40%",
-      "35%",
       "45%",
-      "50%"
+      "50%",
+      "35%",
+      "70%",
+      "40%"
     ],
     "answer": "C",
     "explanation": "Kenaikan pada Wilayah I = 405 - 300 = 105. Persentase kenaikan = (105 / 300) × 100% = 35%.",
@@ -263,11 +263,11 @@ export const analisisTabelBatch2Drafts: readonly QuestionDraft[] = [
     "difficulty": "mudah",
     "prompt": "Perhatikan tabel capaian output layanan pada empat unit kerja berikut:\n| Unit Kerja | Tahun 2025 | Tahun 2026 |\n| Kantor P | 320 | 448 |\n| Kantor Q | 210 | 225 |\n| Kantor R | 240 | 258 |\n| Kantor S | 280 | 302 |\nBerapa persen kenaikan output layanan pada Kantor P dari tahun 2025 ke tahun 2026?",
     "options": [
-      "35%",
-      "45%",
       "50%",
+      "29%",
+      "80%",
       "40%",
-      "55%"
+      "45%"
     ],
     "answer": "D",
     "explanation": "Kenaikan pada Kantor P = 448 - 320 = 128. Persentase kenaikan = (128 / 320) × 100% = 40%.",
@@ -279,10 +279,10 @@ export const analisisTabelBatch2Drafts: readonly QuestionDraft[] = [
     "difficulty": "mudah",
     "prompt": "Perhatikan tabel capaian output layanan pada empat unit kerja berikut:\n| Unit Kerja | Tahun 2025 | Tahun 2026 |\n| Sektor 1 | 340 | 493 |\n| Sektor 2 | 220 | 235 |\n| Sektor 3 | 250 | 268 |\n| Sektor 4 | 290 | 312 |\nBerapa persen kenaikan output layanan pada Sektor 1 dari tahun 2025 ke tahun 2026?",
     "options": [
+      "31%",
       "40%",
+      "90%",
       "50%",
-      "55%",
-      "60%",
       "45%"
     ],
     "answer": "E",
@@ -297,9 +297,9 @@ export const analisisTabelBatch2Drafts: readonly QuestionDraft[] = [
     "options": [
       "50%",
       "45%",
+      "40%",
       "55%",
-      "60%",
-      "65%"
+      "33%"
     ],
     "answer": "A",
     "explanation": "Kenaikan pada Cabang Utara = 540 - 360 = 180. Persentase kenaikan = (180 / 360) × 100% = 50%.",
@@ -311,11 +311,11 @@ export const analisisTabelBatch2Drafts: readonly QuestionDraft[] = [
     "difficulty": "mudah",
     "prompt": "Perhatikan tabel capaian output layanan pada empat unit kerja berikut:\n| Unit Kerja | Tahun 2025 | Tahun 2026 |\n| Balai A | 380 | 608 |\n| Balai B | 240 | 255 |\n| Balai C | 270 | 288 |\n| Balai D | 310 | 332 |\nBerapa persen kenaikan output layanan pada Balai A dari tahun 2025 ke tahun 2026?",
     "options": [
-      "55%",
+      "45%",
       "60%",
-      "65%",
-      "70%",
-      "75%"
+      "50%",
+      "38%",
+      "55%"
     ],
     "answer": "B",
     "explanation": "Kenaikan pada Balai A = 608 - 380 = 228. Persentase kenaikan = (228 / 380) × 100% = 60%.",
@@ -327,11 +327,11 @@ export const analisisTabelBatch2Drafts: readonly QuestionDraft[] = [
     "difficulty": "sedang",
     "prompt": "Perhatikan tabel distribusi peserta ujian di lima wilayah berikut:\n| Wilayah | Jumlah Peserta |\n| Unit A | 100 |\n| Unit B | 80 |\n| Unit C | 120 |\n| Unit D | 60 |\n| Unit E | 40 |\nBerapa persen proporsi peserta di Unit A terhadap total seluruh peserta di lima wilayah tersebut?",
     "options": [
-      "20%",
-      "30%",
+      "37%",
+      "50%",
       "25%",
-      "33%",
-      "37%"
+      "30%",
+      "33%"
     ],
     "answer": "C",
     "explanation": "Total peserta seluruh wilayah = 100 + 80 + 120 + 60 + 40 = 400. Proporsi Unit A = (100 / 400) × 100% = 25%.",
@@ -343,11 +343,11 @@ export const analisisTabelBatch2Drafts: readonly QuestionDraft[] = [
     "difficulty": "sedang",
     "prompt": "Perhatikan tabel distribusi peserta ujian di lima wilayah berikut:\n| Wilayah | Jumlah Peserta |\n| Wilayah I | 125 |\n| Wilayah II | 100 |\n| Wilayah III | 150 |\n| Wilayah IV | 75 |\n| Wilayah V | 50 |\nBerapa persen proporsi peserta di Wilayah II terhadap total seluruh peserta di lima wilayah tersebut?",
     "options": [
-      "15%",
+      "17%",
+      "40%",
       "25%",
-      "28%",
       "20%",
-      "32%"
+      "28%"
     ],
     "answer": "D",
     "explanation": "Total peserta seluruh wilayah = 125 + 100 + 150 + 75 + 50 = 500. Proporsi Wilayah II = (100 / 500) × 100% = 20%.",
@@ -360,9 +360,9 @@ export const analisisTabelBatch2Drafts: readonly QuestionDraft[] = [
     "prompt": "Perhatikan tabel distribusi peserta ujian di lima wilayah berikut:\n| Wilayah | Jumlah Peserta |\n| Kantor P | 150 |\n| Kantor Q | 120 |\n| Kantor R | 180 |\n| Kantor S | 90 |\n| Kantor T | 60 |\nBerapa persen proporsi peserta di Kantor R terhadap total seluruh peserta di lima wilayah tersebut?",
     "options": [
       "25%",
+      "60%",
       "35%",
-      "38%",
-      "42%",
+      "23%",
       "30%"
     ],
     "answer": "E",
@@ -376,10 +376,10 @@ export const analisisTabelBatch2Drafts: readonly QuestionDraft[] = [
     "prompt": "Perhatikan tabel distribusi peserta ujian di lima wilayah berikut:\n| Wilayah | Jumlah Peserta |\n| Sektor 1 | 175 |\n| Sektor 2 | 140 |\n| Sektor 3 | 210 |\n| Sektor 4 | 105 |\n| Sektor 5 | 70 |\nBerapa persen proporsi peserta di Sektor 4 terhadap total seluruh peserta di lima wilayah tersebut?",
     "options": [
       "15%",
-      "10%",
-      "20%",
-      "23%",
-      "27%"
+      "11%",
+      "30%",
+      "13%",
+      "10%"
     ],
     "answer": "A",
     "explanation": "Total peserta seluruh wilayah = 175 + 140 + 210 + 105 + 70 = 700. Proporsi Sektor 4 = (105 / 700) × 100% = 15%.",
@@ -391,11 +391,11 @@ export const analisisTabelBatch2Drafts: readonly QuestionDraft[] = [
     "difficulty": "sedang",
     "prompt": "Perhatikan tabel distribusi peserta ujian di lima wilayah berikut:\n| Wilayah | Jumlah Peserta |\n| Cabang Utara | 200 |\n| Cabang Selatan | 160 |\n| Cabang Timur | 240 |\n| Cabang Barat | 120 |\n| Cabang Pusat | 80 |\nBerapa persen proporsi peserta di Cabang Pusat terhadap total seluruh peserta di lima wilayah tersebut?",
     "options": [
-      "5%",
+      "4%",
       "10%",
-      "15%",
-      "18%",
-      "22%"
+      "9%",
+      "5%",
+      "7%"
     ],
     "answer": "B",
     "explanation": "Total peserta seluruh wilayah = 200 + 160 + 240 + 120 + 80 = 800. Proporsi Cabang Pusat = (80 / 800) × 100% = 10%.",
@@ -407,7 +407,7 @@ export const analisisTabelBatch2Drafts: readonly QuestionDraft[] = [
     "difficulty": "sedang",
     "prompt": "Perhatikan tabel distribusi peserta ujian di lima wilayah berikut:\n| Wilayah | Jumlah Peserta |\n| Balai A | 225 |\n| Balai B | 180 |\n| Balai C | 270 |\n| Balai D | 135 |\n| Balai E | 90 |\nBerapa persen proporsi peserta di Balai A terhadap total seluruh peserta di lima wilayah tersebut?",
     "options": [
-      "20%",
+      "50%",
       "30%",
       "25%",
       "33%",
@@ -423,11 +423,11 @@ export const analisisTabelBatch2Drafts: readonly QuestionDraft[] = [
     "difficulty": "sedang",
     "prompt": "Perhatikan tabel distribusi peserta ujian di lima wilayah berikut:\n| Wilayah | Jumlah Peserta |\n| Unit A | 250 |\n| Unit B | 200 |\n| Unit C | 300 |\n| Unit D | 150 |\n| Unit E | 100 |\nBerapa persen proporsi peserta di Unit B terhadap total seluruh peserta di lima wilayah tersebut?",
     "options": [
-      "15%",
+      "40%",
       "25%",
       "28%",
       "20%",
-      "32%"
+      "17%"
     ],
     "answer": "D",
     "explanation": "Total peserta seluruh wilayah = 250 + 200 + 300 + 150 + 100 = 1000. Proporsi Unit B = (200 / 1000) × 100% = 20%.",
@@ -439,10 +439,10 @@ export const analisisTabelBatch2Drafts: readonly QuestionDraft[] = [
     "difficulty": "sedang",
     "prompt": "Perhatikan tabel distribusi peserta ujian di lima wilayah berikut:\n| Wilayah | Jumlah Peserta |\n| Wilayah I | 275 |\n| Wilayah II | 220 |\n| Wilayah III | 330 |\n| Wilayah IV | 165 |\n| Wilayah V | 110 |\nBerapa persen proporsi peserta di Wilayah III terhadap total seluruh peserta di lima wilayah tersebut?",
     "options": [
-      "25%",
+      "60%",
       "35%",
-      "38%",
-      "42%",
+      "23%",
+      "25%",
       "30%"
     ],
     "answer": "E",
@@ -456,10 +456,10 @@ export const analisisTabelBatch2Drafts: readonly QuestionDraft[] = [
     "prompt": "Perhatikan tabel distribusi peserta ujian di lima wilayah berikut:\n| Wilayah | Jumlah Peserta |\n| Kantor P | 300 |\n| Kantor Q | 240 |\n| Kantor R | 360 |\n| Kantor S | 180 |\n| Kantor T | 120 |\nBerapa persen proporsi peserta di Kantor S terhadap total seluruh peserta di lima wilayah tersebut?",
     "options": [
       "15%",
+      "30%",
+      "13%",
       "10%",
-      "20%",
-      "23%",
-      "27%"
+      "11%"
     ],
     "answer": "A",
     "explanation": "Total peserta seluruh wilayah = 300 + 240 + 360 + 180 + 120 = 1200. Proporsi Kantor S = (180 / 1200) × 100% = 15%.",
@@ -471,11 +471,11 @@ export const analisisTabelBatch2Drafts: readonly QuestionDraft[] = [
     "difficulty": "sedang",
     "prompt": "Perhatikan tabel distribusi peserta ujian di lima wilayah berikut:\n| Wilayah | Jumlah Peserta |\n| Sektor 1 | 325 |\n| Sektor 2 | 260 |\n| Sektor 3 | 390 |\n| Sektor 4 | 195 |\n| Sektor 5 | 130 |\nBerapa persen proporsi peserta di Sektor 5 terhadap total seluruh peserta di lima wilayah tersebut?",
     "options": [
-      "5%",
+      "9%",
       "10%",
-      "15%",
-      "18%",
-      "22%"
+      "5%",
+      "7%",
+      "4%"
     ],
     "answer": "B",
     "explanation": "Total peserta seluruh wilayah = 325 + 260 + 390 + 195 + 130 = 1300. Proporsi Sektor 5 = (130 / 1300) × 100% = 10%.",

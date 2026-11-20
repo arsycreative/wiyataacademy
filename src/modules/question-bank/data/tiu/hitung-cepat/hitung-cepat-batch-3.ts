@@ -2,853 +2,803 @@ import type { QuestionDraft } from "@/modules/question-bank/domain/question";
 
 export const hitungCepatBatch3Drafts: readonly QuestionDraft[] = [
   {
-    id: "tiu-hit-101",
-    subPattern: "aljabar-dan-kuadrat",
-    difficulty: "sedang",
-    prompt: "Hasil dari (125 + 35)² - (125 - 35)² = ...",
-    options: [
-      "8.750",
-      "16.000",
-      "17.500",
+    "id": "tiu-hit-101",
+    "subPattern": "aljabar-dan-kuadrat",
+    "difficulty": "sedang",
+    "prompt": "Hasil dari (125 + 35)² - (125 - 35)² = ...",
+    "options": [
       "18.000",
       "20.000",
+      "17.500",
+      "19.250",
+      "21.000"
     ],
-    answer: "C",
-    explanation:
-      "Gunakan identitas (a + b)² - (a - b)² = 4ab. Di sini 4 × 125 × 35 = 500 × 35 = 17.500.",
-    tip: "Hafalkan rumus cepat (a + b)² - (a - b)² = 4ab.",
+    "answer": "C",
+    "explanation": "Gunakan identitas (a + b)² - (a - b)² = 4ab. Di sini 4 × 125 × 35 = 500 × 35 = 17.500.",
+    "tip": "Hafalkan rumus cepat (a + b)² - (a - b)² = 4ab."
   },
   {
-    id: "tiu-hit-102",
-    subPattern: "aljabar-dan-kuadrat",
-    difficulty: "sedang",
-    prompt: "Hasil dari 2026² - (2 × 2026 × 2023) + 2023² = ...",
-    options: [
+    "id": "tiu-hit-102",
+    "subPattern": "aljabar-dan-kuadrat",
+    "difficulty": "sedang",
+    "prompt": "Hasil dari 2026² - (2 × 2026 × 2023) + 2023² = ...",
+    "options": [
       "9",
-      "3",
-      "6",
       "12",
       "27",
+      "15",
+      "3"
     ],
-    answer: "A",
-    explanation:
-      "Kenali bentuk a² - 2ab + b² = (a - b)². Jadi (2026 - 2023)² = 3² = 9.",
-    tip: "Perhatikan pola a² - 2ab + b² yang dapat diringkas menjadi (a - b)².",
+    "answer": "A",
+    "explanation": "Kenali bentuk a² - 2ab + b² = (a - b)². Jadi (2026 - 2023)² = 3² = 9.",
+    "tip": "Perhatikan pola a² - 2ab + b² yang dapat diringkas menjadi (a - b)²."
   },
   {
-    id: "tiu-hit-103",
-    subPattern: "aljabar-dan-kuadrat",
-    difficulty: "mudah",
-    prompt: "Hasil dari 47² + (2 × 47 × 53) + 53² = ...",
-    options: [
+    "id": "tiu-hit-103",
+    "subPattern": "aljabar-dan-kuadrat",
+    "difficulty": "mudah",
+    "prompt": "Hasil dari 47² + (2 × 47 × 53) + 53² = ...",
+    "options": [
+      "12.000",
+      "11.000",
       "100",
       "1.000",
-      "5.000",
-      "12.000",
-      "10.000",
+      "10.000"
     ],
-    answer: "E",
-    explanation:
-      "Kenali pola a² + 2ab + b² = (a + b)². Jadi (47 + 53)² = 100² = 10.000.",
-    tip: "Ubah penjumlahan kuadrat tersebut menjadi bentuk ringkas (a + b)².",
+    "answer": "E",
+    "explanation": "Kenali pola a² + 2ab + b² = (a + b)². Jadi (47 + 53)² = 100² = 10.000.",
+    "tip": "Ubah penjumlahan kuadrat tersebut menjadi bentuk ringkas (a + b)²."
   },
   {
-    id: "tiu-hit-104",
-    subPattern: "aljabar-dan-kuadrat",
-    difficulty: "sulit",
-    prompt: "Hasil dari (35 + 15)² + (35 - 15)² = ...",
-    options: [
-      "2.500",
-      "2.900",
-      "2.700",
+    "id": "tiu-hit-104",
+    "subPattern": "aljabar-dan-kuadrat",
+    "difficulty": "sulit",
+    "prompt": "Hasil dari (35 + 15)² + (35 - 15)² = ...",
+    "options": [
       "3.100",
-      "3.300",
+      "2.900",
+      "2.500",
+      "2.700",
+      "1.450"
     ],
-    answer: "B",
-    explanation:
-      "Dengan identitas (a + b)² + (a - b)² = 2(a² + b²), atau hitung langsung 50² + 20² = 2.500 + 400 = 2.900.",
-    tip: "Hitung nilai masing-masing kurung terlebih dahulu: 50² dan 20².",
+    "answer": "B",
+    "explanation": "Dengan identitas (a + b)² + (a - b)² = 2(a² + b²), atau hitung langsung 50² + 20² = 2.500 + 400 = 2.900.",
+    "tip": "Hitung nilai masing-masing kurung terlebih dahulu: 50² dan 20²."
   },
   {
-    id: "tiu-hit-105",
-    subPattern: "aljabar-dan-kuadrat",
-    difficulty: "sulit",
-    prompt: "Hasil dari ((86 + 14)² - (86 - 14)²) : (86 × 14) = ...",
-    options: [
+    "id": "tiu-hit-105",
+    "subPattern": "aljabar-dan-kuadrat",
+    "difficulty": "sulit",
+    "prompt": "Hasil dari ((86 + 14)² - (86 - 14)²) : (86 × 14) = ...",
+    "options": [
       "2",
       "3",
-      "6",
+      "1",
       "4",
-      "8",
+      "6"
     ],
-    answer: "D",
-    explanation:
-      "Pembilang berbentuk (a + b)² - (a - b)² = 4ab. Dibagi ab menghasilkan tepat 4.",
-    tip: "Terapkan identitas (a + b)² - (a - b)² = 4ab sebelum membagi.",
+    "answer": "D",
+    "explanation": "Pembilang berbentuk (a + b)² - (a - b)² = 4ab. Dibagi ab menghasilkan tepat 4.",
+    "tip": "Terapkan identitas (a + b)² - (a - b)² = 4ab sebelum membagi."
   },
   {
-    id: "tiu-hit-106",
-    subPattern: "aljabar-dan-kuadrat",
-    difficulty: "sulit",
-    prompt: "Hasil dari 198² + (2 × 198 × 2) + 2² = ...",
-    options: [
+    "id": "tiu-hit-106",
+    "subPattern": "aljabar-dan-kuadrat",
+    "difficulty": "sulit",
+    "prompt": "Hasil dari 198² + (2 × 198 × 2) + 2² = ...",
+    "options": [
       "40.000",
-      "20.000",
-      "38.416",
-      "39.604",
-      "40.400",
+      "44.000",
+      "48.000",
+      "50.000",
+      "40.400"
     ],
-    answer: "A",
-    explanation:
-      "Pola a² + 2ab + b² = (a + b)² dengan a = 198 dan b = 2. Jadi (198 + 2)² = 200² = 40.000.",
-    tip: "Kelompokkan menjadi (198 + 2)² alih-alih menghitung kuadrat 198.",
+    "answer": "A",
+    "explanation": "Pola a² + 2ab + b² = (a + b)² dengan a = 198 dan b = 2. Jadi (198 + 2)² = 200² = 40.000.",
+    "tip": "Kelompokkan menjadi (198 + 2)² alih-alih menghitung kuadrat 198."
   },
   {
-    id: "tiu-hit-107",
-    subPattern: "aljabar-dan-kuadrat",
-    difficulty: "sulit",
-    prompt: "Hasil dari (64 + 36)² - 2(64 + 36)(64 - 36) + (64 - 36)² = ...",
-    options: [
+    "id": "tiu-hit-107",
+    "subPattern": "aljabar-dan-kuadrat",
+    "difficulty": "sulit",
+    "prompt": "Hasil dari (64 + 36)² - 2(64 + 36)(64 - 36) + (64 - 36)² = ...",
+    "options": [
+      "5.702",
+      "6.221",
       "2.800",
-      "3.136",
-      "4.096",
       "5.184",
-      "10.000",
+      "10.000"
     ],
-    answer: "D",
-    explanation:
-      "Bentuk X² - 2XY + Y² = (X - Y)². Di sini X - Y = (64 + 36) - (64 - 36) = 72. Jadi 72² = 5.184 (atau 100 - 28 = 72, 72² = 5.184).",
-    tip: "Gunakan identitas (X - Y)² dengan menyederhanakan X = 100 dan Y = 28.",
+    "answer": "D",
+    "explanation": "Bentuk X² - 2XY + Y² = (X - Y)². Di sini X - Y = (64 + 36) - (64 - 36) = 72. Jadi 72² = 5.184 (atau 100 - 28 = 72, 72² = 5.184).",
+    "tip": "Gunakan identitas (X - Y)² dengan menyederhanakan X = 100 dan Y = 28."
   },
   {
-    id: "tiu-hit-108",
-    subPattern: "aljabar-dan-kuadrat",
-    difficulty: "sedang",
-    prompt: "Hasil dari (93² - 2 × 93 × 43 + 43²) : 25 = ...",
-    options: [
-      "25",
+    "id": "tiu-hit-108",
+    "subPattern": "aljabar-dan-kuadrat",
+    "difficulty": "sedang",
+    "prompt": "Hasil dari (93² - 2 × 93 × 43 + 43²) : 25 = ...",
+    "options": [
+      "110",
       "100",
+      "25",
       "50",
-      "75",
-      "125",
+      "125"
     ],
-    answer: "B",
-    explanation:
-      "Pembilang adalah (93 - 43)² = 50² = 2.500. Lalu 2.500 : 25 = 100.",
-    tip: "Sederhanakan pembilang menjadi (a - b)² dulu.",
+    "answer": "B",
+    "explanation": "Pembilang adalah (93 - 43)² = 50² = 2.500. Lalu 2.500 : 25 = 100.",
+    "tip": "Sederhanakan pembilang menjadi (a - b)² dulu."
   },
   {
-    id: "tiu-hit-109",
-    subPattern: "aljabar-dan-kuadrat",
-    difficulty: "mudah",
-    prompt: "Hasil dari 37 × 68 + 37 × 32 = ...",
-    options: [
+    "id": "tiu-hit-109",
+    "subPattern": "aljabar-dan-kuadrat",
+    "difficulty": "mudah",
+    "prompt": "Hasil dari 37 × 68 + 37 × 32 = ...",
+    "options": [
       "3.500",
       "3.600",
+      "1.850",
       "3.800",
-      "3.900",
-      "3.700",
+      "3.700"
     ],
-    answer: "E",
-    explanation:
-      "Keluarkan faktor 37: 37 × (68 + 32) = 37 × 100 = 3.700.",
-    tip: "Gunakan sifat distributif perkalian: ab + ac = a(b + c).",
+    "answer": "E",
+    "explanation": "Keluarkan faktor 37: 37 × (68 + 32) = 37 × 100 = 3.700.",
+    "tip": "Gunakan sifat distributif perkalian: ab + ac = a(b + c)."
   },
   {
-    id: "tiu-hit-110",
-    subPattern: "aljabar-dan-kuadrat",
-    difficulty: "mudah",
-    prompt: "Hasil dari 125 × 43 - 125 × 27 = ...",
-    options: [
-      "1.500",
+    "id": "tiu-hit-110",
+    "subPattern": "aljabar-dan-kuadrat",
+    "difficulty": "mudah",
+    "prompt": "Hasil dari 125 × 43 - 125 × 27 = ...",
+    "options": [
       "1.750",
-      "2.000",
-      "2.250",
-      "2.500",
-    ],
-    answer: "C",
-    explanation:
-      "Faktorkan 125: 125 × (43 - 27) = 125 × 16 = (125 × 8) × 2 = 1.000 × 2 = 2.000.",
-    tip: "Keluarkan 125 lalu ingat bahwa 125 × 8 = 1.000.",
-  },
-  {
-    id: "tiu-hit-111",
-    subPattern: "aljabar-dan-kuadrat",
-    difficulty: "sedang",
-    prompt: "Hasil dari (45 × 18 + 45 × 12) : 15 = ...",
-    options: [
-      "60",
-      "75",
-      "80",
-      "105",
-      "90",
-    ],
-    answer: "E",
-    explanation:
-      "Pembilang = 45 × (18 + 12) = 45 × 30. Dibagi 15: (45/15) × 30 = 3 × 30 = 90.",
-    tip: "Gabungkan suku pembilang menjadi 45 × 30 terlebih dahulu agar mudah dicoret dengan 15.",
-  },
-  {
-    id: "tiu-hit-112",
-    subPattern: "aljabar-dan-kuadrat",
-    difficulty: "sedang",
-    prompt: "Hasil dari 24 × 89 + 24 × 11 - 24 × 50 = ...",
-    options: [
       "1.000",
-      "1.100",
+      "2.000",
+      "1.600",
+      "1.500"
+    ],
+    "answer": "C",
+    "explanation": "Faktorkan 125: 125 × (43 - 27) = 125 × 16 = (125 × 8) × 2 = 1.000 × 2 = 2.000.",
+    "tip": "Keluarkan 125 lalu ingat bahwa 125 × 8 = 1.000."
+  },
+  {
+    "id": "tiu-hit-111",
+    "subPattern": "aljabar-dan-kuadrat",
+    "difficulty": "sedang",
+    "prompt": "Hasil dari (45 × 18 + 45 × 12) : 15 = ...",
+    "options": [
+      "180",
+      "95",
+      "105",
+      "135",
+      "90"
+    ],
+    "answer": "E",
+    "explanation": "Pembilang = 45 × (18 + 12) = 45 × 30. Dibagi 15: (45/15) × 30 = 3 × 30 = 90.",
+    "tip": "Gabungkan suku pembilang menjadi 45 × 30 terlebih dahulu agar mudah dicoret dengan 15."
+  },
+  {
+    "id": "tiu-hit-112",
+    "subPattern": "aljabar-dan-kuadrat",
+    "difficulty": "sedang",
+    "prompt": "Hasil dari 24 × 89 + 24 × 11 - 24 × 50 = ...",
+    "options": [
+      "1.320",
+      "1.000",
       "1.200",
       "1.440",
-      "1.500",
+      "1.500"
     ],
-    answer: "C",
-    explanation:
-      "Faktorkan 24: 24 × (89 + 11 - 50) = 24 × 50 = 1.200.",
-    tip: "Keluarkan faktor persekutuan 24 dari ketiga suku.",
+    "answer": "C",
+    "explanation": "Faktorkan 24: 24 × (89 + 11 - 50) = 24 × 50 = 1.200.",
+    "tip": "Keluarkan faktor persekutuan 24 dari ketiga suku."
   },
   {
-    id: "tiu-hit-113",
-    subPattern: "aljabar-dan-kuadrat",
-    difficulty: "sulit",
-    prompt: "Hasil dari (76 × 54 + 24 × 54) : (27 × 2) = ...",
-    options: [
+    "id": "tiu-hit-113",
+    "subPattern": "aljabar-dan-kuadrat",
+    "difficulty": "sulit",
+    "prompt": "Hasil dari (76 × 54 + 24 × 54) : (27 × 2) = ...",
+    "options": [
       "100",
       "50",
       "75",
       "125",
-      "150",
+      "150"
     ],
-    answer: "A",
-    explanation:
-      "Pembilang: (76 + 24) × 54 = 100 × 54. Penyebut: 27 × 2 = 54. Maka (100 × 54) / 54 = 100.",
-    tip: "Faktorkan 54 pada pembilang dan sederhanakan langsung terhadap 27 × 2 = 54.",
+    "answer": "A",
+    "explanation": "Pembilang: (76 + 24) × 54 = 100 × 54. Penyebut: 27 × 2 = 54. Maka (100 × 54) / 54 = 100.",
+    "tip": "Faktorkan 54 pada pembilang dan sederhanakan langsung terhadap 27 × 2 = 54."
   },
   {
-    id: "tiu-hit-114",
-    subPattern: "aljabar-dan-kuadrat",
-    difficulty: "sedang",
-    prompt: "Hasil dari 999 × 16 + 16 = ...",
-    options: [
-      "15.984",
+    "id": "tiu-hit-114",
+    "subPattern": "aljabar-dan-kuadrat",
+    "difficulty": "sedang",
+    "prompt": "Hasil dari 999 × 16 + 16 = ...",
+    "options": [
       "15.990",
+      "8.000",
       "16.016",
       "16.000",
-      "16.160",
+      "15.984"
     ],
-    answer: "D",
-    explanation:
-      "Anggap suku kedua sebagai 1 × 16, lalu faktorkan 16: 16 × (999 + 1) = 16 × 1.000 = 16.000.",
-    tip: "Ubah + 16 menjadi + 1 × 16 agar dapat difaktorkan menjadi 16 × (999 + 1).",
+    "answer": "D",
+    "explanation": "Anggap suku kedua sebagai 1 × 16, lalu faktorkan 16: 16 × (999 + 1) = 16 × 1.000 = 16.000.",
+    "tip": "Ubah + 16 menjadi + 1 × 16 agar dapat difaktorkan menjadi 16 × (999 + 1)."
   },
   {
-    id: "tiu-hit-115",
-    subPattern: "aljabar-dan-kuadrat",
-    difficulty: "mudah",
-    prompt: "Hasil dari √1.225 + √625 = ...",
-    options: [
-      "50",
+    "id": "tiu-hit-115",
+    "subPattern": "aljabar-dan-kuadrat",
+    "difficulty": "mudah",
+    "prompt": "Hasil dari √1.225 + √625 = ...",
+    "options": [
+      "30",
       "60",
-      "55",
-      "65",
-      "70",
+      "45",
+      "50",
+      "55"
     ],
-    answer: "B",
-    explanation:
-      "√1.225 = 35 (trik kuadrat akhiran 5: 3×4 = 12) dan √625 = 25. Total: 35 + 25 = 60.",
-    tip: "Gunakan trik akar kuadrat akhiran 25: cari dua bilangan berurutan yang hasil kalinya angka di depan 25.",
+    "answer": "B",
+    "explanation": "√1.225 = 35 (trik kuadrat akhiran 5: 3×4 = 12) dan √625 = 25. Total: 35 + 25 = 60.",
+    "tip": "Gunakan trik akar kuadrat akhiran 25: cari dua bilangan berurutan yang hasil kalinya angka di depan 25."
   },
   {
-    id: "tiu-hit-116",
-    subPattern: "aljabar-dan-kuadrat",
-    difficulty: "mudah",
-    prompt: "Hasil dari √(12² + 5²) + √(10² - 6²) = ...",
-    options: [
-      "17",
+    "id": "tiu-hit-116",
+    "subPattern": "aljabar-dan-kuadrat",
+    "difficulty": "mudah",
+    "prompt": "Hasil dari √(12² + 5²) + √(10² - 6²) = ...",
+    "options": [
+      "32",
       "21",
-      "19",
       "23",
       "25",
+      "26"
     ],
-    answer: "B",
-    explanation:
-      "Gunakan tripel Pythagoras: (5, 12, 13) => √(12² + 5²) = 13, dan (6, 8, 10) => √(10² - 6²) = 8. Jadi 13 + 8 = 21.",
-    tip: "Kenali pasangan tripel Pythagoras (5, 12, 13) dan (6, 8, 10).",
+    "answer": "B",
+    "explanation": "Gunakan tripel Pythagoras: (5, 12, 13) => √(12² + 5²) = 13, dan (6, 8, 10) => √(10² - 6²) = 8. Jadi 13 + 8 = 21.",
+    "tip": "Kenali pasangan tripel Pythagoras (5, 12, 13) dan (6, 8, 10)."
   },
   {
-    id: "tiu-hit-117",
-    subPattern: "aljabar-dan-kuadrat",
-    difficulty: "sedang",
-    prompt: "Hasil dari √(25² - 24²) = ...",
-    options: [
+    "id": "tiu-hit-117",
+    "subPattern": "aljabar-dan-kuadrat",
+    "difficulty": "sedang",
+    "prompt": "Hasil dari √(25² - 24²) = ...",
+    "options": [
       "1",
-      "5",
       "9",
       "11",
-      "7",
+      "13",
+      "7"
     ],
-    answer: "E",
-    explanation:
-      "Gunakan selisih kuadrat di dalam akar: √((25 - 24)(25 + 24)) = √(1 × 49) = 7.",
-    tip: "Faktorkan 25² - 24² menggunakan (25 - 24)(25 + 24) di dalam tanda akar.",
+    "answer": "E",
+    "explanation": "Gunakan selisih kuadrat di dalam akar: √((25 - 24)(25 + 24)) = √(1 × 49) = 7.",
+    "tip": "Faktorkan 25² - 24² menggunakan (25 - 24)(25 + 24) di dalam tanda akar."
   },
   {
-    id: "tiu-hit-118",
-    subPattern: "aljabar-dan-kuadrat",
-    difficulty: "sulit",
-    prompt: "Hasil dari (25² - 15²) : √400 = ...",
-    options: [
-      "10",
+    "id": "tiu-hit-118",
+    "subPattern": "aljabar-dan-kuadrat",
+    "difficulty": "sulit",
+    "prompt": "Hasil dari (25² - 15²) : √400 = ...",
+    "options": [
       "15",
       "25",
-      "20",
       "40",
+      "20",
+      "10"
     ],
-    answer: "D",
-    explanation:
-      "25² - 15² = (25 - 15)(25 + 15) = 10 × 40 = 400. Dibagi √400 (= 20) menjadi 400 / 20 = 20.",
-    tip: "Gunakan selisih kuadrat di pembilang lalu bagi dengan √400 = 20.",
+    "answer": "D",
+    "explanation": "25² - 15² = (25 - 15)(25 + 15) = 10 × 40 = 400. Dibagi √400 (= 20) menjadi 400 / 20 = 20.",
+    "tip": "Gunakan selisih kuadrat di pembilang lalu bagi dengan √400 = 20."
   },
   {
-    id: "tiu-hit-119",
-    subPattern: "aljabar-dan-kuadrat",
-    difficulty: "sulit",
-    prompt: "Hasil dari √12,25 + √0,64 = ...",
-    options: [
+    "id": "tiu-hit-119",
+    "subPattern": "aljabar-dan-kuadrat",
+    "difficulty": "sulit",
+    "prompt": "Hasil dari √12,25 + √0,64 = ...",
+    "options": [
       "4,3",
-      "3,9",
-      "4,1",
+      "3,7",
       "4,5",
-      "4,9",
+      "3,9",
+      "4,1"
     ],
-    answer: "A",
-    explanation:
-      "√12,25 = √(1225/100) = 35/10 = 3,5. Lalu √0,64 = 0,8. Total: 3,5 + 0,8 = 4,3.",
-    tip: "Ubah desimal menjadi pecahan perseratus sebelum menarik akarnya.",
+    "answer": "A",
+    "explanation": "√12,25 = √(1225/100) = 35/10 = 3,5. Lalu √0,64 = 0,8. Total: 3,5 + 0,8 = 4,3.",
+    "tip": "Ubah desimal menjadi pecahan perseratus sebelum menarik akarnya."
   },
   {
-    id: "tiu-hit-120",
-    subPattern: "aljabar-dan-kuadrat",
-    difficulty: "sulit",
-    prompt: "Hasil dari √(68² - 32²) = ...",
-    options: [
+    "id": "tiu-hit-120",
+    "subPattern": "aljabar-dan-kuadrat",
+    "difficulty": "sulit",
+    "prompt": "Hasil dari √(68² - 32²) = ...",
+    "options": [
+      "30",
       "36",
-      "48",
       "60",
-      "50",
-      "72",
+      "48",
+      "50"
     ],
-    answer: "C",
-    explanation:
-      "Gunakan selisih kuadrat: √((68 - 32)(68 + 32)) = √(36 × 100) = 6 × 10 = 60.",
-    tip: "Jangan hitung kuadrat masing-masing; ubah menjadi √((68 - 32)(68 + 32)).",
+    "answer": "C",
+    "explanation": "Gunakan selisih kuadrat: √((68 - 32)(68 + 32)) = √(36 × 100) = 6 × 10 = 60.",
+    "tip": "Jangan hitung kuadrat masing-masing; ubah menjadi √((68 - 32)(68 + 32))."
   },
   {
-    id: "tiu-hit-121",
-    subPattern: "taksiran-dan-ekor-angka",
-    difficulty: "mudah",
-    prompt: "Hasil dari 243 × 18 - 117 = ...",
-    options: [
-      "4.251",
-      "4.253",
-      "4.255",
-      "4.257",
+    "id": "tiu-hit-121",
+    "subPattern": "taksiran-dan-ekor-angka",
+    "difficulty": "mudah",
+    "prompt": "Hasil dari 243 × 18 - 117 = ...",
+    "options": [
       "4.259",
+      "4.261",
+      "4.263",
+      "4.257",
+      "4.265"
     ],
-    answer: "D",
-    explanation:
-      "Cek ekor angka: (3 × 8) = 24 (ekor 4), lalu 4 - 7 => 14 - 7 = 7. Satu-satunya opsi berekor 7 adalah 4.257.",
-    tip: "Hitung digit satuan: ambil satuan 3 × 8, lalu kurangi dengan satuan 7.",
+    "answer": "D",
+    "explanation": "Cek ekor angka: (3 × 8) = 24 (ekor 4), lalu 4 - 7 => 14 - 7 = 7. Satu-satunya opsi berekor 7 adalah 4.257.",
+    "tip": "Hitung digit satuan: ambil satuan 3 × 8, lalu kurangi dengan satuan 7."
   },
   {
-    id: "tiu-hit-122",
-    subPattern: "taksiran-dan-ekor-angka",
-    difficulty: "mudah",
-    prompt: "Hasil dari 324 × 17 + 128 = ...",
-    options: [
-      "5.632",
-      "5.636",
-      "5.634",
+    "id": "tiu-hit-122",
+    "subPattern": "taksiran-dan-ekor-angka",
+    "difficulty": "mudah",
+    "prompt": "Hasil dari 324 × 17 + 128 = ...",
+    "options": [
       "5.638",
+      "5.636",
       "5.640",
+      "5.642",
+      "5.634"
     ],
-    answer: "B",
-    explanation:
-      "Ekor angka: (4 × 7 = 28 -> ekor 8) + 8 = 16 -> ekor 6. Hitung penuh: 5.508 + 128 = 5.636.",
-    tip: "Perhatikan hasil akhir digit satuan dari (4 × 7) ditambah 8.",
+    "answer": "B",
+    "explanation": "Ekor angka: (4 × 7 = 28 -> ekor 8) + 8 = 16 -> ekor 6. Hitung penuh: 5.508 + 128 = 5.636.",
+    "tip": "Perhatikan hasil akhir digit satuan dari (4 × 7) ditambah 8."
   },
   {
-    id: "tiu-hit-123",
-    subPattern: "taksiran-dan-ekor-angka",
-    difficulty: "sedang",
-    prompt: "Hasil dari 487 × 14 - 239 = ...",
-    options: [
-      "6.573",
-      "6.575",
+    "id": "tiu-hit-123",
+    "subPattern": "taksiran-dan-ekor-angka",
+    "difficulty": "sedang",
+    "prompt": "Hasil dari 487 × 14 - 239 = ...",
+    "options": [
+      "6.581",
+      "6.583",
       "6.579",
       "6.577",
-      "6.581",
+      "6.575"
     ],
-    answer: "C",
-    explanation:
-      "Ekor angka: (7 × 4 = 28 -> ekor 8), dikurangi 9 menjadi 18 - 9 = 9. Satu-satunya opsi berekor 9 adalah 6.579.",
-    tip: "Gunakan pengecekan digit satuan terakhir sebelum menghitung ribuan secara utuh.",
+    "answer": "C",
+    "explanation": "Ekor angka: (7 × 4 = 28 -> ekor 8), dikurangi 9 menjadi 18 - 9 = 9. Satu-satunya opsi berekor 9 adalah 6.579.",
+    "tip": "Gunakan pengecekan digit satuan terakhir sebelum menghitung ribuan secara utuh."
   },
   {
-    id: "tiu-hit-124",
-    subPattern: "taksiran-dan-ekor-angka",
-    difficulty: "sedang",
-    prompt: "Hasil dari 638 × 19 + 415 = ...",
-    options: [
-      "12.531",
-      "12.533",
-      "12.535",
+    "id": "tiu-hit-124",
+    "subPattern": "taksiran-dan-ekor-angka",
+    "difficulty": "sedang",
+    "prompt": "Hasil dari 638 × 19 + 415 = ...",
+    "options": [
       "12.539",
-      "12.537",
+      "12.535",
+      "12.533",
+      "12.531",
+      "12.537"
     ],
-    answer: "E",
-    explanation:
-      "Ekor angka: (8 × 9 = 72 -> ekor 2) + 5 = 7. Atau 638 × (20 - 1) + 415 = 12.760 - 638 + 415 = 12.537.",
-    tip: "Cek ekor angka (8 × 9 + 5) atau ubah × 19 menjadi × (20 - 1).",
+    "answer": "E",
+    "explanation": "Ekor angka: (8 × 9 = 72 -> ekor 2) + 5 = 7. Atau 638 × (20 - 1) + 415 = 12.760 - 638 + 415 = 12.537.",
+    "tip": "Cek ekor angka (8 × 9 + 5) atau ubah × 19 menjadi × (20 - 1)."
   },
   {
-    id: "tiu-hit-125",
-    subPattern: "taksiran-dan-ekor-angka",
-    difficulty: "sedang",
-    prompt: "Hasil dari 128² - 35 × 12 = ...",
-    options: [
+    "id": "tiu-hit-125",
+    "subPattern": "taksiran-dan-ekor-angka",
+    "difficulty": "sedang",
+    "prompt": "Hasil dari 128² - 35 × 12 = ...",
+    "options": [
       "15.964",
-      "15.960",
       "15.962",
-      "15.966",
-      "15.968",
+      "15.960",
+      "15.958",
+      "15.956"
     ],
-    answer: "A",
-    explanation:
-      "Ekor angka: 8² = 64 (ekor 4) dan 35 × 12 = 420 (ekor 0). Jadi ekornya 4 - 0 = 4 (15.964).",
-    tip: "Lihat satuan 8² lalu kurangi dengan satuan 5 × 2.",
+    "answer": "A",
+    "explanation": "Ekor angka: 8² = 64 (ekor 4) dan 35 × 12 = 420 (ekor 0). Jadi ekornya 4 - 0 = 4 (15.964).",
+    "tip": "Lihat satuan 8² lalu kurangi dengan satuan 5 × 2."
   },
   {
-    id: "tiu-hit-126",
-    subPattern: "taksiran-dan-ekor-angka",
-    difficulty: "sedang",
-    prompt: "Hasil dari 513 × 26 + 174 × 12 = ...",
-    options: [
+    "id": "tiu-hit-126",
+    "subPattern": "taksiran-dan-ekor-angka",
+    "difficulty": "sedang",
+    "prompt": "Hasil dari 513 × 26 + 174 × 12 = ...",
+    "options": [
       "15.426",
-      "15.422",
-      "15.424",
-      "15.428",
       "15.430",
+      "15.432",
+      "15.434",
+      "15.428"
     ],
-    answer: "A",
-    explanation:
-      "Ekor angka: (3 × 6 = 18 -> 8) + (4 × 2 = 8) = 16 -> ekor 6. Hitung: 13.338 + 2.088 = 15.426.",
-    tip: "Jumlahkan ekor angka dari masing-masing perkalian.",
+    "answer": "A",
+    "explanation": "Ekor angka: (3 × 6 = 18 -> 8) + (4 × 2 = 8) = 16 -> ekor 6. Hitung: 13.338 + 2.088 = 15.426.",
+    "tip": "Jumlahkan ekor angka dari masing-masing perkalian."
   },
   {
-    id: "tiu-hit-127",
-    subPattern: "taksiran-dan-ekor-angka",
-    difficulty: "sulit",
-    prompt: "Hasil dari 76² - 43 × 18 = ...",
-    options: [
-      "5.000",
-      "5.004",
-      "5.002",
+    "id": "tiu-hit-127",
+    "subPattern": "taksiran-dan-ekor-angka",
+    "difficulty": "sulit",
+    "prompt": "Hasil dari 76² - 43 × 18 = ...",
+    "options": [
       "5.006",
       "5.008",
+      "5.002",
+      "5.000",
+      "5.004"
     ],
-    answer: "C",
-    explanation:
-      "Ekor angka: 6² -> 6, dikurangi (3 × 8 -> 4) = 2. Hitung tepat: 5.776 - 774 = 5.002.",
-    tip: "Cari selisih digit satuan dari 6² dengan satuan dari 3 × 8.",
+    "answer": "C",
+    "explanation": "Ekor angka: 6² -> 6, dikurangi (3 × 8 -> 4) = 2. Hitung tepat: 5.776 - 774 = 5.002.",
+    "tip": "Cari selisih digit satuan dari 6² dengan satuan dari 3 × 8."
   },
   {
-    id: "tiu-hit-128",
-    subPattern: "taksiran-dan-ekor-angka",
-    difficulty: "sulit",
-    prompt: "Hasil dari 84² + 37² - 29² = ...",
-    options: [
-      "7.580",
-      "7.582",
-      "7.586",
+    "id": "tiu-hit-128",
+    "subPattern": "taksiran-dan-ekor-angka",
+    "difficulty": "sulit",
+    "prompt": "Hasil dari 84² + 37² - 29² = ...",
+    "options": [
       "7.588",
-      "7.584",
+      "7.582",
+      "7.580",
+      "7.586",
+      "7.584"
     ],
-    answer: "E",
-    explanation:
-      "Ekor angka: 4²(6) + 7²(9) - 9²(1) => 6 + 9 - 1 = 14 -> ekor 4. Hitung: 7.056 + 1.369 - 841 = 7.584.",
-    tip: "Operasikan digit satuan setiap bilangan kuadrat terlebih dahulu.",
+    "answer": "E",
+    "explanation": "Ekor angka: 4²(6) + 7²(9) - 9²(1) => 6 + 9 - 1 = 14 -> ekor 4. Hitung: 7.056 + 1.369 - 841 = 7.584.",
+    "tip": "Operasikan digit satuan setiap bilangan kuadrat terlebih dahulu."
   },
   {
-    id: "tiu-hit-129",
-    subPattern: "taksiran-dan-ekor-angka",
-    difficulty: "sulit",
-    prompt: "Hasil dari 1.248 : 16 + 347 × 13 = ...",
-    options: [
-      "4.583",
+    "id": "tiu-hit-129",
+    "subPattern": "taksiran-dan-ekor-angka",
+    "difficulty": "sulit",
+    "prompt": "Hasil dari 1.248 : 16 + 347 × 13 = ...",
+    "options": [
+      "4.587",
       "4.589",
       "4.585",
-      "4.587",
-      "4.591",
+      "4.583",
+      "4.591"
     ],
-    answer: "B",
-    explanation:
-      "1.248 : 16 = 78 (ekor 8) dan 347 × 13 = 4.511 (ekor 1). Ekor total 8 + 1 = 9. Hasil: 78 + 4.511 = 4.589.",
-    tip: "Bagi 1.248 dengan 16 lebih dulu lalu gabungkan digit satuannya dengan 7 × 3.",
+    "answer": "B",
+    "explanation": "1.248 : 16 = 78 (ekor 8) dan 347 × 13 = 4.511 (ekor 1). Ekor total 8 + 1 = 9. Hasil: 78 + 4.511 = 4.589.",
+    "tip": "Bagi 1.248 dengan 16 lebih dulu lalu gabungkan digit satuannya dengan 7 × 3."
   },
   {
-    id: "tiu-hit-130",
-    subPattern: "taksiran-dan-ekor-angka",
-    difficulty: "mudah",
-    prompt: "Hasil dari 199 + 298 + 397 + 496 = ...",
-    options: [
-      "1.380",
+    "id": "tiu-hit-130",
+    "subPattern": "taksiran-dan-ekor-angka",
+    "difficulty": "mudah",
+    "prompt": "Hasil dari 199 + 298 + 397 + 496 = ...",
+    "options": [
       "1.385",
-      "1.395",
+      "695",
+      "1.375",
       "1.390",
-      "1.400",
+      "1.380"
     ],
-    answer: "D",
-    explanation:
-      "Bulatkan ke ratusan terdekat lalu kurangi selisihnya: (200 - 1) + (300 - 2) + (400 - 3) + (500 - 4) = 1.400 - 10 = 1.390.",
-    tip: "Ubah tiap bilangan mendekati ratusan penuh lalu kurangkan selisih pembulatannya.",
+    "answer": "D",
+    "explanation": "Bulatkan ke ratusan terdekat lalu kurangi selisihnya: (200 - 1) + (300 - 2) + (400 - 3) + (500 - 4) = 1.400 - 10 = 1.390.",
+    "tip": "Ubah tiap bilangan mendekati ratusan penuh lalu kurangkan selisih pembulatannya."
   },
   {
-    id: "tiu-hit-131",
-    subPattern: "taksiran-dan-ekor-angka",
-    difficulty: "sedang",
-    prompt: "Nilai yang paling mendekati hasil dari 49,8% × 402 adalah ...",
-    options: [
-      "150",
-      "200",
-      "250",
-      "300",
+    "id": "tiu-hit-131",
+    "subPattern": "taksiran-dan-ekor-angka",
+    "difficulty": "sedang",
+    "prompt": "Nilai yang paling mendekati hasil dari 49,8% × 402 adalah ...",
+    "options": [
       "350",
+      "200",
+      "240",
+      "250",
+      "300"
     ],
-    answer: "B",
-    explanation:
-      "Taksir ke bilangan terdekat: 49,8% ≈ 50% dan 402 ≈ 400. Maka 50% × 400 = 200 (nilai eksaknya 200,196).",
-    tip: "Bulatkan persentase ke 50% dan pengalinya ke ratusan terdekat.",
+    "answer": "B",
+    "explanation": "Taksir ke bilangan terdekat: 49,8% ≈ 50% dan 402 ≈ 400. Maka 50% × 400 = 200 (nilai eksaknya 200,196).",
+    "tip": "Bulatkan persentase ke 50% dan pengalinya ke ratusan terdekat."
   },
   {
-    id: "tiu-hit-132",
-    subPattern: "taksiran-dan-ekor-angka",
-    difficulty: "sedang",
-    prompt: "Nilai yang paling mendekati hasil dari 24,9% × 796 + 101 adalah ...",
-    options: [
+    "id": "tiu-hit-132",
+    "subPattern": "taksiran-dan-ekor-angka",
+    "difficulty": "sedang",
+    "prompt": "Nilai yang paling mendekati hasil dari 24,9% × 796 + 101 adalah ...",
+    "options": [
+      "360",
       "200",
-      "250",
       "350",
       "300",
-      "400",
+      "400"
     ],
-    answer: "D",
-    explanation:
-      "24,9% ≈ 25% = 1/4 dan 796 ≈ 800, sedangkan 101 ≈ 100. Taksiran: (1/4 × 800) + 100 = 200 + 100 = 300.",
-    tip: "Bulatkan 24,9% ke 25% (1/4) dan 796 ke 800 untuk menaksir cepat.",
+    "answer": "D",
+    "explanation": "24,9% ≈ 25% = 1/4 dan 796 ≈ 800, sedangkan 101 ≈ 100. Taksiran: (1/4 × 800) + 100 = 200 + 100 = 300.",
+    "tip": "Bulatkan 24,9% ke 25% (1/4) dan 796 ke 800 untuk menaksir cepat."
   },
   {
-    id: "tiu-hit-133",
-    subPattern: "taksiran-dan-ekor-angka",
-    difficulty: "sedang",
-    prompt: "Nilai yang paling mendekati hasil dari 33,2% × 597 = ...",
-    options: [
+    "id": "tiu-hit-133",
+    "subPattern": "taksiran-dan-ekor-angka",
+    "difficulty": "sedang",
+    "prompt": "Nilai yang paling mendekati hasil dari 33,2% × 597 = ...",
+    "options": [
       "200",
       "120",
       "160",
       "240",
-      "280",
+      "280"
     ],
-    answer: "A",
-    explanation:
-      "33,2% ≈ 1/3 dan 597 ≈ 600. Taksiran cepat: 1/3 × 600 = 200 (nilai eksak 198,204).",
-    tip: "Dekatkan 33,2% ke pecahan istimewa 1/3 dan bulatkan 597 ke 600.",
+    "answer": "A",
+    "explanation": "33,2% ≈ 1/3 dan 597 ≈ 600. Taksiran cepat: 1/3 × 600 = 200 (nilai eksak 198,204).",
+    "tip": "Dekatkan 33,2% ke pecahan istimewa 1/3 dan bulatkan 597 ke 600."
   },
   {
-    id: "tiu-hit-134",
-    subPattern: "taksiran-dan-ekor-angka",
-    difficulty: "sulit",
-    prompt: "Nilai yang paling mendekati hasil dari (12,48% × 1.604) : 1,99 adalah ...",
-    options: [
-      "50",
+    "id": "tiu-hit-134",
+    "subPattern": "taksiran-dan-ekor-angka",
+    "difficulty": "sulit",
+    "prompt": "Nilai yang paling mendekati hasil dari (12,48% × 1.604) : 1,99 adalah ...",
+    "options": [
       "75",
+      "80",
       "100",
       "125",
-      "150",
+      "50"
     ],
-    answer: "C",
-    explanation:
-      "12,48% ≈ 12,5% = 1/8, 1.604 ≈ 1.600, dan 1,99 ≈ 2. Maka (1/8 × 1.600) : 2 = 200 : 2 = 100.",
-    tip: "Bulatkan ketiga angka menuju angka mudah: 12,5% (1/8), 1.600, dan 2.",
+    "answer": "C",
+    "explanation": "12,48% ≈ 12,5% = 1/8, 1.604 ≈ 1.600, dan 1,99 ≈ 2. Maka (1/8 × 1.600) : 2 = 200 : 2 = 100.",
+    "tip": "Bulatkan ketiga angka menuju angka mudah: 12,5% (1/8), 1.600, dan 2."
   },
   {
-    id: "tiu-hit-135",
-    subPattern: "taksiran-dan-ekor-angka",
-    difficulty: "sulit",
-    prompt: "Nilai yang paling mendekati hasil dari √624 × √145 = ...",
-    options: [
+    "id": "tiu-hit-135",
+    "subPattern": "taksiran-dan-ekor-angka",
+    "difficulty": "sulit",
+    "prompt": "Nilai yang paling mendekati hasil dari √624 × √145 = ...",
+    "options": [
+      "150",
+      "225",
       "200",
       "240",
-      "360",
-      "400",
-      "300",
+      "300"
     ],
-    answer: "E",
-    explanation:
-      "624 sangat dekat dengan 625 (√625 = 25) dan 145 dekat dengan 144 (√144 = 12). Maka 25 × 12 = 300.",
-    tip: "Cari bilangan kuadrat sempurna yang paling berdekatan dengan 624 dan 145.",
+    "answer": "E",
+    "explanation": "624 sangat dekat dengan 625 (√625 = 25) dan 145 dekat dengan 144 (√144 = 12). Maka 25 × 12 = 300.",
+    "tip": "Cari bilangan kuadrat sempurna yang paling berdekatan dengan 624 dan 145."
   },
   {
-    id: "tiu-hit-136",
-    subPattern: "taksiran-dan-ekor-angka",
-    difficulty: "sedang",
-    prompt: "Nilai yang paling mendekati hasil dari 37,6% × 798 = ...",
-    options: [
-      "220",
-      "260",
+    "id": "tiu-hit-136",
+    "subPattern": "taksiran-dan-ekor-angka",
+    "difficulty": "sedang",
+    "prompt": "Nilai yang paling mendekati hasil dari 37,6% × 798 = ...",
+    "options": [
+      "375",
       "340",
       "380",
-      "300",
+      "360",
+      "300"
     ],
-    answer: "E",
-    explanation:
-      "37,6% ≈ 37,5% = 3/8 dan 798 ≈ 800. Jadi taksirannya 3/8 × 800 = 300 (nilai eksak 300,048).",
-    tip: "Gunakan pendekatan angka sakti 37,5% = 3/8 dan bulatkan 798 ke 800.",
+    "answer": "E",
+    "explanation": "37,6% ≈ 37,5% = 3/8 dan 798 ≈ 800. Jadi taksirannya 3/8 × 800 = 300 (nilai eksak 300,048).",
+    "tip": "Gunakan pendekatan angka sakti 37,5% = 3/8 dan bulatkan 798 ke 800."
   },
   {
-    id: "tiu-hit-137",
-    subPattern: "taksiran-dan-ekor-angka",
-    difficulty: "mudah",
-    prompt: "Hasil dari 98 + 102 + 99 + 101 + 100 = ...",
-    options: [
+    "id": "tiu-hit-137",
+    "subPattern": "taksiran-dan-ekor-angka",
+    "difficulty": "mudah",
+    "prompt": "Hasil dari 98 + 102 + 99 + 101 + 100 = ...",
+    "options": [
       "500",
       "490",
-      "495",
       "505",
       "510",
+      "550"
     ],
-    answer: "A",
-    explanation:
-      "Pasangkan bilangan simetris terhadap 100: (98 + 102) + (99 + 101) + 100 = 200 + 200 + 100 = 500.",
-    tip: "Kelompokkan bilangan yang saling melengkapi menjadi kelipatan 200.",
+    "answer": "A",
+    "explanation": "Pasangkan bilangan simetris terhadap 100: (98 + 102) + (99 + 101) + 100 = 200 + 200 + 100 = 500.",
+    "tip": "Kelompokkan bilangan yang saling melengkapi menjadi kelipatan 200."
   },
   {
-    id: "tiu-hit-138",
-    subPattern: "taksiran-dan-ekor-angka",
-    difficulty: "sedang",
-    prompt: "Hasil dari 1 + 2 + 3 + ... + 40 = ...",
-    options: [
-      "780",
+    "id": "tiu-hit-138",
+    "subPattern": "taksiran-dan-ekor-angka",
+    "difficulty": "sedang",
+    "prompt": "Hasil dari 1 + 2 + 3 + ... + 40 = ...",
+    "options": [
       "800",
-      "820",
       "840",
+      "820",
       "860",
+      "780"
     ],
-    answer: "C",
-    explanation:
-      "Gunakan rumus deret Gauss n(n+1)/2: (40 × 41) / 2 = 20 × 41 = 820.",
-    tip: "Gunakan rumus jumlah n bilangan asli pertama: n × (n + 1) : 2.",
+    "answer": "C",
+    "explanation": "Gunakan rumus deret Gauss n(n+1)/2: (40 × 41) / 2 = 20 × 41 = 820.",
+    "tip": "Gunakan rumus jumlah n bilangan asli pertama: n × (n + 1) : 2."
   },
   {
-    id: "tiu-hit-139",
-    subPattern: "taksiran-dan-ekor-angka",
-    difficulty: "sulit",
-    prompt: "Hasil dari 2 + 4 + 6 + ... + 60 = ...",
-    options: [
-      "870",
-      "900",
+    "id": "tiu-hit-139",
+    "subPattern": "taksiran-dan-ekor-angka",
+    "difficulty": "sulit",
+    "prompt": "Hasil dari 2 + 4 + 6 + ... + 60 = ...",
+    "options": [
+      "465",
       "960",
+      "870",
       "930",
-      "990",
+      "900"
     ],
-    answer: "D",
-    explanation:
-      "Ada 30 suku bilangan genap (60/2 = 30). Jumlahnya = 30 × (2 + 60) / 2 = 30 × 31 = 930.",
-    tip: "Hitung banyaknya suku terlebih dahulu lalu kalikan dengan rata-rata suku awal dan akhir.",
+    "answer": "D",
+    "explanation": "Ada 30 suku bilangan genap (60/2 = 30). Jumlahnya = 30 × (2 + 60) / 2 = 30 × 31 = 930.",
+    "tip": "Hitung banyaknya suku terlebih dahulu lalu kalikan dengan rata-rata suku awal dan akhir."
   },
   {
-    id: "tiu-hit-140",
-    subPattern: "taksiran-dan-ekor-angka",
-    difficulty: "sulit",
-    prompt: "Hasil dari 1 + 3 + 5 + ... + 49 = ...",
-    options: [
-      "575",
+    "id": "tiu-hit-140",
+    "subPattern": "taksiran-dan-ekor-angka",
+    "difficulty": "sulit",
+    "prompt": "Hasil dari 1 + 3 + 5 + ... + 49 = ...",
+    "options": [
+      "469",
       "625",
+      "575",
       "600",
-      "650",
-      "675",
+      "313"
     ],
-    answer: "B",
-    explanation:
-      "Dari 1 sampai 49 ada 25 bilangan ganjil. Jumlah n bilangan ganjil pertama = n² = 25² = 625.",
-    tip: "Hitung banyaknya bilangan ganjil dari 1 hingga 49, lalu kuadratkan banyaknya suku itu.",
+    "answer": "B",
+    "explanation": "Dari 1 sampai 49 ada 25 bilangan ganjil. Jumlah n bilangan ganjil pertama = n² = 25² = 625.",
+    "tip": "Hitung banyaknya bilangan ganjil dari 1 hingga 49, lalu kuadratkan banyaknya suku itu."
   },
   {
-    id: "tiu-hit-141",
-    subPattern: "taksiran-dan-ekor-angka",
-    difficulty: "mudah",
-    prompt: "Jika 3x + 2,5 = 17,5, maka nilai dari 4x - 3 adalah ...",
-    options: [
-      "13",
-      "15",
+    "id": "tiu-hit-141",
+    "subPattern": "taksiran-dan-ekor-angka",
+    "difficulty": "mudah",
+    "prompt": "Jika 3x + 2,5 = 17,5, maka nilai dari 4x - 3 adalah ...",
+    "options": [
       "19",
-      "17",
       "21",
+      "20",
+      "17",
+      "26"
     ],
-    answer: "D",
-    explanation:
-      "3x = 17,5 - 2,5 = 15 => x = 5. Maka 4(5) - 3 = 20 - 3 = 17.",
-    tip: "Selesaikan persamaan untuk memperoleh x terlebih dahulu baru masukkan ke 4x - 3.",
+    "answer": "D",
+    "explanation": "3x = 17,5 - 2,5 = 15 => x = 5. Maka 4(5) - 3 = 20 - 3 = 17.",
+    "tip": "Selesaikan persamaan untuk memperoleh x terlebih dahulu baru masukkan ke 4x - 3."
   },
   {
-    id: "tiu-hit-142",
-    subPattern: "taksiran-dan-ekor-angka",
-    difficulty: "sedang",
-    prompt: "Jika p = 12,5% dari 64 dan q = 3/5 dari 25, maka nilai 2p + q adalah ...",
-    options: [
-      "27",
-      "29",
+    "id": "tiu-hit-142",
+    "subPattern": "taksiran-dan-ekor-angka",
+    "difficulty": "sedang",
+    "prompt": "Jika p = 12,5% dari 64 dan q = 3/5 dari 25, maka nilai 2p + q adalah ...",
+    "options": [
       "33",
       "35",
-      "31",
+      "34",
+      "27",
+      "31"
     ],
-    answer: "E",
-    explanation:
-      "p = 1/8 × 64 = 8 dan q = 3/5 × 25 = 15. Jadi 2p + q = 2(8) + 15 = 16 + 15 = 31.",
-    tip: "Hitung p menggunakan pecahan 1/8 dan q dengan mencoret 25 dengan 5.",
+    "answer": "E",
+    "explanation": "p = 1/8 × 64 = 8 dan q = 3/5 × 25 = 15. Jadi 2p + q = 2(8) + 15 = 16 + 15 = 31.",
+    "tip": "Hitung p menggunakan pecahan 1/8 dan q dengan mencoret 25 dengan 5."
   },
   {
-    id: "tiu-hit-143",
-    subPattern: "taksiran-dan-ekor-angka",
-    difficulty: "sedang",
-    prompt: "Jika x/4 + 6 = 15, maka nilai dari 2x - 12 adalah ...",
-    options: [
-      "48",
-      "60",
-      "54",
+    "id": "tiu-hit-143",
+    "subPattern": "taksiran-dan-ekor-angka",
+    "difficulty": "sedang",
+    "prompt": "Jika x/4 + 6 = 15, maka nilai dari 2x - 12 adalah ...",
+    "options": [
       "66",
+      "60",
       "72",
+      "48",
+      "54"
     ],
-    answer: "B",
-    explanation:
-      "x/4 = 15 - 6 = 9 => x = 36. Maka 2(36) - 12 = 72 - 12 = 60.",
-    tip: "Kurangkan 15 dengan 6 lalu kalikan hasilnya dengan 4 untuk mendapatkan x.",
+    "answer": "B",
+    "explanation": "x/4 = 15 - 6 = 9 => x = 36. Maka 2(36) - 12 = 72 - 12 = 60.",
+    "tip": "Kurangkan 15 dengan 6 lalu kalikan hasilnya dengan 4 untuk mendapatkan x."
   },
   {
-    id: "tiu-hit-144",
-    subPattern: "taksiran-dan-ekor-angka",
-    difficulty: "sulit",
-    prompt: "Jika 2a + 3b = 27 dan 4a - 3b = 9, maka nilai a × b adalah ...",
-    options: [
+    "id": "tiu-hit-144",
+    "subPattern": "taksiran-dan-ekor-angka",
+    "difficulty": "sulit",
+    "prompt": "Jika 2a + 3b = 27 dan 4a - 3b = 9, maka nilai a × b adalah ...",
+    "options": [
       "30",
+      "32",
       "24",
       "28",
-      "32",
-      "36",
+      "15"
     ],
-    answer: "A",
-    explanation:
-      "Jumlahkan kedua persamaan agar 3b habis: 6a = 36 => a = 6. Substitusi: 2(6) + 3b = 27 => 3b = 15 => b = 5. Jadi a × b = 6 × 5 = 30.",
-    tip: "Eliminasi 3b dengan langsung menjumlahkan kedua persamaan.",
+    "answer": "A",
+    "explanation": "Jumlahkan kedua persamaan agar 3b habis: 6a = 36 => a = 6. Substitusi: 2(6) + 3b = 27 => 3b = 15 => b = 5. Jadi a × b = 6 × 5 = 30.",
+    "tip": "Eliminasi 3b dengan langsung menjumlahkan kedua persamaan."
   },
   {
-    id: "tiu-hit-145",
-    subPattern: "taksiran-dan-ekor-angka",
-    difficulty: "sulit",
-    prompt: "Hasil dari (32 × 125) : 400 + 75% × 40 = ...",
-    options: [
+    "id": "tiu-hit-145",
+    "subPattern": "taksiran-dan-ekor-angka",
+    "difficulty": "sulit",
+    "prompt": "Hasil dari (32 × 125) : 400 + 75% × 40 = ...",
+    "options": [
       "35",
       "38",
       "40",
-      "42",
-      "45",
+      "20",
+      "30"
     ],
-    answer: "C",
-    explanation:
-      "32 × 125 = 4 × (8 × 125) = 4.000, lalu 4.000 : 400 = 10. Sementara 75% × 40 = 3/4 × 40 = 30. Total: 10 + 30 = 40.",
-    tip: "Pecah 32 menjadi 4 × 8 agar 8 × 125 langsung membentuk 1.000.",
+    "answer": "C",
+    "explanation": "32 × 125 = 4 × (8 × 125) = 4.000, lalu 4.000 : 400 = 10. Sementara 75% × 40 = 3/4 × 40 = 30. Total: 10 + 30 = 40.",
+    "tip": "Pecah 32 menjadi 4 × 8 agar 8 × 125 langsung membentuk 1.000."
   },
   {
-    id: "tiu-hit-146",
-    subPattern: "taksiran-dan-ekor-angka",
-    difficulty: "sulit",
-    prompt: "Hasil dari 25 × 28 + 15 × 28 - 40 × 18 = ...",
-    options: [
-      "360",
-      "380",
-      "400",
-      "420",
+    "id": "tiu-hit-146",
+    "subPattern": "taksiran-dan-ekor-angka",
+    "difficulty": "sulit",
+    "prompt": "Hasil dari 25 × 28 + 15 × 28 - 40 × 18 = ...",
+    "options": [
       "440",
+      "480",
+      "400",
+      "500",
+      "420"
     ],
-    answer: "C",
-    explanation:
-      "Gabungkan dua suku pertama: (25 + 15) × 28 = 40 × 28. Kemudian faktorkan 40: 40 × (28 - 18) = 40 × 10 = 400.",
-    tip: "Faktorkan 28 dari dua suku depan lebih dulu, lalu muncul angka pengali baru 40.",
+    "answer": "C",
+    "explanation": "Gabungkan dua suku pertama: (25 + 15) × 28 = 40 × 28. Kemudian faktorkan 40: 40 × (28 - 18) = 40 × 10 = 400.",
+    "tip": "Faktorkan 28 dari dua suku depan lebih dulu, lalu muncul angka pengali baru 40."
   },
   {
-    id: "tiu-hit-147",
-    subPattern: "taksiran-dan-ekor-angka",
-    difficulty: "mudah",
-    prompt: "Hasil dari 4.500 : 25 + 120 × 0,5 = ...",
-    options: [
-      "220",
-      "240",
-      "230",
-      "250",
+    "id": "tiu-hit-147",
+    "subPattern": "taksiran-dan-ekor-angka",
+    "difficulty": "mudah",
+    "prompt": "Hasil dari 4.500 : 25 + 120 × 0,5 = ...",
+    "options": [
       "260",
+      "240",
+      "300",
+      "220",
+      "250"
     ],
-    answer: "B",
-    explanation:
-      "Ingat trik bagi 25: kalikan dengan 4 lalu bagi 100. 4.500 : 25 = 45 × 4 = 180. Lalu 120 × 0,5 = 60. Total: 180 + 60 = 240.",
-    tip: "Untuk membagi bilangan kelipatan 100 dengan 25, cukup kalikan angka ratusannya dengan 4.",
+    "answer": "B",
+    "explanation": "Ingat trik bagi 25: kalikan dengan 4 lalu bagi 100. 4.500 : 25 = 45 × 4 = 180. Lalu 120 × 0,5 = 60. Total: 180 + 60 = 240.",
+    "tip": "Untuk membagi bilangan kelipatan 100 dengan 25, cukup kalikan angka ratusannya dengan 4."
   },
   {
-    id: "tiu-hit-148",
-    subPattern: "taksiran-dan-ekor-angka",
-    difficulty: "sedang",
-    prompt: "Hasil dari 125 × 48 : 150 = ...",
-    options: [
+    "id": "tiu-hit-148",
+    "subPattern": "taksiran-dan-ekor-angka",
+    "difficulty": "sedang",
+    "prompt": "Hasil dari 125 × 48 : 150 = ...",
+    "options": [
+      "48",
       "32",
       "36",
-      "44",
       "40",
-      "48",
+      "44"
     ],
-    answer: "D",
-    explanation:
-      "Pecah 48 = 6 × 8 sehingga 125 × 48 = 6 × 1.000 = 6.000. Lalu 6.000 : 150 = 600 : 15 = 40.",
-    tip: "Ubah 125 × 48 menjadi 6 × (8 × 125) = 6.000 sebelum membagi 150.",
+    "answer": "D",
+    "explanation": "Pecah 48 = 6 × 8 sehingga 125 × 48 = 6 × 1.000 = 6.000. Lalu 6.000 : 150 = 600 : 15 = 40.",
+    "tip": "Ubah 125 × 48 menjadi 6 × (8 × 125) = 6.000 sebelum membagi 150."
   },
   {
-    id: "tiu-hit-149",
-    subPattern: "taksiran-dan-ekor-angka",
-    difficulty: "sulit",
-    prompt: "Jika x = 1/3 - 1/4 dan y = 1/4 - 1/5, maka nilai dari (x + y) × 60 adalah ...",
-    options: [
+    "id": "tiu-hit-149",
+    "subPattern": "taksiran-dan-ekor-angka",
+    "difficulty": "sulit",
+    "prompt": "Jika x = 1/3 - 1/4 dan y = 1/4 - 1/5, maka nilai dari (x + y) × 60 adalah ...",
+    "options": [
       "6",
       "7",
+      "5",
       "9",
-      "10",
-      "8",
+      "8"
     ],
-    answer: "E",
-    explanation:
-      "x + y = (1/3 - 1/4) + (1/4 - 1/5) = 1/3 - 1/5 = 2/15. Kalikan 60: 2/15 × 60 = 2 × 4 = 8.",
-    tip: "Jumlahkan x dan y secara aljabar agar -1/4 dan +1/4 saling meniadakan.",
+    "answer": "E",
+    "explanation": "x + y = (1/3 - 1/4) + (1/4 - 1/5) = 1/3 - 1/5 = 2/15. Kalikan 60: 2/15 × 60 = 2 × 4 = 8.",
+    "tip": "Jumlahkan x dan y secara aljabar agar -1/4 dan +1/4 saling meniadakan."
   },
   {
-    id: "tiu-hit-150",
-    subPattern: "taksiran-dan-ekor-angka",
-    difficulty: "sulit",
-    prompt: "Hasil dari (998 × 12) + (2 × 12) - (50 × 24) = ...",
-    options: [
+    "id": "tiu-hit-150",
+    "subPattern": "taksiran-dan-ekor-angka",
+    "difficulty": "sulit",
+    "prompt": "Hasil dari (998 × 12) + (2 × 12) - (50 × 24) = ...",
+    "options": [
       "10.800",
-      "9.600",
       "10.400",
       "10.600",
-      "11.200",
+      "5.400",
+      "9.600"
     ],
-    answer: "A",
-    explanation:
-      "Dua suku awal = (998 + 2) × 12 = 1.000 × 12 = 12.000. Sementara 50 × 24 = 100 × 12 = 1.200. Selisihnya 12.000 - 1.200 = 10.800.",
-    tip: "Faktorkan 12 dari dua suku pertama dan ubah 50 × 24 menjadi 100 × 12.",
-  },
+    "answer": "A",
+    "explanation": "Dua suku awal = (998 + 2) × 12 = 1.000 × 12 = 12.000. Sementara 50 × 24 = 100 × 12 = 1.200. Selisihnya 12.000 - 1.200 = 10.800.",
+    "tip": "Faktorkan 12 dari dua suku pertama dan ubah 50 × 24 menjadi 100 × 12."
+  }
 ];

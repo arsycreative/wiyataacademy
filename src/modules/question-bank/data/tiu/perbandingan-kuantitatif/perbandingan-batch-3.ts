@@ -7,11 +7,11 @@ export const perbandinganBatch3Drafts: readonly QuestionDraft[] = [
     "difficulty": "sedang",
     "prompt": "Kota P dan Kota Q berjarak 255 km. Bus A berangkat dari Kota P menuju Kota Q pukul 07.00 dengan kecepatan 60 km/jam. Bus B berangkat dari Kota Q menuju Kota P pukul 07.30 dengan kecepatan 75 km/jam. Pada pukul berapa kedua bus tersebut berpapasan?",
     "options": [
-      "08.50",
-      "09.00",
-      "09.15",
+      "09.20",
+      "09.30",
+      "09.25",
       "09.10",
-      "09.20"
+      "09.15"
     ],
     "answer": "D",
     "explanation": "Selama 30 menit pertama (07.00–07.30), Bus A sudah menempuh 60 × 0,5 = 30 km. Sisa jarak pada pukul 07.30 adalah 255 - 30 = 225 km. Waktu papasan sejak pukul 07.30 = 225 / (60 + 75) = 225 / 135 = 5/3 jam = 1 jam 40 menit. Kedua bus berpapasan pukul 07.30 + 01.40 = 09.10.",
@@ -23,10 +23,10 @@ export const perbandinganBatch3Drafts: readonly QuestionDraft[] = [
     "difficulty": "sedang",
     "prompt": "Seorang pegawai mengendarai mobil dari kantor ke bandara dengan kecepatan rata-rata 60 km/jam, lalu kembali dari bandara ke kantor melalui rute yang sama dengan kecepatan rata-rata 40 km/jam. Berapakah kecepatan rata-rata perjalanan pulang-pergi pegawai tersebut?",
     "options": [
-      "45 km/jam",
-      "50 km/jam",
       "52 km/jam",
       "54 km/jam",
+      "45 km/jam",
+      "50 km/jam",
       "48 km/jam"
     ],
     "answer": "E",
@@ -40,9 +40,9 @@ export const perbandinganBatch3Drafts: readonly QuestionDraft[] = [
     "prompt": "Truk logistik berangkat dari gudang pukul 05.30 dengan kecepatan 50 km/jam. Pada pukul 06.18, mobil pengawal berangkat dari gudang yang sama menyusul truk tersebut dengan kecepatan 70 km/jam. Pada pukul berapa mobil pengawal tepat menyusul truk logistik?",
     "options": [
       "08.18",
+      "08.28",
       "07.48",
       "08.00",
-      "08.12",
       "08.30"
     ],
     "answer": "A",
@@ -58,8 +58,8 @@ export const perbandinganBatch3Drafts: readonly QuestionDraft[] = [
       "10.30",
       "10.55",
       "10.45",
-      "11.00",
-      "11.05"
+      "10.35",
+      "11.00"
     ],
     "answer": "B",
     "explanation": "Waktu berkendara murni = 240 / 60 = 4 jam. Ditambah istirahat 25 menit = 4 jam 25 menit. Waktu tiba = 06.30 + 04.25 = 10.55.",
@@ -71,11 +71,11 @@ export const perbandinganBatch3Drafts: readonly QuestionDraft[] = [
     "difficulty": "sedang",
     "prompt": "Kereta A berangkat dari Stasiun Barat menuju Stasiun Timur dengan kecepatan 70 km/jam, dan pada saat bersamaan Kereta B berangkat dari Stasiun Timur menuju Stasiun Barat dengan kecepatan 80 km/jam. Keduanya berpapasan setelah 2 jam 20 menit. Berapakah jarak antara Stasiun Barat dan Stasiun Timur?",
     "options": [
-      "300 km",
       "325 km",
+      "280 km",
       "350 km",
-      "360 km",
-      "375 km"
+      "340 km",
+      "300 km"
     ],
     "answer": "C",
     "explanation": "Laju gabungan = 70 + 80 = 150 km/jam. Waktu 2 jam 20 menit = 7/3 jam. Jarak total = 150 × (7/3) = 350 km.",
@@ -87,8 +87,8 @@ export const perbandinganBatch3Drafts: readonly QuestionDraft[] = [
     "difficulty": "sedang",
     "prompt": "Pada saat dua mobil yang bergerak saling mendekat dari Kota X (kecepatan 55 km/jam) dan Kota Y (kecepatan 65 km/jam) berpapasan, mobil dari Kota Y telah menempuh jarak 195 km. Berapakah jarak total antara Kota X dan Kota Y?",
     "options": [
-      "330 km",
-      "345 km",
+      "450 km",
+      "540 km",
       "375 km",
       "360 km",
       "390 km"
@@ -103,9 +103,9 @@ export const perbandinganBatch3Drafts: readonly QuestionDraft[] = [
     "difficulty": "sedang",
     "prompt": "Sebuah perahu motor memiliki kecepatan 16 km/jam di air tenang. Jika perahu tersebut berlayar melawan arus sungai yang berkecepatan 4 km/jam, berapa jam waktu yang diperlukan untuk menempuh jarak 42 km ke arah hulu?",
     "options": [
+      "5,5 jam",
       "2,5 jam",
-      "3 jam",
-      "4 jam",
+      "4,0 jam",
       "4,5 jam",
       "3.5 jam"
     ],
@@ -135,11 +135,11 @@ export const perbandinganBatch3Drafts: readonly QuestionDraft[] = [
     "difficulty": "sedang",
     "prompt": "Sebuah kereta sepanjang 140 meter melaju dengan kecepatan 72 km/jam melewati sebuah jembatan yang panjangnya 260 meter. Berapa detik waktu yang dibutuhkan sejak bagian depan kereta masuk jembatan hingga bagian belakang kereta lepas dari jembatan?",
     "options": [
-      "15 detik",
-      "20 detik",
       "18 detik",
+      "20 detik",
+      "16 detik",
       "22 detik",
-      "25 detik"
+      "15 detik"
     ],
     "answer": "B",
     "explanation": "Kecepatan 72 km/jam = 20 m/detik. Total jarak yang harus ditempuh ujung depan kereta = panjang jembatan + panjang kereta = 260 + 140 = 400 meter. Waktu = 400 / 20 = 20 detik.",
@@ -151,11 +151,11 @@ export const perbandinganBatch3Drafts: readonly QuestionDraft[] = [
     "difficulty": "sedang",
     "prompt": "Jika Budi mengendarai sepeda motor dengan kecepatan 40 km/jam, ia terlambat 15 menit tiba di kantor. Namun jika ia melaju dengan kecepatan 60 km/jam, ia tiba 15 menit lebih awal dari jam masuk. Berapa km jarak dari rumah Budi ke kantor?",
     "options": [
-      "45 km",
-      "48 km",
-      "60 km",
       "50 km",
-      "72 km"
+      "58 km",
+      "60 km",
+      "45 km",
+      "48 km"
     ],
     "answer": "C",
     "explanation": "Selisih waktu antara kedua kecepatan adalah 15 + 15 = 30 menit = 0,5 jam. Maka Jarak/40 - Jarak/60 = 0,5 → Jarak/120 = 0,5 → Jarak = 60 km.",
@@ -169,7 +169,7 @@ export const perbandinganBatch3Drafts: readonly QuestionDraft[] = [
     "options": [
       "X > Y",
       "X = Y",
-      "X = 1,2Y",
+      "X = 2Y",
       "X < Y",
       "Hubungan X dan Y tidak dapat ditentukan"
     ],
@@ -200,10 +200,10 @@ export const perbandinganBatch3Drafts: readonly QuestionDraft[] = [
     "prompt": "Dua pelari berlari mengelilingi lintasan stadion berbentuk lingkaran sepanjang 400 meter dari garis start yang sama. Pelari A berlari dengan kecepatan 6 m/detik dan Pelari B dengan kecepatan 4 m/detik. Jika keduanya berlari searah, setelah berapa menit Pelari A akan menyusul Pelari B sebanyak 1 putaran penuh untuk pertama kalinya?",
     "options": [
       "3 menit 20 detik",
-      "2 menit 40 detik",
-      "3 menit",
-      "3 menit 40 detik",
-      "4 menit"
+      "4 menit",
+      "3 menit 50 detik",
+      "4 menit 20 detik",
+      "3 menit 40 detik"
     ],
     "answer": "A",
     "explanation": "Untuk menyusul 1 putaran (400 m) searah, selisih jarak harus 400 m: t = 400 / (6 - 4) = 200 detik = 3 menit 20 detik.",
@@ -218,7 +218,7 @@ export const perbandinganBatch3Drafts: readonly QuestionDraft[] = [
       "X > Y",
       "X = Y",
       "X < Y",
-      "X = 2Y",
+      "X + Y = 0",
       "Hubungan X dan Y tidak dapat ditentukan"
     ],
     "answer": "B",
@@ -231,8 +231,8 @@ export const perbandinganBatch3Drafts: readonly QuestionDraft[] = [
     "difficulty": "sulit",
     "prompt": "Jarak Kota A dan B adalah 300 km. Mobil P berangkat dari A ke B pukul 06.00 dengan kecepatan 60 km/jam. Mobil Q berangkat dari B ke A pukul 06.30 dengan kecepatan 75 km/jam. Berapa km jarak titik berpapasan kedua mobil tersebut dihitung dari Kota A?",
     "options": [
+      "225 km",
       "120 km",
-      "135 km",
       "150 km",
       "160 km",
       "180 km"
@@ -263,10 +263,10 @@ export const perbandinganBatch3Drafts: readonly QuestionDraft[] = [
     "difficulty": "sulit",
     "prompt": "Jika Fajar berjalan kaki dengan kecepatan 4 km/jam dari kos ke stasiun, ia terlambat 6 menit dari jadwal kereta. Namun jika ia berlari kecil dengan kecepatan 6 km/jam, ia tiba 9 menit sebelum jadwal kereta. Berapa km jarak dari kos Fajar ke stasiun?",
     "options": [
-      "2 km",
       "2,5 km",
+      "1,0 km",
       "3,5 km",
-      "4 km",
+      "2,0 km",
       "3 km"
     ],
     "answer": "E",
@@ -280,10 +280,10 @@ export const perbandinganBatch3Drafts: readonly QuestionDraft[] = [
     "prompt": "Kereta Ekspres sepanjang 160 meter melaju dengan kecepatan 90 km/jam searah dengan Kereta Barang sepanjang 200 meter yang melaju di rel sejajar dengan kecepatan 54 km/jam. Berapa detik waktu yang dibutuhkan Kereta Ekspres untuk menyalip seluruh badan Kereta Barang?",
     "options": [
       "36 detik",
-      "24 detik",
-      "30 detik",
       "32 detik",
-      "40 detik"
+      "27 detik",
+      "24 detik",
+      "30 detik"
     ],
     "answer": "A",
     "explanation": "Selisih kecepatan = 90 - 54 = 36 km/jam = 10 m/detik. Total panjang yang harus dilewati = 160 + 200 = 360 meter. Waktu menyalip = 360 / 10 = 36 detik.",
@@ -311,11 +311,11 @@ export const perbandinganBatch3Drafts: readonly QuestionDraft[] = [
     "difficulty": "sulit",
     "prompt": "Peserta A dan B berangkat dari Kota S ke Kota T yang berjarak 120 km secara bersamaan. Kecepatan A adalah 60 km/jam dan kecepatan B adalah 40 km/jam. Setibanya di Kota T, A langsung berbalik arah kembali menuju Kota S tanpa berhenti. Pada jarak berapa km dari Kota S keduanya akan berpapasan?",
     "options": [
-      "84 km",
-      "90 km",
-      "96 km",
       "100 km",
-      "105 km"
+      "105 km",
+      "96 km",
+      "115 km",
+      "120 km"
     ],
     "answer": "C",
     "explanation": "Saat A berbalik dan berpapasan dengan B, jumlah jarak yang telah ditempuh A dan B adalah 2 × 120 = 240 km. Waktu papasan = 240 / (60 + 40) = 2,4 jam. Jarak B dari Kota S saat itu = 40 × 2,4 = 96 km.",
@@ -329,7 +329,7 @@ export const perbandinganBatch3Drafts: readonly QuestionDraft[] = [
     "options": [
       "X > Y",
       "X < Y",
-      "2X = 3Y",
+      "X = 2Y",
       "Hubungan antara X dan Y tidak dapat ditentukan",
       "X = Y"
     ],
@@ -346,7 +346,7 @@ export const perbandinganBatch3Drafts: readonly QuestionDraft[] = [
       "X < Y",
       "X > Y",
       "X = Y",
-      "2X = 3Y",
+      "2X = Y",
       "Hubungan antara X dan Y tidak dapat ditentukan"
     ],
     "answer": "A",
@@ -362,7 +362,7 @@ export const perbandinganBatch3Drafts: readonly QuestionDraft[] = [
       "X < Y",
       "X > Y",
       "X = Y",
-      "2X = 3Y",
+      "3X = 2Y",
       "Hubungan antara X dan Y tidak dapat ditentukan"
     ],
     "answer": "B",
@@ -378,7 +378,7 @@ export const perbandinganBatch3Drafts: readonly QuestionDraft[] = [
       "X > Y",
       "X < Y",
       "X = Y",
-      "2X = 3Y",
+      "X + Y = 0",
       "Hubungan antara X dan Y tidak dapat ditentukan"
     ],
     "answer": "C",
@@ -389,17 +389,17 @@ export const perbandinganBatch3Drafts: readonly QuestionDraft[] = [
     "id": "tiu-pk-125",
     "subPattern": "hubungan-variabel-x-dan-y",
     "difficulty": "mudah",
-    "prompt": "Diketahui X = (2/3) + (3/4) dan Y = (5/6) + (1/2). Manakah hubungan yang benar antara kuantitas X dan Y?",
+    "prompt": "Total berat tas Rina dan tas Sinta adalah 12 kg, dan tas Sinta lebih berat daripada tas Rina. Jika X adalah berat tas Sinta dan Y = 7 kg, manakah hubungan yang benar antara kuantitas X dan Y?",
     "options": [
+      "X > Y",
       "X < Y",
       "X = Y",
-      "2X = 3Y",
-      "X > Y",
-      "Hubungan antara X dan Y tidak dapat ditentukan"
+      "Hubungan antara X dan Y tidak dapat ditentukan",
+      "X = 2Y"
     ],
     "answer": "D",
-    "explanation": "Samakan penyebut ke 12: X = (8 + 9)/12 = 17/12, sedangkan Y = (10 + 6)/12 = 16/12. Karena 17/12 > 16/12, maka X > Y.",
-    "tip": "Samakan kedua ekspresi pecahan ke penyebut KPK 12 agar pembilangnya bisa langsung dibandingkan."
+    "explanation": "Karena jumlah berat adalah 12 kg dan tas Sinta lebih berat daripada tas Rina, maka 6 < X < 12. Berat tas Sinta bisa 6,5 kg (lebih kecil dari 7 kg), bisa 7 kg (sama dengan Y), atau bisa 8 kg (lebih besar dari 7 kg). Jadi hubungan X dan Y tidak dapat ditentukan.",
+    "tip": "Syarat X > 6 kg tidak mengunci apakah X berada di bawah, tepat di 7 kg, atau di atas 7 kg."
   },
   {
     "id": "tiu-pk-126",
@@ -409,7 +409,7 @@ export const perbandinganBatch3Drafts: readonly QuestionDraft[] = [
     "options": [
       "X < Y",
       "X = Y",
-      "2X = 3Y",
+      "X = 2Y",
       "Hubungan antara X dan Y tidak dapat ditentukan",
       "X > Y"
     ],
@@ -426,7 +426,7 @@ export const perbandinganBatch3Drafts: readonly QuestionDraft[] = [
       "X < Y",
       "X > Y",
       "X = Y",
-      "2X = 3Y",
+      "2X = Y",
       "Hubungan antara X dan Y tidak dapat ditentukan"
     ],
     "answer": "A",
@@ -458,7 +458,7 @@ export const perbandinganBatch3Drafts: readonly QuestionDraft[] = [
       "X > Y",
       "X < Y",
       "X = Y",
-      "2X = 3Y",
+      "X + Y = 0",
       "Hubungan antara X dan Y tidak dapat ditentukan"
     ],
     "answer": "C",
@@ -490,7 +490,7 @@ export const perbandinganBatch3Drafts: readonly QuestionDraft[] = [
       "X > Y",
       "X < Y",
       "X = Y",
-      "2X = 3Y",
+      "X = 2Y",
       "Hubungan antara X dan Y tidak dapat ditentukan"
     ],
     "answer": "E",
@@ -506,7 +506,7 @@ export const perbandinganBatch3Drafts: readonly QuestionDraft[] = [
       "X = Y",
       "X > Y",
       "X < Y",
-      "2X = 3Y",
+      "2X = Y",
       "Hubungan antara X dan Y tidak dapat ditentukan"
     ],
     "answer": "A",
@@ -522,7 +522,7 @@ export const perbandinganBatch3Drafts: readonly QuestionDraft[] = [
       "X > Y",
       "X < Y",
       "X = Y",
-      "2X = 3Y",
+      "3X = 2Y",
       "Hubungan antara X dan Y tidak dapat ditentukan"
     ],
     "answer": "B",
@@ -533,17 +533,17 @@ export const perbandinganBatch3Drafts: readonly QuestionDraft[] = [
     "id": "tiu-pk-134",
     "subPattern": "hubungan-variabel-x-dan-y",
     "difficulty": "sedang",
-    "prompt": "Rata-rata nilai SKD 12 peserta kelompok pertama adalah 410, sedangkan rata-rata nilai 8 peserta kelompok kedua adalah 435. Jika X adalah rata-rata gabungan seluruh peserta dan Y = 420, manakah hubungan yang benar?",
+    "prompt": "Diketahui a dan b adalah bilangan bulat positif yang memenuhi a × b = 24. Jika X = a + b dan Y = 11, manakah hubungan yang benar antara kuantitas X dan Y?",
     "options": [
       "X > Y",
       "X < Y",
+      "Hubungan antara X dan Y tidak dapat ditentukan",
       "X = Y",
-      "2X = 3Y",
-      "Hubungan antara X dan Y tidak dapat ditentukan"
+      "2X = 3Y"
     ],
     "answer": "C",
-    "explanation": "Rata-rata gabungan X = (12 × 410 + 8 × 435) / (12 + 8) = (3 × 410 + 2 × 435) / 5 = (1230 + 870) / 5 = 2100 / 5 = 420. Maka X = Y.",
-    "tip": "Sederhanakan perbandingan jumlah peserta 12 : 8 menjadi 3 : 2 terlebih dahulu sebelum menghitung rata-rata tertimbang."
+    "explanation": "Pasangan (a, b) bilangan bulat positif dengan hasil kali 24 meliputi (4, 6) -> X = 10 < 11, (3, 8) -> X = 11 = Y, dan (2, 12) -> X = 14 > 11. Karena nilainya bervariasi terhadap Y, hubungan X dan Y tidak dapat ditentukan.",
+    "tip": "Uji beberapa pasangan faktor positif dari 24 untuk melihat apakah X selalu lebih besar/kecil atau bisa berubah-ubah terhadap Y."
   },
   {
     "id": "tiu-pk-135",
@@ -569,7 +569,7 @@ export const perbandinganBatch3Drafts: readonly QuestionDraft[] = [
     "options": [
       "X > Y",
       "X = Y",
-      "2X = 3Y",
+      "X = 2Y",
       "Hubungan antara X dan Y tidak dapat ditentukan",
       "X < Y"
     ],
@@ -581,17 +581,17 @@ export const perbandinganBatch3Drafts: readonly QuestionDraft[] = [
     "id": "tiu-pk-137",
     "subPattern": "hubungan-variabel-x-dan-y",
     "difficulty": "sedang",
-    "prompt": "Diketahui bilangan bulat positif p dan q memenuhi p + q = 16. Jika X adalah nilai maksimum dari p × q dan Y = 60, manakah hubungan yang benar?",
+    "prompt": "Sebuah persegi panjang memiliki keliling 40 cm. Jika X adalah luas persegi panjang tersebut (dalam cm²) dan Y = 64 cm², manakah hubungan yang benar antara kuantitas X dan Y?",
     "options": [
+      "Hubungan antara X dan Y tidak dapat ditentukan",
       "X > Y",
       "X < Y",
       "X = Y",
-      "2X = 3Y",
-      "Hubungan antara X dan Y tidak dapat ditentukan"
+      "X = 2Y"
     ],
     "answer": "A",
-    "explanation": "Hasil kali dua bilangan dengan jumlah tetap mencapai nilai maksimum saat kedua bilangan sama besar: p = q = 8, sehingga X = 8 × 8 = 64. Karena 64 > 60, maka X > Y.",
-    "tip": "Jika jumlah dua bilangan tetap (p + q = S), maka hasil kali maksimumnya adalah (S/2)²."
+    "explanation": "Dari keliling 40 cm diperoleh panjang + lebar = 20 cm. Jika ukurannya 19 cm × 1 cm, luas X = 19 cm² < 64 cm²; jika ukurannya 12 cm × 8 cm, luas X = 96 cm² > 64 cm². Karena X dapat kurang maupun lebih dari Y, hubungannya tidak dapat ditentukan.",
+    "tip": "Keliling yang sama dapat menghasilkan rentang luas yang lebar (dari sangat sempit mendekati 0 hingga maksimum saat p = l = 10)."
   },
   {
     "id": "tiu-pk-138",
@@ -602,7 +602,7 @@ export const perbandinganBatch3Drafts: readonly QuestionDraft[] = [
       "X > Y",
       "X = Y",
       "X < Y",
-      "2X = 3Y",
+      "3X = 2Y",
       "Hubungan antara X dan Y tidak dapat ditentukan"
     ],
     "answer": "B",
@@ -618,7 +618,7 @@ export const perbandinganBatch3Drafts: readonly QuestionDraft[] = [
       "X < Y",
       "X = Y",
       "X > Y",
-      "2X = 3Y",
+      "X + Y = 0",
       "Hubungan antara X dan Y tidak dapat ditentukan"
     ],
     "answer": "C",
@@ -650,7 +650,7 @@ export const perbandinganBatch3Drafts: readonly QuestionDraft[] = [
       "X > Y",
       "X < Y",
       "X = Y",
-      "2X = 3Y",
+      "X = 2Y",
       "Hubungan antara X dan Y tidak dapat ditentukan"
     ],
     "answer": "E",
@@ -666,7 +666,7 @@ export const perbandinganBatch3Drafts: readonly QuestionDraft[] = [
       "X < Y",
       "X > Y",
       "X = Y",
-      "2X = 3Y",
+      "2X = Y",
       "Hubungan antara X dan Y tidak dapat ditentukan"
     ],
     "answer": "A",
@@ -677,17 +677,17 @@ export const perbandinganBatch3Drafts: readonly QuestionDraft[] = [
     "id": "tiu-pk-143",
     "subPattern": "hubungan-variabel-x-dan-y",
     "difficulty": "sulit",
-    "prompt": "Diketahui x + y = 11 dan x × y = 24, dengan x > y. Jika X = 2x dan Y = 3y, manakah hubungan yang benar antara kuantitas X dan Y?",
+    "prompt": "Diketahui bilangan real x dan y memenuhi x + y = 11 dan x × y = 24. Jika X = 2x dan Y = 3y, manakah hubungan yang benar antara kuantitas X dan Y?",
     "options": [
-      "X < Y",
       "X > Y",
+      "Hubungan antara X dan Y tidak dapat ditentukan",
+      "X < Y",
       "X = Y",
-      "2X = 3Y",
-      "Hubungan antara X dan Y tidak dapat ditentukan"
+      "2X = 3Y"
     ],
     "answer": "B",
-    "explanation": "Dua bilangan yang jumlahnya 11 dan hasil kalinya 24 dengan x > y adalah x = 8 dan y = 3. Maka X = 2(8) = 16 dan Y = 3(3) = 9. Karena 16 > 9, maka X > Y.",
-    "tip": "Faktorkan 24 menjadi pasangan yang berjumlah 11 (yaitu 8 dan 3), lalu perhatikan syarat x > y."
+    "explanation": "Dua bilangan yang berjumlah 11 dan berhasil kali 24 adalah 8 dan 3, tetapi tidak ada syarat mana yang lebih besar. Jika x = 8 dan y = 3, maka X = 16 > Y = 9. Sebaliknya jika x = 3 dan y = 8, maka X = 6 < Y = 24. Jadi hubungan X dan Y tidak dapat ditentukan.",
+    "tip": "Periksa apakah soal memberi syarat urutan seperti x > y; tanpa syarat urutan, nilai x dan y dapat saling bertukar."
   },
   {
     "id": "tiu-pk-144",
@@ -698,7 +698,7 @@ export const perbandinganBatch3Drafts: readonly QuestionDraft[] = [
       "X > Y",
       "X < Y",
       "X = Y",
-      "2X = 3Y",
+      "X + Y = 0",
       "Hubungan antara X dan Y tidak dapat ditentukan"
     ],
     "answer": "C",
@@ -729,7 +729,7 @@ export const perbandinganBatch3Drafts: readonly QuestionDraft[] = [
     "options": [
       "X > Y",
       "X < Y",
-      "2X = 3Y",
+      "X = 2Y",
       "Hubungan antara X dan Y tidak dapat ditentukan",
       "X = Y"
     ],
@@ -746,7 +746,7 @@ export const perbandinganBatch3Drafts: readonly QuestionDraft[] = [
       "X > Y",
       "X < Y",
       "X = Y",
-      "2X = 3Y",
+      "2X = Y",
       "Hubungan antara X dan Y tidak dapat ditentukan"
     ],
     "answer": "A",
@@ -773,17 +773,17 @@ export const perbandinganBatch3Drafts: readonly QuestionDraft[] = [
     "id": "tiu-pk-149",
     "subPattern": "hubungan-variabel-x-dan-y",
     "difficulty": "sulit",
-    "prompt": "Diketahui p dan q adalah bilangan real bukan nol yang memenuhi 1/p + 1/q = 1/6 dan p + q = 24. Jika X adalah nilai dari p × q dan Y = 144, manakah hubungan yang benar?",
+    "prompt": "Toko A memberikan diskon 20% untuk sebuah tas, sedangkan Toko B memberikan potongan langsung Rp50.000 untuk tas yang sama. Diketahui harga awal tas lebih dari Rp200.000 tanpa nominal pasti. Jika X adalah besar potongan harga di Toko A dan Y = Rp50.000, manakah hubungan yang benar?",
     "options": [
       "X > Y",
       "X < Y",
+      "Hubungan antara X dan Y tidak dapat ditentukan",
       "X = Y",
-      "2X = 3Y",
-      "Hubungan antara X dan Y tidak dapat ditentukan"
+      "2X = Y"
     ],
     "answer": "C",
-    "explanation": "Dari 1/p + 1/q = 1/6 diperoleh (p + q) / (p × q) = 1/6. Substitusikan p + q = 24: 24 / X = 1/6 → X = 24 × 6 = 144. Karena Y = 144, maka X = Y.",
-    "tip": "Sederhanakan 1/p + 1/q menjadi (p + q)/(pq) tanpa perlu mencari nilai p dan q satu per satu."
+    "explanation": "Karena harga awal P > Rp200.000, maka potongan 20% di Toko A bernilai X > Rp40.000. Jika P = Rp220.000, maka X = Rp44.000 < Rp50.000; jika P = Rp300.000, maka X = Rp60.000 > Rp50.000. Jadi hubungan X dan Y tidak dapat ditentukan.",
+    "tip": "Diskon persen bergantung pada harga awal; selama batas atas harga awal tidak dikunci melewati Rp250.000, hasilnya bisa lebih kecil atau lebih besar dari Rp50.000."
   },
   {
     "id": "tiu-pk-150",
