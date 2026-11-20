@@ -6,14 +6,17 @@ import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState, type FormEvent } from "react";
 import {
   ArrowRight,
+  Award,
   BookOpen,
   CheckCircle2,
+  Clock,
   Cloud,
   CloudOff,
   Loader2,
   LogOut,
   Save,
   User as UserIcon,
+  XCircle,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -30,6 +33,10 @@ import {
   sanitizePracticeProgress,
   type SanitizedPracticeProgress,
 } from "@/modules/question-bank/infrastructure/tiu-progress-sync";
+import {
+  readTryoutHistory,
+  type TryoutHistoryRecord,
+} from "@/modules/tryout/infrastructure/tryout-storage";
 import { APP_ROUTES } from "@/shared/constants/app";
 import { useToastStore } from "@/shared/stores/toast-store";
 import { createSupabaseBrowserClient } from "@/shared/supabase/client";
@@ -75,10 +82,12 @@ export function AccountDashboard({
   const [progressState, setProgressState] = useState<SanitizedPracticeProgress>(() =>
     initialCloudProgress ?? sanitizePracticeProgress({}),
   );
+  const [tryoutHistory, setTryoutHistory] = useState<TryoutHistoryRecord[]>([]);
 
   // Gabungkan progres lokal browser agar ringkasan di /akun selalu mutakhir
   useEffect(() => {
     const frame = window.requestAnimationFrame(() => {
+      setTryoutHistory(readTryoutHistory());
       const localProgress = readLocalTiuProgress();
       if (!localProgress) return;
       setProgressState(mergePracticeProgress(localProgress, initialCloudProgress));
@@ -260,6 +269,15 @@ export function AccountDashboard({
             </Button>
             <Button
               asChild
+              className="bg-slate-900 font-semibold text-white hover:bg-slate-800"
+            >
+              <Link href={APP_ROUTES.tryout}>
+                <Award className="size-4" aria-hidden />
+                Tryout CAT
+              </Link>
+            </Button>
+            <Button
+              asChild
               className="bg-blue-600 font-semibold text-white hover:bg-blue-700"
             >
               <Link href={APP_ROUTES.tiuPatternPractice(progressState.lastPattern)}>
@@ -392,8 +410,88 @@ export function AccountDashboard({
           </div>
         </section>
 
-        {/* Ringkasan Progres TKP (6 Aspek), TWK (5 Pilar) & TIU (9 Pola) */}
+        {/* Ringkasan Tryout CAT & Progres TKP (6 Aspek), TWK (5 Pilar), TIU (9 Pola) */}
         <div className="space-y-6 lg:col-span-7">
+          <section className="rounded-2xl border border-blue-100 bg-white p-6 shadow-sm shadow-blue-100/60">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <h2 className="text-base font-semibold text-slate-950">
+                  Simulasi Tryout CAT SKD (110 Soal)
+                </h2>
+                <p className="mt-0.5 text-xs text-slate-600">
+                  Pantau capaian skor tryout berbatas waktu terhadap passing grade BKN.
+                </p>
+              </div>
+              <Button
+                asChild
+                size="sm"
+                className="bg-slate-900 font-semibold text-white hover:bg-slate-800"
+              >
+                <Link href={APP_ROUTES.tryout}>
+                  Mulai Tryout
+                  <ArrowRight className="size-3.5" aria-hidden />
+                </Link>
+              </Button>
+            </div>
+
+            {tryoutHistory.length === 0 ? (
+              <div className="mt-4 flex items-center gap-3 rounded-xl border border-dashed border-slate-200 bg-slate-50/70 p-4 text-xs text-slate-600">
+                <Clock className="size-4 shrink-0 text-blue-600" aria-hidden />
+                <span>
+                  Belum ada riwayat simulasi tryout di perangkat ini. Coba paket resmi 110 soal (100
+                  menit) atau Mini Tryout 35 soal di halaman Tryout CAT.
+                </span>
+              </div>
+            ) : (
+              <div className="mt-4 divide-y divide-slate-100">
+                {tryoutHistory.slice(0, 3).map((rec) => (
+                  <div
+                    key={rec.id}
+                    className="flex flex-wrap items-center justify-between gap-2 py-3 first:pt-0 last:pb-0"
+                  >
+                    <div className="min-w-0">
+                      <div className="flex items-center gap-2">
+                        <p className="truncate text-sm font-semibold text-slate-900">
+                          {rec.packageLabel}
+                        </p>
+                        <span
+                          className={cn(
+                            "inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-bold",
+                            rec.passed
+                              ? "bg-emerald-50 text-emerald-700"
+                              : "bg-rose-50 text-rose-700",
+                          )}
+                        >
+                          {rec.passed ? (
+                            <CheckCircle2 className="size-3" aria-hidden />
+                          ) : (
+                            <XCircle className="size-3" aria-hidden />
+                          )}
+                          {rec.passed ? "Lulus PG" : "Belum PG"}
+                        </span>
+                      </div>
+                      <p className="mt-0.5 text-xs text-slate-500">
+                        TWK {rec.subtests.TWK.score} • TIU {rec.subtests.TIU.score} • TKP{" "}
+                        {rec.subtests.TKP.score}
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="rounded-lg bg-slate-900 px-2.5 py-1 text-xs font-bold text-white">
+                        {rec.totalScore}/{rec.maxScore}
+                      </span>
+                      <Link
+                        href={APP_ROUTES.tryout}
+                        className="text-xs font-semibold text-blue-700 hover:underline"
+                      >
+                        Detail
+                      </Link>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </section>
+
           <SubtestSummaryCard
             title="Ringkasan Latihan TKP (6 Aspek)"
             subtitle="Pantau progres pengerjaan dan capaian skor 1–5 poin dari 6 aspek TKP SKD CPNS."

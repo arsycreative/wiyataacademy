@@ -23,6 +23,9 @@ export function SiteFooter() {
           <Link href={APP_ROUTES.programs} className="transition-colors hover:text-blue-700">
             Program Bimbel
           </Link>
+          <Link href={APP_ROUTES.tryout} className="transition-colors hover:text-blue-700">
+            Tryout CAT
+          </Link>
           <Link href={APP_ROUTES.testimonials} className="transition-colors hover:text-blue-700">
             Testimoni
           </Link>

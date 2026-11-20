@@ -106,6 +106,15 @@ export function SubtestPracticeIntro({
             </Link>
           );
         })}
+        <Link
+          href={APP_ROUTES.tryout}
+          className="inline-flex items-center gap-1.5 rounded-xl bg-slate-900 px-3.5 py-2 text-xs font-semibold text-white transition-colors hover:bg-slate-800 sm:px-4 sm:text-sm"
+        >
+          <span>Tryout CAT</span>
+          <span className="rounded-full bg-white/15 px-2 py-0.5 text-[11px] font-bold">
+            110 soal
+          </span>
+        </Link>
       </nav>
     </div>
   );

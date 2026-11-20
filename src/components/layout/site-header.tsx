@@ -15,10 +15,10 @@ import { useToastStore } from "@/shared/stores/toast-store";
 const navLinks = [
   { href: APP_ROUTES.method, label: "Metode Belajar" },
   { href: APP_ROUTES.programs, label: "Program Bimbel" },
-  { href: APP_ROUTES.twkPractice, label: "Bank Soal TWK" },
-  { href: APP_ROUTES.tiuPractice, label: "Bank Soal TIU" },
-  { href: APP_ROUTES.tkpPractice, label: "Bank Soal TKP" },
-  { href: APP_ROUTES.testimonials, label: "Testimoni" },
+  { href: APP_ROUTES.twkPractice, label: "TWK" },
+  { href: APP_ROUTES.tiuPractice, label: "TIU" },
+  { href: APP_ROUTES.tkpPractice, label: "TKP" },
+  { href: APP_ROUTES.tryout, label: "Tryout CAT" },
   { href: APP_ROUTES.faq, label: "FAQ" },
 ] as const;
 
