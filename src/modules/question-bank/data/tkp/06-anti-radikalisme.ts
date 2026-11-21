@@ -3,6 +3,7 @@ import {
   type Question,
   type TkpQuestionDraft,
 } from "@/modules/question-bank/domain/question";
+import { antiRadikalismeBatch2Drafts } from "./batches/06-anti-radikalisme-batch-2";
 
 const antiRadikalismeDrafts: readonly TkpQuestionDraft[] = [
   {
@@ -929,5 +930,5 @@ const antiRadikalismeDrafts: readonly TkpQuestionDraft[] = [
 
 export const antiRadikalismeQuestions: readonly Question[] = buildTkpPatternQuestions(
   "anti-radikalisme",
-  antiRadikalismeDrafts,
+  [...antiRadikalismeDrafts, ...antiRadikalismeBatch2Drafts],
 );

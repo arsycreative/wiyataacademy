@@ -22,12 +22,10 @@ import {
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { profileSchema } from "@/modules/auth/domain/auth-schema";
-import { summarizeTiuProgress } from "@/modules/question-bank/domain/question-shuffle";
+import type { AllProgressSummaries } from "@/modules/question-bank/domain/progress-summary-types";
 import {
-  summarizeTkpProgress,
-  summarizeTwkProgress,
-} from "@/modules/question-bank/domain/subtest-summary";
-import {
+  fetchProgressSummaries,
+  hasLocalProgressDiff,
   mergePracticeProgress,
   readLocalTiuProgress,
   sanitizePracticeProgress,
@@ -54,6 +52,7 @@ type AccountUser = {
 type AccountDashboardProps = {
   user: AccountUser;
   initialCloudProgress: SanitizedPracticeProgress | null;
+  initialSummaries: AllProgressSummaries;
   initialSchemaMissing: boolean;
 };
 
@@ -69,6 +68,7 @@ function getInitials(name: string, email: string): string {
 export function AccountDashboard({
   user,
   initialCloudProgress,
+  initialSummaries,
   initialSchemaMissing,
 }: AccountDashboardProps) {
   const router = useRouter();
@@ -82,51 +82,35 @@ export function AccountDashboard({
   const [progressState, setProgressState] = useState<SanitizedPracticeProgress>(() =>
     initialCloudProgress ?? sanitizePracticeProgress({}),
   );
+  const [summaries, setSummaries] = useState<AllProgressSummaries>(initialSummaries);
   const [tryoutHistory, setTryoutHistory] = useState<TryoutHistoryRecord[]>([]);
 
-  // Gabungkan progres lokal browser agar ringkasan di /akun selalu mutakhir
+  // Gabungkan progres lokal browser agar ringkasan di /akun selalu mutakhir tanpa membebani client bundle
   useEffect(() => {
+    let cancelled = false;
     const frame = window.requestAnimationFrame(() => {
       setTryoutHistory(readTryoutHistory());
       const localProgress = readLocalTiuProgress();
       if (!localProgress) return;
-      setProgressState(mergePracticeProgress(localProgress, initialCloudProgress));
+      const merged = mergePracticeProgress(localProgress, initialCloudProgress);
+      setProgressState(merged);
+      if (hasLocalProgressDiff(localProgress, initialCloudProgress)) {
+        void fetchProgressSummaries(merged).then((nextSummaries) => {
+          if (!cancelled && nextSummaries) {
+            setSummaries(nextSummaries);
+          }
+        });
+      }
     });
-    return () => window.cancelAnimationFrame(frame);
+    return () => {
+      cancelled = true;
+      window.cancelAnimationFrame(frame);
+    };
   }, [initialCloudProgress]);
 
-  const tiuSummary = useMemo(
-    () =>
-      summarizeTiuProgress(
-        progressState.selectedAnswers,
-        progressState.flaggedQuestions,
-        progressState.patternSeeds,
-        progressState.questionSeeds,
-      ),
-    [progressState],
-  );
-
-  const twkSummary = useMemo(
-    () =>
-      summarizeTwkProgress(
-        progressState.selectedAnswers,
-        progressState.flaggedQuestions,
-        progressState.patternSeeds,
-        progressState.questionSeeds,
-      ),
-    [progressState],
-  );
-
-  const tkpSummary = useMemo(
-    () =>
-      summarizeTkpProgress(
-        progressState.selectedAnswers,
-        progressState.flaggedQuestions,
-        progressState.patternSeeds,
-        progressState.questionSeeds,
-      ),
-    [progressState],
-  );
+  const tiuSummary = summaries.tiu;
+  const twkSummary = summaries.twk;
+  const tkpSummary = summaries.tkp;
 
   const formattedJoinDate = useMemo(() => {
     try {

@@ -3,6 +3,7 @@ import {
   type Question,
   type TkpQuestionDraft,
 } from "@/modules/question-bank/domain/question";
+import { pelayananPublikBatch2Drafts } from "./batches/01-pelayanan-publik-batch-2";
 
 const pelayananPublikDrafts: readonly TkpQuestionDraft[] = [
   {
@@ -929,5 +930,5 @@ const pelayananPublikDrafts: readonly TkpQuestionDraft[] = [
 
 export const pelayananPublikQuestions: readonly Question[] = buildTkpPatternQuestions(
   "pelayanan-publik",
-  pelayananPublikDrafts,
+  [...pelayananPublikDrafts, ...pelayananPublikBatch2Drafts],
 );

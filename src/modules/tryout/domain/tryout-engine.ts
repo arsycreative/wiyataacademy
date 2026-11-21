@@ -16,220 +16,51 @@ import {
 import {
   hashStringWithSeed,
   seededShuffle,
-} from "@/modules/question-bank/domain/question-shuffle";
-import { shuffleQuestionWithScores } from "@/modules/question-bank/domain/subtest-summary";
-import { APP_ROUTES } from "@/shared/constants/app";
+  shuffleQuestionWithScores,
+} from "@/modules/question-bank/domain/shuffle-core";
+import {
+  buildPatternPracticeHref,
+  formatDurationClock,
+  formatDurationVerbose,
+  isTryoutMode,
+  TRYOUT_MODE_CONFIGS,
+  TRYOUT_PRESETS,
+  TRYOUT_SUBTEST_ORDER,
+  type PublicTryoutQuestion,
+  type SubtestEvaluation,
+  type TryoutEvaluation,
+  type TryoutExamQuestion,
+  type TryoutMode,
+  type TryoutModeConfig,
+  type TryoutPatternAnalysis,
+  type TryoutPreset,
+  type TryoutQuestionItem,
+  type TryoutQuestionResult,
+  type TryoutSubtestConfig,
+} from "./tryout-config";
 
-export type TryoutMode = "official" | "mini";
-
-export type TryoutSubtestConfig = {
-  subtest: QuestionSubtest;
-  label: string;
-  questionCount: number;
-  maxScore: number;
-  passingGrade: number;
+export {
+  buildPatternPracticeHref,
+  formatDurationClock,
+  formatDurationVerbose,
+  isTryoutMode,
+  TRYOUT_MODE_CONFIGS,
+  TRYOUT_PRESETS,
+  TRYOUT_SUBTEST_ORDER,
 };
-
-export type TryoutModeConfig = {
-  mode: TryoutMode;
-  label: string;
-  shortLabel: string;
-  description: string;
-  totalQuestions: number;
-  durationSec: number;
-  maxScore: number;
-  subtests: Record<QuestionSubtest, TryoutSubtestConfig>;
+export type {
+  PublicTryoutQuestion,
+  SubtestEvaluation,
+  TryoutEvaluation,
+  TryoutExamQuestion,
+  TryoutMode,
+  TryoutModeConfig,
+  TryoutPatternAnalysis,
+  TryoutPreset,
+  TryoutQuestionItem,
+  TryoutQuestionResult,
+  TryoutSubtestConfig,
 };
-
-export type TryoutPreset = {
-  id: string;
-  mode: TryoutMode;
-  title: string;
-  subtitle: string;
-  badge: string;
-  fixedSeed?: number;
-};
-
-export type TryoutQuestionItem = {
-  number: number;
-  subtest: QuestionSubtest;
-  patternLabel: string;
-  question: Question;
-};
-
-export type SubtestEvaluation = {
-  subtest: QuestionSubtest;
-  label: string;
-  questionCount: number;
-  answeredCount: number;
-  unansweredCount: number;
-  correctCount: number;
-  wrongCount: number;
-  score: number;
-  maxScore: number;
-  passingGrade: number;
-  passed: boolean;
-  gapToPassing: number;
-  tkpDistribution?: Record<1 | 2 | 3 | 4 | 5, number>;
-};
-
-export type TryoutPatternAnalysis = {
-  subtest: QuestionSubtest;
-  patternId: PracticePatternId;
-  patternLabel: string;
-  total: number;
-  answered: number;
-  correct: number;
-  earnedPoints: number;
-  maxPoints: number;
-  accuracyPct: number;
-  practiceHref: string;
-};
-
-export type TryoutQuestionResult = {
-  number: number;
-  questionId: string;
-  subtest: QuestionSubtest;
-  selectedAnswer: OptionKey | undefined;
-  correctAnswer: OptionKey;
-  earnedPoints: number;
-  maxPoints: number;
-  isOptimal: boolean;
-  isUnanswered: boolean;
-};
-
-export type TryoutEvaluation = {
-  mode: TryoutMode;
-  totalQuestions: number;
-  answeredCount: number;
-  unansweredCount: number;
-  totalScore: number;
-  maxScore: number;
-  passed: boolean;
-  failedSubtests: QuestionSubtest[];
-  durationUsedSec: number;
-  avgSecondsPerAnswered: number;
-  subtests: Record<QuestionSubtest, SubtestEvaluation>;
-  patternBreakdown: TryoutPatternAnalysis[];
-  weakestPatterns: TryoutPatternAnalysis[];
-  questionResults: TryoutQuestionResult[];
-};
-
-export const TRYOUT_SUBTEST_ORDER: readonly QuestionSubtest[] = ["TWK", "TIU", "TKP"];
-
-/**
- * Konfigurasi standar CAT SKD CPNS resmi (KepmenPANRB Formasi Umum: 110 soal, 100 menit,
- * passing grade TWK 65 / TIU 80 / TKP 166) serta mode Mini Tryout 35 soal / 30 menit.
- */
-export const TRYOUT_MODE_CONFIGS: Record<TryoutMode, TryoutModeConfig> = {
-  official: {
-    mode: "official",
-    label: "Simulasi Resmi CAT SKD (110 Soal)",
-    shortLabel: "CAT Resmi 110 Soal",
-    description:
-      "Standar ujian SKD CPNS BKN: 30 TWK, 35 TIU, dan 45 TKP dalam 100 menit dengan ambang batas resmi Formasi Umum.",
-    totalQuestions: 110,
-    durationSec: 100 * 60,
-    maxScore: 550,
-    subtests: {
-      TWK: {
-        subtest: "TWK",
-        label: "Tes Wawasan Kebangsaan",
-        questionCount: 30,
-        maxScore: 150,
-        passingGrade: 65,
-      },
-      TIU: {
-        subtest: "TIU",
-        label: "Tes Intelegensia Umum",
-        questionCount: 35,
-        maxScore: 175,
-        passingGrade: 80,
-      },
-      TKP: {
-        subtest: "TKP",
-        label: "Tes Karakteristik Pribadi",
-        questionCount: 45,
-        maxScore: 225,
-        passingGrade: 166,
-      },
-    },
-  },
-  mini: {
-    mode: "mini",
-    label: "Mini Tryout CAT Cepat (35 Soal)",
-    shortLabel: "Mini CAT 35 Soal",
-    description:
-      "Simulasi ringkas 10 TWK, 11 TIU, dan 14 TKP dalam 30 menit untuk menguji ritme CAT tanpa duduk penuh 100 menit.",
-    totalQuestions: 35,
-    durationSec: 30 * 60,
-    maxScore: 175,
-    subtests: {
-      TWK: {
-        subtest: "TWK",
-        label: "Tes Wawasan Kebangsaan",
-        questionCount: 10,
-        maxScore: 50,
-        passingGrade: 25,
-      },
-      TIU: {
-        subtest: "TIU",
-        label: "Tes Intelegensia Umum",
-        questionCount: 11,
-        maxScore: 55,
-        passingGrade: 25,
-      },
-      TKP: {
-        subtest: "TKP",
-        label: "Tes Karakteristik Pribadi",
-        questionCount: 14,
-        maxScore: 70,
-        passingGrade: 52,
-      },
-    },
-  },
-};
-
-export const TRYOUT_PRESETS: readonly TryoutPreset[] = [
-  {
-    id: "paket-resmi-1",
-    mode: "official",
-    title: "Paket Tryout Resmi 01",
-    subtitle: "110 soal terstratifikasi seluruh pilar TWK, pola TIU & aspek TKP • 100 menit",
-    badge: "Standar BKN",
-    fixedSeed: 20261101,
-  },
-  {
-    id: "paket-resmi-2",
-    mode: "official",
-    title: "Paket Tryout Resmi 02",
-    subtitle: "110 soal variasi paket kedua dengan distribusi penuh • 100 menit",
-    badge: "Standar BKN",
-    fixedSeed: 20261102,
-  },
-  {
-    id: "paket-resmi-3",
-    mode: "official",
-    title: "Paket Tryout Resmi 03",
-    subtitle: "110 soal variasi paket ketiga untuk tolok ukur peningkatan • 100 menit",
-    badge: "Standar BKN",
-    fixedSeed: 20261103,
-  },
-  {
-    id: "paket-acak-resmi",
-    mode: "official",
-    title: "Paket Acak Dinamis (110 Soal)",
-    subtitle: "Menarik 110 soal acak baru dari 2.100 bank soal setiap kali memulai • 100 menit",
-    badge: "Acak Baru",
-  },
-  {
-    id: "mini-cat-cepat",
-    mode: "mini",
-    title: "Mini Tryout CAT Cepat (35 Soal)",
-    subtitle: "10 TWK + 11 TIU + 14 TKP dengan timer 30 menit & passing grade proporsional",
-    badge: "Uji Cepat",
-  },
-];
 
 function computeStratifiedQuotas(
   bucketCount: number,
@@ -272,7 +103,6 @@ function selectStratifiedQuestions<TId extends PracticePatternId>(
     picked.push(...shuffled.slice(0, quota));
   });
 
-  // Acak urutan soal di dalam subtes agar pola/pilar tercampur seperti CAT BKN
   return seededShuffle(picked, hashStringWithSeed(`order:${salt}`, subtestSeed));
 }
 
@@ -286,18 +116,9 @@ export function getPatternLabel(subtest: QuestionSubtest, patternId: string): st
   return TIU_PATTERNS[patternId as keyof typeof TIU_PATTERNS]?.label ?? patternId;
 }
 
-export function buildPatternPracticeHref(
-  subtest: QuestionSubtest,
-  patternId: string,
-): string {
-  if (subtest === "TWK") return APP_ROUTES.twkPatternPractice(patternId);
-  if (subtest === "TKP") return APP_ROUTES.tkpPatternPractice(patternId);
-  return APP_ROUTES.tiuPatternPractice(patternId);
-}
-
 /**
  * Menghasilkan paket soal CAT SKD terstratifikasi secara deterministik dari `(mode, seed)`.
- * Urutan mengikuti standar CAT BKN: TWK → TIU → TKP, dengan opsi A–E diacak konsisten.
+ * Dipanggil di server agar kunci jawaban & bank soal penuh tidak bocor ke client bundle.
  */
 export function generateTryoutQuestions(
   mode: TryoutMode,
@@ -340,6 +161,29 @@ export function generateTryoutQuestions(
       question: shuffledQuestion,
     };
   });
+}
+
+/**
+ * Membuang `answer`, `optionScores`, `explanation`, dan `tip` sebelum mengirim soal
+ * ke browser saat sesi CAT aktif berlangsung.
+ */
+export function stripTryoutAnswersForExam(
+  items: readonly TryoutQuestionItem[],
+): TryoutExamQuestion[] {
+  return items.map((item) => ({
+    number: item.number,
+    subtest: item.subtest,
+    patternLabel: item.patternLabel,
+    question: {
+      id: item.question.id,
+      subtest: item.question.subtest,
+      pattern: item.question.pattern,
+      subPattern: item.question.subPattern,
+      difficulty: item.question.difficulty,
+      prompt: item.question.prompt,
+      options: item.question.options,
+    },
+  }));
 }
 
 /**
@@ -514,24 +358,4 @@ export function evaluateTryoutAttempt(
     weakestPatterns,
     questionResults,
   };
-}
-
-export function formatDurationClock(totalSeconds: number): string {
-  const safe = Math.max(0, Math.floor(totalSeconds));
-  const hours = Math.floor(safe / 3600);
-  const minutes = Math.floor((safe % 3600) / 60);
-  const seconds = safe % 60;
-  return [hours, minutes, seconds].map((n) => String(n).padStart(2, "0")).join(":");
-}
-
-export function formatDurationVerbose(totalSeconds: number): string {
-  const safe = Math.max(0, Math.floor(totalSeconds));
-  const hours = Math.floor(safe / 3600);
-  const minutes = Math.floor((safe % 3600) / 60);
-  const seconds = safe % 60;
-  const parts: string[] = [];
-  if (hours > 0) parts.push(`${hours} jam`);
-  if (minutes > 0) parts.push(`${minutes} menit`);
-  if (seconds > 0 || parts.length === 0) parts.push(`${seconds} detik`);
-  return parts.join(" ");
 }

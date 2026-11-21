@@ -1,10 +1,11 @@
 import type { OptionKey, QuestionSubtest } from "@/modules/question-bank/domain/question";
 import { isOptionKey } from "@/modules/question-bank/infrastructure/tiu-progress-sync";
 import {
+  isTryoutMode,
   TRYOUT_MODE_CONFIGS,
   type TryoutEvaluation,
   type TryoutMode,
-} from "@/modules/tryout/domain/tryout-engine";
+} from "@/modules/tryout/domain/tryout-config";
 
 export const TRYOUT_ACTIVE_STORAGE_KEY = "wiyata-skd-tryout-active-v1";
 export const TRYOUT_HISTORY_STORAGE_KEY = "wiyata-skd-tryout-history-v1";
@@ -51,10 +52,6 @@ export type TryoutHistoryRecord = {
   answers: Record<string, OptionKey>;
   flagged: Record<string, boolean>;
 };
-
-function isTryoutMode(value: unknown): value is TryoutMode {
-  return value === "official" || value === "mini";
-}
 
 function sanitizeAnswers(raw: unknown): Record<string, OptionKey> {
   const out: Record<string, OptionKey> = {};

@@ -15,6 +15,7 @@ import {
   HelpCircle,
   Layers3,
   LayoutGrid,
+  Loader2,
   RotateCcw,
   X,
   XCircle,
@@ -23,26 +24,26 @@ import {
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useSupabaseAuth } from "@/modules/auth/presentation/use-supabase-auth";
-import type {
-  Difficulty,
-  OptionKey,
-  PracticePatternId,
-  Question,
-  TiuPatternId,
-  TkpPatternId,
-  TwkPatternId,
+import type { PatternStatItem } from "@/modules/question-bank/domain/progress-summary-types";
+import {
+  TKP_PATTERNS,
+  TWK_PATTERNS,
+  type Difficulty,
+  type OptionKey,
+  type PracticePatternId,
+  type Question,
+  type TiuPatternId,
+  type TkpPatternId,
+  type TwkPatternId,
 } from "@/modules/question-bank/domain/question";
 import {
-  createRandomSeed,
-  seededShuffle,
-} from "@/modules/question-bank/domain/question-shuffle";
-import {
   createInitialAllPatternSeeds,
-  getSubtestCatalog,
+  createRandomSeed,
   isTkpPattern,
   isTwkPattern,
+  seededShuffle,
   shuffleQuestionWithScores,
-} from "@/modules/question-bank/domain/subtest-summary";
+} from "@/modules/question-bank/domain/shuffle-core";
 import {
   commitRetryAnswer,
   getRetryEffectiveAnswers,
@@ -73,6 +74,8 @@ import {
   PracticeWrongFilterBanner,
   formatSubPatternLabel,
 } from "./practice-ui-primitives";
+import { PatternCheatSheetCard } from "./pattern-cheat-sheet-card";
+import { usePatternQuestions } from "./use-pattern-questions";
 
 export type StandardSubtest = "TWK" | "TKP";
 
@@ -178,6 +181,9 @@ function isNeedsImprovement(question: Question, selected: OptionKey | undefined)
 export type StandardPatternPracticeProps = {
   subtest: StandardSubtest;
   initialPattern?: TwkPatternId | TkpPatternId;
+  initialLoadedPattern: TwkPatternId | TkpPatternId;
+  initialPatternStats: readonly PatternStatItem<TwkPatternId | TkpPatternId>[];
+  initialQuestions: readonly Question[];
   siteHeader?: ReactNode;
   siteFooter?: ReactNode;
   pageIntro?: ReactNode;
@@ -186,12 +192,15 @@ export type StandardPatternPracticeProps = {
 export function StandardPatternPractice({
   subtest,
   initialPattern,
+  initialLoadedPattern,
+  initialPatternStats,
+  initialQuestions,
   siteHeader,
   siteFooter,
   pageIntro,
 }: StandardPatternPracticeProps) {
   const ui = SUBTEST_UI_CONFIG[subtest];
-  const catalog = useMemo(() => getSubtestCatalog(subtest), [subtest]);
+  const patternCatalog = subtest === "TWK" ? TWK_PATTERNS : TKP_PATTERNS;
 
   const [activePattern, setActivePattern] = useState<PracticePatternId>(
     initialPattern ?? ui.defaultPattern,
@@ -413,12 +422,21 @@ export function StandardPatternPractice({
     };
   }, []);
 
-  const patternStats = catalog.patternStats;
-  const activeMeta = catalog.patternCatalog[activePattern] ?? catalog.patternCatalog[ui.defaultPattern];
-  const rawPatternQuestions = useMemo(
-    () => catalog.questionBanks[activePattern] ?? [],
-    [catalog.questionBanks, activePattern],
-  );
+  const patternStats = initialPatternStats;
+  const activeMeta =
+    (patternCatalog as Record<string, (typeof TWK_PATTERNS)[TwkPatternId] | (typeof TKP_PATTERNS)[TkpPatternId]>)[activePattern] ??
+    (patternCatalog as Record<string, (typeof TWK_PATTERNS)[TwkPatternId] | (typeof TKP_PATTERNS)[TkpPatternId]>)[ui.defaultPattern];
+  const {
+    questions: rawPatternQuestions,
+    isLoading: isPatternLoading,
+    errorMessage: patternLoadError,
+    retryLoad: retryLoadPattern,
+  } = usePatternQuestions({
+    subtest,
+    activePattern,
+    initialLoadedPattern,
+    initialQuestions,
+  });
   const rawQuestionById = useMemo(
     () => new Map(rawPatternQuestions.map((question) => [question.id, question])),
     [rawPatternQuestions],
@@ -1645,6 +1663,11 @@ export function StandardPatternPractice({
                 )}
             </section>
 
+            <PatternCheatSheetCard
+              patternId={activePattern}
+              patternLabel={activeMeta.label}
+            />
+
             {retrySummary ? (
               <PracticeRetryBanner
                 summary={retrySummary}
@@ -1665,7 +1688,26 @@ export function StandardPatternPractice({
             )}
 
             {/* Daftar Kartu Soal */}
-            {filteredQuestions.length === 0 ? (
+            {isPatternLoading ? (
+              <section className="flex flex-col items-center justify-center rounded-2xl border border-blue-100 bg-white px-6 py-16 text-center">
+                <Loader2 className="size-8 animate-spin text-blue-600" aria-hidden />
+                <p className="mt-3 text-sm font-semibold text-slate-800">
+                  Memuat bank soal {activeMeta.label}...
+                </p>
+              </section>
+            ) : patternLoadError ? (
+              <section className="rounded-2xl border border-rose-200 bg-rose-50/60 px-6 py-12 text-center">
+                <p className="text-sm font-semibold text-rose-800">{patternLoadError}</p>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={retryLoadPattern}
+                  className="mt-4 border-rose-300 text-rose-700 hover:bg-rose-100"
+                >
+                  Muat Ulang Bagian Ini
+                </Button>
+              </section>
+            ) : filteredQuestions.length === 0 ? (
               <section className="rounded-2xl border border-dashed border-slate-200 bg-white px-6 py-12 text-center">
                 <span className="mx-auto flex size-12 items-center justify-center rounded-full bg-blue-50 text-blue-600">
                   <BookOpen className="size-6" aria-hidden />

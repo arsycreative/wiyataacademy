@@ -1,5 +1,5 @@
 import type { OptionKey, Question } from "./question";
-import { createRandomSeed, hashStringWithSeed } from "./question-shuffle";
+import { createRandomSeed, hashStringWithSeed } from "./shuffle-core";
 
 export type RetrySession = {
   questionIds: readonly string[];

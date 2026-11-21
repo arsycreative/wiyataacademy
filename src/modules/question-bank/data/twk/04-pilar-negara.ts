@@ -3,6 +3,7 @@ import {
   type Question,
   type QuestionDraft,
 } from "@/modules/question-bank/domain/question";
+import { pilarNegaraBatch2Drafts } from "./batches/04-pilar-negara-batch-2";
 
 const pilarNegaraDrafts: readonly QuestionDraft[] = [
   {
@@ -649,5 +650,5 @@ const pilarNegaraDrafts: readonly QuestionDraft[] = [
 
 export const pilarNegaraQuestions: readonly Question[] = buildTwkPatternQuestions(
   "pilar-negara",
-  pilarNegaraDrafts,
+  [...pilarNegaraDrafts, ...pilarNegaraBatch2Drafts],
 );

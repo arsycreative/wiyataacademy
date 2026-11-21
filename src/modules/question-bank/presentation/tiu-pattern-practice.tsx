@@ -23,6 +23,7 @@ import {
   Layers3,
   LayoutGrid,
   Lightbulb,
+  Loader2,
   RotateCcw,
   X,
   XCircle,
@@ -31,10 +32,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useSupabaseAuth } from "@/modules/auth/presentation/use-supabase-auth";
-import {
-  getPatternStats,
-  getQuestionsByPattern,
-} from "@/modules/question-bank/data/tiu";
+import type { PatternStatItem } from "@/modules/question-bank/domain/progress-summary-types";
 import {
   TIU_PATTERNS,
   type OptionKey,
@@ -47,7 +45,7 @@ import {
   hashStringWithSeed,
   seededShuffle,
   shuffleQuestionOptions,
-} from "@/modules/question-bank/domain/question-shuffle";
+} from "@/modules/question-bank/domain/shuffle-core";
 import {
   commitRetryAnswer,
   getRetryEffectiveAnswers,
@@ -74,9 +72,14 @@ import {
   PracticeRetryBanner,
   PracticeWrongFilterBanner,
 } from "./practice-ui-primitives";
+import { PatternCheatSheetCard } from "./pattern-cheat-sheet-card";
+import { usePatternQuestions } from "./use-pattern-questions";
 
 type TiuPatternPracticeProps = {
   initialPattern?: TiuPatternId;
+  initialLoadedPattern: TiuPatternId;
+  initialPatternStats: readonly PatternStatItem<TiuPatternId>[];
+  initialQuestions: readonly Question[];
   siteHeader?: ReactNode;
   siteFooter?: ReactNode;
   pageIntro?: ReactNode;
@@ -99,6 +102,9 @@ function syncPatternUrl(patternId: TiuPatternId) {
 
 export function TiuPatternPractice({
   initialPattern,
+  initialLoadedPattern,
+  initialPatternStats,
+  initialQuestions,
   siteHeader,
   siteFooter,
   pageIntro,
@@ -344,12 +350,19 @@ export function TiuPatternPractice({
     };
   }, []);
 
-  const patternStats = useMemo(() => getPatternStats(), []);
+  const patternStats = initialPatternStats;
   const activeMeta = TIU_PATTERNS[activePattern];
-  const rawPatternQuestions = useMemo(
-    () => getQuestionsByPattern(activePattern),
-    [activePattern],
-  );
+  const {
+    questions: rawPatternQuestions,
+    isLoading: isPatternLoading,
+    errorMessage: patternLoadError,
+    retryLoad: retryLoadPattern,
+  } = usePatternQuestions({
+    subtest: "TIU",
+    activePattern,
+    initialLoadedPattern,
+    initialQuestions,
+  });
   const rawQuestionById = useMemo(
     () => new Map(rawPatternQuestions.map((question) => [question.id, question])),
     [rawPatternQuestions],
@@ -1648,6 +1661,11 @@ export function TiuPatternPractice({
             )}
         </section>
 
+        <PatternCheatSheetCard
+          patternId={activePattern}
+          patternLabel={activeMeta.label}
+        />
+
         {retrySummary ? (
           <PracticeRetryBanner
             summary={retrySummary}
@@ -1668,7 +1686,26 @@ export function TiuPatternPractice({
         )}
 
         {/* Empty state or question list */}
-        {allPatternQuestions.length === 0 ? (
+        {isPatternLoading ? (
+          <section className="flex flex-col items-center justify-center rounded-2xl border border-blue-100 bg-white px-6 py-16 text-center">
+            <Loader2 className="size-8 animate-spin text-blue-600" aria-hidden />
+            <p className="mt-3 text-sm font-semibold text-slate-800">
+              Memuat bank soal {activeMeta.label}...
+            </p>
+          </section>
+        ) : patternLoadError ? (
+          <section className="rounded-2xl border border-rose-200 bg-rose-50/60 px-6 py-12 text-center">
+            <p className="text-sm font-semibold text-rose-800">{patternLoadError}</p>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={retryLoadPattern}
+              className="mt-4 border-rose-300 text-rose-700 hover:bg-rose-100"
+            >
+              Muat Ulang Pola Ini
+            </Button>
+          </section>
+        ) : allPatternQuestions.length === 0 ? (
           <section className="rounded-2xl border border-dashed border-blue-200 bg-white px-6 py-16 text-center">
             <span className="mx-auto flex size-14 items-center justify-center rounded-full bg-blue-50 text-blue-600">
               <BookOpen className="size-7" aria-hidden />

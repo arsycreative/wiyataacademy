@@ -1,15 +1,18 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
+import { Loader2 } from "lucide-react";
 
 import type { OptionKey } from "@/modules/question-bank/domain/question";
-import { createRandomSeed } from "@/modules/question-bank/domain/question-shuffle";
+import { createRandomSeed } from "@/modules/question-bank/domain/shuffle-core";
 import {
-  evaluateTryoutAttempt,
-  generateTryoutQuestions,
   TRYOUT_MODE_CONFIGS,
+  type TryoutEvaluation,
+  type TryoutExamQuestion,
+  type TryoutMode,
   type TryoutPreset,
-} from "@/modules/tryout/domain/tryout-engine";
+  type TryoutQuestionItem,
+} from "@/modules/tryout/domain/tryout-config";
 import {
   appendTryoutHistory,
   buildTryoutHistoryRecord,
@@ -33,8 +36,57 @@ type TryoutCatExperienceProps = {
   siteFooter?: ReactNode;
 };
 
+type LoadedResultView = {
+  record: TryoutHistoryRecord;
+  items: TryoutQuestionItem[];
+  evaluation: TryoutEvaluation;
+};
+
 function computeRemainingSeconds(endsAtMs: number, nowMs: number = Date.now()): number {
   return Math.max(0, Math.ceil((endsAtMs - nowMs) / 1000));
+}
+
+async function fetchExamQuestionsFromServer(
+  mode: TryoutMode,
+  seed: number,
+): Promise<TryoutExamQuestion[]> {
+  const response = await fetch("/api/tryout/start", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ mode, seed }),
+  });
+  if (!response.ok) {
+    throw new Error("Gagal memuat paket soal CAT dari server.");
+  }
+  const payload = (await response.json()) as { items?: TryoutExamQuestion[] };
+  if (!Array.isArray(payload.items) || payload.items.length === 0) {
+    throw new Error("Paket soal CAT dari server kosong.");
+  }
+  return payload.items;
+}
+
+async function submitAndGradeOnServer(params: {
+  mode: TryoutMode;
+  seed: number;
+  answers: Readonly<Record<string, OptionKey>>;
+  durationUsedSec: number;
+}): Promise<{ evaluation: TryoutEvaluation; items: TryoutQuestionItem[] }> {
+  const response = await fetch("/api/tryout/submit", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(params),
+  });
+  if (!response.ok) {
+    throw new Error("Gagal menilai jawaban tryout di server.");
+  }
+  const payload = (await response.json()) as {
+    evaluation?: TryoutEvaluation;
+    items?: TryoutQuestionItem[];
+  };
+  if (!payload.evaluation || !Array.isArray(payload.items)) {
+    throw new Error("Respons penilaian tryout tidak lengkap.");
+  }
+  return { evaluation: payload.evaluation, items: payload.items };
 }
 
 export function TryoutCatExperience({
@@ -45,41 +97,64 @@ export function TryoutCatExperience({
 
   const [screen, setScreen] = useState<TryoutScreen>("lobby");
   const [activeSession, setActiveSession] = useState<ActiveTryoutSession | null>(null);
+  const [activeItems, setActiveItems] = useState<TryoutExamQuestion[]>([]);
   const [remainingSec, setRemainingSec] = useState<number>(0);
   const [history, setHistory] = useState<TryoutHistoryRecord[]>([]);
-  const [viewingRecord, setViewingRecord] = useState<TryoutHistoryRecord | null>(null);
+  const [loadedResult, setLoadedResult] = useState<LoadedResultView | null>(null);
+  const [loadingMessage, setLoadingMessage] = useState<string | null>(null);
 
   const autoSubmittedRef = useRef<string | null>(null);
+  const loadedExamKeyRef = useRef<string | null>(null);
 
   const finalizeSession = useCallback(
-    (session: ActiveTryoutSession, reason: "manual" | "timeout") => {
+    async (session: ActiveTryoutSession, reason: "manual" | "timeout") => {
       if (autoSubmittedRef.current === session.id) return;
       autoSubmittedRef.current = session.id;
+      setLoadingMessage("Menilai jawaban tryout CAT di server...");
 
-      const items = generateTryoutQuestions(session.mode, session.seed);
-      const elapsedSec = Math.min(
-        session.durationLimitSec,
-        Math.max(1, Math.round((Date.now() - session.startedAtMs) / 1000)),
-      );
-      const evaluation = evaluateTryoutAttempt(items, session.mode, session.answers, elapsedSec);
-      const record = buildTryoutHistoryRecord(session, evaluation);
-
-      const updatedHistory = appendTryoutHistory(record);
-      clearActiveTryoutSession();
-
-      setHistory(updatedHistory);
-      setActiveSession(null);
-      setRemainingSec(0);
-      setViewingRecord(record);
-      setScreen("result");
-
-      if (reason === "timeout") {
-        addToast(
-          "Waktu tryout CAT telah berakhir. Jawaban Anda otomatis dikumpulkan dan dinilai.",
-          "info",
+      try {
+        const elapsedSec = Math.min(
+          session.durationLimitSec,
+          Math.max(1, Math.round((Date.now() - session.startedAtMs) / 1000)),
         );
-      } else {
-        addToast("Jawaban tryout berhasil dikumpulkan. Rapor skor SKD siap ditinjau.", "success");
+        const { evaluation, items } = await submitAndGradeOnServer({
+          mode: session.mode,
+          seed: session.seed,
+          answers: session.answers,
+          durationUsedSec: elapsedSec,
+        });
+
+        const record = buildTryoutHistoryRecord(session, evaluation);
+        const updatedHistory = appendTryoutHistory(record);
+        clearActiveTryoutSession();
+        loadedExamKeyRef.current = null;
+
+        setHistory(updatedHistory);
+        setActiveSession(null);
+        setActiveItems([]);
+        setRemainingSec(0);
+        setLoadedResult({ record, items, evaluation });
+        setScreen("result");
+
+        if (reason === "timeout") {
+          addToast(
+            "Waktu tryout CAT telah berakhir. Jawaban Anda otomatis dikumpulkan dan dinilai.",
+            "info",
+          );
+        } else {
+          addToast(
+            "Jawaban tryout berhasil dinilai. Rapor skor SKD siap ditinjau.",
+            "success",
+          );
+        }
+      } catch {
+        autoSubmittedRef.current = null;
+        addToast(
+          "Gagal menghubungi server penilaian. Periksa koneksi Anda lalu coba kumpulkan ulang.",
+          "error",
+        );
+      } finally {
+        setLoadingMessage(null);
       }
     },
     [addToast],
@@ -96,7 +171,7 @@ export function TryoutCatExperience({
 
       const rem = computeRemainingSeconds(savedActive.endsAtMs);
       if (rem <= 0) {
-        finalizeSession(savedActive, "timeout");
+        void finalizeSession(savedActive, "timeout");
       } else {
         setActiveSession(savedActive);
         setRemainingSec(rem);
@@ -114,7 +189,7 @@ export function TryoutCatExperience({
       const rem = computeRemainingSeconds(activeSession.endsAtMs);
       setRemainingSec(rem);
       if (rem <= 0) {
-        finalizeSession(activeSession, "timeout");
+        void finalizeSession(activeSession, "timeout");
       }
     };
 
@@ -122,51 +197,92 @@ export function TryoutCatExperience({
     return () => window.clearInterval(intervalId);
   }, [activeSession, finalizeSession]);
 
-  const activeItems = useMemo(() => {
-    if (!activeSession) return [];
-    return generateTryoutQuestions(activeSession.mode, activeSession.seed);
-  }, [activeSession]);
-
-  const resultViewData = useMemo(() => {
-    if (!viewingRecord) return null;
-    const items = generateTryoutQuestions(viewingRecord.mode, viewingRecord.seed);
-    const evaluation = evaluateTryoutAttempt(
-      items,
-      viewingRecord.mode,
-      viewingRecord.answers,
-      viewingRecord.durationUsedSec,
-    );
-    return { items, evaluation };
-  }, [viewingRecord]);
-
   const startPreset = useCallback(
-    (preset: TryoutPreset) => {
+    async (preset: TryoutPreset) => {
       const cfg = TRYOUT_MODE_CONFIGS[preset.mode];
-      const now = Date.now();
       const seed = preset.fixedSeed ?? createRandomSeed();
-      const newSession: ActiveTryoutSession = {
-        id: `tryout-${now}-${Math.floor(Math.random() * 10000)}`,
-        mode: preset.mode,
-        presetId: preset.id,
-        packageLabel: preset.title,
-        seed,
-        startedAtMs: now,
-        endsAtMs: now + cfg.durationSec * 1000,
-        durationLimitSec: cfg.durationSec,
-        answers: {},
-        flagged: {},
-        currentIndex: 0,
-      };
+      setLoadingMessage(`Menyiapkan ${cfg.totalQuestions} soal CAT dari server...`);
 
-      autoSubmittedRef.current = null;
-      writeActiveTryoutSession(newSession);
-      setActiveSession(newSession);
-      setRemainingSec(cfg.durationSec);
-      setViewingRecord(null);
+      try {
+        const examItems = await fetchExamQuestionsFromServer(preset.mode, seed);
+        const now = Date.now();
+        const newSession: ActiveTryoutSession = {
+          id: `tryout-${now}-${Math.floor(Math.random() * 10000)}`,
+          mode: preset.mode,
+          presetId: preset.id,
+          packageLabel: preset.title,
+          seed,
+          startedAtMs: now,
+          endsAtMs: now + cfg.durationSec * 1000,
+          durationLimitSec: cfg.durationSec,
+          answers: {},
+          flagged: {},
+          currentIndex: 0,
+        };
+
+        autoSubmittedRef.current = null;
+        loadedExamKeyRef.current = `${newSession.mode}:${newSession.seed}`;
+        writeActiveTryoutSession(newSession);
+        setActiveSession(newSession);
+        setActiveItems(examItems);
+        setRemainingSec(cfg.durationSec);
+        setLoadedResult(null);
+        setScreen("exam");
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      } catch {
+        addToast("Gagal memuat soal tryout CAT. Silakan coba lagi.", "error");
+      } finally {
+        setLoadingMessage(null);
+      }
+    },
+    [addToast],
+  );
+
+  const handleResumeActive = useCallback(async () => {
+    if (!activeSession) return;
+    const key = `${activeSession.mode}:${activeSession.seed}`;
+    if (loadedExamKeyRef.current === key && activeItems.length > 0) {
+      setScreen("exam");
+      return;
+    }
+
+    setLoadingMessage("Memulihkan paket soal CAT aktif dari server...");
+    try {
+      const examItems = await fetchExamQuestionsFromServer(
+        activeSession.mode,
+        activeSession.seed,
+      );
+      loadedExamKeyRef.current = key;
+      setActiveItems(examItems);
       setScreen("exam");
       window.scrollTo({ top: 0, behavior: "smooth" });
+    } catch {
+      addToast("Gagal memulihkan soal tryout aktif. Silakan coba lagi.", "error");
+    } finally {
+      setLoadingMessage(null);
+    }
+  }, [activeSession, activeItems.length, addToast]);
+
+  const handleOpenHistory = useCallback(
+    async (record: TryoutHistoryRecord) => {
+      setLoadingMessage("Memuat rapor & pembahasan lengkap dari server...");
+      try {
+        const { evaluation, items } = await submitAndGradeOnServer({
+          mode: record.mode,
+          seed: record.seed,
+          answers: record.answers,
+          durationUsedSec: record.durationUsedSec,
+        });
+        setLoadedResult({ record, items, evaluation });
+        setScreen("result");
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      } catch {
+        addToast("Gagal membuka pembahasan riwayat tryout. Silakan coba lagi.", "error");
+      } finally {
+        setLoadingMessage(null);
+      }
     },
-    [],
+    [addToast],
   );
 
   const updateActiveSession = useCallback(
@@ -226,7 +342,9 @@ export function TryoutCatExperience({
 
   const handleDiscardActive = useCallback(() => {
     clearActiveTryoutSession();
+    loadedExamKeyRef.current = null;
     setActiveSession(null);
+    setActiveItems([]);
     setRemainingSec(0);
     addToast("Sesi tryout yang sedang berjalan dibatalkan.", "info");
   }, [addToast]);
@@ -235,57 +353,74 @@ export function TryoutCatExperience({
     (recordId: string) => {
       const next = deleteTryoutHistoryItem(recordId);
       setHistory(next);
-      if (viewingRecord?.id === recordId) {
-        setViewingRecord(null);
+      if (loadedResult?.record.id === recordId) {
+        setLoadedResult(null);
         setScreen("lobby");
       }
       addToast("Riwayat tryout berhasil dihapus.", "info");
     },
-    [viewingRecord, addToast],
+    [loadedResult, addToast],
   );
 
   const handleRetakeFresh = useCallback(() => {
-    const mode = viewingRecord?.mode ?? "official";
+    const mode = loadedResult?.record.mode ?? "official";
     const cfg = TRYOUT_MODE_CONFIGS[mode];
-    startPreset({
+    void startPreset({
       id: mode === "mini" ? "mini-cat-cepat" : "paket-acak-resmi",
       mode,
       title: mode === "mini" ? "Mini Tryout CAT Cepat (35 Soal)" : "Paket Acak Dinamis (110 Soal)",
       subtitle: cfg.description,
       badge: mode === "mini" ? "Uji Cepat" : "Acak Baru",
     });
-  }, [viewingRecord, startPreset]);
+  }, [loadedResult, startPreset]);
+
+  const loadingOverlay = loadingMessage ? (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/45 p-4 backdrop-blur-xs"
+      role="status"
+      aria-live="polite"
+    >
+      <div className="flex items-center gap-3 rounded-2xl border border-blue-100 bg-white px-6 py-4 shadow-xl">
+        <Loader2 className="size-5 animate-spin text-blue-600" aria-hidden />
+        <p className="text-sm font-semibold text-slate-900">{loadingMessage}</p>
+      </div>
+    </div>
+  ) : null;
 
   if (screen === "exam" && activeSession && activeItems.length > 0) {
     return (
-      <TryoutExamRunner
-        packageLabel={activeSession.packageLabel}
-        items={activeItems}
-        answers={activeSession.answers}
-        flagged={activeSession.flagged}
-        currentIndex={activeSession.currentIndex}
-        remainingSec={remainingSec}
-        onSelectAnswer={handleSelectAnswer}
-        onClearAnswer={handleClearAnswer}
-        onToggleFlag={handleToggleFlag}
-        onJumpToIndex={handleJumpToIndex}
-        onSubmitExam={() => finalizeSession(activeSession, "manual")}
-        onPauseToLobby={() => setScreen("lobby")}
-      />
+      <>
+        {loadingOverlay}
+        <TryoutExamRunner
+          packageLabel={activeSession.packageLabel}
+          items={activeItems}
+          answers={activeSession.answers}
+          flagged={activeSession.flagged}
+          currentIndex={activeSession.currentIndex}
+          remainingSec={remainingSec}
+          onSelectAnswer={handleSelectAnswer}
+          onClearAnswer={handleClearAnswer}
+          onToggleFlag={handleToggleFlag}
+          onJumpToIndex={handleJumpToIndex}
+          onSubmitExam={() => void finalizeSession(activeSession, "manual")}
+          onPauseToLobby={() => setScreen("lobby")}
+        />
+      </>
     );
   }
 
   return (
     <div className="flex min-h-screen flex-col bg-[linear-gradient(180deg,#f8fbff_0%,#ffffff_30%,#f8fafc_100%)]">
+      {loadingOverlay}
       {siteHeader}
       <div className="flex-1">
-        {screen === "result" && viewingRecord && resultViewData ? (
+        {screen === "result" && loadedResult ? (
           <TryoutResultReview
-            packageLabel={viewingRecord.packageLabel}
-            items={resultViewData.items}
-            answers={viewingRecord.answers}
-            flagged={viewingRecord.flagged}
-            evaluation={resultViewData.evaluation}
+            packageLabel={loadedResult.record.packageLabel}
+            items={loadedResult.items}
+            answers={loadedResult.record.answers}
+            flagged={loadedResult.record.flagged}
+            evaluation={loadedResult.evaluation}
             onBackToLobby={() => setScreen("lobby")}
             onRetakeFresh={handleRetakeFresh}
           />
@@ -294,14 +429,10 @@ export function TryoutCatExperience({
             activeSession={activeSession}
             activeRemainingSec={remainingSec}
             history={history}
-            onStartPreset={startPreset}
-            onResumeActive={() => setScreen("exam")}
+            onStartPreset={(preset) => void startPreset(preset)}
+            onResumeActive={() => void handleResumeActive()}
             onDiscardActive={handleDiscardActive}
-            onOpenHistory={(record) => {
-              setViewingRecord(record);
-              setScreen("result");
-              window.scrollTo({ top: 0, behavior: "smooth" });
-            }}
+            onOpenHistory={(record) => void handleOpenHistory(record)}
             onDeleteHistory={handleDeleteHistory}
           />
         )}
@@ -310,4 +441,3 @@ export function TryoutCatExperience({
     </div>
   );
 }
-

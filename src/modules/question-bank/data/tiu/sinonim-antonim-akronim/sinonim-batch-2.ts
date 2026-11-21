@@ -130,11 +130,18 @@ export const sinonimBatch2Drafts: readonly QuestionDraft[] = [
   {
     id: "tiu-saa-sin-093",
     subPattern: "sinonim",
-    difficulty: "sedang",
-    prompt: "AKUISISI = ...",
-    options: ["Pelepasan", "Penanaman", "Pengambilalihan", "Pemecahan", "Penghapusan"],
+    difficulty: "sulit",
+    prompt: "ESOTERIS = ...",
+    options: [
+      "Terbuka untuk umum",
+      "Sangat mendasar",
+      "Khusus kalangan terbatas",
+      "Mudah dipahami awam",
+      "Bersifat sementara",
+    ],
     answer: "C",
-    explanation: "Akuisisi berarti pemindahan kepemilikan perusahaan atau aset melalui pengambilalihan.",
+    explanation:
+      "Menurut KBBI, esoteris berarti bersifat khusus, rahasia, atau hanya diperuntukkan dan dipahami oleh kalangan tertentu yang terbatas (lawan dari eksoteris yang terbuka untuk masyarakat umum).",
   },
   {
     id: "tiu-saa-sin-094",

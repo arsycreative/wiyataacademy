@@ -28,8 +28,12 @@ import {
 } from "@/modules/catalog/presentation/course-catalog-content";
 import { ProgramEnrollButton } from "@/modules/catalog/presentation/program-enroll-button";
 import { SkdLearningPathView } from "@/modules/catalog/presentation/skd-learning-path-view";
+import { summarizeAllProgress } from "@/modules/question-bank/domain/subtest-summary";
 import { createTiuProgressRepository } from "@/modules/question-bank/infrastructure/tiu-progress-repository.server";
-import type { SanitizedPracticeProgress } from "@/modules/question-bank/infrastructure/tiu-progress-sync";
+import {
+  sanitizePracticeProgress,
+  type SanitizedPracticeProgress,
+} from "@/modules/question-bank/infrastructure/tiu-progress-sync";
 import { APP_ROUTES } from "@/shared/constants/app";
 
 type CoursePageProps = {
@@ -79,6 +83,9 @@ export default async function CoursePage({ params }: CoursePageProps) {
       initialCloudProgress = null;
     }
   }
+  const initialSummaries = isSkdRoadmap
+    ? summarizeAllProgress(initialCloudProgress ?? sanitizePracticeProgress({}))
+    : null;
 
   return (
     <div className="flex min-h-screen flex-col bg-[#f8fbff] text-slate-900">
@@ -136,8 +143,11 @@ export default async function CoursePage({ params }: CoursePageProps) {
       <main className="mx-auto w-full max-w-[1280px] flex-1 px-5 py-10 sm:px-8 lg:px-10">
         <div className="grid gap-8 lg:grid-cols-[1fr_360px]">
           <div className="min-w-0 space-y-6">
-            {isSkdRoadmap && (
-              <SkdLearningPathView initialCloudProgress={initialCloudProgress} />
+            {isSkdRoadmap && initialSummaries && (
+              <SkdLearningPathView
+                initialCloudProgress={initialCloudProgress}
+                initialSummaries={initialSummaries}
+              />
             )}
 
             <section className="rounded-xl border border-blue-100 bg-white p-6 shadow-sm shadow-blue-100/50">

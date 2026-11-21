@@ -4,7 +4,11 @@ import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteHeader } from "@/components/layout/site-header";
 import { getPatternStats } from "@/modules/question-bank/data/tiu";
 import { ALL_TKP_QUESTIONS } from "@/modules/question-bank/data/tkp";
-import { ALL_TWK_QUESTIONS } from "@/modules/question-bank/data/twk";
+import {
+  ALL_TWK_QUESTIONS,
+  getTwkPatternStats,
+  TWK_QUESTION_BANKS,
+} from "@/modules/question-bank/data/twk";
 import {
   TWK_PATTERN_IDS,
   type TwkPatternId,
@@ -41,6 +45,10 @@ export default async function TwkPracticePage({
     parseTwkPatternParam(resolvedParams?.pattern) ??
     parseTwkPatternParam(resolvedParams?.pola);
 
+  const initialLoadedPattern: TwkPatternId = initialPattern ?? "nasionalisme";
+  const initialPatternStats = getTwkPatternStats();
+  const initialQuestions = TWK_QUESTION_BANKS[initialLoadedPattern];
+
   const tiuTotal = getPatternStats().reduce((total, item) => total + item.total, 0);
   const twkTotal = ALL_TWK_QUESTIONS.length;
   const tkpTotal = ALL_TKP_QUESTIONS.length;
@@ -59,6 +67,9 @@ export default async function TwkPracticePage({
   return (
     <TwkPatternPractice
       initialPattern={initialPattern}
+      initialLoadedPattern={initialLoadedPattern}
+      initialPatternStats={initialPatternStats}
+      initialQuestions={initialQuestions}
       siteHeader={<SiteHeader />}
       siteFooter={<SiteFooter />}
       pageIntro={pageIntro}

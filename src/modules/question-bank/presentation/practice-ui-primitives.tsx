@@ -107,6 +107,12 @@ export function SubtestPracticeIntro({
           );
         })}
         <Link
+          href={`${APP_ROUTES.sprint}?subtest=${activeSubtest}`}
+          className="inline-flex items-center gap-1.5 rounded-xl border border-indigo-200 bg-indigo-50 px-3 py-2 text-xs font-semibold text-indigo-800 transition-colors hover:bg-indigo-100 sm:px-3.5 sm:text-sm"
+        >
+          <span>Sprint 10m</span>
+        </Link>
+        <Link
           href={APP_ROUTES.tryout}
           className="inline-flex items-center gap-1.5 rounded-xl bg-slate-900 px-3.5 py-2 text-xs font-semibold text-white transition-colors hover:bg-slate-800 sm:px-4 sm:text-sm"
         >

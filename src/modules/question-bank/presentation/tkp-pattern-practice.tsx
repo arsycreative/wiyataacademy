@@ -1,10 +1,14 @@
 import type { ReactNode } from "react";
 
-import type { TkpPatternId } from "@/modules/question-bank/domain/question";
+import type { PatternStatItem } from "@/modules/question-bank/domain/progress-summary-types";
+import type { Question, TkpPatternId } from "@/modules/question-bank/domain/question";
 import { StandardPatternPractice } from "./standard-pattern-practice";
 
 type TkpPatternPracticeProps = {
   initialPattern?: TkpPatternId;
+  initialLoadedPattern: TkpPatternId;
+  initialPatternStats: readonly PatternStatItem<TkpPatternId>[];
+  initialQuestions: readonly Question[];
   siteHeader?: ReactNode;
   siteFooter?: ReactNode;
   pageIntro?: ReactNode;

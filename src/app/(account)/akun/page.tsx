@@ -11,7 +11,9 @@ import {
   getAuthenticatedUser,
 } from "@/modules/auth/infrastructure/profile-repository.server";
 import { AccountDashboard } from "@/modules/auth/presentation/account-dashboard";
+import { summarizeAllProgress } from "@/modules/question-bank/domain/subtest-summary";
 import { createTiuProgressRepository } from "@/modules/question-bank/infrastructure/tiu-progress-repository.server";
+import { sanitizePracticeProgress } from "@/modules/question-bank/infrastructure/tiu-progress-sync";
 import { APP_ROUTES } from "@/shared/constants/app";
 
 export const dynamic = "force-dynamic";
@@ -35,6 +37,10 @@ export default async function AccountPage() {
     profileRepo.findById(user.id),
     progressRepo.findByUserId(user.id),
   ]);
+
+  const initialSummaries = summarizeAllProgress(
+    progressRes.data ?? sanitizePracticeProgress({}),
+  );
 
   return (
     <div className="flex min-h-screen flex-col bg-[#f8fbff] text-slate-950">
@@ -64,6 +70,7 @@ export default async function AccountPage() {
             createdAt: user.createdAt,
           }}
           initialCloudProgress={progressRes.data}
+          initialSummaries={initialSummaries}
           initialSchemaMissing={profileRes.schemaMissing || progressRes.schemaMissing}
         />
       </main>

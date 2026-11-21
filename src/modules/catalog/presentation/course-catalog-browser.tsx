@@ -104,7 +104,7 @@ export function CourseCatalogBrowser({
       visualCode: "SKD",
       title: skdCourse.title,
       summary:
-        "Roadmap belajar 5 tahap: tes diagnostik, 2.100 soal TWK/TIU/TKP per pola, hingga Tryout CAT 110 soal.",
+        "Roadmap belajar 5 tahap: tes diagnostik, 2.540 soal TWK/TIU/TKP per pola & cheat sheet, hingga Tryout CAT 110 soal.",
       gradient: slideGradients[skdCourse.theme],
       course: skdCourse,
     };

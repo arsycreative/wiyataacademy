@@ -684,20 +684,34 @@ export const sinonimBatch1Drafts: readonly QuestionDraft[] = [
   {
     id: "tiu-saa-sin-067",
     subPattern: "sinonim",
-    difficulty: "mudah",
-    prompt: "KLARIFIKASI = ...",
-    options: ["Penyamaran", "Penjelasan", "Permintaan", "Penilaian", "Pengajuan"],
+    difficulty: "sulit",
+    prompt: "KLANDESTIN = ...",
+    options: [
+      "Terang-terangan",
+      "Secara diam-diam",
+      "Bersifat legal",
+      "Secara serentak",
+      "Melalui perantara",
+    ],
     answer: "B",
-    explanation: "Klarifikasi berarti penjernihan atau penjelasan kepada keadaan sebenarnya.",
+    explanation:
+      "Menurut KBBI, klandestin berarti secara diam-diam atau secara gelap/rahasia (tersembunyi). Terang-terangan merupakan lawan katanya, sedangkan bersifat legal merujuk pada keabsahan hukum, bukan kerahasiaan.",
   },
   {
     id: "tiu-saa-sin-068",
     subPattern: "sinonim",
-    difficulty: "mudah",
-    prompt: "KOLABORASI = ...",
-    options: ["Adu gagasan", "Beda pandangan", "Kerja sama", "Alih tugas", "Serah terima"],
+    difficulty: "sulit",
+    prompt: "APOKRIF = ...",
+    options: [
+      "Terbukti sahih",
+      "Bersifat pokok",
+      "Diragukan keasliannya",
+      "Diakui bersama",
+      "Tercatat resmi",
+    ],
     answer: "C",
-    explanation: "Kolaborasi berarti perbuatan bekerja sama.",
+    explanation:
+      "Menurut KBBI, apokrif berarti diragukan keasliannya atau tidak asli sebagai sumber resmi. Terbukti sahih dan tercatat resmi merupakan lawan maknanya.",
   },
   {
     id: "tiu-saa-sin-069",

@@ -3,6 +3,7 @@ import {
   type Question,
   type QuestionDraft,
 } from "@/modules/question-bank/domain/question";
+import { bahasaIndonesiaBatch2Drafts } from "./batches/05-bahasa-indonesia-batch-2";
 
 const bahasaIndonesiaDrafts: readonly QuestionDraft[] = [
   {
@@ -649,5 +650,5 @@ const bahasaIndonesiaDrafts: readonly QuestionDraft[] = [
 
 export const bahasaIndonesiaQuestions: readonly Question[] = buildTwkPatternQuestions(
   "bahasa-indonesia",
-  bahasaIndonesiaDrafts,
+  [...bahasaIndonesiaDrafts, ...bahasaIndonesiaBatch2Drafts],
 );

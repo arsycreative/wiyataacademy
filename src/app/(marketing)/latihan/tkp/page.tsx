@@ -3,7 +3,11 @@ import type { Metadata } from "next";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteHeader } from "@/components/layout/site-header";
 import { getPatternStats } from "@/modules/question-bank/data/tiu";
-import { ALL_TKP_QUESTIONS } from "@/modules/question-bank/data/tkp";
+import {
+  ALL_TKP_QUESTIONS,
+  getTkpPatternStats,
+  TKP_QUESTION_BANKS,
+} from "@/modules/question-bank/data/tkp";
 import { ALL_TWK_QUESTIONS } from "@/modules/question-bank/data/twk";
 import {
   TKP_PATTERN_IDS,
@@ -41,6 +45,10 @@ export default async function TkpPracticePage({
     parseTkpPatternParam(resolvedParams?.pattern) ??
     parseTkpPatternParam(resolvedParams?.pola);
 
+  const initialLoadedPattern: TkpPatternId = initialPattern ?? "pelayanan-publik";
+  const initialPatternStats = getTkpPatternStats();
+  const initialQuestions = TKP_QUESTION_BANKS[initialLoadedPattern];
+
   const tiuTotal = getPatternStats().reduce((total, item) => total + item.total, 0);
   const twkTotal = ALL_TWK_QUESTIONS.length;
   const tkpTotal = ALL_TKP_QUESTIONS.length;
@@ -59,6 +67,9 @@ export default async function TkpPracticePage({
   return (
     <TkpPatternPractice
       initialPattern={initialPattern}
+      initialLoadedPattern={initialLoadedPattern}
+      initialPatternStats={initialPatternStats}
+      initialQuestions={initialQuestions}
       siteHeader={<SiteHeader />}
       siteFooter={<SiteFooter />}
       pageIntro={pageIntro}

@@ -1,9 +1,4 @@
-import { summarizeTiuProgress } from "@/modules/question-bank/domain/question-shuffle";
-import {
-  summarizeTkpProgress,
-  summarizeTwkProgress,
-} from "@/modules/question-bank/domain/subtest-summary";
-import type { SanitizedPracticeProgress } from "@/modules/question-bank/infrastructure/tiu-progress-sync";
+import type { AllProgressSummaries } from "@/modules/question-bank/domain/progress-summary-types";
 import type { TryoutHistoryRecord } from "@/modules/tryout/infrastructure/tryout-storage";
 import { APP_ROUTES } from "@/shared/constants/app";
 
@@ -66,27 +61,10 @@ function calcPct(part: number, total: number): number {
 }
 
 export function computeSkdLearningPath(
-  progress: SanitizedPracticeProgress,
+  summaries: AllProgressSummaries,
   tryoutHistory: readonly TryoutHistoryRecord[],
 ): SkdLearningPathState {
-  const twk = summarizeTwkProgress(
-    progress.selectedAnswers,
-    progress.flaggedQuestions,
-    progress.patternSeeds,
-    progress.questionSeeds,
-  );
-  const tiu = summarizeTiuProgress(
-    progress.selectedAnswers,
-    progress.flaggedQuestions,
-    progress.patternSeeds,
-    progress.questionSeeds,
-  );
-  const tkp = summarizeTkpProgress(
-    progress.selectedAnswers,
-    progress.flaggedQuestions,
-    progress.patternSeeds,
-    progress.questionSeeds,
-  );
+  const { twk, tiu, tkp } = summaries;
 
   // Tahap 1: Diagnostik Awal (minimal 1 simulasi CAT — Mini 35 atau Resmi 110)
   const hasDiagnostic = tryoutHistory.length > 0;
@@ -163,7 +141,7 @@ export function computeSkdLearningPath(
     title: "Penguasaan TWK (5 Pilar Kebangsaan)",
     description:
       "Latih penalaran studi kasus pada 5 pilar utama: Nasionalisme, Integritas, Bela Negara, Pilar Negara, dan Bahasa Negara.",
-    targetSummary: "Target: kuasai 200 soal di 5 pilar (Passing Grade BKN ≥ 65 / 150)",
+    targetSummary: `Target: kuasai ${twk.totalQuestions.toLocaleString("id-ID")} soal di 5 pilar (Passing Grade BKN ≥ 65 / 150)`,
     status:
       twk.totalAnswered >= twk.totalQuestions
         ? "completed"
@@ -261,7 +239,7 @@ export function computeSkdLearningPath(
     title: "Penguasaan TKP (6 Aspek Strategi Skor 5)",
     description:
       "Asah insting memilih opsi bernilai 5 poin dari pengecoh skor 4 pada seluruh 6 aspek TKP sesuai nilai dasar ASN BerAKHLAK.",
-    targetSummary: "Target: kuasai 240 soal di 6 aspek (Passing Grade BKN ≥ 166 / 225)",
+    targetSummary: `Target: kuasai ${tkp.totalQuestions.toLocaleString("id-ID")} soal di 6 aspek (Passing Grade BKN ≥ 166 / 225)`,
     status:
       tkp.totalAnswered >= tkp.totalQuestions
         ? "completed"

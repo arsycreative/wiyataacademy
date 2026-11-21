@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import { ALL_TWK_QUESTIONS } from "@/modules/question-bank/data/twk";
+import { summarizeAllProgress } from "@/modules/question-bank/domain/subtest-summary";
 import { sanitizePracticeProgress } from "@/modules/question-bank/infrastructure/tiu-progress-sync";
 import type { TryoutHistoryRecord } from "@/modules/tryout/infrastructure/tryout-storage";
 import { APP_ROUTES } from "@/shared/constants/app";
@@ -57,11 +58,14 @@ function makeHistoryRecord(
 }
 
 describe("computeSkdLearningPath", () => {
-  it("builds 5 structured stages totaling 2,100 practice questions and starts at diagnostic for new users", () => {
-    const state = computeSkdLearningPath(sanitizePracticeProgress({}), []);
+  it("builds 5 structured stages totaling 2,540 practice questions and starts at diagnostic for new users", () => {
+    const state = computeSkdLearningPath(
+      summarizeAllProgress(sanitizePracticeProgress({})),
+      [],
+    );
 
     expect(state.stages).toHaveLength(5);
-    expect(state.totalQuestions).toBe(2100);
+    expect(state.totalQuestions).toBe(2540);
     expect(state.totalAnswered).toBe(0);
     expect(state.completedStagesCount).toBe(0);
     expect(state.nextAction.stageId).toBe("diagnostik");
@@ -79,7 +83,10 @@ describe("computeSkdLearningPath", () => {
         [ALL_TWK_QUESTIONS[0].id]: ALL_TWK_QUESTIONS[0].answer,
       },
     });
-    const state = computeSkdLearningPath(progress, [makeHistoryRecord()]);
+    const state = computeSkdLearningPath(
+      summarizeAllProgress(progress),
+      [makeHistoryRecord()],
+    );
 
     expect(state.stages[0].status).toBe("completed");
     expect(state.stages[1].status).toBe("in_progress");
@@ -97,7 +104,10 @@ describe("computeSkdLearningPath", () => {
       maxScore: 550,
       passed: true,
     });
-    const state = computeSkdLearningPath(sanitizePracticeProgress({}), [passedOfficial]);
+    const state = computeSkdLearningPath(
+      summarizeAllProgress(sanitizePracticeProgress({})),
+      [passedOfficial],
+    );
 
     expect(state.stages[0].status).toBe("completed");
     expect(state.stages[4].status).toBe("completed");

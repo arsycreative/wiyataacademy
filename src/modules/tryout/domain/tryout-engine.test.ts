@@ -11,6 +11,7 @@ import {
   formatDurationClock,
   formatDurationVerbose,
   generateTryoutQuestions,
+  stripTryoutAnswersForExam,
   TRYOUT_MODE_CONFIGS,
   TRYOUT_PRESETS,
 } from "./tryout-engine";
@@ -125,6 +126,21 @@ describe("tryout-engine", () => {
     expect(TRYOUT_MODE_CONFIGS.official.subtests.TIU.passingGrade).toBe(80);
     expect(TRYOUT_MODE_CONFIGS.official.subtests.TKP.passingGrade).toBe(166);
     expect(TRYOUT_PRESETS.length).toBeGreaterThanOrEqual(4);
+  });
+
+  it("strips answer keys, TKP optionScores, explanations, and tips before sending active CAT items to client", () => {
+    const fullItems = generateTryoutQuestions("official", 20261101);
+    const examItems = stripTryoutAnswersForExam(fullItems);
+    expect(examItems).toHaveLength(110);
+
+    for (const item of examItems) {
+      const serialized = JSON.parse(JSON.stringify(item.question)) as Record<string, unknown>;
+      expect(serialized.answer).toBeUndefined();
+      expect(serialized.optionScores).toBeUndefined();
+      expect(serialized.explanation).toBeUndefined();
+      expect(serialized.tip).toBeUndefined();
+      expect(item.question.options).toHaveLength(5);
+    }
   });
 });
 

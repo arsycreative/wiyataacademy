@@ -26,7 +26,7 @@ import {
   TRYOUT_MODE_CONFIGS,
   TRYOUT_PRESETS,
   type TryoutPreset,
-} from "@/modules/tryout/domain/tryout-engine";
+} from "@/modules/tryout/domain/tryout-config";
 import type {
   ActiveTryoutSession,
   TryoutHistoryRecord,
@@ -106,6 +106,13 @@ export function TryoutLobby({
           </div>
 
           <div className="flex flex-wrap gap-2">
+            <Button
+              asChild
+              variant="outline"
+              className="border-indigo-200 bg-indigo-50/70 font-semibold text-indigo-800 hover:bg-indigo-100"
+            >
+              <Link href={APP_ROUTES.sprint}>Sprint 10–15 Menit</Link>
+            </Button>
             <Button
               asChild
               variant="outline"

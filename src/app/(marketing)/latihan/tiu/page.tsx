@@ -2,7 +2,10 @@ import type { Metadata } from "next";
 
 import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteHeader } from "@/components/layout/site-header";
-import { getPatternStats } from "@/modules/question-bank/data/tiu";
+import {
+  getPatternStats,
+  getQuestionsByPattern,
+} from "@/modules/question-bank/data/tiu";
 import { ALL_TKP_QUESTIONS } from "@/modules/question-bank/data/tkp";
 import { ALL_TWK_QUESTIONS } from "@/modules/question-bank/data/twk";
 import {
@@ -41,7 +44,11 @@ export default async function TiuPracticePage({
     parsePatternParam(resolvedParams?.pattern) ??
     parsePatternParam(resolvedParams?.pola);
 
-  const tiuTotal = getPatternStats().reduce((total, item) => total + item.total, 0);
+  const patternStats = getPatternStats();
+  const initialLoadedPattern: TiuPatternId = initialPattern ?? "sinonim-antonim-akronim";
+  const initialQuestions = getQuestionsByPattern(initialLoadedPattern);
+
+  const tiuTotal = patternStats.reduce((total, item) => total + item.total, 0);
   const twkTotal = ALL_TWK_QUESTIONS.length;
   const tkpTotal = ALL_TKP_QUESTIONS.length;
 
@@ -59,6 +66,9 @@ export default async function TiuPracticePage({
   return (
     <TiuPatternPractice
       initialPattern={initialPattern}
+      initialLoadedPattern={initialLoadedPattern}
+      initialPatternStats={patternStats}
+      initialQuestions={initialQuestions}
       siteHeader={<SiteHeader />}
       siteFooter={<SiteFooter />}
       pageIntro={pageIntro}

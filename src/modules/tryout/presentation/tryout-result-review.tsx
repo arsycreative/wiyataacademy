@@ -32,7 +32,7 @@ import {
   TRYOUT_SUBTEST_ORDER,
   type TryoutEvaluation,
   type TryoutQuestionItem,
-} from "@/modules/tryout/domain/tryout-engine";
+} from "@/modules/tryout/domain/tryout-config";
 
 type ReviewSubtestFilter = "ALL" | QuestionSubtest;
 type ReviewStatusFilter = "all" | "wrong" | "unanswered" | "optimal" | "flagged";

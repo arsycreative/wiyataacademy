@@ -16,6 +16,13 @@ export const APP_ROUTES = {
   tkpPatternPractice: (pattern: string) =>
     `/latihan/tkp?pattern=${encodeURIComponent(pattern)}`,
   tryout: "/tryout",
+  sprint: "/sprint",
+  sprintForPattern: (
+    subtest: "TWK" | "TIU" | "TKP",
+    pattern: string,
+    duration: 10 | 12 | 15 = 10,
+  ) =>
+    `/sprint?subtest=${subtest}&pattern=${encodeURIComponent(pattern)}&duration=${duration}`,
   courseDetail: (slug: string) => `/courses/${slug}`,
   login: "/masuk",
   register: "/daftar",

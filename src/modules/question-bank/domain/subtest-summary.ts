@@ -2,7 +2,6 @@ import { TIU_QUESTION_BANKS, getPatternStats } from "@/modules/question-bank/dat
 import { TKP_QUESTION_BANKS, getTkpPatternStats } from "@/modules/question-bank/data/tkp";
 import { TWK_QUESTION_BANKS, getTwkPatternStats } from "@/modules/question-bank/data/twk";
 import {
-  OPTION_KEYS,
   TIU_PATTERN_IDS,
   TIU_PATTERNS,
   TKP_PATTERN_IDS,
@@ -10,116 +9,36 @@ import {
   TWK_PATTERN_IDS,
   TWK_PATTERNS,
   type OptionKey,
-  type OptionScores,
   type PracticePatternId,
   type Question,
   type QuestionSubtest,
-  type TiuPatternId,
-  type TkpPatternId,
-  type TwkPatternId,
 } from "./question";
+import type {
+  AllProgressSummaries,
+  SubtestPatternProgressSummary,
+  SubtestProgressSummary,
+} from "./progress-summary-types";
+import { summarizeTiuProgress } from "./question-shuffle";
 import {
-  createInitialPatternSeeds,
-  createRandomSeed,
-  hashStringWithSeed,
-  seededShuffle,
-  shuffleQuestionOptions,
-} from "./question-shuffle";
+  createInitialAllPatternSeeds,
+  isTiuPattern,
+  isTkpPattern,
+  isTwkPattern,
+  shuffleQuestionWithScores,
+} from "./shuffle-core";
 
-export type SubtestPatternProgressSummary = {
-  patternId: PracticePatternId;
-  label: string;
-  order: number;
-  totalQuestions: number;
-  answeredCount: number;
-  correctCount: number;
-  flaggedCount: number;
-  earnedPoints: number;
-  maxAnsweredPoints: number;
+export {
+  createInitialAllPatternSeeds,
+  isTiuPattern,
+  isTkpPattern,
+  isTwkPattern,
+  shuffleQuestionWithScores,
 };
-
-export type SubtestProgressSummary = {
-  patterns: SubtestPatternProgressSummary[];
-  totalQuestions: number;
-  totalAnswered: number;
-  totalCorrect: number;
-  totalFlagged: number;
-  totalEarnedPoints: number;
-  totalMaxAnsweredPoints: number;
+export type {
+  AllProgressSummaries,
+  SubtestPatternProgressSummary,
+  SubtestProgressSummary,
 };
-
-/**
- * Mengacak opsi soal sekaligus memetakan skor TKP (1–5) ke huruf baru yang sejajar.
- */
-export function shuffleQuestionWithScores(
-  question: Question,
-  seed: number,
-): Question {
-  if (!seed || seed <= 0) {
-    return question;
-  }
-
-  if (!question.optionScores) {
-    return shuffleQuestionOptions(question, seed);
-  }
-
-  const saltSeed = hashStringWithSeed(question.id, seed);
-  const shuffledItems = seededShuffle(
-    question.options.map((option) => ({
-      text: option.text,
-      isOptimal: option.key === question.answer,
-      score: question.optionScores![option.key],
-    })),
-    saltSeed,
-  );
-
-  const nextScores: OptionScores = {
-    A: 1,
-    B: 1,
-    C: 1,
-    D: 1,
-    E: 1,
-  };
-  let nextAnswer = question.answer;
-
-  const nextOptions = shuffledItems.map((item, idx) => {
-    const key = OPTION_KEYS[idx];
-    nextScores[key] = item.score;
-    if (item.isOptimal) {
-      nextAnswer = key;
-    }
-    return { key, text: item.text };
-  });
-
-  return {
-    ...question,
-    options: nextOptions,
-    answer: nextAnswer,
-    optionScores: nextScores,
-  };
-}
-
-/**
- * Mengisi seed pengacakan awal untuk seluruh pola TIU, pilar TWK, dan aspek TKP.
- */
-export function createInitialAllPatternSeeds(
-  existingSeeds?: Partial<Record<PracticePatternId, number>>,
-): Record<PracticePatternId, number> {
-  const tiuSeeds = createInitialPatternSeeds(
-    existingSeeds as Partial<Record<TiuPatternId, number>> | undefined,
-  );
-  const seeds = { ...tiuSeeds } as Record<PracticePatternId, number>;
-
-  for (const id of [...TWK_PATTERN_IDS, ...TKP_PATTERN_IDS]) {
-    const existing = existingSeeds?.[id];
-    seeds[id] =
-      typeof existing === "number" && Number.isFinite(existing) && existing > 0
-        ? existing >>> 0
-        : createRandomSeed();
-  }
-
-  return seeds;
-}
 
 function summarizePatternCollection<TId extends PracticePatternId>(
   patternIds: readonly TId[],
@@ -248,25 +167,35 @@ export function summarizeTkpProgress(
   );
 }
 
-export function isTiuPattern(value: unknown): value is TiuPatternId {
-  return (
-    typeof value === "string" &&
-    (TIU_PATTERN_IDS as readonly string[]).includes(value)
-  );
-}
-
-export function isTwkPattern(value: unknown): value is TwkPatternId {
-  return (
-    typeof value === "string" &&
-    (TWK_PATTERN_IDS as readonly string[]).includes(value)
-  );
-}
-
-export function isTkpPattern(value: unknown): value is TkpPatternId {
-  return (
-    typeof value === "string" &&
-    (TKP_PATTERN_IDS as readonly string[]).includes(value)
-  );
+/**
+ * Merangkum progres ketiga subtes (TIU, TWK, TKP) sekaligus di server.
+ */
+export function summarizeAllProgress(input: {
+  selectedAnswers: Readonly<Record<string, OptionKey>>;
+  flaggedQuestions: Readonly<Record<string, boolean>>;
+  patternSeeds: Partial<Record<PracticePatternId, number>>;
+  questionSeeds: Readonly<Record<string, number>>;
+}): AllProgressSummaries {
+  return {
+    tiu: summarizeTiuProgress(
+      input.selectedAnswers,
+      input.flaggedQuestions,
+      input.patternSeeds,
+      input.questionSeeds,
+    ),
+    twk: summarizeTwkProgress(
+      input.selectedAnswers,
+      input.flaggedQuestions,
+      input.patternSeeds,
+      input.questionSeeds,
+    ),
+    tkp: summarizeTkpProgress(
+      input.selectedAnswers,
+      input.flaggedQuestions,
+      input.patternSeeds,
+      input.questionSeeds,
+    ),
+  };
 }
 
 export type SubtestPatternMeta = {

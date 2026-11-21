@@ -20,10 +20,12 @@ import {
   type RoadmapStageId,
   type RoadmapStageStatus,
 } from "@/modules/catalog/domain/skd-learning-path";
+import type { AllProgressSummaries } from "@/modules/question-bank/domain/progress-summary-types";
 import {
+  fetchProgressSummaries,
+  hasLocalProgressDiff,
   mergePracticeProgress,
   readLocalTiuProgress,
-  sanitizePracticeProgress,
   type SanitizedPracticeProgress,
 } from "@/modules/question-bank/infrastructure/tiu-progress-sync";
 import {
@@ -33,6 +35,7 @@ import {
 
 type SkdLearningPathViewProps = {
   initialCloudProgress: SanitizedPracticeProgress | null;
+  initialSummaries: AllProgressSummaries;
 };
 
 const STATUS_BADGE: Record<
@@ -55,10 +58,9 @@ const STATUS_BADGE: Record<
 
 export function SkdLearningPathView({
   initialCloudProgress,
+  initialSummaries,
 }: SkdLearningPathViewProps) {
-  const [progressState, setProgressState] = useState<SanitizedPracticeProgress>(() =>
-    initialCloudProgress ?? sanitizePracticeProgress({}),
-  );
+  const [summaries, setSummaries] = useState<AllProgressSummaries>(initialSummaries);
   const [tryoutHistory, setTryoutHistory] = useState<TryoutHistoryRecord[]>([]);
   const [expandedStages, setExpandedStages] = useState<Record<RoadmapStageId, boolean>>({
     diagnostik: true,
@@ -69,19 +71,29 @@ export function SkdLearningPathView({
   });
 
   useEffect(() => {
+    let cancelled = false;
     const frame = window.requestAnimationFrame(() => {
-      const localProgress = readLocalTiuProgress();
-      if (localProgress) {
-        setProgressState(mergePracticeProgress(localProgress, initialCloudProgress));
-      }
       setTryoutHistory(readTryoutHistory());
+      const localProgress = readLocalTiuProgress();
+      if (!localProgress || !hasLocalProgressDiff(localProgress, initialCloudProgress)) {
+        return;
+      }
+      const merged = mergePracticeProgress(localProgress, initialCloudProgress);
+      void fetchProgressSummaries(merged).then((nextSummaries) => {
+        if (!cancelled && nextSummaries) {
+          setSummaries(nextSummaries);
+        }
+      });
     });
-    return () => window.cancelAnimationFrame(frame);
+    return () => {
+      cancelled = true;
+      window.cancelAnimationFrame(frame);
+    };
   }, [initialCloudProgress]);
 
   const roadmap = useMemo(
-    () => computeSkdLearningPath(progressState, tryoutHistory),
-    [progressState, tryoutHistory],
+    () => computeSkdLearningPath(summaries, tryoutHistory),
+    [summaries, tryoutHistory],
   );
 
   const toggleStage = (stageId: RoadmapStageId) => {

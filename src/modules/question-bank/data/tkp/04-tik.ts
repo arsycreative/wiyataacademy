@@ -3,6 +3,7 @@ import {
   type Question,
   type TkpQuestionDraft,
 } from "@/modules/question-bank/domain/question";
+import { tikBatch2Drafts } from "./batches/04-tik-batch-2";
 
 const tikDrafts: readonly TkpQuestionDraft[] = [
   {
@@ -929,5 +930,5 @@ const tikDrafts: readonly TkpQuestionDraft[] = [
 
 export const tikQuestions: readonly Question[] = buildTkpPatternQuestions(
   "tik",
-  tikDrafts,
+  [...tikDrafts, ...tikBatch2Drafts],
 );

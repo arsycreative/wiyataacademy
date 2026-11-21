@@ -11,9 +11,8 @@ import {
   type TkpPatternId,
   type TwkPatternId,
 } from "@/modules/question-bank/domain/question";
-import { TIU_QUESTION_BANKS } from "@/modules/question-bank/data/tiu";
-import { TKP_QUESTION_BANKS } from "@/modules/question-bank/data/tkp";
-import { TWK_QUESTION_BANKS } from "@/modules/question-bank/data/twk";
+import type { AllProgressSummaries } from "@/modules/question-bank/domain/progress-summary-types";
+import { getPatternIdFromQuestionId } from "@/modules/question-bank/domain/shuffle-core";
 
 export type ViewMode = "list" | "single";
 
@@ -37,23 +36,6 @@ export type SanitizedPracticeProgress = {
 
 export const TIU_PROGRESS_STORAGE_KEY = "wiyata-tiu-practice-progress-v1";
 const TIU_PROGRESS_API_PATH = "/api/tiu/progress";
-
-const QUESTION_TO_PATTERN = new Map<string, PracticePatternId>();
-for (const patternId of TIU_PATTERN_IDS) {
-  for (const question of TIU_QUESTION_BANKS[patternId]) {
-    QUESTION_TO_PATTERN.set(question.id, patternId);
-  }
-}
-for (const patternId of TWK_PATTERN_IDS) {
-  for (const question of TWK_QUESTION_BANKS[patternId]) {
-    QUESTION_TO_PATTERN.set(question.id, patternId);
-  }
-}
-for (const patternId of TKP_PATTERN_IDS) {
-  for (const question of TKP_QUESTION_BANKS[patternId]) {
-    QUESTION_TO_PATTERN.set(question.id, patternId);
-  }
-}
 
 export function isTiuPatternId(value: unknown): value is TiuPatternId {
   return (
@@ -174,7 +156,7 @@ export function mergePracticeProgress(
       if (localSeed) {
         mergedQuestionSeeds[qId] = localSeed;
       } else {
-        const patternId = QUESTION_TO_PATTERN.get(qId);
+        const patternId = getPatternIdFromQuestionId(qId);
         const fallbackPatternSeed = patternId ? local.patternSeeds[patternId] : undefined;
         if (fallbackPatternSeed) {
           mergedQuestionSeeds[qId] = fallbackPatternSeed;
@@ -326,5 +308,36 @@ export async function saveCloudTiuProgress(
       schemaMissing: false,
       error: "Gagal menyimpan progres ke server.",
     };
+  }
+}
+
+export function hasLocalProgressDiff(
+  local: SanitizedPracticeProgress,
+  remote: SanitizedPracticeProgress | null,
+): boolean {
+  const remoteAnswers = remote?.selectedAnswers ?? {};
+  const remoteFlags = remote?.flaggedQuestions ?? {};
+  for (const qId of Object.keys(local.selectedAnswers)) {
+    if (remoteAnswers[qId] === undefined) return true;
+  }
+  for (const qId of Object.keys(local.flaggedQuestions)) {
+    if (remoteFlags[qId] === undefined) return true;
+  }
+  return false;
+}
+
+export async function fetchProgressSummaries(
+  progress: SanitizedPracticeProgress,
+): Promise<AllProgressSummaries | null> {
+  try {
+    const res = await fetch("/api/progress/summary", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(progress),
+    });
+    if (!res.ok) return null;
+    return (await res.json()) as AllProgressSummaries;
+  } catch {
+    return null;
   }
 }

@@ -3,6 +3,7 @@ import {
   type Question,
   type QuestionDraft,
 } from "@/modules/question-bank/domain/question";
+import { belaNegaraBatch2Drafts } from "./batches/03-bela-negara-batch-2";
 
 const belaNegaraDrafts: readonly QuestionDraft[] = [
   {
@@ -649,5 +650,5 @@ const belaNegaraDrafts: readonly QuestionDraft[] = [
 
 export const belaNegaraQuestions: readonly Question[] = buildTwkPatternQuestions(
   "bela-negara",
-  belaNegaraDrafts,
+  [...belaNegaraDrafts, ...belaNegaraBatch2Drafts],
 );

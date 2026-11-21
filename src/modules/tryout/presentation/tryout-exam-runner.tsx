@@ -29,14 +29,14 @@ import {
 import {
   formatDurationClock,
   TRYOUT_SUBTEST_ORDER,
-  type TryoutQuestionItem,
-} from "@/modules/tryout/domain/tryout-engine";
+  type TryoutExamQuestion,
+} from "@/modules/tryout/domain/tryout-config";
 
 type MatrixFilter = "all" | "unanswered" | "flagged";
 
 type TryoutExamRunnerProps = {
   packageLabel: string;
-  items: readonly TryoutQuestionItem[];
+  items: readonly TryoutExamQuestion[];
   answers: Readonly<Record<string, OptionKey>>;
   flagged: Readonly<Record<string, boolean>>;
   currentIndex: number;
@@ -587,8 +587,8 @@ function MatrixPanel({
   onChangeFilter,
   onJumpToIndex,
 }: {
-  items: readonly TryoutQuestionItem[];
-  filteredMatrixItems: ReadonlyArray<{ item: TryoutQuestionItem; idx: number }>;
+  items: readonly TryoutExamQuestion[];
+  filteredMatrixItems: ReadonlyArray<{ item: TryoutExamQuestion; idx: number }>;
   answers: Readonly<Record<string, OptionKey>>;
   flagged: Readonly<Record<string, boolean>>;
   currentIndex: number;

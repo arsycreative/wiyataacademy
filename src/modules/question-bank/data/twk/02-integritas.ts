@@ -3,6 +3,7 @@ import {
   type Question,
   type QuestionDraft,
 } from "@/modules/question-bank/domain/question";
+import { integritasBatch2Drafts } from "./batches/02-integritas-batch-2";
 
 const integritasDrafts: readonly QuestionDraft[] = [
   {
@@ -649,5 +650,5 @@ const integritasDrafts: readonly QuestionDraft[] = [
 
 export const integritasQuestions: readonly Question[] = buildTwkPatternQuestions(
   "integritas",
-  integritasDrafts,
+  [...integritasDrafts, ...integritasBatch2Drafts],
 );
