@@ -47,25 +47,28 @@ CREATE UNIQUE INDEX IF NOT EXISTS subscriptions_user_product_idx
 
 CREATE INDEX IF NOT EXISTS subscriptions_user_id_idx ON public.subscriptions (user_id);
 
--- RLS (aktifkan setelah deployment)
+-- RLS (Row Level Security)
 ALTER TABLE public.orders        ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.subscriptions ENABLE ROW LEVEL SECURITY;
 
--- Policy: user hanya bisa baca order miliknya sendiri
-CREATE POLICY IF NOT EXISTS "users_read_own_orders"
+-- Policy: user hanya bisa baca order & subscription miliknya sendiri
+DROP POLICY IF EXISTS "users_read_own_orders" ON public.orders;
+CREATE POLICY "users_read_own_orders"
   ON public.orders FOR SELECT
   USING (auth.uid() = user_id);
 
-CREATE POLICY IF NOT EXISTS "users_read_own_subscriptions"
+DROP POLICY IF EXISTS "users_read_own_subscriptions" ON public.subscriptions;
+CREATE POLICY "users_read_own_subscriptions"
   ON public.subscriptions FOR SELECT
   USING (auth.uid() = user_id);
 
 -- Service role bypass (untuk webhook server-side)
-CREATE POLICY IF NOT EXISTS "service_role_all_orders"
+DROP POLICY IF EXISTS "service_role_all_orders" ON public.orders;
+CREATE POLICY "service_role_all_orders"
   ON public.orders FOR ALL
   USING (auth.role() = 'service_role');
 
-CREATE POLICY IF NOT EXISTS "service_role_all_subscriptions"
+DROP POLICY IF EXISTS "service_role_all_subscriptions" ON public.subscriptions;
+CREATE POLICY "service_role_all_subscriptions"
   ON public.subscriptions FOR ALL
   USING (auth.role() = 'service_role');
-
