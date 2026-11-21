@@ -68,5 +68,23 @@ describe("SiteHeader", () => {
     fireEvent.keyDown(document, { key: "Escape" });
     expect(trigger.getAttribute("aria-expanded")).toBe("false");
   });
+
+  it("streamlines desktop navigation to 4 clear pillars without informational clutter", () => {
+    render(<SiteHeader />);
+
+    const primaryNav = screen.getByRole("navigation", { name: "Navigasi utama" });
+
+    // 4 Core Pillars exist
+    expect(primaryNav.textContent).toContain("Bank Soal");
+    expect(primaryNav.textContent).toContain("Sprint 10m");
+    expect(primaryNav.textContent).toContain("Tryout CAT");
+    expect(primaryNav.textContent).toContain("Paket Belajar");
+
+    // Clutter/secondary anchor links are removed from desktop primary nav
+    expect(primaryNav.textContent).not.toContain("Metode Belajar");
+    expect(primaryNav.textContent).not.toContain("Program Bimbel");
+    expect(primaryNav.textContent).not.toContain("FAQ");
+  });
 });
+
 

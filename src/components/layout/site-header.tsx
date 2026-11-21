@@ -5,14 +5,17 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import {
+  Award,
   BookOpen,
   ChevronDown,
   Compass,
   LogIn,
   LogOut,
   Menu,
+  Sparkles,
   User as UserIcon,
   X,
+  Zap,
 } from "lucide-react";
 
 import { BrandLogo } from "@/components/layout/brand-logo";
@@ -44,13 +47,6 @@ const BANK_SOAL_ITEMS = [
     meta: "6 aspek • 480 soal",
     badgeClass: "bg-teal-600 text-white",
   },
-] as const;
-
-const navLinksAfterDropdown = [
-  { href: APP_ROUTES.sprint, label: "Sprint 10m" },
-  { href: APP_ROUTES.tryout, label: "Tryout CAT" },
-  { href: APP_ROUTES.pricing, label: "Paket Belajar" },
-  { href: APP_ROUTES.faq, label: "FAQ" },
 ] as const;
 
 export function SiteHeader() {
@@ -130,28 +126,17 @@ export function SiteHeader() {
   return (
     <header className="sticky top-0 z-30 border-b border-blue-100 bg-white/95 backdrop-blur">
       <div className="mx-auto flex h-[4.5rem] max-w-[1280px] items-center justify-between gap-4 px-5 sm:px-8 lg:px-10">
+        {/* Brand Logo */}
         <Link href={APP_ROUTES.home} className="flex items-center gap-3">
           <BrandLogo priority className="h-10 sm:h-11" />
         </Link>
 
+        {/* Desktop Navigation — 4 Pilar Utama Fungsional */}
         <nav
           aria-label="Navigasi utama"
-          className="hidden items-center gap-5 whitespace-nowrap text-xs font-medium text-blue-950 lg:flex xl:gap-7 xl:text-sm"
+          className="hidden items-center gap-1.5 lg:flex xl:gap-2.5"
         >
-          <Link
-            href={APP_ROUTES.method}
-            className="whitespace-nowrap transition-colors hover:text-blue-700"
-          >
-            Metode Belajar
-          </Link>
-          <Link
-            href={APP_ROUTES.programs}
-            className="whitespace-nowrap transition-colors hover:text-blue-700"
-          >
-            Program Bimbel
-          </Link>
-
-          {/* Dropdown Bank Soal (TWK, TIU, TKP & Roadmap) */}
+          {/* 1. Bank Soal SKD (Dropdown Latihan Mandiri & Roadmap) */}
           <div ref={dropdownRef} className="relative">
             <button
               type="button"
@@ -159,11 +144,12 @@ export function SiteHeader() {
               aria-haspopup="menu"
               onClick={() => setBankDropdownOpen((open) => !open)}
               className={cn(
-                "inline-flex items-center gap-1 whitespace-nowrap rounded-lg px-2 py-1.5 transition-colors hover:bg-blue-50/80 hover:text-blue-700",
+                "inline-flex items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-medium text-slate-700 transition-colors hover:bg-slate-100 hover:text-blue-700 xl:text-sm",
                 (bankDropdownOpen || isBankSoalActive) &&
                   "bg-blue-50 font-semibold text-blue-700",
               )}
             >
+              <BookOpen className="size-4 text-blue-600" aria-hidden />
               <span>Bank Soal</span>
               <ChevronDown
                 className={cn(
@@ -232,20 +218,45 @@ export function SiteHeader() {
             )}
           </div>
 
-          {navLinksAfterDropdown.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={cn(
-                "whitespace-nowrap transition-colors hover:text-blue-700",
-                pathname === item.href && "font-semibold text-blue-700",
-              )}
-            >
-              {item.label}
-            </Link>
-          ))}
+          {/* 2. Sprint 10m (Drill Kecepatan) */}
+          <Link
+            href={APP_ROUTES.sprint}
+            className={cn(
+              "inline-flex items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-medium text-slate-700 transition-colors hover:bg-slate-100 hover:text-blue-700 xl:text-sm",
+              pathname === APP_ROUTES.sprint && "bg-blue-50 font-semibold text-blue-700",
+            )}
+          >
+            <Zap className="size-4 text-amber-500" aria-hidden />
+            <span>Sprint 10m</span>
+          </Link>
+
+          {/* 3. Tryout CAT (Simulasi 110 Soal Resmi) */}
+          <Link
+            href={APP_ROUTES.tryout}
+            className={cn(
+              "inline-flex items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-medium text-slate-700 transition-colors hover:bg-slate-100 hover:text-blue-700 xl:text-sm",
+              pathname === APP_ROUTES.tryout && "bg-blue-50 font-semibold text-blue-700",
+            )}
+          >
+            <Award className="size-4 text-blue-600" aria-hidden />
+            <span>Tryout CAT</span>
+          </Link>
+
+          {/* 4. Paket Belajar (Fokus Utama / Highlight Konversi) */}
+          <Link
+            href={APP_ROUTES.pricing}
+            className={cn(
+              "ml-1 inline-flex items-center gap-1.5 rounded-full border border-blue-200 bg-blue-50/90 px-3.5 py-1.5 text-xs font-semibold text-blue-700 shadow-sm transition-all hover:bg-blue-100 hover:text-blue-800 xl:text-sm",
+              pathname === APP_ROUTES.pricing &&
+                "border-blue-600 bg-blue-600 text-white shadow-blue-500/20 hover:bg-blue-700 hover:text-white",
+            )}
+          >
+            <Sparkles className="size-3.5 text-amber-500" aria-hidden />
+            <span>Paket Belajar</span>
+          </Link>
         </nav>
 
+        {/* Right CTA / Auth Area */}
         <div className="hidden items-center gap-2.5 lg:flex">
           {isLoading ? (
             <div
@@ -280,26 +291,33 @@ export function SiteHeader() {
                 size="icon"
                 disabled={isSigningOut}
                 onClick={handleSignOut}
-                aria-label="Keluar dari akun"
+                className="size-9 text-slate-500 hover:bg-rose-50 hover:text-rose-600"
+                aria-label="Keluar akun"
                 title="Keluar"
-                className="size-9 text-slate-600 hover:bg-rose-50 hover:text-rose-700"
               >
                 <LogOut className="size-4" aria-hidden />
               </Button>
             </div>
           ) : (
-            <Button
-              asChild
-              className="bg-blue-600 px-5 text-white shadow-sm shadow-blue-100 hover:bg-blue-700"
-            >
-              <Link href={loginHref}>
-                <LogIn className="size-4" aria-hidden />
-                Masuk
-              </Link>
-            </Button>
+            <div className="flex items-center gap-2">
+              <Button
+                asChild
+                variant="ghost"
+                className="h-9 px-3 text-xs font-medium text-slate-600 hover:text-blue-700 xl:text-sm"
+              >
+                <Link href={loginHref}>Masuk</Link>
+              </Button>
+              <Button
+                asChild
+                className="h-9 bg-blue-600 px-4 text-xs font-semibold text-white shadow-sm shadow-blue-500/20 hover:bg-blue-700 xl:text-sm"
+              >
+                <Link href={APP_ROUTES.register}>Daftar Gratis</Link>
+              </Button>
+            </div>
           )}
         </div>
 
+        {/* Mobile Hamburger Button */}
         <button
           type="button"
           aria-label={mobileMenuOpen ? "Tutup menu navigasi" : "Buka menu navigasi"}
@@ -311,36 +329,23 @@ export function SiteHeader() {
         </button>
       </div>
 
+      {/* Mobile Navigation Drawer */}
       {mobileMenuOpen && (
         <div className="border-t border-blue-100 bg-white px-5 py-4 lg:hidden">
-          <nav aria-label="Navigasi mobile" className="grid gap-1 text-sm font-medium text-blue-950">
-            <Link
-              href={APP_ROUTES.method}
-              onClick={() => setMobileMenuOpen(false)}
-              className="rounded-lg px-3 py-2 transition-colors hover:bg-blue-50 hover:text-blue-700"
-            >
-              Metode Belajar
-            </Link>
-            <Link
-              href={APP_ROUTES.programs}
-              onClick={() => setMobileMenuOpen(false)}
-              className="rounded-lg px-3 py-2 transition-colors hover:bg-blue-50 hover:text-blue-700"
-            >
-              Program Bimbel
-            </Link>
-
-            <div className="my-1.5 rounded-xl border border-blue-100 bg-slate-50/70 p-2">
+          <nav aria-label="Navigasi mobile" className="grid gap-1.5 text-sm font-medium text-blue-950">
+            {/* Bank Soal Accordion Section */}
+            <div className="rounded-xl border border-blue-100 bg-slate-50/70 p-2.5">
               <p className="flex items-center gap-1.5 px-2 py-1 text-[11px] font-bold uppercase tracking-wider text-slate-500">
                 <BookOpen className="size-3.5 text-blue-600" aria-hidden />
                 Bank Soal SKD (2.540 Soal)
               </p>
-              <div className="mt-1 grid gap-1">
+              <div className="mt-1.5 grid gap-1">
                 {BANK_SOAL_ITEMS.map((item) => (
                   <Link
                     key={item.href}
                     href={item.href}
                     onClick={() => setMobileMenuOpen(false)}
-                    className="flex items-center justify-between rounded-lg px-2 py-1.5 text-xs transition-colors hover:bg-white"
+                    className="flex items-center justify-between rounded-lg px-2.5 py-2 text-xs transition-colors hover:bg-white"
                   >
                     <span className="font-semibold text-slate-900">
                       {item.code} — {item.label}
@@ -351,29 +356,74 @@ export function SiteHeader() {
                 <Link
                   href={APP_ROUTES.courseDetail("intensif-skd-cpns")}
                   onClick={() => setMobileMenuOpen(false)}
-                  className="flex items-center gap-1.5 rounded-lg px-2 py-1.5 text-xs font-semibold text-blue-700 hover:bg-white"
+                  className="flex items-center gap-2 rounded-lg bg-white px-2.5 py-2 text-xs font-semibold text-blue-700 shadow-sm"
                 >
                   <Compass className="size-3.5" aria-hidden />
-                  Roadmap Learning Path SKD
+                  Roadmap Learning Path SKD (5 Tahap)
                 </Link>
               </div>
             </div>
 
-            {navLinksAfterDropdown.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                onClick={() => setMobileMenuOpen(false)}
-                className="rounded-lg px-3 py-2 transition-colors hover:bg-blue-50 hover:text-blue-700"
-              >
-                {item.label}
-              </Link>
-            ))}
+            {/* Core Drill Links */}
+            <Link
+              href={APP_ROUTES.sprint}
+              onClick={() => setMobileMenuOpen(false)}
+              className="flex items-center gap-2 rounded-lg px-3 py-2 transition-colors hover:bg-blue-50 hover:text-blue-700"
+            >
+              <Zap className="size-4 text-amber-500" aria-hidden />
+              <span>Sprint Drill 10 Menit</span>
+            </Link>
+
+            <Link
+              href={APP_ROUTES.tryout}
+              onClick={() => setMobileMenuOpen(false)}
+              className="flex items-center gap-2 rounded-lg px-3 py-2 transition-colors hover:bg-blue-50 hover:text-blue-700"
+            >
+              <Award className="size-4 text-blue-600" aria-hidden />
+              <span>Simulasi Tryout CAT 110 Soal</span>
+            </Link>
+
+            <Link
+              href={APP_ROUTES.pricing}
+              onClick={() => setMobileMenuOpen(false)}
+              className="flex items-center gap-2 rounded-lg bg-blue-50 px-3 py-2 font-semibold text-blue-700"
+            >
+              <Sparkles className="size-4 text-amber-500" aria-hidden />
+              <span>Paket Belajar &amp; Harga</span>
+            </Link>
+
+            {/* Secondary Landing Anchor Links */}
+            <div className="mt-2 border-t border-slate-100 pt-2 text-xs text-slate-500">
+              <div className="grid grid-cols-3 gap-1 text-center">
+                <Link
+                  href={APP_ROUTES.programs}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="rounded px-2 py-1.5 hover:bg-slate-50 hover:text-blue-700"
+                >
+                  Program
+                </Link>
+                <Link
+                  href={APP_ROUTES.method}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="rounded px-2 py-1.5 hover:bg-slate-50 hover:text-blue-700"
+                >
+                  Metode
+                </Link>
+                <Link
+                  href={APP_ROUTES.faq}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="rounded px-2 py-1.5 hover:bg-slate-50 hover:text-blue-700"
+                >
+                  FAQ
+                </Link>
+              </div>
+            </div>
           </nav>
 
-          <div className="mt-3 grid gap-2">
+          {/* Auth Actions in Mobile */}
+          <div className="mt-4 border-t border-slate-100 pt-3">
             {user ? (
-              <>
+              <div className="grid gap-2">
                 <Button asChild variant="outline" className="w-full border-blue-200 bg-blue-50/70 text-blue-900">
                   <Link href={APP_ROUTES.account} onClick={() => setMobileMenuOpen(false)}>
                     <UserIcon className="size-4" aria-hidden />
@@ -390,21 +440,21 @@ export function SiteHeader() {
                   <LogOut className="size-4" aria-hidden />
                   Keluar
                 </Button>
-              </>
+              </div>
             ) : (
-              <>
-                <Button asChild className="w-full bg-blue-600 hover:bg-blue-700">
+              <div className="grid grid-cols-2 gap-2">
+                <Button asChild variant="outline" className="w-full border-slate-200 text-slate-700">
                   <Link href={loginHref} onClick={() => setMobileMenuOpen(false)}>
                     <LogIn className="size-4" aria-hidden />
                     Masuk
                   </Link>
                 </Button>
-                <Button asChild variant="outline" className="w-full border-slate-200 text-slate-700">
+                <Button asChild className="w-full bg-blue-600 hover:bg-blue-700 text-white">
                   <Link href={APP_ROUTES.register} onClick={() => setMobileMenuOpen(false)}>
-                    Daftar Akun Baru
+                    Daftar Gratis
                   </Link>
                 </Button>
-              </>
+              </div>
             )}
           </div>
         </div>
