@@ -23,6 +23,7 @@ export const APP_ROUTES = {
     duration: 10 | 12 | 15 = 10,
   ) =>
     `/sprint?subtest=${subtest}&pattern=${encodeURIComponent(pattern)}&duration=${duration}`,
+  pricing: "/paket",
   courseDetail: (slug: string) => `/courses/${slug}`,
   login: "/masuk",
   register: "/daftar",

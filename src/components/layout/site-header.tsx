@@ -49,6 +49,7 @@ const BANK_SOAL_ITEMS = [
 const navLinksAfterDropdown = [
   { href: APP_ROUTES.sprint, label: "Sprint 10m" },
   { href: APP_ROUTES.tryout, label: "Tryout CAT" },
+  { href: APP_ROUTES.pricing, label: "Paket Belajar" },
   { href: APP_ROUTES.faq, label: "FAQ" },
 ] as const;
 

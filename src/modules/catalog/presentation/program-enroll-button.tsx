@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowRight, Award, Compass } from "lucide-react";
+import { ArrowRight, Award, Compass, CreditCard } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -34,6 +34,20 @@ export function ProgramEnrollButton({
           <Compass className="size-4" aria-hidden />
           Mulai Roadmap Belajar
           <ArrowRight className="size-4" aria-hidden />
+        </Link>
+      </Button>
+
+      <Button
+        asChild
+        variant="outline"
+        className={cn(
+          "border-emerald-300 bg-emerald-50 text-emerald-800 hover:bg-emerald-100",
+          isSidebarStacked ? "h-11 w-full" : "h-10 px-3 text-xs sm:text-sm",
+        )}
+      >
+        <Link href={APP_ROUTES.pricing}>
+          <CreditCard className="size-4 text-emerald-600" aria-hidden />
+          Beli Paket Akses
         </Link>
       </Button>
 
