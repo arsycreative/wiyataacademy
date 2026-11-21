@@ -24,6 +24,7 @@ export const APP_ROUTES = {
   ) =>
     `/sprint?subtest=${subtest}&pattern=${encodeURIComponent(pattern)}&duration=${duration}`,
   pricing: "/paket",
+  terms: "/syarat-ketentuan",
   courseDetail: (slug: string) => `/courses/${slug}`,
   login: "/masuk",
   register: "/daftar",
