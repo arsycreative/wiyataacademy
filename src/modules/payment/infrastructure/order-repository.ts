@@ -1,21 +1,14 @@
-import { createClient } from "@supabase/supabase-js";
+import { createSupabaseAdminClient } from "@/shared/supabase/admin";
 
 /** Supabase Admin client (service role) — server-side only */
 function getAdminClient() {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const serviceKey =
-    process.env.SUPABASE_SERVICE_ROLE_KEY ||
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-
-  if (!url || !serviceKey) {
+  const client = createSupabaseAdminClient({ allowAnonFallback: true });
+  if (!client) {
     throw new Error(
       "[Supabase Admin] NEXT_PUBLIC_SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY is missing.",
     );
   }
-
-  return createClient(url, serviceKey, {
-    auth: { persistSession: false },
-  });
+  return client;
 }
 
 export interface OrderRecord {

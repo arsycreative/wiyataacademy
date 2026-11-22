@@ -1,3 +1,5 @@
+export type UserRole = "student" | "admin" | "superadmin";
+
 export type AuthSessionUser = {
   id: string;
   email: string;
@@ -12,6 +14,7 @@ export type UserProfile = {
   email: string | null;
   fullName: string | null;
   avatarUrl: string | null;
+  role?: UserRole;
 };
 
 export type ProfileUpsertInput = {

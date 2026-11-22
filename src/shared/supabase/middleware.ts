@@ -4,7 +4,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { APP_ROUTES } from "@/shared/constants/app";
 import { getSupabaseConfig } from "./env";
 
-const PROTECTED_PATHS = [APP_ROUTES.account];
+const PROTECTED_PATHS = [APP_ROUTES.account, APP_ROUTES.admin];
 const AUTH_GUEST_ONLY_PATHS = [APP_ROUTES.login, APP_ROUTES.register];
 
 function isPathMatch(pathname: string, prefixes: readonly string[]) {

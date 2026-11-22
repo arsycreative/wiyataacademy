@@ -8,6 +8,7 @@ import type {
   ProfileRepository,
   ProfileUpsertInput,
   ProfileWriteResult,
+  UserRole,
 } from "@/modules/auth/application/ports";
 import { createSupabaseServerClient } from "@/shared/supabase/server";
 
@@ -16,7 +17,13 @@ type ProfileRow = {
   email: string | null;
   full_name: string | null;
   avatar_url: string | null;
+  role?: string | null;
 };
+
+function parseUserRole(raw: string | null | undefined): UserRole {
+  if (raw === "admin" || raw === "superadmin") return raw;
+  return "student";
+}
 
 function isMissingProfilesTableError(
   error: { code?: string; message?: string } | null,
@@ -94,11 +101,22 @@ export function createSupabaseProfileRepository(): ProfileRepository {
         };
       }
 
-      const { data, error } = await supabase
+      let { data, error } = await supabase
         .from("profiles")
-        .select("id, email, full_name, avatar_url")
+        .select("id, email, full_name, avatar_url, role")
         .eq("id", userId)
         .maybeSingle<ProfileRow>();
+
+      // Fallback aman bila migrasi 004_admin_roles.sql (kolom role) belum dijalankan
+      if (error && (error.code === "42703" || error.message?.includes("role"))) {
+        const legacy = await supabase
+          .from("profiles")
+          .select("id, email, full_name, avatar_url")
+          .eq("id", userId)
+          .maybeSingle<ProfileRow>();
+        data = legacy.data;
+        error = legacy.error;
+      }
 
       if (error) {
         return {
@@ -118,6 +136,7 @@ export function createSupabaseProfileRepository(): ProfileRepository {
           email: data.email,
           fullName: data.full_name,
           avatarUrl: data.avatar_url,
+          role: parseUserRole(data.role),
         },
         schemaMissing: false,
         error: null,

@@ -29,5 +29,8 @@ export const APP_ROUTES = {
   login: "/masuk",
   register: "/daftar",
   account: "/akun",
+  admin: "/admin",
+  adminOrders: "/admin/orders",
+  adminUsers: "/admin/users",
   authCallback: "/auth/callback",
 } as const;

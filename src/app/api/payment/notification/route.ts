@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { verifyMidtransSignature } from "@/lib/midtrans";
+import { mapMidtransTransactionStatus } from "@/modules/payment/domain/status";
 import {
   getOrderByOrderId,
   updateOrderByOrderId,
@@ -43,20 +44,11 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Order not found" }, { status: 404 });
     }
 
+    const fraudStatus =
+      typeof body.fraud_status === "string" ? body.fraud_status : undefined;
+
     // ── 3. Map status Midtrans ke status internal ──────────────────────────
-    type InternalStatus = "pending" | "paid" | "failed" | "expired" | "cancelled";
-
-    const statusMap: Record<string, InternalStatus> = {
-      capture:   "paid",
-      settlement: "paid",
-      pending:   "pending",
-      deny:      "failed",
-      cancel:    "cancelled",
-      expire:    "expired",
-      failure:   "failed",
-    };
-
-    const newStatus: InternalStatus = statusMap[transactionStatus] ?? "pending";
+    const newStatus = mapMidtransTransactionStatus(transactionStatus, fraudStatus);
 
     // ── 4. Update order ────────────────────────────────────────────────────
     await updateOrderByOrderId(orderId, {
