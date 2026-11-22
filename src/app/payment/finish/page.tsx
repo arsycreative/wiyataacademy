@@ -3,6 +3,7 @@ import { CheckCircle2, ArrowRight, Compass, Award } from "lucide-react";
 
 import { SiteHeader } from "@/components/layout/site-header";
 import { SiteFooter } from "@/components/layout/site-footer";
+import { WhatsappFloatingButton } from "@/components/layout/whatsapp-floating-button";
 import { Button } from "@/components/ui/button";
 import { APP_ROUTES } from "@/shared/constants/app";
 
@@ -81,6 +82,10 @@ export default async function PaymentFinishPage({ searchParams }: FinishPageProp
       </main>
 
       <SiteFooter />
+      <WhatsappFloatingButton
+        label="Butuh Bantuan CS"
+        message={`Halo CS Wiyata Academy, saya baru saja menyelesaikan pembayaran untuk Order ID ${orderId} dan butuh bantuan akses.`}
+      />
     </div>
   );
 }

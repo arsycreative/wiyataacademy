@@ -3,6 +3,7 @@ import { Clock, RefreshCw, Home } from "lucide-react";
 
 import { SiteHeader } from "@/components/layout/site-header";
 import { SiteFooter } from "@/components/layout/site-footer";
+import { WhatsappFloatingButton } from "@/components/layout/whatsapp-floating-button";
 import { Button } from "@/components/ui/button";
 import { APP_ROUTES } from "@/shared/constants/app";
 
@@ -80,6 +81,10 @@ export default async function PaymentPendingPage({ searchParams }: PendingPagePr
       </main>
 
       <SiteFooter />
+      <WhatsappFloatingButton
+        label="Konfirmasi via WA"
+        message={`Halo CS Wiyata Academy, saya ingin konfirmasi pembayaran untuk Order ID ${orderId}.`}
+      />
     </div>
   );
 }

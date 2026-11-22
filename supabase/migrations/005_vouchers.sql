@@ -52,3 +52,4 @@ BEGIN
   WHERE code = upper(trim(p_code));
 END;
 $$;
+

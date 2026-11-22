@@ -3,6 +3,7 @@ import { CreditCard, ShieldCheck, Sparkles } from "lucide-react";
 
 import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteHeader } from "@/components/layout/site-header";
+import { WhatsappFloatingButton } from "@/components/layout/whatsapp-floating-button";
 import { getCurrentUserEntitlements } from "@/modules/payment/infrastructure/entitlements.server";
 import { PricingGridClient } from "@/modules/payment/presentation/pricing-grid-client";
 
@@ -102,6 +103,7 @@ export default async function PricingPage() {
       </main>
 
       <SiteFooter />
+      <WhatsappFloatingButton message="Halo CS Wiyata Academy, saya ingin konsultasi atau bertanya tentang Paket Belajar SKD CPNS." />
     </div>
   );
 }

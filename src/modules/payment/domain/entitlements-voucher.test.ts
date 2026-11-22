@@ -101,3 +101,4 @@ describe("voucher domain", () => {
     expect(wrongProduct.valid).toBe(false);
   });
 });
+

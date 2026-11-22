@@ -92,3 +92,4 @@ export function RevenueChart({ series }: RevenueChartProps) {
     </section>
   );
 }
+

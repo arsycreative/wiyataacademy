@@ -53,3 +53,4 @@ export function resolveUserEntitlements(options: {
       options.isAdmin || hasIntensifOrPremium || hasTryoutBundle,
   };
 }
+

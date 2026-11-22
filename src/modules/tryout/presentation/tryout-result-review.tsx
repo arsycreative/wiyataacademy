@@ -13,11 +13,15 @@ import {
   Clock,
   Flag,
   Lightbulb,
+  Printer,
   RotateCcw,
+  Sparkles,
   Target,
   XCircle,
+  Zap,
 } from "lucide-react";
 
+import { BrandLogo } from "@/components/layout/brand-logo";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import type { OptionKey, QuestionSubtest } from "@/modules/question-bank/domain/question";
@@ -26,6 +30,7 @@ import {
   OptionContent,
   QuestionPrompt,
 } from "@/modules/question-bank/presentation/question-content";
+import { buildStudyRecommendationPlan } from "@/modules/tryout/domain/study-recommendation";
 import {
   buildPatternPracticeHref,
   formatDurationVerbose,
@@ -89,11 +94,42 @@ export function TryoutResultReview({
 
   const wrongCount = evaluation.questionResults.filter((r) => !r.isOptimal).length;
   const flaggedCount = Object.values(flagged).filter(Boolean).length;
+  const studyPlan = useMemo(
+    () => buildStudyRecommendationPlan(evaluation),
+    [evaluation],
+  );
+  const printDate = useMemo(
+    () =>
+      new Intl.DateTimeFormat("id-ID", {
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+      }).format(new Date()),
+    [],
+  );
+
+  const handlePrintReport = () => {
+    window.print();
+  };
 
   return (
-    <div className="mx-auto max-w-[1280px] px-5 py-8 sm:px-8 sm:py-10 lg:px-10">
+    <div className="mx-auto max-w-[1280px] px-5 py-8 sm:px-8 sm:py-10 lg:px-10 print:max-w-none print:px-0 print:py-0">
+      {/* Header Khusus PDF / Cetak Rapor */}
+      <div className="mb-6 hidden items-center justify-between border-b-2 border-blue-600 pb-4 print:flex">
+        <div>
+          <BrandLogo className="h-9" />
+          <p className="mt-1 text-xs font-semibold text-slate-600">
+            Rapor Resmi Evaluasi Simulasi CAT SKD CPNS
+          </p>
+        </div>
+        <div className="text-right text-xs text-slate-500">
+          <p className="font-bold text-slate-900">{packageLabel}</p>
+          <p>Dicetak: {printDate}</p>
+        </div>
+      </div>
+
       {/* Top Actions */}
-      <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
+      <div className="mb-6 flex flex-wrap items-center justify-between gap-3 print:hidden">
         <Button
           type="button"
           variant="ghost"
@@ -104,14 +140,25 @@ export function TryoutResultReview({
           Kembali ke Lobi Tryout
         </Button>
 
-        <Button
-          type="button"
-          onClick={onRetakeFresh}
-          className="bg-blue-600 font-semibold text-white hover:bg-blue-700"
-        >
-          <RotateCcw className="size-4" aria-hidden />
-          Coba Paket Baru
-        </Button>
+        <div className="flex flex-wrap items-center gap-2.5">
+          <Button
+            type="button"
+            variant="outline"
+            onClick={handlePrintReport}
+            className="border-slate-200 bg-white font-semibold text-slate-800 hover:bg-slate-50"
+          >
+            <Printer className="size-4" aria-hidden />
+            Cetak / Simpan Rapor PDF
+          </Button>
+          <Button
+            type="button"
+            onClick={onRetakeFresh}
+            className="bg-blue-600 font-semibold text-white hover:bg-blue-700"
+          >
+            <RotateCcw className="size-4" aria-hidden />
+            Coba Paket Baru
+          </Button>
+        </div>
       </div>
 
       {/* Verdict Hero Banner */}
@@ -311,7 +358,7 @@ export function TryoutResultReview({
               </div>
               <Link
                 href={pat.practiceHref}
-                className="mt-3 inline-flex items-center gap-1 text-xs font-semibold text-blue-700 hover:text-blue-800 hover:underline"
+                className="mt-3 inline-flex items-center gap-1 text-xs font-semibold text-blue-700 hover:text-blue-800 hover:underline print:hidden"
               >
                 Latih Pola Ini
                 <ArrowRight className="size-3.5" aria-hidden />
@@ -321,8 +368,104 @@ export function TryoutResultReview({
         </div>
       </section>
 
-      {/* Pembahasan Lengkap */}
-      <section className="mt-8">
+      {/* Smart Rekomendasi Belajar & Rencana Aksi */}
+      <section className="mt-6 break-inside-avoid rounded-2xl border border-indigo-100 bg-gradient-to-br from-white via-indigo-50/30 to-blue-50/40 p-6 shadow-2xs">
+        <div className="flex flex-col gap-4 border-b border-indigo-100 pb-4 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <div className="flex items-center gap-2 text-indigo-700">
+              <Sparkles className="size-5" aria-hidden />
+              <h2 className="text-base font-bold text-slate-950">
+                Smart Rekomendasi Belajar Personal
+              </h2>
+            </div>
+            <p className="mt-1 text-xs leading-relaxed text-slate-600">
+              {studyPlan.readinessSummary}
+            </p>
+          </div>
+
+          <span
+            className={cn(
+              "inline-flex w-fit shrink-0 items-center rounded-full border px-3 py-1 text-xs font-bold",
+              studyPlan.readinessLevel === "competitive"
+                ? "border-emerald-200 bg-emerald-50 text-emerald-700"
+                : studyPlan.readinessLevel === "passing"
+                  ? "border-blue-200 bg-blue-50 text-blue-700"
+                  : "border-amber-200 bg-amber-50 text-amber-800",
+            )}
+          >
+            {studyPlan.readinessLabel}
+          </span>
+        </div>
+
+        {/* Audit Waktu Pengerjaan */}
+        <div
+          className={cn(
+            "mt-4 rounded-xl border p-4 text-xs",
+            studyPlan.timeAudit.status === "optimal"
+              ? "border-emerald-200 bg-emerald-50/60 text-emerald-900"
+              : "border-amber-200 bg-amber-50/70 text-amber-900",
+          )}
+        >
+          <p className="flex items-center gap-1.5 font-bold">
+            <Clock className="size-4 shrink-0" aria-hidden />
+            <span>Audit Manajemen Waktu: {studyPlan.timeAudit.label}</span>
+          </p>
+          <p className="mt-1 leading-relaxed opacity-90">
+            {studyPlan.timeAudit.advice}
+          </p>
+        </div>
+
+        {/* Langkah Aksi Terprioritas */}
+        <div className="mt-4 grid gap-3 md:grid-cols-2">
+          {studyPlan.actionSteps.map((step) => (
+            <div
+              key={step.id}
+              className="flex flex-col justify-between rounded-xl border border-slate-200 bg-white p-4 shadow-2xs"
+            >
+              <div>
+                <span
+                  className={cn(
+                    "inline-block rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider",
+                    step.priority === "high"
+                      ? "bg-rose-50 text-rose-700"
+                      : "bg-blue-50 text-blue-700",
+                  )}
+                >
+                  {step.badge}
+                </span>
+                <h3 className="mt-2 text-sm font-bold text-slate-950">
+                  {step.title}
+                </h3>
+                <p className="mt-1 text-xs leading-relaxed text-slate-600">
+                  {step.detail}
+                </p>
+              </div>
+
+              <div className="mt-3 flex flex-wrap gap-2 print:hidden">
+                <Link
+                  href={step.primaryHref}
+                  className="inline-flex items-center gap-1 rounded-lg bg-blue-600 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-blue-700"
+                >
+                  <span>{step.primaryLabel}</span>
+                  <ArrowRight className="size-3.5" aria-hidden />
+                </Link>
+                {step.sprintHref && (
+                  <Link
+                    href={step.sprintHref}
+                    className="inline-flex items-center gap-1 rounded-lg border border-amber-200 bg-amber-50 px-3 py-1.5 text-xs font-semibold text-amber-800 transition hover:bg-amber-100"
+                  >
+                    <Zap className="size-3.5 text-amber-600" aria-hidden />
+                    <span>Sprint 10m</span>
+                  </Link>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Pembahasan Lengkap (disembunyikan saat cetak PDF agar rapor ringkas 1-2 halaman) */}
+      <section className="mt-8 print:hidden">
         <div className="flex flex-col gap-4 rounded-2xl border border-blue-100 bg-white p-5 shadow-2xs sm:p-6">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div className="flex items-center gap-2">

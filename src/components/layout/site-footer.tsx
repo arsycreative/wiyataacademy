@@ -7,7 +7,7 @@ export function SiteFooter() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="border-t border-blue-100 bg-white text-slate-600">
+    <footer className="border-t border-blue-100 bg-white text-slate-600 print:hidden">
       <div className="mx-auto flex max-w-[1280px] flex-col gap-6 px-5 py-8 sm:flex-row sm:items-center sm:justify-between sm:px-8 lg:px-10">
         <div>
           <Link href={APP_ROUTES.home} className="inline-flex items-center">

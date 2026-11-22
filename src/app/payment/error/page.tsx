@@ -3,6 +3,7 @@ import { AlertCircle, RotateCcw, Home } from "lucide-react";
 
 import { SiteHeader } from "@/components/layout/site-header";
 import { SiteFooter } from "@/components/layout/site-footer";
+import { WhatsappFloatingButton } from "@/components/layout/whatsapp-floating-button";
 import { Button } from "@/components/ui/button";
 import { APP_ROUTES } from "@/shared/constants/app";
 
@@ -75,6 +76,10 @@ export default async function PaymentErrorPage({ searchParams }: ErrorPageProps)
       </main>
 
       <SiteFooter />
+      <WhatsappFloatingButton
+        label="Bantuan Pembayaran"
+        message={`Halo CS Wiyata Academy, saya mengalami kendala pembayaran untuk Order ID ${orderId}.`}
+      />
     </div>
   );
 }

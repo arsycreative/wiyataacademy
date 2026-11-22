@@ -124,7 +124,7 @@ export function SiteHeader() {
   };
 
   return (
-    <header className="sticky top-0 z-30 border-b border-blue-100 bg-white/95 backdrop-blur">
+    <header className="sticky top-0 z-30 border-b border-blue-100 bg-white/95 backdrop-blur print:hidden">
       <div className="mx-auto flex h-[4.5rem] max-w-[1280px] items-center justify-between gap-4 px-5 sm:px-8 lg:px-10">
         {/* Brand Logo */}
         <Link href={APP_ROUTES.home} className="flex items-center gap-3">
