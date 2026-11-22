@@ -55,3 +55,4 @@ export function RoleBadge({ role }: { role: UserRole }) {
     </span>
   );
 }
+

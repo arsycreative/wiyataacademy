@@ -18,6 +18,9 @@ export interface OrderRecord {
   product_id: string;
   product_name: string;
   amount: number;
+  original_amount?: number | null;
+  discount_amount?: number;
+  voucher_code?: string | null;
   status: string;
   payment_method?: string;
   midtrans_transaction_id?: string;
@@ -25,6 +28,7 @@ export interface OrderRecord {
   snap_token?: string;
   snap_redirect_url?: string;
   paid_at?: string;
+  created_at?: string;
   metadata?: Record<string, unknown>;
 }
 

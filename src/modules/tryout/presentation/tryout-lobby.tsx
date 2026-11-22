@@ -9,6 +9,7 @@ import {
   Clock,
   FileText,
   History,
+  Lock,
   Play,
   ShieldCheck,
   Shuffle,
@@ -34,6 +35,7 @@ import type {
 import { APP_ROUTES } from "@/shared/constants/app";
 
 type TryoutLobbyProps = {
+  hasOfficialAccess?: boolean;
   activeSession: ActiveTryoutSession | null;
   activeRemainingSec: number;
   history: readonly TryoutHistoryRecord[];
@@ -59,6 +61,7 @@ function formatDateId(iso: string): string {
 }
 
 export function TryoutLobby({
+  hasOfficialAccess = true,
   activeSession,
   activeRemainingSec,
   history,
@@ -267,6 +270,7 @@ export function TryoutLobby({
           {TRYOUT_PRESETS.map((preset) => {
             const cfg = TRYOUT_MODE_CONFIGS[preset.mode];
             const isMini = preset.mode === "mini";
+            const isLocked = !hasOfficialAccess && !isMini;
             const isDynamic = !preset.fixedSeed && !isMini;
             const pastForPreset = history.filter((h) => h.presetId === preset.id);
             const bestScore =
@@ -306,14 +310,20 @@ export function TryoutLobby({
                         <Sparkles className="size-3" aria-hidden />
                       )}
                       {preset.badge}
+                      {isMini && !hasOfficialAccess ? " • Gratis" : ""}
                     </span>
 
-                    {bestScore !== null && (
+                    {isLocked ? (
+                      <span className="inline-flex items-center gap-1 rounded-full border border-amber-200 bg-amber-50 px-2 py-0.5 text-[11px] font-bold text-amber-800">
+                        <Lock className="size-3" aria-hidden />
+                        Premium
+                      </span>
+                    ) : bestScore !== null ? (
                       <span className="inline-flex items-center gap-1 text-xs font-semibold text-emerald-700">
                         <Award className="size-3.5" aria-hidden />
                         Terbaik: {bestScore}/{cfg.maxScore}
                       </span>
-                    )}
+                    ) : null}
                   </div>
 
                   <h3 className="mt-3 text-lg font-semibold text-slate-950">{preset.title}</h3>
@@ -335,21 +345,34 @@ export function TryoutLobby({
                   </div>
                 </div>
 
-                <Button
-                  type="button"
-                  onClick={() => onStartPreset(preset)}
-                  className={cn(
-                    "mt-5 w-full font-semibold text-white",
-                    isMini
-                      ? "bg-teal-600 hover:bg-teal-700"
-                      : isDynamic
-                        ? "bg-violet-600 hover:bg-violet-700"
-                        : "bg-blue-600 hover:bg-blue-700",
-                  )}
-                >
-                  Mulai Simulasi
-                  <ArrowRight className="size-4" aria-hidden />
-                </Button>
+                {isLocked ? (
+                  <Button
+                    asChild
+                    variant="outline"
+                    className="mt-5 w-full border-amber-300 bg-amber-50/70 font-semibold text-amber-900 hover:bg-amber-100"
+                  >
+                    <Link href={APP_ROUTES.pricing}>
+                      <Lock className="size-4" aria-hidden />
+                      Buka Akses Paket
+                    </Link>
+                  </Button>
+                ) : (
+                  <Button
+                    type="button"
+                    onClick={() => onStartPreset(preset)}
+                    className={cn(
+                      "mt-5 w-full font-semibold text-white",
+                      isMini
+                        ? "bg-teal-600 hover:bg-teal-700"
+                        : isDynamic
+                          ? "bg-violet-600 hover:bg-violet-700"
+                          : "bg-blue-600 hover:bg-blue-700",
+                    )}
+                  >
+                    Mulai Simulasi
+                    <ArrowRight className="size-4" aria-hidden />
+                  </Button>
+                )}
               </div>
             );
           })}

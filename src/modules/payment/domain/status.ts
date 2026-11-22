@@ -39,3 +39,4 @@ export function mapMidtransTransactionStatus(
   }
   return MIDTRANS_TO_INTERNAL_STATUS[transactionStatus] ?? "pending";
 }
+

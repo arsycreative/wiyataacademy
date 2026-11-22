@@ -6,6 +6,7 @@ import {
   updateOrderByOrderId,
   activateSubscription,
 } from "@/modules/payment/infrastructure/order-repository";
+import { incrementVoucherUsageInDb } from "@/modules/payment/infrastructure/voucher-repository.server";
 
 /**
  * Webhook handler untuk notifikasi Midtrans.
@@ -59,9 +60,12 @@ export async function POST(req: NextRequest) {
       paid_at: newStatus === "paid" ? new Date().toISOString() : undefined,
     });
 
-    // ── 5. Aktifkan subscription jika paid ─────────────────────────────────
+    // ── 5. Aktifkan subscription & catat penggunaan voucher jika baru paid ──
     if (newStatus === "paid") {
       await activateSubscription(order.user_id, orderId, order.product_id);
+      if (order.status !== "paid" && order.voucher_code) {
+        await incrementVoucherUsageInDb(order.voucher_code);
+      }
       console.info("[Notification] Subscription activated:", {
         userId: order.user_id,
         productId: order.product_id,

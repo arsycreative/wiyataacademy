@@ -16,6 +16,7 @@ import {
   Layers3,
   LayoutGrid,
   Loader2,
+  Lock,
   RotateCcw,
   X,
   XCircle,
@@ -24,6 +25,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useSupabaseAuth } from "@/modules/auth/presentation/use-supabase-auth";
+import { isQuestionPatternFree } from "@/modules/payment/domain/entitlements";
+import { PremiumPaywallCard } from "@/modules/payment/presentation/premium-paywall-card";
 import type { PatternStatItem } from "@/modules/question-bank/domain/progress-summary-types";
 import {
   TKP_PATTERNS,
@@ -184,6 +187,7 @@ export type StandardPatternPracticeProps = {
   initialLoadedPattern: TwkPatternId | TkpPatternId;
   initialPatternStats: readonly PatternStatItem<TwkPatternId | TkpPatternId>[];
   initialQuestions: readonly Question[];
+  hasFullAccess?: boolean;
   siteHeader?: ReactNode;
   siteFooter?: ReactNode;
   pageIntro?: ReactNode;
@@ -195,6 +199,7 @@ export function StandardPatternPractice({
   initialLoadedPattern,
   initialPatternStats,
   initialQuestions,
+  hasFullAccess = true,
   siteHeader,
   siteFooter,
   pageIntro,
@@ -426,6 +431,8 @@ export function StandardPatternPractice({
   const activeMeta =
     (patternCatalog as Record<string, (typeof TWK_PATTERNS)[TwkPatternId] | (typeof TKP_PATTERNS)[TkpPatternId]>)[activePattern] ??
     (patternCatalog as Record<string, (typeof TWK_PATTERNS)[TwkPatternId] | (typeof TKP_PATTERNS)[TkpPatternId]>)[ui.defaultPattern];
+  const isCurrentPatternLocked =
+    !hasFullAccess && !isQuestionPatternFree(subtest, activePattern);
   const {
     questions: rawPatternQuestions,
     isLoading: isPatternLoading,
@@ -436,6 +443,7 @@ export function StandardPatternPractice({
     activePattern,
     initialLoadedPattern,
     initialQuestions,
+    isLocked: isCurrentPatternLocked,
   });
   const rawQuestionById = useMemo(
     () => new Map(rawPatternQuestions.map((question) => [question.id, question])),
@@ -591,20 +599,26 @@ export function StandardPatternPractice({
     return () => window.cancelAnimationFrame(frame);
   }, [safePage, activePattern, selectedSubPattern, statusFilter, viewMode]);
 
-  const handlePatternChange = useCallback((patternId: PracticePatternId) => {
-    setActivePattern(patternId);
-    setSelectedSubPattern("all");
-    setStatusFilter("all");
-    setRetrySession(null);
-    setCurrentPage(1);
-    setActiveQuestionId(null);
-    setPatternSeeds((prev) =>
-      prev[patternId] ? prev : { ...prev, [patternId]: createRandomSeed() },
-    );
-    pendingScrollIdRef.current = null;
-    syncSubtestPatternUrl(patternId);
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  }, []);
+  const handlePatternChange = useCallback(
+    (patternId: PracticePatternId) => {
+      if (!hasFullAccess && !isQuestionPatternFree(subtest, patternId)) {
+        setViewMode("list");
+      }
+      setActivePattern(patternId);
+      setSelectedSubPattern("all");
+      setStatusFilter("all");
+      setRetrySession(null);
+      setCurrentPage(1);
+      setActiveQuestionId(null);
+      setPatternSeeds((prev) =>
+        prev[patternId] ? prev : { ...prev, [patternId]: createRandomSeed() },
+      );
+      pendingScrollIdRef.current = null;
+      syncSubtestPatternUrl(patternId);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    },
+    [hasFullAccess, subtest],
+  );
 
   const handleSubPatternChange = useCallback((subPattern: string) => {
     setSelectedSubPattern(subPattern);
@@ -1401,6 +1415,8 @@ export function StandardPatternPractice({
               {patternStats.map((pattern) => {
                 const isSelected = pattern.id === activePattern;
                 const hasQuestions = pattern.total > 0;
+                const isLocked =
+                  !hasFullAccess && !isQuestionPatternFree(subtest, pattern.id);
 
                 return (
                   <button
@@ -1426,6 +1442,15 @@ export function StandardPatternPractice({
                         {pattern.order}
                       </span>
                       <span className="line-clamp-1 font-medium">{pattern.label}</span>
+                      {isLocked && (
+                        <Lock
+                          className={cn(
+                            "size-3.5 shrink-0",
+                            isSelected ? "text-amber-200" : "text-amber-600",
+                          )}
+                          aria-label="Khusus Paket Premium"
+                        />
+                      )}
                     </span>
 
                     <span
@@ -1663,10 +1688,12 @@ export function StandardPatternPractice({
                 )}
             </section>
 
-            <PatternCheatSheetCard
-              patternId={activePattern}
-              patternLabel={activeMeta.label}
-            />
+            {!isCurrentPatternLocked && (
+              <PatternCheatSheetCard
+                patternId={activePattern}
+                patternLabel={activeMeta.label}
+              />
+            )}
 
             {retrySummary ? (
               <PracticeRetryBanner
@@ -1688,7 +1715,12 @@ export function StandardPatternPractice({
             )}
 
             {/* Daftar Kartu Soal */}
-            {isPatternLoading ? (
+            {isCurrentPatternLocked ? (
+              <PremiumPaywallCard
+                title={`Buka Modul ${activeMeta.label} (${patternStats.find((p) => p.id === activePattern)?.total ?? 0} Soal HOTS)`}
+                description={`Pilar gratis (${subtest === "TWK" ? "Nasionalisme" : "Pelayanan Publik"}) dapat dicoba kapan saja. Untuk membuka seluruh pilar ${subtest}, pembahasan, serta 2.540+ soal SKD, aktifkan Paket Belajar Wiyata Academy.`}
+              />
+            ) : isPatternLoading ? (
               <section className="flex flex-col items-center justify-center rounded-2xl border border-blue-100 bg-white px-6 py-16 text-center">
                 <Loader2 className="size-8 animate-spin text-blue-600" aria-hidden />
                 <p className="mt-3 text-sm font-semibold text-slate-800">

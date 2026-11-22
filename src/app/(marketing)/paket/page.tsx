@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
-import { Check, ShieldCheck, Sparkles, CreditCard } from "lucide-react";
+import { CreditCard, ShieldCheck, Sparkles } from "lucide-react";
 
-import { SiteHeader } from "@/components/layout/site-header";
 import { SiteFooter } from "@/components/layout/site-footer";
-import { CheckoutButton } from "@/modules/payment/presentation/checkout-button";
-import { PRODUCTS } from "@/modules/payment/domain/products";
+import { SiteHeader } from "@/components/layout/site-header";
+import { getCurrentUserEntitlements } from "@/modules/payment/infrastructure/entitlements.server";
+import { PricingGridClient } from "@/modules/payment/presentation/pricing-grid-client";
+
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Pilihan Paket Belajar & Simulasi SKD CPNS",
@@ -14,7 +16,9 @@ export const metadata: Metadata = {
 
 const IS_SANDBOX = process.env.MIDTRANS_IS_PRODUCTION !== "true";
 
-export default function PricingPage() {
+export default async function PricingPage() {
+  const entitlements = await getCurrentUserEntitlements();
+
   return (
     <div className="min-h-screen bg-[#f8fbff] text-slate-950">
       <SiteHeader />
@@ -50,138 +54,7 @@ export default function PricingPage() {
             )}
           </div>
 
-          {/* Pricing Grid */}
-          <div className="mt-12 grid gap-8 lg:grid-cols-3 lg:items-stretch">
-            {/* 1. Paket Bundle Try Out */}
-            <div className="flex flex-col rounded-2xl border border-slate-200 bg-white p-7 shadow-sm transition hover:shadow-md sm:p-8">
-              <div className="flex-1">
-                <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">
-                  Fokus Simulasi
-                </span>
-                <h3 className="mt-2 text-xl font-bold text-slate-950">
-                  {PRODUCTS["tryout-bundle"].name}
-                </h3>
-                <p className="mt-2 text-sm text-slate-600">
-                  {PRODUCTS["tryout-bundle"].description}
-                </p>
-
-                <div className="mt-6 flex items-baseline gap-1">
-                  <span className="text-3xl font-extrabold text-slate-950 sm:text-4xl">
-                    {PRODUCTS["tryout-bundle"].priceDisplay}
-                  </span>
-                  <span className="text-xs font-medium text-slate-500">/ sekali bayar</span>
-                </div>
-
-                <div className="my-6 h-px bg-slate-100" />
-
-                <ul className="space-y-3 text-sm text-slate-700">
-                  <PricingFeature text="10 Paket Try Out SKD CAT 110 Soal" />
-                  <PricingFeature text="Standar Waktu &amp; Passing Grade BKN" />
-                  <PricingFeature text="Pembahasan Lengkap Tiap Butir Soal" />
-                  <PricingFeature text="Ranking &amp; Statistik Nilai Nasional" />
-                  <PricingFeature text="Akses Aktif Selamanya" />
-                </ul>
-              </div>
-
-              <div className="mt-8">
-                <CheckoutButton
-                  productId="tryout-bundle"
-                  productName={PRODUCTS["tryout-bundle"].name}
-                  amountDisplay={PRODUCTS["tryout-bundle"].priceDisplay}
-                  variant="outline"
-                  className="w-full border-slate-300 text-slate-900 hover:bg-slate-50"
-                />
-              </div>
-            </div>
-
-            {/* 2. Paket Intensif SKD (Featured) */}
-            <div className="relative flex flex-col rounded-2xl border-2 border-blue-600 bg-white p-7 shadow-xl shadow-blue-500/10 sm:p-8">
-              <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 rounded-full bg-blue-600 px-4 py-1 text-xs font-bold uppercase tracking-wider text-white shadow-md">
-                Paling Diminati ⭐
-              </div>
-
-              <div className="flex-1">
-                <span className="text-xs font-semibold uppercase tracking-wider text-blue-600">
-                  Paket Lengkap Mandiri
-                </span>
-                <h3 className="mt-2 text-xl font-bold text-slate-950">
-                  {PRODUCTS["skd-intensif"].name}
-                </h3>
-                <p className="mt-2 text-sm text-slate-600">
-                  {PRODUCTS["skd-intensif"].description}
-                </p>
-
-                <div className="mt-6 flex items-baseline gap-1">
-                  <span className="text-3xl font-extrabold text-blue-600 sm:text-4xl">
-                    {PRODUCTS["skd-intensif"].priceDisplay}
-                  </span>
-                  <span className="text-xs font-medium text-slate-500">/ akses seumur hidup</span>
-                </div>
-
-                <div className="my-6 h-px bg-blue-50" />
-
-                <ul className="space-y-3 text-sm text-slate-700">
-                  <PricingFeature text="2.540+ Soal HOTS Terupdate (TWK, TIU, TKP)" bold />
-                  <PricingFeature text="Cheat Sheet Rumus Cepat 20 Modul" bold />
-                  <PricingFeature text="Sprint Drill 10-15 Menit Berbatas Waktu" />
-                  <PricingFeature text="Simulasi Tryout CAT Resmi 110 Soal" />
-                  <PricingFeature text="Peta Kelemahan Pola Soal Interaktif" />
-                  <PricingFeature text="Bebas Akses Kapan Saja &amp; Di Mana Saja" />
-                </ul>
-              </div>
-
-              <div className="mt-8">
-                <CheckoutButton
-                  productId="skd-intensif"
-                  productName={PRODUCTS["skd-intensif"].name}
-                  amountDisplay={PRODUCTS["skd-intensif"].priceDisplay}
-                  className="w-full bg-blue-600 text-white shadow-lg shadow-blue-500/25 hover:bg-blue-700"
-                />
-              </div>
-            </div>
-
-            {/* 3. Paket Premium SKD */}
-            <div className="flex flex-col rounded-2xl border border-violet-200 bg-white p-7 shadow-sm transition hover:shadow-md sm:p-8">
-              <div className="flex-1">
-                <span className="text-xs font-semibold uppercase tracking-wider text-violet-600">
-                  Bimbingan Intensif
-                </span>
-                <h3 className="mt-2 text-xl font-bold text-slate-950">
-                  {PRODUCTS["skd-premium"].name}
-                </h3>
-                <p className="mt-2 text-sm text-slate-600">
-                  {PRODUCTS["skd-premium"].description}
-                </p>
-
-                <div className="mt-6 flex items-baseline gap-1">
-                  <span className="text-3xl font-extrabold text-slate-950 sm:text-4xl">
-                    {PRODUCTS["skd-premium"].priceDisplay}
-                  </span>
-                  <span className="text-xs font-medium text-slate-500">/ sekali bayar</span>
-                </div>
-
-                <div className="my-6 h-px bg-slate-100" />
-
-                <ul className="space-y-3 text-sm text-slate-700">
-                  <PricingFeature text="Semua Fitur Paket Intensif SKD" bold />
-                  <PricingFeature text="Live Class &amp; Bedah Soal Mingguan via Zoom" bold />
-                  <PricingFeature text="Grup Diskusi Mentor Privat Telegram" />
-                  <PricingFeature text="Konsultasi Strategi Pemilihan Formasi" />
-                  <PricingFeature text="Garansi Uang Kembali 7 Hari" />
-                </ul>
-              </div>
-
-              <div className="mt-8">
-                <CheckoutButton
-                  productId="skd-premium"
-                  productName={PRODUCTS["skd-premium"].name}
-                  amountDisplay={PRODUCTS["skd-premium"].priceDisplay}
-                  variant="outline"
-                  className="w-full border-violet-300 text-violet-900 hover:bg-violet-50"
-                />
-              </div>
-            </div>
-          </div>
+          <PricingGridClient ownedProductIds={entitlements.activeProductIds} />
 
           {/* Payment Methods Supported */}
           <div className="mt-16 rounded-2xl border border-slate-200 bg-white p-6 text-center sm:p-8">
@@ -230,19 +103,6 @@ export default function PricingPage() {
 
       <SiteFooter />
     </div>
-  );
-}
-
-function PricingFeature({ text, bold }: { text: string; bold?: boolean }) {
-  return (
-    <li className="flex items-start gap-3">
-      <span className="mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-emerald-600">
-        <Check className="size-3.5" aria-hidden />
-      </span>
-      <span className={bold ? "font-semibold text-slate-900" : "text-slate-600"}>
-        {text}
-      </span>
-    </li>
   );
 }
 

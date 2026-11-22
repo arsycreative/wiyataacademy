@@ -32,6 +32,7 @@ import { TryoutResultReview } from "./tryout-result-review";
 type TryoutScreen = "lobby" | "exam" | "result";
 
 type TryoutCatExperienceProps = {
+  hasOfficialAccess?: boolean;
   siteHeader?: ReactNode;
   siteFooter?: ReactNode;
 };
@@ -90,6 +91,7 @@ async function submitAndGradeOnServer(params: {
 }
 
 export function TryoutCatExperience({
+  hasOfficialAccess = true,
   siteHeader,
   siteFooter,
 }: TryoutCatExperienceProps) {
@@ -426,6 +428,7 @@ export function TryoutCatExperience({
           />
         ) : (
           <TryoutLobby
+            hasOfficialAccess={hasOfficialAccess}
             activeSession={activeSession}
             activeRemainingSec={remainingSec}
             history={history}

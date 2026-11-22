@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 import {
   CheckCircle2,
+  Download,
   Loader2,
   RefreshCw,
   RotateCcw,
@@ -12,6 +13,10 @@ import {
 
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import {
+  buildCsvContent,
+  downloadCsvFile,
+} from "@/modules/admin/domain/csv";
 import {
   formatIdr,
   formatShortDateTime,
@@ -167,6 +172,38 @@ export function OrdersTableClient({ initialOrders }: OrdersTableClientProps) {
     }
   };
 
+  const handleExportCsv = () => {
+    const csv = buildCsvContent(
+      [
+        "Order ID",
+        "Tanggal Buat",
+        "Nama Siswa",
+        "Email Siswa",
+        "Paket",
+        "Nominal (IDR)",
+        "Metode Bayar",
+        "Status",
+        "ID Transaksi Midtrans",
+        "Tanggal Lunas",
+      ],
+      filteredOrders.map((o) => [
+        o.order_id,
+        o.created_at,
+        o.user_name ?? "",
+        o.user_email ?? "",
+        o.product_name,
+        o.amount,
+        o.payment_method ?? "",
+        o.status,
+        o.midtrans_transaction_id ?? "",
+        o.paid_at ?? "",
+      ]),
+    );
+    const dateStamp = new Date().toISOString().slice(0, 10);
+    downloadCsvFile(`wiyata-orders-${dateStamp}.csv`, csv);
+    addToast(`${filteredOrders.length} transaksi diekspor ke CSV.`, "success");
+  };
+
   return (
     <div className="space-y-4">
       {/* Toolbar Filter & Search */}
@@ -189,18 +226,31 @@ export function OrdersTableClient({ initialOrders }: OrdersTableClientProps) {
           ))}
         </div>
 
-        <div className="relative w-full sm:w-72">
-          <Search
-            className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-slate-400"
-            aria-hidden
-          />
-          <input
-            type="search"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="Cari Order ID, email, paket..."
-            className="h-9 w-full rounded-lg border border-slate-200 bg-slate-50/70 pl-9 pr-3 text-xs text-slate-900 placeholder:text-slate-400 focus:border-blue-400 focus:bg-white focus:outline-none"
-          />
+        <div className="flex flex-wrap items-center gap-2">
+          <div className="relative w-full sm:w-64">
+            <Search
+              className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-slate-400"
+              aria-hidden
+            />
+            <input
+              type="search"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Cari Order ID, email, paket..."
+              className="h-9 w-full rounded-lg border border-slate-200 bg-slate-50/70 pl-9 pr-3 text-xs text-slate-900 placeholder:text-slate-400 focus:border-blue-400 focus:bg-white focus:outline-none"
+            />
+          </div>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={handleExportCsv}
+            disabled={filteredOrders.length === 0}
+            className="h-9 gap-1.5 border-slate-200 text-xs font-semibold text-slate-700 hover:bg-slate-50"
+          >
+            <Download className="size-3.5" aria-hidden />
+            Ekspor CSV
+          </Button>
         </div>
       </div>
 
@@ -344,3 +394,4 @@ export function OrdersTableClient({ initialOrders }: OrdersTableClientProps) {
     </div>
   );
 }
+

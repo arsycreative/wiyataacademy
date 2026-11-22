@@ -31,3 +31,4 @@ export function createSupabaseAdminClient(
     auth: { persistSession: false },
   });
 }
+

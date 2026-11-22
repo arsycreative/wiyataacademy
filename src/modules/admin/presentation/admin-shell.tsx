@@ -9,6 +9,7 @@ import {
   LayoutDashboard,
   Menu,
   ShieldCheck,
+  Tag,
   Users,
   X,
 } from "lucide-react";
@@ -36,6 +37,12 @@ const ADMIN_NAV_ITEMS = [
     href: APP_ROUTES.adminUsers,
     label: "Siswa & Paket",
     icon: Users,
+    exact: false,
+  },
+  {
+    href: APP_ROUTES.adminVouchers,
+    label: "Kode Promo",
+    icon: Tag,
     exact: false,
   },
 ] as const;
@@ -190,3 +197,4 @@ export function AdminShell({
     </div>
   );
 }
+

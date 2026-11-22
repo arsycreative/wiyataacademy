@@ -9,6 +9,7 @@ type TwkPatternPracticeProps = {
   initialLoadedPattern: TwkPatternId;
   initialPatternStats: readonly PatternStatItem<TwkPatternId>[];
   initialQuestions: readonly Question[];
+  hasFullAccess?: boolean;
   siteHeader?: ReactNode;
   siteFooter?: ReactNode;
   pageIntro?: ReactNode;

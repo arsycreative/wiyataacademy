@@ -24,6 +24,7 @@ import {
   LayoutGrid,
   Lightbulb,
   Loader2,
+  Lock,
   RotateCcw,
   X,
   XCircle,
@@ -32,6 +33,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useSupabaseAuth } from "@/modules/auth/presentation/use-supabase-auth";
+import { isQuestionPatternFree } from "@/modules/payment/domain/entitlements";
+import { PremiumPaywallCard } from "@/modules/payment/presentation/premium-paywall-card";
 import type { PatternStatItem } from "@/modules/question-bank/domain/progress-summary-types";
 import {
   TIU_PATTERNS,
@@ -80,6 +83,7 @@ type TiuPatternPracticeProps = {
   initialLoadedPattern: TiuPatternId;
   initialPatternStats: readonly PatternStatItem<TiuPatternId>[];
   initialQuestions: readonly Question[];
+  hasFullAccess?: boolean;
   siteHeader?: ReactNode;
   siteFooter?: ReactNode;
   pageIntro?: ReactNode;
@@ -105,6 +109,7 @@ export function TiuPatternPractice({
   initialLoadedPattern,
   initialPatternStats,
   initialQuestions,
+  hasFullAccess = true,
   siteHeader,
   siteFooter,
   pageIntro,
@@ -352,6 +357,8 @@ export function TiuPatternPractice({
 
   const patternStats = initialPatternStats;
   const activeMeta = TIU_PATTERNS[activePattern];
+  const isCurrentPatternLocked =
+    !hasFullAccess && !isQuestionPatternFree("TIU", activePattern);
   const {
     questions: rawPatternQuestions,
     isLoading: isPatternLoading,
@@ -362,6 +369,7 @@ export function TiuPatternPractice({
     activePattern,
     initialLoadedPattern,
     initialQuestions,
+    isLocked: isCurrentPatternLocked,
   });
   const rawQuestionById = useMemo(
     () => new Map(rawPatternQuestions.map((question) => [question.id, question])),
@@ -528,19 +536,25 @@ export function TiuPatternPractice({
     return () => window.cancelAnimationFrame(frame);
   }, [safePage, activePattern, selectedSubPattern, statusFilter, viewMode]);
 
-  const handlePatternChange = useCallback((patternId: TiuPatternId) => {
-    setActivePattern(patternId);
-    setSelectedSubPattern("all");
-    setStatusFilter("all");
-    setRetrySession(null);
-    setCurrentPage(1);
-    setActiveQuestionId(null);
-    setPatternSeeds((prev) =>
-      prev[patternId] ? prev : { ...prev, [patternId]: createRandomSeed() },
-    );
-    pendingScrollIdRef.current = null;
-    syncPatternUrl(patternId);
-  }, []);
+  const handlePatternChange = useCallback(
+    (patternId: TiuPatternId) => {
+      if (!hasFullAccess && !isQuestionPatternFree("TIU", patternId)) {
+        setViewMode("list");
+      }
+      setActivePattern(patternId);
+      setSelectedSubPattern("all");
+      setStatusFilter("all");
+      setRetrySession(null);
+      setCurrentPage(1);
+      setActiveQuestionId(null);
+      setPatternSeeds((prev) =>
+        prev[patternId] ? prev : { ...prev, [patternId]: createRandomSeed() },
+      );
+      pendingScrollIdRef.current = null;
+      syncPatternUrl(patternId);
+    },
+    [hasFullAccess],
+  );
 
   const handleSubPatternChange = useCallback((subPattern: string) => {
     setSelectedSubPattern(subPattern);
@@ -1401,6 +1415,8 @@ export function TiuPatternPractice({
           {patternStats.map((pattern) => {
             const isSelected = pattern.id === activePattern;
             const hasQuestions = pattern.total > 0;
+            const isLocked =
+              !hasFullAccess && !isQuestionPatternFree("TIU", pattern.id);
 
             return (
               <button
@@ -1426,6 +1442,15 @@ export function TiuPatternPractice({
                     {pattern.order}
                   </span>
                   <span className="line-clamp-1 font-medium">{pattern.label}</span>
+                  {isLocked && (
+                    <Lock
+                      className={cn(
+                        "size-3.5 shrink-0",
+                        isSelected ? "text-amber-200" : "text-amber-600",
+                      )}
+                      aria-label="Khusus Paket Premium"
+                    />
+                  )}
                 </span>
 
                 <span
@@ -1661,10 +1686,12 @@ export function TiuPatternPractice({
             )}
         </section>
 
-        <PatternCheatSheetCard
-          patternId={activePattern}
-          patternLabel={activeMeta.label}
-        />
+        {!isCurrentPatternLocked && (
+          <PatternCheatSheetCard
+            patternId={activePattern}
+            patternLabel={activeMeta.label}
+          />
+        )}
 
         {retrySummary ? (
           <PracticeRetryBanner
@@ -1686,7 +1713,12 @@ export function TiuPatternPractice({
         )}
 
         {/* Empty state or question list */}
-        {isPatternLoading ? (
+        {isCurrentPatternLocked ? (
+          <PremiumPaywallCard
+            title={`Buka Pola ${activeMeta.label} (${patternStats.find((p) => p.id === activePattern)?.total ?? 0} Soal HOTS)`}
+            description={`Pola "Sinonim, Antonim & Akronim" dapat dicoba secara gratis. Untuk mengakses ${activeMeta.label} beserta seluruh 9 pola TIU, TWK, dan TKP, silakan aktifkan Paket Belajar Wiyata Academy.`}
+          />
+        ) : isPatternLoading ? (
           <section className="flex flex-col items-center justify-center rounded-2xl border border-blue-100 bg-white px-6 py-16 text-center">
             <Loader2 className="size-8 animate-spin text-blue-600" aria-hidden />
             <p className="mt-3 text-sm font-semibold text-slate-800">

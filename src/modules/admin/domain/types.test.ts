@@ -1,5 +1,7 @@
 import { describe, expect, it } from "vitest";
+import { buildCsvContent } from "./csv";
 import {
+  buildDailyRevenueSeries,
   buildProductRevenueBreakdown,
   computeConversionRate,
   isAdminRole,
@@ -39,4 +41,42 @@ describe("admin domain helpers", () => {
     expect(bundle?.paidCount).toBe(0);
     expect(bundle?.revenue).toBe(0);
   });
+
+  it("builds a 14-day daily revenue series including zero days", () => {
+    const ref = new Date("2026-11-22T10:00:00Z");
+    const series = buildDailyRevenueSeries(
+      [
+        {
+          amount: 299000,
+          status: "paid",
+          paid_at: "2026-11-22T08:00:00Z",
+          created_at: "2026-11-22T07:55:00Z",
+        },
+        {
+          amount: 149000,
+          status: "pending",
+          paid_at: null,
+          created_at: "2026-11-21T08:00:00Z",
+        },
+      ],
+      7,
+      ref,
+    );
+
+    expect(series).toHaveLength(7);
+    expect(series[6].dateKey).toBe("2026-11-22");
+    expect(series[6].revenue).toBe(299000);
+    expect(series[6].paidCount).toBe(1);
+    expect(series[5].revenue).toBe(0);
+  });
+
+  it("formats RFC-4180 CSV with UTF-8 BOM and proper escaping", () => {
+    const csv = buildCsvContent(
+      ["Order ID", "Nama", "Nominal"],
+      [['WA-1', 'Budi, "Santoso"', 299000]],
+    );
+    expect(csv.startsWith("\uFEFF")).toBe(true);
+    expect(csv).toContain('"Budi, ""Santoso"""');
+  });
 });
+

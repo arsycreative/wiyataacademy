@@ -9,6 +9,7 @@ type TkpPatternPracticeProps = {
   initialLoadedPattern: TkpPatternId;
   initialPatternStats: readonly PatternStatItem<TkpPatternId>[];
   initialQuestions: readonly Question[];
+  hasFullAccess?: boolean;
   siteHeader?: ReactNode;
   siteFooter?: ReactNode;
   pageIntro?: ReactNode;

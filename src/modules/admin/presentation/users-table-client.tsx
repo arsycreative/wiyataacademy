@@ -2,10 +2,14 @@
 
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
-import { Loader2, Plus, Search, Shield, Trash2 } from "lucide-react";
+import { Download, Eye, Loader2, Plus, Search, Shield, Trash2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import {
+  buildCsvContent,
+  downloadCsvFile,
+} from "@/modules/admin/domain/csv";
 import {
   formatIdr,
   formatShortDateTime,
@@ -14,6 +18,7 @@ import {
   type UserFilter,
 } from "@/modules/admin/domain/types";
 import { RoleBadge } from "@/modules/admin/presentation/status-badge";
+import { UserDetailDrawer } from "@/modules/admin/presentation/user-detail-drawer";
 import type { UserRole } from "@/modules/auth/application/ports";
 import { PRODUCTS, type ProductId } from "@/modules/payment/domain/products";
 import { useToastStore } from "@/shared/stores/toast-store";
@@ -45,6 +50,7 @@ export function UsersTableClient({
   const [activeFilter, setActiveFilter] = useState<UserFilter>("all");
   const [search, setSearch] = useState("");
   const [busyUserId, setBusyUserId] = useState<string | null>(null);
+  const [detailUserId, setDetailUserId] = useState<string | null>(null);
   const [selectedProducts, setSelectedProducts] = useState<
     Record<string, ProductId>
   >({});
@@ -223,6 +229,37 @@ export function UsersTableClient({
     }
   };
 
+  const handleExportCsv = () => {
+    const csv = buildCsvContent(
+      [
+        "User ID",
+        "Nama Lengkap",
+        "Email",
+        "Role",
+        "Paket Aktif",
+        "Jumlah Transaksi",
+        "Total Belanja (IDR)",
+        "Tanggal Daftar",
+      ],
+      filteredUsers.map((u) => [
+        u.id,
+        u.full_name ?? "",
+        u.email ?? "",
+        u.role,
+        u.subscriptions
+          .filter((s) => s.status === "active")
+          .map((s) => PRODUCTS[s.product_id as ProductId]?.name ?? s.product_id)
+          .join("; "),
+        u.orders_count,
+        u.total_spent,
+        u.created_at,
+      ]),
+    );
+    const dateStamp = new Date().toISOString().slice(0, 10);
+    downloadCsvFile(`wiyata-users-${dateStamp}.csv`, csv);
+    addToast(`${filteredUsers.length} data pengguna diekspor ke CSV.`, "success");
+  };
+
   return (
     <div className="space-y-4">
       {/* Toolbar */}
@@ -245,18 +282,31 @@ export function UsersTableClient({
           ))}
         </div>
 
-        <div className="relative w-full sm:w-72">
-          <Search
-            className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-slate-400"
-            aria-hidden
-          />
-          <input
-            type="search"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="Cari nama atau email siswa..."
-            className="h-9 w-full rounded-lg border border-slate-200 bg-slate-50/70 pl-9 pr-3 text-xs text-slate-900 placeholder:text-slate-400 focus:border-blue-400 focus:bg-white focus:outline-none"
-          />
+        <div className="flex flex-wrap items-center gap-2">
+          <div className="relative w-full sm:w-64">
+            <Search
+              className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-slate-400"
+              aria-hidden
+            />
+            <input
+              type="search"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Cari nama atau email siswa..."
+              className="h-9 w-full rounded-lg border border-slate-200 bg-slate-50/70 pl-9 pr-3 text-xs text-slate-900 placeholder:text-slate-400 focus:border-blue-400 focus:bg-white focus:outline-none"
+            />
+          </div>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={handleExportCsv}
+            disabled={filteredUsers.length === 0}
+            className="h-9 gap-1.5 border-slate-200 text-xs font-semibold text-slate-700 hover:bg-slate-50"
+          >
+            <Download className="size-3.5" aria-hidden />
+            Ekspor CSV
+          </Button>
         </div>
       </div>
 
@@ -415,6 +465,18 @@ export function UsersTableClient({
                             )}
                             Aktifkan
                           </Button>
+
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setDetailUserId(user.id)}
+                            title="Lihat progres belajar & riwayat transaksi"
+                            className="h-8 gap-1 border-slate-200 px-2.5 text-[11px] text-slate-700 hover:bg-slate-50"
+                          >
+                            <Eye className="size-3" aria-hidden />
+                            Detail
+                          </Button>
                         </div>
                       </td>
                     </tr>
@@ -434,6 +496,11 @@ export function UsersTableClient({
           </span>
         </p>
       )}
+
+      <UserDetailDrawer
+        userId={detailUserId}
+        onClose={() => setDetailUserId(null)}
+      />
     </div>
   );
 }

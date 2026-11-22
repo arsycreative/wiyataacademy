@@ -3,11 +3,13 @@ import "server-only";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { coreApi } from "@/lib/midtrans";
 import {
+  buildDailyRevenueSeries,
   buildProductRevenueBreakdown,
   computeConversionRate,
   type AdminOrderItem,
   type AdminOverviewStats,
   type AdminSubscriptionSummary,
+  type AdminUserDetailResult,
   type AdminUserItem,
   type OrderStatusFilter,
   type UserFilter,
@@ -18,6 +20,13 @@ import {
   mapMidtransTransactionStatus,
   type OrderStatus,
 } from "@/modules/payment/domain/status";
+import {
+  normalizeVoucherCode,
+  type VoucherDiscountType,
+  type VoucherRecord,
+} from "@/modules/payment/domain/voucher";
+import { summarizeAllProgress } from "@/modules/question-bank/domain/subtest-summary";
+import { sanitizePracticeProgress } from "@/modules/question-bank/infrastructure/tiu-progress-sync";
 import {
   createSupabaseAdminClient,
   hasSupabaseServiceRoleKey,
@@ -234,6 +243,7 @@ export async function getAdminOverviewStats(): Promise<AdminOverviewStats> {
       totalUsersCount,
     ),
     revenueByProduct: buildProductRevenueBreakdown(orders),
+    dailyRevenueSeries: buildDailyRevenueSeries(orders, 14),
     recentOrders: mapOrdersWithProfiles(recentOrderRows, profileMap),
     schemaMissing,
     usingServiceRole: usingServiceRole && hasSupabaseServiceRoleKey(),
@@ -594,3 +604,189 @@ export async function updateUserRole(
     throw new Error(`Gagal mengubah role pengguna: ${error.message}`);
   }
 }
+
+export async function getAdminUserDetail(
+  userId: string,
+): Promise<AdminUserDetailResult | null> {
+  const { client } = await getAdminDbClient();
+
+  const [profileRes, progressRes, subsRes, ordersRes] = await Promise.all([
+    client
+      .from("profiles")
+      .select("id, email, full_name, role, created_at")
+      .eq("id", userId)
+      .maybeSingle<ProfileLookupRow>(),
+    client
+      .from("tiu_practice_progress")
+      .select("*")
+      .eq("user_id", userId)
+      .maybeSingle<{
+        selected_answers?: unknown;
+        flagged_questions?: unknown;
+        pattern_seeds?: unknown;
+        question_seeds?: unknown;
+        view_mode?: unknown;
+        last_pattern?: unknown;
+        updated_at?: string;
+      }>(),
+    client
+      .from("subscriptions")
+      .select("id, order_id, product_id, plan, status, starts_at, expires_at")
+      .eq("user_id", userId)
+      .order("starts_at", { ascending: false }),
+    client
+      .from("orders")
+      .select(
+        "order_id, user_id, product_id, product_name, amount, status, payment_method, midtrans_transaction_id, midtrans_status, paid_at, created_at",
+      )
+      .eq("user_id", userId)
+      .order("created_at", { ascending: false }),
+  ]);
+
+  if (!profileRes.data) return null;
+
+  const profile = profileRes.data;
+  const role: UserRole =
+    profile.role === "admin" || profile.role === "superadmin"
+      ? profile.role
+      : "student";
+
+  const rawProgress = progressRes.data;
+  const sanitized = sanitizePracticeProgress(
+    rawProgress
+      ? {
+          selectedAnswers: rawProgress.selected_answers,
+          flaggedQuestions: rawProgress.flagged_questions,
+          patternSeeds: rawProgress.pattern_seeds,
+          questionSeeds: rawProgress.question_seeds,
+          viewMode: rawProgress.view_mode,
+          lastPattern: rawProgress.last_pattern,
+          updatedAt: rawProgress.updated_at,
+        }
+      : {},
+  );
+
+  const profileMap = new Map<string, ProfileLookupRow>([[profile.id, profile]]);
+  const orders = mapOrdersWithProfiles(
+    (ordersRes.data ?? []) as OrderRow[],
+    profileMap,
+  );
+
+  return {
+    user: {
+      id: profile.id,
+      email: profile.email,
+      full_name: profile.full_name,
+      role,
+      created_at: profile.created_at,
+    },
+    progressSummaries: summarizeAllProgress(sanitized),
+    progressUpdatedAt: rawProgress?.updated_at ?? null,
+    subscriptions: (subsRes.data ?? []) as AdminSubscriptionSummary[],
+    orders,
+  };
+}
+
+export async function listAdminVouchers(): Promise<{
+  vouchers: VoucherRecord[];
+  schemaMissing: boolean;
+}> {
+  const { client } = await getAdminDbClient();
+  const { data, error } = await client
+    .from("vouchers")
+    .select("*")
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    return {
+      vouchers: [],
+      schemaMissing: isMissingTableOrColumn(error),
+    };
+  }
+
+  return {
+    vouchers: (data ?? []) as VoucherRecord[],
+    schemaMissing: false,
+  };
+}
+
+export interface CreateVoucherInput {
+  code: string;
+  description?: string | null;
+  discount_type: VoucherDiscountType;
+  discount_value: number;
+  max_discount?: number | null;
+  min_purchase?: number;
+  applicable_products?: string[] | null;
+  max_uses?: number | null;
+  expires_at?: string | null;
+}
+
+export async function createAdminVoucher(
+  input: CreateVoucherInput,
+): Promise<VoucherRecord> {
+  const { client } = await getAdminDbClient();
+  const normalizedCode = normalizeVoucherCode(input.code);
+  if (!normalizedCode || normalizedCode.length < 3) {
+    throw new Error("Kode promo minimal 3 karakter alfanumerik.");
+  }
+
+  const { data, error } = await client
+    .from("vouchers")
+    .insert({
+      code: normalizedCode,
+      description: input.description?.trim() || null,
+      discount_type: input.discount_type,
+      discount_value: Math.round(input.discount_value),
+      max_discount:
+        input.max_discount && input.max_discount > 0
+          ? Math.round(input.max_discount)
+          : null,
+      min_purchase: Math.max(0, Math.round(input.min_purchase ?? 0)),
+      applicable_products:
+        input.applicable_products && input.applicable_products.length > 0
+          ? input.applicable_products
+          : null,
+      max_uses:
+        input.max_uses && input.max_uses > 0 ? Math.round(input.max_uses) : null,
+      expires_at: input.expires_at ? new Date(input.expires_at).toISOString() : null,
+      is_active: true,
+    })
+    .select("*")
+    .single<VoucherRecord>();
+
+  if (error || !data) {
+    if (error?.code === "23505") {
+      throw new Error(`Kode promo "${normalizedCode}" sudah pernah dibuat.`);
+    }
+    throw new Error(`Gagal membuat kode promo: ${error?.message ?? "Unknown"}`);
+  }
+
+  return data;
+}
+
+export async function toggleAdminVoucherStatus(
+  voucherId: string,
+  isActive: boolean,
+): Promise<void> {
+  const { client } = await getAdminDbClient();
+  const { error } = await client
+    .from("vouchers")
+    .update({ is_active: isActive, updated_at: new Date().toISOString() })
+    .eq("id", voucherId);
+
+  if (error) {
+    throw new Error(`Gagal memperbarui status kode promo: ${error.message}`);
+  }
+}
+
+export async function deleteAdminVoucher(voucherId: string): Promise<void> {
+  const { client } = await getAdminDbClient();
+  const { error } = await client.from("vouchers").delete().eq("id", voucherId);
+
+  if (error) {
+    throw new Error(`Gagal menghapus kode promo: ${error.message}`);
+  }
+}
+
+

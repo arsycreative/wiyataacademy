@@ -95,4 +95,12 @@ describe("TryoutCatExperience", () => {
     expect(history[0].mode).toBe("mini");
     expect(history[0].subtests.TWK.answeredCount).toBe(1);
   });
+
+  it("locks official 110-question presets when hasOfficialAccess is false while keeping mini tryout free", () => {
+    render(<TryoutCatExperience hasOfficialAccess={false} />);
+
+    // Only the 1 mini tryout has "Mulai Simulasi" button; 4 official presets show "Buka Akses Paket" link
+    expect(screen.getAllByRole("button", { name: /Mulai Simulasi/i })).toHaveLength(1);
+    expect(screen.getAllByRole("link", { name: /Buka Akses Paket/i })).toHaveLength(4);
+  });
 });

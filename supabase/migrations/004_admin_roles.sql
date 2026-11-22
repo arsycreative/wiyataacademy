@@ -73,3 +73,4 @@ CREATE POLICY "admin_read_all_tiu_progress"
 -- SET role = 'superadmin'
 -- WHERE email = 'email-anda@gmail.com';
 -- =========================================================================
+

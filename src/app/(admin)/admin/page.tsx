@@ -14,6 +14,7 @@ import {
   formatShortDateTime,
 } from "@/modules/admin/domain/types";
 import { getAdminOverviewStats } from "@/modules/admin/infrastructure/admin-repository.server";
+import { RevenueChart } from "@/modules/admin/presentation/revenue-chart";
 import { OrderStatusBadge } from "@/modules/admin/presentation/status-badge";
 import { APP_ROUTES } from "@/shared/constants/app";
 
@@ -146,6 +147,9 @@ export default async function AdminOverviewPage() {
         </div>
       </div>
 
+      {/* Grafik Tren Pendapatan 14 Hari */}
+      <RevenueChart series={stats.dailyRevenueSeries} />
+
       {/* Product Breakdown + Recent Orders */}
       <div className="grid gap-6 lg:grid-cols-3">
         {/* Pendapatan per Paket */}
@@ -255,3 +259,4 @@ export default async function AdminOverviewPage() {
     </div>
   );
 }
+

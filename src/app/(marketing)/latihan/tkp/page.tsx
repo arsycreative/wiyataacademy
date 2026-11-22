@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 
 import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteHeader } from "@/components/layout/site-header";
+import { isQuestionPatternFree } from "@/modules/payment/domain/entitlements";
+import { getCurrentUserEntitlements } from "@/modules/payment/infrastructure/entitlements.server";
 import { getPatternStats } from "@/modules/question-bank/data/tiu";
 import {
   ALL_TKP_QUESTIONS,
@@ -15,6 +17,8 @@ import {
 } from "@/modules/question-bank/domain/question";
 import { SubtestPracticeIntro } from "@/modules/question-bank/presentation/practice-ui-primitives";
 import { TkpPatternPractice } from "@/modules/question-bank/presentation/tkp-pattern-practice";
+
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Latihan Soal TKP — SKD CPNS",
@@ -45,9 +49,15 @@ export default async function TkpPracticePage({
     parseTkpPatternParam(resolvedParams?.pattern) ??
     parseTkpPatternParam(resolvedParams?.pola);
 
+  const entitlements = await getCurrentUserEntitlements();
   const initialLoadedPattern: TkpPatternId = initialPattern ?? "pelayanan-publik";
   const initialPatternStats = getTkpPatternStats();
-  const initialQuestions = TKP_QUESTION_BANKS[initialLoadedPattern];
+  const canLoadInitial =
+    entitlements.hasFullQuestionBank ||
+    isQuestionPatternFree("TKP", initialLoadedPattern);
+  const initialQuestions = canLoadInitial
+    ? TKP_QUESTION_BANKS[initialLoadedPattern]
+    : [];
 
   const tiuTotal = getPatternStats().reduce((total, item) => total + item.total, 0);
   const twkTotal = ALL_TWK_QUESTIONS.length;
@@ -70,6 +80,7 @@ export default async function TkpPracticePage({
       initialLoadedPattern={initialLoadedPattern}
       initialPatternStats={initialPatternStats}
       initialQuestions={initialQuestions}
+      hasFullAccess={entitlements.hasFullQuestionBank}
       siteHeader={<SiteHeader />}
       siteFooter={<SiteFooter />}
       pageIntro={pageIntro}

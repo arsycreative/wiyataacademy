@@ -4,9 +4,14 @@ import { cookies } from "next/headers";
 import { snap, isMidtransConfigured } from "@/lib/midtrans";
 import { getProduct } from "@/modules/payment/domain/products";
 import {
+  activateSubscription,
   createOrder,
   hasActiveSubscription,
 } from "@/modules/payment/infrastructure/order-repository";
+import {
+  incrementVoucherUsageInDb,
+  validateVoucherInDb,
+} from "@/modules/payment/infrastructure/voucher-repository.server";
 
 export const dynamic = "force-dynamic";
 
@@ -46,9 +51,14 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // ── 2. Validasi body ───────────────────────────────────────────────────
-    const body = await req.json() as { productId?: unknown };
+    // ── 2. Validasi body & voucher (opsional) ─────────────────────────────
+    const body = (await req.json()) as {
+      productId?: unknown;
+      voucherCode?: unknown;
+    };
     const productId = typeof body.productId === "string" ? body.productId : "";
+    const rawVoucherCode =
+      typeof body.voucherCode === "string" ? body.voucherCode.trim() : "";
     const product = getProduct(productId);
 
     if (!product) {
@@ -64,24 +74,77 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    // ── 3b. Validasi kode promo jika diisi ─────────────────────────────────
+    let finalAmount = product.price;
+    let discountAmount = 0;
+    let appliedVoucherCode: string | null = null;
+
+    if (rawVoucherCode) {
+      const voucherRes = await validateVoucherInDb(rawVoucherCode, product.id);
+      if (!voucherRes.valid) {
+        return NextResponse.json(
+          { error: voucherRes.error },
+          { status: 400 },
+        );
+      }
+      finalAmount = voucherRes.finalPrice;
+      discountAmount = voucherRes.discountAmount;
+      appliedVoucherCode = voucherRes.code;
+    }
+
     // ── 4. Buat order ID unik ──────────────────────────────────────────────
     const timestamp = Date.now();
     const orderId = `WA-${productId.toUpperCase()}-${user.id.slice(0, 8)}-${timestamp}`;
 
+    // ── 4b. Aktivasi instan bila diskon 100% (finalAmount === 0) ───────────
+    if (finalAmount === 0 && appliedVoucherCode) {
+      await createOrder({
+        user_id: user.id,
+        order_id: orderId,
+        product_id: product.id,
+        product_name: product.name,
+        amount: 0,
+        original_amount: product.price,
+        discount_amount: discountAmount,
+        voucher_code: appliedVoucherCode,
+        status: "paid",
+        payment_method: "voucher_100",
+        paid_at: new Date().toISOString(),
+        metadata: { user_email: user.email ?? "", free_via_voucher: true },
+      });
+
+      await activateSubscription(user.id, orderId, product.id);
+      await incrementVoucherUsageInDb(appliedVoucherCode);
+
+      return NextResponse.json({ freeActivation: true, orderId });
+    }
+
     // ── 5. Buat Snap Token via Midtrans ────────────────────────────────────
+    const itemDetails = [
+      {
+        id: product.id,
+        price: product.price,
+        quantity: 1,
+        name: product.name,
+      },
+      ...(appliedVoucherCode && discountAmount > 0
+        ? [
+            {
+              id: `VOUCHER-${appliedVoucherCode}`,
+              price: -discountAmount,
+              quantity: 1,
+              name: `Diskon Promo (${appliedVoucherCode})`.slice(0, 50),
+            },
+          ]
+        : []),
+    ];
+
     const snapParams = {
       transaction_details: {
         order_id: orderId,
-        gross_amount: product.price,
+        gross_amount: finalAmount,
       },
-      item_details: [
-        {
-          id: product.id,
-          price: product.price,
-          quantity: 1,
-          name: product.name,
-        },
-      ],
+      item_details: itemDetails,
       customer_details: {
         email: user.email ?? "",
         first_name:
@@ -108,7 +171,14 @@ export async function POST(req: NextRequest) {
       order_id: orderId,
       product_id: product.id,
       product_name: product.name,
-      amount: product.price,
+      amount: finalAmount,
+      ...(appliedVoucherCode
+        ? {
+            original_amount: product.price,
+            discount_amount: discountAmount,
+            voucher_code: appliedVoucherCode,
+          }
+        : {}),
       status: "pending",
       snap_token: token,
       snap_redirect_url: redirect_url,

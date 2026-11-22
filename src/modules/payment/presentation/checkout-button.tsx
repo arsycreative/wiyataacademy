@@ -28,6 +28,8 @@ interface CheckoutButtonProps {
   productId: ProductId;
   productName?: string;
   amountDisplay?: string;
+  voucherCode?: string;
+  disabled?: boolean;
   className?: string;
   variant?: "default" | "secondary" | "outline";
   children?: React.ReactNode;
@@ -43,6 +45,8 @@ export function CheckoutButton({
   productId,
   productName = "Paket Belajar",
   amountDisplay,
+  voucherCode,
+  disabled = false,
   className,
   variant = "default",
   children,
@@ -84,17 +88,35 @@ export function CheckoutButton({
       const res = await fetch("/api/payment/create-token", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ productId }),
+        body: JSON.stringify({
+          productId,
+          ...(voucherCode ? { voucherCode } : {}),
+        }),
       });
 
       const data = (await res.json()) as {
         token?: string;
         redirectUrl?: string;
         orderId?: string;
+        freeActivation?: boolean;
         error?: string;
       };
 
-      if (!res.ok || !data.token) {
+      if (!res.ok) {
+        throw new Error(
+          data.error ?? "Gagal memproses transaksi. Silakan coba lagi.",
+        );
+      }
+
+      if (data.freeActivation) {
+        toast.success(`Kode promo 100% berhasil! Akses ${productName} langsung aktif.`);
+        router.push(
+          `/payment/finish?order_id=${encodeURIComponent(data.orderId ?? "")}`,
+        );
+        return;
+      }
+
+      if (!data.token) {
         throw new Error(
           data.error ?? "Gagal memproses transaksi. Silakan coba lagi.",
         );
@@ -144,13 +166,13 @@ export function CheckoutButton({
     } finally {
       setIsLoading(false);
     }
-  }, [user, isAuthLoading, productId, productName, router]);
+  }, [user, isAuthLoading, productId, productName, voucherCode, router]);
 
   return (
     <Button
       type="button"
       onClick={handleCheckout}
-      disabled={isLoading || isAuthLoading}
+      disabled={disabled || isLoading || isAuthLoading}
       variant={variant}
       className={cn("gap-2 font-semibold", className)}
     >

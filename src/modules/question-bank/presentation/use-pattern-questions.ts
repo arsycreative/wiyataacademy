@@ -13,6 +13,7 @@ type UsePatternQuestionsParams = {
   activePattern: PracticePatternId;
   initialLoadedPattern: PracticePatternId;
   initialQuestions: readonly Question[];
+  isLocked?: boolean;
 };
 
 /**
@@ -25,10 +26,11 @@ export function usePatternQuestions({
   activePattern,
   initialLoadedPattern,
   initialQuestions,
+  isLocked = false,
 }: UsePatternQuestionsParams) {
-  const [cache, setCache] = useState<Partial<Record<PracticePatternId, readonly Question[]>>>(() => ({
-    [initialLoadedPattern]: initialQuestions,
-  }));
+  const [cache, setCache] = useState<Partial<Record<PracticePatternId, readonly Question[]>>>(() =>
+    isLocked ? {} : { [initialLoadedPattern]: initialQuestions },
+  );
   const [loadingPattern, setLoadingPattern] = useState<PracticePatternId | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [reloadNonce, setReloadNonce] = useState(0);
@@ -36,7 +38,7 @@ export function usePatternQuestions({
   const cachedQuestions = cache[activePattern];
 
   useEffect(() => {
-    if (cachedQuestions !== undefined) {
+    if (isLocked || cachedQuestions !== undefined) {
       return;
     }
 
@@ -76,17 +78,20 @@ export function usePatternQuestions({
       window.cancelAnimationFrame(frame);
       controller.abort();
     };
-  }, [subtest, activePattern, cachedQuestions, reloadNonce]);
+  }, [subtest, activePattern, cachedQuestions, isLocked, reloadNonce]);
 
   const retryLoad = useCallback(() => {
     setErrorMessage(null);
     setReloadNonce((n) => n + 1);
   }, []);
 
-  const isLoading = cachedQuestions === undefined && (loadingPattern === activePattern || !errorMessage);
+  const isLoading =
+    !isLocked &&
+    cachedQuestions === undefined &&
+    (loadingPattern === activePattern || !errorMessage);
 
   return {
-    questions: cachedQuestions ?? [],
+    questions: isLocked ? [] : (cachedQuestions ?? []),
     isLoading,
     errorMessage,
     retryLoad,

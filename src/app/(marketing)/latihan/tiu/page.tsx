@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 
 import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteHeader } from "@/components/layout/site-header";
+import { isQuestionPatternFree } from "@/modules/payment/domain/entitlements";
+import { getCurrentUserEntitlements } from "@/modules/payment/infrastructure/entitlements.server";
 import {
   getPatternStats,
   getQuestionsByPattern,
@@ -14,6 +16,8 @@ import {
 } from "@/modules/question-bank/domain/question";
 import { SubtestPracticeIntro } from "@/modules/question-bank/presentation/practice-ui-primitives";
 import { TiuPatternPractice } from "@/modules/question-bank/presentation/tiu-pattern-practice";
+
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Latihan Soal TIU — SKD CPNS",
@@ -44,9 +48,15 @@ export default async function TiuPracticePage({
     parsePatternParam(resolvedParams?.pattern) ??
     parsePatternParam(resolvedParams?.pola);
 
+  const entitlements = await getCurrentUserEntitlements();
   const patternStats = getPatternStats();
   const initialLoadedPattern: TiuPatternId = initialPattern ?? "sinonim-antonim-akronim";
-  const initialQuestions = getQuestionsByPattern(initialLoadedPattern);
+  const canLoadInitial =
+    entitlements.hasFullQuestionBank ||
+    isQuestionPatternFree("TIU", initialLoadedPattern);
+  const initialQuestions = canLoadInitial
+    ? getQuestionsByPattern(initialLoadedPattern)
+    : [];
 
   const tiuTotal = patternStats.reduce((total, item) => total + item.total, 0);
   const twkTotal = ALL_TWK_QUESTIONS.length;
@@ -69,6 +79,7 @@ export default async function TiuPracticePage({
       initialLoadedPattern={initialLoadedPattern}
       initialPatternStats={patternStats}
       initialQuestions={initialQuestions}
+      hasFullAccess={entitlements.hasFullQuestionBank}
       siteHeader={<SiteHeader />}
       siteFooter={<SiteFooter />}
       pageIntro={pageIntro}

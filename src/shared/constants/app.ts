@@ -32,5 +32,6 @@ export const APP_ROUTES = {
   admin: "/admin",
   adminOrders: "/admin/orders",
   adminUsers: "/admin/users",
+  adminVouchers: "/admin/vouchers",
   authCallback: "/auth/callback",
 } as const;

@@ -12,6 +12,8 @@ import {
   getAuthenticatedUser,
 } from "@/modules/auth/infrastructure/profile-repository.server";
 import { AccountDashboard } from "@/modules/auth/presentation/account-dashboard";
+import { getUserBillingSummary } from "@/modules/payment/infrastructure/entitlements.server";
+import { AccountBillingSection } from "@/modules/payment/presentation/account-billing-section";
 import { summarizeAllProgress } from "@/modules/question-bank/domain/subtest-summary";
 import { createTiuProgressRepository } from "@/modules/question-bank/infrastructure/tiu-progress-repository.server";
 import { sanitizePracticeProgress } from "@/modules/question-bank/infrastructure/tiu-progress-sync";
@@ -34,9 +36,10 @@ export default async function AccountPage() {
   const profileRepo = createProfileRepository();
   const progressRepo = createTiuProgressRepository();
 
-  const [profileRes, progressRes] = await Promise.all([
+  const [profileRes, progressRes, billingSummary] = await Promise.all([
     profileRepo.findById(user.id),
     progressRepo.findByUserId(user.id),
+    getUserBillingSummary(user.id),
   ]);
 
   const initialSummaries = summarizeAllProgress(
@@ -73,6 +76,10 @@ export default async function AccountPage() {
               </Link>
             </Button>
           )}
+        </div>
+
+        <div className="mb-6">
+          <AccountBillingSection billing={billingSummary} isAdmin={isAdmin} />
         </div>
 
         <AccountDashboard
