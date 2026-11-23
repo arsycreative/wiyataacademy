@@ -2,7 +2,6 @@ import { TIU_QUESTION_BANKS } from "@/modules/question-bank/data/tiu";
 import { TKP_QUESTION_BANKS } from "@/modules/question-bank/data/tkp";
 import { TWK_QUESTION_BANKS } from "@/modules/question-bank/data/twk";
 import {
-  TIU_PATTERN_IDS,
   TIU_PATTERNS,
   TKP_PATTERN_IDS,
   TKP_PATTERNS,
@@ -12,6 +11,7 @@ import {
   type PracticePatternId,
   type Question,
   type QuestionSubtest,
+  type TiuPatternId,
 } from "@/modules/question-bank/domain/question";
 import {
   hashStringWithSeed,
@@ -82,6 +82,141 @@ function computeStratifiedQuotas(
   return quotas;
 }
 
+/**
+ * Blueprint berbobot FR SKD CPNS BKN terbaru untuk subtes TIU:
+ * memprioritaskan Silogisme & Penalaran Induktif, Analitis (Urutan/Duduk/Tabel),
+ * Hitung Cepat (Pecahan & Perkalian/Pembagian Setara), Perbandingan Kuantitatif
+ * (Kecukupan Data & Optimasi Biaya), Deret Angka (Suku ke-N & Matriks), dan Figural.
+ * Pola Sinonim/Antonim tetap tersedia di Bank Soal sebagai latihan kosakata (kuota 0 di CAT resmi).
+ */
+export const TRYOUT_TIU_BLUEPRINT_QUOTAS: Readonly<
+  Record<TryoutMode, Readonly<Record<TiuPatternId, number>>>
+> = {
+  official: {
+    "sinonim-antonim-akronim": 0,
+    "analogi-kata": 3,
+    silogisme: 6,
+    "hitung-cepat": 5,
+    "perbandingan-kuantitatif": 6,
+    "penalaran-analitis-melingkar": 5,
+    "deret-angka": 4,
+    "analisis-tabel": 2,
+    figural: 4,
+  },
+  mini: {
+    "sinonim-antonim-akronim": 0,
+    "analogi-kata": 1,
+    silogisme: 2,
+    "hitung-cepat": 1,
+    "perbandingan-kuantitatif": 2,
+    "penalaran-analitis-melingkar": 2,
+    "deret-angka": 1,
+    "analisis-tabel": 1,
+    figural: 1,
+  },
+};
+
+export const TRYOUT_ACTIVE_TIU_PATTERNS: readonly TiuPatternId[] = (
+  Object.keys(TRYOUT_TIU_BLUEPRINT_QUOTAS.official) as TiuPatternId[]
+).filter((patternId) => TRYOUT_TIU_BLUEPRINT_QUOTAS.official[patternId] > 0);
+
+/**
+ * Memilih `quota` soal dari satu bank pola dengan stratifikasi sub-pola secara deterministik,
+ * agar sub-pola FR terbaru (Penalaran Induktif, Kecukupan Data, Optimasi Biaya, Urutan/Tabel,
+ * Suku ke-N, Deret Matriks) terwakili seimbang dan tidak tenggelam oleh jumlah soal sub-pola lama.
+ */
+function pickSubPatternStratified(
+  bank: readonly Question[],
+  quota: number,
+  seed: number,
+  prioritySubPatterns: readonly string[] = [],
+): Question[] {
+  if (quota <= 0 || bank.length === 0) return [];
+
+  const grouped = new Map<string, Question[]>();
+  for (const question of bank) {
+    const bucket = grouped.get(question.subPattern);
+    if (bucket) {
+      bucket.push(question);
+    } else {
+      grouped.set(question.subPattern, [question]);
+    }
+  }
+
+  const allSubPatterns = Array.from(grouped.keys());
+  const prioritySet = new Set(prioritySubPatterns);
+  const prioritized = seededShuffle(
+    allSubPatterns.filter((sp) => prioritySet.has(sp)),
+    hashStringWithSeed("sub-priority", seed),
+  );
+  const remaining = seededShuffle(
+    allSubPatterns.filter((sp) => !prioritySet.has(sp)),
+    hashStringWithSeed("sub-rest", seed),
+  );
+  const orderedSubPatterns = [...prioritized, ...remaining];
+
+  const shuffledBuckets = new Map<string, Question[]>();
+  for (const sp of orderedSubPatterns) {
+    shuffledBuckets.set(
+      sp,
+      seededShuffle(grouped.get(sp) ?? [], hashStringWithSeed(`sp:${sp}`, seed)),
+    );
+  }
+
+  const picked: Question[] = [];
+  let round = 0;
+  while (picked.length < quota) {
+    let addedInRound = false;
+    for (const sp of orderedSubPatterns) {
+      if (picked.length >= quota) break;
+      const bucket = shuffledBuckets.get(sp);
+      if (bucket && round < bucket.length) {
+        picked.push(bucket[round]);
+        addedInRound = true;
+      }
+    }
+    if (!addedInRound) break;
+    round += 1;
+  }
+
+  return picked;
+}
+
+const TIU_FR_PRIORITY_SUBPATTERNS: Partial<Record<TiuPatternId, readonly string[]>> = {
+  silogisme: ["penalaran-induktif"],
+  "hitung-cepat": ["operasi-pecahan", "perkalian-dan-pembagian-setara"],
+  "perbandingan-kuantitatif": ["kecukupan-data", "optimasi-biaya"],
+  "penalaran-analitis-melingkar": [
+    "urutan-dan-jadwal",
+    "duduk-berderet",
+    "analitis-tabel-logika",
+  ],
+  "deret-angka": ["deret-suku-ke-n", "deret-matriks-tabel"],
+};
+
+function selectWeightedTiuQuestions(mode: TryoutMode, seed: number): Question[] {
+  const subtestSeed = hashStringWithSeed("tryout:TIU", seed);
+  const quotas = TRYOUT_TIU_BLUEPRINT_QUOTAS[mode];
+  const picked: Question[] = [];
+
+  for (const patternId of Object.keys(quotas) as TiuPatternId[]) {
+    const quota = quotas[patternId];
+    if (quota <= 0) continue;
+    const bank = TIU_QUESTION_BANKS[patternId];
+    const patternSeed = hashStringWithSeed(`pick:TIU:${patternId}`, subtestSeed);
+    picked.push(
+      ...pickSubPatternStratified(
+        bank,
+        quota,
+        patternSeed,
+        TIU_FR_PRIORITY_SUBPATTERNS[patternId] ?? [],
+      ),
+    );
+  }
+
+  return seededShuffle(picked, hashStringWithSeed("order:TIU", subtestSeed));
+}
+
 function selectStratifiedQuestions<TId extends PracticePatternId>(
   patternIds: readonly TId[],
   banks: Record<TId, readonly Question[]>,
@@ -134,13 +269,7 @@ export function generateTryoutQuestions(
     normalizedSeed,
     "TWK",
   );
-  const tiuRaw = selectStratifiedQuestions(
-    TIU_PATTERN_IDS,
-    TIU_QUESTION_BANKS,
-    config.subtests.TIU.questionCount,
-    normalizedSeed,
-    "TIU",
-  );
+  const tiuRaw = selectWeightedTiuQuestions(mode, normalizedSeed);
   const tkpRaw = selectStratifiedQuestions(
     TKP_PATTERN_IDS,
     TKP_QUESTION_BANKS,

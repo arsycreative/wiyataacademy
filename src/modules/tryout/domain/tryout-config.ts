@@ -228,7 +228,7 @@ export const TRYOUT_PRESETS: readonly TryoutPreset[] = [
     id: "paket-acak-resmi",
     mode: "official",
     title: "Paket Acak Dinamis (110 Soal)",
-    subtitle: "Menarik 110 soal acak baru dari 2.540 bank soal setiap kali memulai • 100 menit",
+    subtitle: "Menarik 110 soal acak baru dari 2.700 bank soal setiap kali memulai • 100 menit",
     badge: "Acak Baru",
   },
   {

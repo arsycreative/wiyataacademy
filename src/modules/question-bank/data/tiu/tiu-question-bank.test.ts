@@ -84,21 +84,22 @@ describe("TIU question bank", () => {
     }
   });
 
-  it("contains 150 questions for silogisme (30 per sub-pattern)", () => {
-    expect(silogismeQuestions).toHaveLength(150);
+  it("contains 170 questions for silogisme (30 per deduktif sub-pattern + 20 penalaran-induktif)", () => {
+    expect(silogismeQuestions).toHaveLength(170);
 
-    const expectedSubPatterns = [
-      "modus-ponens",
-      "modus-tollens",
-      "silogisme-hipotesis",
-      "silogisme-kategoris",
-      "ekuivalensi-dan-ingkaran",
-    ] as const;
+    const expectedSubPatterns: Record<string, number> = {
+      "modus-ponens": 30,
+      "modus-tollens": 30,
+      "silogisme-hipotesis": 30,
+      "silogisme-kategoris": 30,
+      "ekuivalensi-dan-ingkaran": 30,
+      "penalaran-induktif": 20,
+    };
 
-    for (const subPattern of expectedSubPatterns) {
+    for (const [subPattern, expectedCount] of Object.entries(expectedSubPatterns)) {
       expect(
         getQuestionsByPattern("silogisme", { subPattern }),
-      ).toHaveLength(30);
+      ).toHaveLength(expectedCount);
     }
 
     for (const difficulty of DIFFICULTIES) {
@@ -108,21 +109,22 @@ describe("TIU question bank", () => {
     }
   });
 
-  it("contains 150 questions for hitung-cepat (30 per sub-pattern)", () => {
-    expect(hitungCepatQuestions).toHaveLength(150);
+  it("contains 170 questions for hitung-cepat (30 per sub-pattern + 20 perkalian-dan-pembagian-setara)", () => {
+    expect(hitungCepatQuestions).toHaveLength(170);
 
-    const expectedSubPatterns = [
-      "operasi-pecahan",
-      "operasi-desimal",
-      "persentase-dan-angka-sakti",
-      "aljabar-dan-kuadrat",
-      "taksiran-dan-ekor-angka",
-    ] as const;
+    const expectedSubPatterns: Record<string, number> = {
+      "operasi-pecahan": 30,
+      "perkalian-dan-pembagian-setara": 20,
+      "operasi-desimal": 30,
+      "persentase-dan-angka-sakti": 30,
+      "aljabar-dan-kuadrat": 30,
+      "taksiran-dan-ekor-angka": 30,
+    };
 
-    for (const subPattern of expectedSubPatterns) {
+    for (const [subPattern, expectedCount] of Object.entries(expectedSubPatterns)) {
       expect(
         getQuestionsByPattern("hitung-cepat", { subPattern }),
-      ).toHaveLength(30);
+      ).toHaveLength(expectedCount);
     }
 
     for (const difficulty of DIFFICULTIES) {
@@ -132,21 +134,23 @@ describe("TIU question bank", () => {
     }
   });
 
-  it("contains 150 questions for perbandingan-kuantitatif (30 per sub-pattern)", () => {
-    expect(perbandinganKuantitatifQuestions).toHaveLength(150);
+  it("contains 190 questions for perbandingan-kuantitatif (incl. 20 kecukupan-data & 20 optimasi-biaya)", () => {
+    expect(perbandinganKuantitatifQuestions).toHaveLength(190);
 
-    const expectedSubPatterns = [
-      "perbandingan-senilai",
-      "perbandingan-berbalik-nilai",
-      "proyek-dan-pekerjaan-gabungan",
-      "kecepatan-jarak-dan-waktu",
-      "hubungan-variabel-x-dan-y",
-    ] as const;
+    const expectedSubPatterns: Record<string, number> = {
+      "perbandingan-senilai": 30,
+      "perbandingan-berbalik-nilai": 30,
+      "proyek-dan-pekerjaan-gabungan": 30,
+      "kecepatan-jarak-dan-waktu": 30,
+      "hubungan-variabel-x-dan-y": 30,
+      "kecukupan-data": 20,
+      "optimasi-biaya": 20,
+    };
 
-    for (const subPattern of expectedSubPatterns) {
+    for (const [subPattern, expectedCount] of Object.entries(expectedSubPatterns)) {
       expect(
         getQuestionsByPattern("perbandingan-kuantitatif", { subPattern }),
-      ).toHaveLength(30);
+      ).toHaveLength(expectedCount);
     }
 
     for (const difficulty of DIFFICULTIES) {
@@ -156,21 +160,24 @@ describe("TIU question bank", () => {
     }
   });
 
-  it("contains 150 questions for penalaran-analitis-melingkar (30 per sub-pattern)", () => {
-    expect(penalaranAnalitisMelingkarQuestions).toHaveLength(150);
+  it("contains 200 questions for penalaran-analitis-melingkar (incl. urutan, duduk berderet & tabel logika)", () => {
+    expect(penalaranAnalitisMelingkarQuestions).toHaveLength(200);
 
-    const expectedSubPatterns = [
-      "posisi-berhadapan",
-      "posisi-kanan-dan-kiri",
-      "syarat-berdampingan-dan-terpisah",
-      "meja-melingkar-kursi-kosong",
-      "evaluasi-pernyataan-dan-kemungkinan",
-    ] as const;
+    const expectedSubPatterns: Record<string, number> = {
+      "urutan-dan-jadwal": 20,
+      "duduk-berderet": 15,
+      "analitis-tabel-logika": 15,
+      "posisi-berhadapan": 30,
+      "posisi-kanan-dan-kiri": 30,
+      "syarat-berdampingan-dan-terpisah": 30,
+      "meja-melingkar-kursi-kosong": 30,
+      "evaluasi-pernyataan-dan-kemungkinan": 30,
+    };
 
-    for (const subPattern of expectedSubPatterns) {
+    for (const [subPattern, expectedCount] of Object.entries(expectedSubPatterns)) {
       expect(
         getQuestionsByPattern("penalaran-analitis-melingkar", { subPattern }),
-      ).toHaveLength(30);
+      ).toHaveLength(expectedCount);
     }
 
     for (const difficulty of DIFFICULTIES) {
@@ -180,21 +187,23 @@ describe("TIU question bank", () => {
     }
   });
 
-  it("contains 150 questions for deret-angka (30 per sub-pattern)", () => {
-    expect(deretAngkaQuestions).toHaveLength(150);
+  it("contains 180 questions for deret-angka (incl. 15 deret-suku-ke-n & 15 deret-matriks-tabel)", () => {
+    expect(deretAngkaQuestions).toHaveLength(180);
 
-    const expectedSubPatterns = [
-      "deret-satu-larik-dan-bertingkat",
-      "deret-dua-dan-tiga-larik",
-      "deret-operasi-campuran-dan-berpola",
-      "deret-fibonacci-dan-pangkat",
-      "deret-pecahan-dan-desimal",
-    ] as const;
+    const expectedSubPatterns: Record<string, number> = {
+      "deret-satu-larik-dan-bertingkat": 30,
+      "deret-dua-dan-tiga-larik": 30,
+      "deret-operasi-campuran-dan-berpola": 30,
+      "deret-fibonacci-dan-pangkat": 30,
+      "deret-pecahan-dan-desimal": 30,
+      "deret-suku-ke-n": 15,
+      "deret-matriks-tabel": 15,
+    };
 
-    for (const subPattern of expectedSubPatterns) {
+    for (const [subPattern, expectedCount] of Object.entries(expectedSubPatterns)) {
       expect(
         getQuestionsByPattern("deret-angka", { subPattern }),
-      ).toHaveLength(30);
+      ).toHaveLength(expectedCount);
     }
 
     for (const difficulty of DIFFICULTIES) {
@@ -276,27 +285,27 @@ describe("TIU question bank", () => {
     expect(stats[2]).toMatchObject({
       id: "silogisme",
       order: 3,
-      total: 150,
+      total: 170,
     });
     expect(stats[3]).toMatchObject({
       id: "hitung-cepat",
       order: 4,
-      total: 150,
+      total: 170,
     });
     expect(stats[4]).toMatchObject({
       id: "perbandingan-kuantitatif",
       order: 5,
-      total: 150,
+      total: 190,
     });
     expect(stats[5]).toMatchObject({
       id: "penalaran-analitis-melingkar",
       order: 6,
-      total: 150,
+      total: 200,
     });
     expect(stats[6]).toMatchObject({
       id: "deret-angka",
       order: 7,
-      total: 150,
+      total: 180,
     });
     expect(stats[7]).toMatchObject({
       id: "analisis-tabel",

@@ -22,7 +22,7 @@ export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: "Latihan Soal TIU — SKD CPNS",
   description:
-    "Latihan dan review bank soal TIU SKD CPNS yang dipisah per pola: Sinonim, Antonim, Akronim, dan pola TIU lainnya.",
+    "Latihan dan review bank soal TIU SKD CPNS sesuai FR BKN terbaru: Silogisme & Penalaran Induktif, Analitis (Urutan, Duduk & Tabel), Hitung Cepat, Kecukupan Data, Optimasi Biaya, Deret Angka, dan Figural.",
 };
 
 type TiuPracticePageProps = {
@@ -50,7 +50,7 @@ export default async function TiuPracticePage({
 
   const entitlements = await getCurrentUserEntitlements();
   const patternStats = getPatternStats();
-  const initialLoadedPattern: TiuPatternId = initialPattern ?? "sinonim-antonim-akronim";
+  const initialLoadedPattern: TiuPatternId = initialPattern ?? "silogisme";
   const canLoadInitial =
     entitlements.hasFullQuestionBank ||
     isQuestionPatternFree("TIU", initialLoadedPattern);

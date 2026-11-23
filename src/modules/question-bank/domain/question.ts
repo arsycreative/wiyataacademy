@@ -49,13 +49,14 @@ export const TIU_PATTERNS: Record<TiuPatternId, TiuPatternMeta> = {
   silogisme: {
     id: "silogisme",
     order: 3,
-    label: "Silogisme",
+    label: "Silogisme & Penalaran Induktif",
     subPatterns: [
       "modus-ponens",
       "modus-tollens",
       "silogisme-hipotesis",
       "silogisme-kategoris",
       "ekuivalensi-dan-ingkaran",
+      "penalaran-induktif",
     ],
   },
   "hitung-cepat": {
@@ -64,6 +65,7 @@ export const TIU_PATTERNS: Record<TiuPatternId, TiuPatternMeta> = {
     label: "Hitung Cepat",
     subPatterns: [
       "operasi-pecahan",
+      "perkalian-dan-pembagian-setara",
       "operasi-desimal",
       "persentase-dan-angka-sakti",
       "aljabar-dan-kuadrat",
@@ -73,20 +75,25 @@ export const TIU_PATTERNS: Record<TiuPatternId, TiuPatternMeta> = {
   "perbandingan-kuantitatif": {
     id: "perbandingan-kuantitatif",
     order: 5,
-    label: "Perbandingan Kuantitatif",
+    label: "Perbandingan, Kecukupan Data & Optimasi",
     subPatterns: [
       "perbandingan-senilai",
       "perbandingan-berbalik-nilai",
       "proyek-dan-pekerjaan-gabungan",
       "kecepatan-jarak-dan-waktu",
       "hubungan-variabel-x-dan-y",
+      "kecukupan-data",
+      "optimasi-biaya",
     ],
   },
   "penalaran-analitis-melingkar": {
     id: "penalaran-analitis-melingkar",
     order: 6,
-    label: "Penalaran Analitis Duduk Melingkar",
+    label: "Penalaran Analitis (Urutan, Duduk & Tabel)",
     subPatterns: [
+      "urutan-dan-jadwal",
+      "duduk-berderet",
+      "analitis-tabel-logika",
       "posisi-berhadapan",
       "posisi-kanan-dan-kiri",
       "syarat-berdampingan-dan-terpisah",
@@ -104,6 +111,8 @@ export const TIU_PATTERNS: Record<TiuPatternId, TiuPatternMeta> = {
       "deret-operasi-campuran-dan-berpola",
       "deret-fibonacci-dan-pangkat",
       "deret-pecahan-dan-desimal",
+      "deret-suku-ke-n",
+      "deret-matriks-tabel",
     ],
   },
   "analisis-tabel": {
@@ -622,11 +631,17 @@ function getDefaultHint(pattern: TiuPatternId, subPattern: string): string {
     if (subPattern === "ekuivalensi-dan-ingkaran") {
       return "Uji ekuivalensi p -> q dengan ~q -> ~p atau ~p atau q, serta cek aturan ingkaran kuantor dan implikasi.";
     }
+    if (subPattern === "penalaran-induktif") {
+      return "Tarik generalisasi yang tepat mengikuti batas data dan fakta pada teks; hindari opsi ekstrem ('selalu', 'semua', 'pasti') yang melampaui bukti.";
+    }
   }
 
   if (pattern === "hitung-cepat") {
     if (subPattern === "operasi-pecahan") {
       return "Pisahkan bilangan bulat dengan pecahannya atau sederhanakan dengan pencoretan silang sebelum menghitung penuh.";
+    }
+    if (subPattern === "perkalian-dan-pembagian-setara") {
+      return "Ubah pembagian pecahan/desimal menjadi perkalian kebalikannya, lalu kelompokkan atau coret faktor persekutuan agar bentuk setaranya langsung terlihat.";
     }
     if (subPattern === "operasi-desimal") {
       return "Geser tanda koma secara seimbang atau ubah desimal istimewa seperti 0,125 dan 0,75 ke pecahan biasa.";
@@ -658,9 +673,24 @@ function getDefaultHint(pattern: TiuPatternId, subPattern: string): string {
     if (subPattern === "hubungan-variabel-x-dan-y") {
       return "Sederhanakan nilai X dan Y terlebih dahulu, serta waspadai persamaan kuadrat atau pertidaksamaan terbuka yang membuat hubungan tidak dapat ditentukan.";
     }
+    if (subPattern === "kecukupan-data") {
+      return "Uji pernyataan (1) secara terpisah lalu pernyataan (2) secara terpisah (lupakan dulu (1)!); baru gabungkan keduanya jika masing-masing belum memberi satu jawaban tunggal.";
+    }
+    if (subPattern === "optimasi-biaya") {
+      return "Hitung biaya per unit/kapasitas tiap opsi terlebih dahulu, lalu uji kombinasi bulat yang memenuhi target tanpa menyisakan biaya tak perlu.";
+    }
   }
 
   if (pattern === "penalaran-analitis-melingkar") {
+    if (subPattern === "urutan-dan-jadwal") {
+      return "Buat slot urutan 1 sampai N (atau Senin–Jumat), kunci posisi absolut terlebih dahulu, lalu masukkan syarat ketidaksamaan atau selisih jarak.";
+    }
+    if (subPattern === "duduk-berderet") {
+      return "Gambar deret kursi berurut kiri ke kanan (atau dua baris berhadapan), tempatkan syarat ujung/tengah terlebih dahulu, lalu pasang blok berdampingan.";
+    }
+    if (subPattern === "analitis-tabel-logika") {
+      return "Buat matriks silang sederhana antara orang dan atributnya; tandai centang untuk fakta pasti dan silang untuk larangan guna menyempitkan sisa kandidat.";
+    }
     if (subPattern === "posisi-berhadapan") {
       return "Pada meja bundar dengan N kursi genap, posisi berhadapan selalu berjarak N/2 kursi (misal 3 kursi pada meja 6 orang, atau 4 kursi pada meja 8 orang).";
     }
@@ -693,6 +723,12 @@ function getDefaultHint(pattern: TiuPatternId, subPattern: string): string {
     }
     if (subPattern === "deret-pecahan-dan-desimal") {
       return "Untuk pecahan, analisis pola deret pembilang dan deret penyebut secara terpisah; untuk desimal, kalikan 10 agar menjadi bilangan bulat.";
+    }
+    if (subPattern === "deret-suku-ke-n") {
+      return "Temukan rumus umum Un (aritmetika a + (n-1)b, bertingkat, atau sisa bagi modulo untuk pola periodik) daripada mendaftar manual satu per satu.";
+    }
+    if (subPattern === "deret-matriks-tabel") {
+      return "Uji hubungan operasi antar kolom di tiap baris terlebih dahulu; jika tidak cocok, uji pola vertikal antar baris pada tiap kolom.";
     }
   }
 

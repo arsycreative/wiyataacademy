@@ -231,7 +231,7 @@ export function getSubtestCatalog(subtest: QuestionSubtest) {
 
   return {
     subtest: "TIU" as const,
-    defaultPattern: "sinonim-antonim-akronim" as PracticePatternId,
+    defaultPattern: "silogisme" as PracticePatternId,
     patternIds: TIU_PATTERN_IDS as readonly PracticePatternId[],
     patternCatalog: TIU_PATTERNS as Record<string, SubtestPatternMeta>,
     questionBanks: TIU_QUESTION_BANKS as Record<string, readonly Question[]>,

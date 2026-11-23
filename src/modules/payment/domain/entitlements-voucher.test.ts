@@ -15,8 +15,9 @@ describe("entitlements domain", () => {
 
     expect(ent.hasFullQuestionBank).toBe(false);
     expect(ent.hasOfficialTryout).toBe(false);
+    expect(isQuestionPatternFree("TIU", "silogisme")).toBe(true);
     expect(isQuestionPatternFree("TIU", "sinonim-antonim-akronim")).toBe(true);
-    expect(isQuestionPatternFree("TIU", "analogi")).toBe(false);
+    expect(isQuestionPatternFree("TIU", "analogi-kata")).toBe(false);
     expect(isQuestionPatternFree("TWK", "nasionalisme")).toBe(true);
     expect(isQuestionPatternFree("TKP", "pelayanan-publik")).toBe(true);
   });

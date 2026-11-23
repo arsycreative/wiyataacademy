@@ -161,7 +161,7 @@ export function computeSkdLearningPath(
     modules: twkModules,
   };
 
-  // Tahap 3: TIU (9 Pola • 1.660 Soal)
+  // Tahap 3: TIU (9 Pola • 1.820 Soal)
   const tiuModules: RoadmapModuleItem[] = tiu.patterns.map((p) => {
     const pct = calcPct(p.answeredCount, p.totalQuestions);
     const acc = p.answeredCount > 0 ? calcPct(p.correctCount, p.answeredCount) : null;
@@ -186,7 +186,7 @@ export function computeSkdLearningPath(
     badge: "TIU • PG 80",
     title: "Penguasaan TIU (9 Pola Verbal, Numerik & Figural)",
     description:
-      "Bangun kecepatan dan ketepatan menaklukkan seluruh 9 pola TIU dari sinonim/antonim, silogisme, hitung cepat, deret, tabel, hingga figural.",
+      "Bangun kecepatan dan ketepatan menaklukkan 9 pola TIU sesuai FR BKN: silogisme & penalaran induktif, analitis (urutan/duduk/tabel), hitung cepat, kecukupan data, optimasi biaya, deret angka, dan figural.",
     targetSummary: "Target: kuasai 9 pola bank soal TIU (Passing Grade BKN ≥ 80 / 175)",
     status:
       tiu.totalAnswered >= tiu.totalQuestions

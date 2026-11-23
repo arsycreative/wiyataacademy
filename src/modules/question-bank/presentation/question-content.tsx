@@ -68,8 +68,17 @@ export function QuestionPrompt({
       .split("|")
       .map((cell) => cell.trim());
 
-  const headers = parseRow(tableLines[0]);
-  const bodyRows = tableLines.slice(1).map(parseRow);
+  const isDividerRow = (cells: string[]) =>
+    cells.length > 0 && cells.every((cell) => /^:?-{2,}:?$/.test(cell));
+
+  const parsedRows = tableLines.map(parseRow).filter((row) => !isDividerRow(row));
+  const headers = parsedRows[0] ?? [];
+  const bodyRows = parsedRows.slice(1);
+  const isCompactNumericMatrix =
+    bodyRows.length > 0 &&
+    bodyRows.every((row) =>
+      row.every((cell) => /^[-+0-9.,/?xX()\s]{1,10}$/.test(cell)),
+    );
 
   return (
     <div className={cn("mt-4 space-y-3 text-slate-950", className)}>
@@ -79,8 +88,18 @@ export function QuestionPrompt({
         </p>
       )}
 
-      <div className="overflow-x-auto rounded-xl border border-slate-200">
-        <table className="w-full border-collapse text-left text-xs sm:text-sm">
+      <div
+        className={cn(
+          "overflow-x-auto rounded-xl border border-slate-200",
+          isCompactNumericMatrix && "max-w-md",
+        )}
+      >
+        <table
+          className={cn(
+            "w-full border-collapse text-xs sm:text-sm",
+            isCompactNumericMatrix ? "text-center" : "text-left",
+          )}
+        >
           <thead className="bg-slate-100 text-slate-800">
             <tr>
               {headers.map((header, idx) => (
@@ -101,7 +120,11 @@ export function QuestionPrompt({
                     key={cellIdx}
                     className={cn(
                       "px-3.5 py-2 text-slate-700",
-                      cellIdx === 0 && "font-medium text-slate-900",
+                      isCompactNumericMatrix
+                        ? cell === "?" || cell === "X"
+                          ? "bg-blue-50/70 font-bold text-blue-700"
+                          : "font-semibold tabular-nums text-slate-900"
+                        : cellIdx === 0 && "font-medium text-slate-900",
                     )}
                   >
                     {cell}

@@ -14,7 +14,7 @@ export function PremiumPaywallCard({
   title = "Buka Akses Penuh Bank Soal & Simulasi CAT",
   description = "Modul atau paket simulasi ini khusus untuk peserta Paket Intensif / Premium SKD CPNS. Upgrade akun Anda satu kali bayar untuk akses selamanya.",
   featureHighlights = [
-    "2.540+ Soal HOTS lengkap TWK, TIU, dan TKP dengan pembahasan taktis",
+    "2.700+ Soal HOTS lengkap TWK, TIU, dan TKP dengan pembahasan taktis",
     "20 Cheat Sheet rumus cepat & analisis pola kesalahan",
     "Simulasi Tryout CAT Resmi 110 soal standar BKN",
   ],

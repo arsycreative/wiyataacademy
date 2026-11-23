@@ -5,7 +5,7 @@ import type { ProductId } from "./products";
  * Pola soal gratis (Trial) yang dapat diakses tanpa langganan aktif.
  */
 export const FREE_QUESTION_PATTERNS: Record<QuestionSubtest, readonly PracticePatternId[]> = {
-  TIU: ["sinonim-antonim-akronim"],
+  TIU: ["silogisme", "sinonim-antonim-akronim"],
   TWK: ["nasionalisme"],
   TKP: ["pelayanan-publik"],
 };

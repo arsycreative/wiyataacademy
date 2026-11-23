@@ -82,8 +82,8 @@ export const skdIntensifSyllabus: readonly CourseSyllabusSection[] = [
   {
     title: "Tahap 3: TIU — 9 Pola Verbal, Numerik & Figural",
     description:
-      "Kuasai sinonim/antonim, analogi, silogisme, hitung cepat, perbandingan, penalaran analitis, deret, analisis tabel, dan figural.",
-    lessons: "9 pola • 1.660 soal",
+      "Kuasai silogisme & penalaran induktif, analitis (urutan, tempat duduk, tabel), pecahan & perkalian/pembagian setara, kecukupan data, optimasi biaya, deret suku ke-N/matriks, dan figural.",
+    lessons: "9 pola • 1.820 soal",
     href: "/latihan/tiu",
   },
   {
@@ -230,13 +230,13 @@ const detailBySlug: Record<string, CourseDetail> = {
     description:
       "Roadmap belajar interaktif 5 tahap untuk menembus ambang batas dan meraih skor tinggi SKD CPNS berbasis CAT BKN.",
     duration: "5 tahap terstruktur",
-    lessons: "20 modul • 2.540 soal",
+    lessons: "20 modul • 2.700 soal",
     practiceTests: "Tryout CAT 110 Soal + Mini 35 Soal",
     bannerLabel: "SKD CPNS 2026",
     bannerTheme: "blue",
     bannerUrl: "/images/courses/asn-cpns-banner.svg",
     outcomes: [
-      "Menguasai 5 pilar TWK (400 soal), 9 pola TIU (1.660 soal), dan 6 aspek TKP (480 soal) sesuai kisi-kisi terbaru.",
+      "Menguasai 5 pilar TWK (400 soal), 9 pola TIU (1.820 soal), dan 6 aspek TKP (480 soal) sesuai kisi-kisi FR BKN terbaru.",
       "Mempelajari Cheat Sheet konsep inti, rumus cepat, dan jebakan umum di setiap modul sebelum berlatih soal HOTS.",
       "Memantau progres pengerjaan dan akurasi tiap modul secara langsung pada roadmap belajar interaktif.",
       "Mengelola ritme 100 menit untuk 110 soal pada simulasi CAT resmi lengkap dengan evaluasi ambang batas BKN.",
@@ -251,7 +251,7 @@ const detailBySlug: Record<string, CourseDetail> = {
       {
         question: "Apakah materi dan bank soal sudah sesuai kisi-kisi CPNS terbaru?",
         answer:
-          "Ya, seluruh 2.540 soal TWK, TIU, dan TKP beserta ambang batas CAT (TWK 65, TIU 80, TKP 166) mengacu pada standar seleksi SKD CPNS terbaru.",
+          "Ya, seluruh 2.700 soal TWK, TIU, dan TKP beserta ambang batas CAT (TWK 65, TIU 80, TKP 166) mengacu pada standar seleksi SKD CPNS FR BKN terbaru.",
       },
       {
         question: "Apakah harus menyelesaikan tahap secara berurutan?",

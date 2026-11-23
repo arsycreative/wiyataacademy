@@ -94,7 +94,7 @@ type CloudSyncState = "idle" | "syncing" | "synced" | "schema-missing" | "error"
 
 const PAGE_SIZE = 25;
 const NAV_CHUNK_SIZE = 50;
-const DEFAULT_PATTERN: TiuPatternId = "sinonim-antonim-akronim";
+const DEFAULT_PATTERN: TiuPatternId = "silogisme";
 
 function syncPatternUrl(patternId: TiuPatternId) {
   if (typeof window === "undefined") return;
@@ -1752,10 +1752,10 @@ export function TiuPatternPractice({
               tersedia pada pola{" "}
               <button
                 type="button"
-                onClick={() => handlePatternChange("sinonim-antonim-akronim")}
+                onClick={() => handlePatternChange("silogisme")}
                 className="font-semibold text-blue-700 underline underline-offset-4 hover:text-blue-800"
               >
-                Sinonim, Antonim, dan Akronim ({patternStats[0]?.total ?? 0} soal)
+                Silogisme &amp; Penalaran Induktif
               </button>
               .
             </p>
@@ -2315,6 +2315,12 @@ function QuestionNumberNavigator({
 function capitalize(value: string) {
   return value
     .split("-")
-    .map((part) => (part ? part[0].toUpperCase() + part.slice(1) : part))
+    .map((part, index) => {
+      if (!part) return part;
+      const lower = part.toLowerCase();
+      if (lower === "n" || lower === "x" || lower === "y") return lower.toUpperCase();
+      if (index > 0 && (lower === "dan" || lower === "ke")) return lower;
+      return part[0].toUpperCase() + part.slice(1);
+    })
     .join(" ");
 }

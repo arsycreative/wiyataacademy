@@ -14,7 +14,7 @@ export const PRODUCTS: Record<ProductId, Product> = {
     id: "skd-intensif",
     name: "Paket Intensif SKD CPNS",
     description:
-      "Akses penuh 2.540+ soal HOTS, cheat sheet 20 modul, sprint drill, dan try out SKD simulasi resmi.",
+      "Akses penuh 2.700+ soal HOTS, cheat sheet 20 modul, sprint drill, dan try out SKD simulasi resmi.",
     price: 299_000,
     priceDisplay: "Rp 299.000",
   },

@@ -1,7 +1,6 @@
 import { describe, expect, it } from "vitest";
 
 import {
-  TIU_PATTERN_IDS,
   TKP_PATTERN_IDS,
   TWK_PATTERN_IDS,
   type OptionKey,
@@ -12,8 +11,10 @@ import {
   formatDurationVerbose,
   generateTryoutQuestions,
   stripTryoutAnswersForExam,
+  TRYOUT_ACTIVE_TIU_PATTERNS,
   TRYOUT_MODE_CONFIGS,
   TRYOUT_PRESETS,
+  TRYOUT_TIU_BLUEPRINT_QUOTAS,
 } from "./tryout-engine";
 
 describe("tryout-engine", () => {
@@ -29,9 +30,20 @@ describe("tryout-engine", () => {
     expect(tiuItems.every((item) => item.subtest === "TIU")).toBe(true);
     expect(tkpItems.every((item) => item.subtest === "TKP")).toBe(true);
 
-    // Every pillar, TIU pattern, and TKP aspect is represented
+    // Every pillar, active FR BKN TIU pattern, and TKP aspect is represented
     expect(new Set(twkItems.map((i) => i.question.pattern)).size).toBe(TWK_PATTERN_IDS.length);
-    expect(new Set(tiuItems.map((i) => i.question.pattern)).size).toBe(TIU_PATTERN_IDS.length);
+    expect(new Set(tiuItems.map((i) => i.question.pattern)).size).toBe(
+      TRYOUT_ACTIVE_TIU_PATTERNS.length,
+    );
+    expect(
+      tiuItems.filter((i) => i.question.pattern === "sinonim-antonim-akronim"),
+    ).toHaveLength(0);
+    expect(tiuItems.filter((i) => i.question.pattern === "silogisme")).toHaveLength(
+      TRYOUT_TIU_BLUEPRINT_QUOTAS.official.silogisme,
+    );
+    expect(
+      tiuItems.filter((i) => i.question.pattern === "perbandingan-kuantitatif"),
+    ).toHaveLength(TRYOUT_TIU_BLUEPRINT_QUOTAS.official["perbandingan-kuantitatif"]);
     expect(new Set(tkpItems.map((i) => i.question.pattern)).size).toBe(TKP_PATTERN_IDS.length);
 
     // Every question ID is unique and numbers run 1..110

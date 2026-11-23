@@ -5,11 +5,13 @@ import {
 import { melingkarBatch1Drafts } from "./penalaran-analitis-melingkar/melingkar-batch-1";
 import { melingkarBatch2Drafts } from "./penalaran-analitis-melingkar/melingkar-batch-2";
 import { melingkarBatch3Drafts } from "./penalaran-analitis-melingkar/melingkar-batch-3";
+import { analitisBatch4UrutanDudukTabelDrafts } from "./penalaran-analitis-melingkar/analitis-batch-4-urutan-duduk-tabel";
 
 const allDrafts = [
   ...melingkarBatch1Drafts,
   ...melingkarBatch2Drafts,
   ...melingkarBatch3Drafts,
+  ...analitisBatch4UrutanDudukTabelDrafts,
 ];
 
 export const penalaranAnalitisMelingkarQuestions: readonly Question[] = buildPatternQuestions(
