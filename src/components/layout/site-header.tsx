@@ -4,19 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import {
-  Award,
-  BookOpen,
-  ChevronDown,
-  Compass,
-  LogIn,
-  LogOut,
-  Menu,
-  Sparkles,
-  User as UserIcon,
-  X,
-  Zap,
-} from "lucide-react";
+import { ChevronDown, LogOut, Menu, User as UserIcon, X } from "lucide-react";
 
 import { BrandLogo } from "@/components/layout/brand-logo";
 import { Button } from "@/components/ui/button";
@@ -31,21 +19,18 @@ const BANK_SOAL_ITEMS = [
     code: "TWK",
     label: "Tes Wawasan Kebangsaan",
     meta: "5 pilar • 400 soal",
-    badgeClass: "bg-blue-600 text-white",
   },
   {
     href: APP_ROUTES.tiuPractice,
     code: "TIU",
     label: "Tes Intelegensia Umum",
     meta: "9 pola • 1.660 soal",
-    badgeClass: "bg-violet-600 text-white",
   },
   {
     href: APP_ROUTES.tkpPractice,
     code: "TKP",
     label: "Tes Karakteristik Pribadi",
     meta: "6 aspek • 480 soal",
-    badgeClass: "bg-teal-600 text-white",
   },
 ] as const;
 
@@ -124,19 +109,19 @@ export function SiteHeader() {
   };
 
   return (
-    <header className="sticky top-0 z-30 border-b border-blue-100 bg-white/95 backdrop-blur print:hidden">
-      <div className="mx-auto flex h-[4.5rem] max-w-[1280px] items-center justify-between gap-4 px-5 sm:px-8 lg:px-10">
+    <header className="sticky top-0 z-30 border-b border-slate-200/80 bg-white/90 backdrop-blur-md print:hidden">
+      <div className="mx-auto flex h-[4.5rem] max-w-[1280px] items-center justify-between gap-6 px-5 sm:px-8 lg:px-10">
         {/* Brand Logo */}
-        <Link href={APP_ROUTES.home} className="flex items-center gap-3">
-          <BrandLogo priority className="h-10 sm:h-11" />
+        <Link href={APP_ROUTES.home} className="flex shrink-0 items-center">
+          <BrandLogo priority className="h-9 sm:h-10" />
         </Link>
 
-        {/* Desktop Navigation — 4 Pilar Utama Fungsional */}
+        {/* Desktop Navigation — Simple, Elegan & Profesional (Tanpa Ikon Dekoratif) */}
         <nav
           aria-label="Navigasi utama"
-          className="hidden items-center gap-1.5 lg:flex xl:gap-2.5"
+          className="hidden items-center gap-7 lg:flex xl:gap-9"
         >
-          {/* 1. Bank Soal SKD (Dropdown Latihan Mandiri & Roadmap) */}
+          {/* 1. Bank Soal (Dropdown Subtes & Roadmap) */}
           <div ref={dropdownRef} className="relative">
             <button
               type="button"
@@ -144,17 +129,16 @@ export function SiteHeader() {
               aria-haspopup="menu"
               onClick={() => setBankDropdownOpen((open) => !open)}
               className={cn(
-                "inline-flex items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-medium text-slate-700 transition-colors hover:bg-slate-100 hover:text-blue-700 xl:text-sm",
+                "inline-flex items-center gap-1 py-1 text-sm font-medium tracking-[-0.01em] text-slate-600 transition-colors hover:text-slate-950",
                 (bankDropdownOpen || isBankSoalActive) &&
-                  "bg-blue-50 font-semibold text-blue-700",
+                  "font-semibold text-blue-700",
               )}
             >
-              <BookOpen className="size-4 text-blue-600" aria-hidden />
               <span>Bank Soal</span>
               <ChevronDown
                 className={cn(
-                  "size-3.5 transition-transform duration-150",
-                  bankDropdownOpen && "rotate-180",
+                  "size-3.5 text-slate-400 transition-transform duration-150",
+                  bankDropdownOpen && "rotate-180 text-blue-600",
                 )}
                 aria-hidden
               />
@@ -164,13 +148,13 @@ export function SiteHeader() {
               <div
                 role="menu"
                 aria-label="Subtes Bank Soal SKD"
-                className="absolute left-0 top-full z-40 mt-2 w-80 rounded-2xl border border-blue-100 bg-white p-2 shadow-xl shadow-blue-950/10"
+                className="absolute left-0 top-full z-40 mt-3 w-72 rounded-xl border border-slate-200/90 bg-white p-1.5 shadow-xl shadow-slate-900/8"
               >
-                <div className="px-2.5 py-1.5 text-[11px] font-bold uppercase tracking-wider text-slate-400">
-                  Latihan per Subtes (2.540 Soal)
+                <div className="px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wider text-slate-400">
+                  Latihan Subtes (2.540 Soal)
                 </div>
 
-                <div className="space-y-1">
+                <div className="space-y-0.5">
                   {BANK_SOAL_ITEMS.map((item) => {
                     const isItemActive = pathname === item.href;
                     return (
@@ -180,84 +164,73 @@ export function SiteHeader() {
                         role="menuitem"
                         onClick={() => setBankDropdownOpen(false)}
                         className={cn(
-                          "flex items-center gap-3 rounded-xl px-2.5 py-2 transition-colors hover:bg-blue-50/80",
-                          isItemActive && "bg-blue-50",
+                          "flex items-center justify-between rounded-lg px-3 py-2 transition-colors hover:bg-slate-50",
+                          isItemActive && "bg-blue-50/70",
                         )}
                       >
-                        <span
-                          className={cn(
-                            "flex h-7 w-10 shrink-0 items-center justify-center rounded-lg text-[11px] font-bold",
-                            item.badgeClass,
-                          )}
-                        >
-                          {item.code}
-                        </span>
                         <div className="min-w-0">
                           <p className="truncate text-xs font-semibold text-slate-900">
-                            {item.label}
+                            {item.code} — {item.label}
                           </p>
-                          <p className="text-[11px] text-slate-500">{item.meta}</p>
+                          <p className="mt-0.5 text-[11px] text-slate-500">
+                            {item.meta}
+                          </p>
                         </div>
                       </Link>
                     );
                   })}
                 </div>
 
-                <div className="mt-2 border-t border-slate-100 pt-2">
+                <div className="mt-1 border-t border-slate-100 pt-1">
                   <Link
                     href={APP_ROUTES.courseDetail("intensif-skd-cpns")}
                     role="menuitem"
                     onClick={() => setBankDropdownOpen(false)}
-                    className="flex items-center gap-2.5 rounded-xl bg-slate-50/90 px-2.5 py-2 text-xs font-semibold text-blue-800 transition-colors hover:bg-blue-50"
+                    className="block rounded-lg px-3 py-2 text-xs font-semibold text-blue-700 transition-colors hover:bg-blue-50/70"
                   >
-                    <Compass className="size-4 shrink-0 text-blue-600" aria-hidden />
-                    <span>Roadmap Learning Path SKD (5 Tahap)</span>
+                    Roadmap Learning Path SKD &rarr;
                   </Link>
                 </div>
               </div>
             )}
           </div>
 
-          {/* 2. Sprint 10m (Drill Kecepatan) */}
+          {/* 2. Sprint 10m */}
           <Link
             href={APP_ROUTES.sprint}
             className={cn(
-              "inline-flex items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-medium text-slate-700 transition-colors hover:bg-slate-100 hover:text-blue-700 xl:text-sm",
-              pathname === APP_ROUTES.sprint && "bg-blue-50 font-semibold text-blue-700",
+              "py-1 text-sm font-medium tracking-[-0.01em] text-slate-600 transition-colors hover:text-slate-950",
+              pathname === APP_ROUTES.sprint && "font-semibold text-blue-700",
             )}
           >
-            <Zap className="size-4 text-amber-500" aria-hidden />
-            <span>Sprint 10m</span>
+            Sprint 10m
           </Link>
 
-          {/* 3. Tryout CAT (Simulasi 110 Soal Resmi) */}
+          {/* 3. Tryout CAT */}
           <Link
             href={APP_ROUTES.tryout}
             className={cn(
-              "inline-flex items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-medium text-slate-700 transition-colors hover:bg-slate-100 hover:text-blue-700 xl:text-sm",
-              pathname === APP_ROUTES.tryout && "bg-blue-50 font-semibold text-blue-700",
+              "py-1 text-sm font-medium tracking-[-0.01em] text-slate-600 transition-colors hover:text-slate-950",
+              pathname === APP_ROUTES.tryout && "font-semibold text-blue-700",
             )}
           >
-            <Award className="size-4 text-blue-600" aria-hidden />
-            <span>Tryout CAT</span>
+            Tryout CAT
           </Link>
 
-          {/* 4. Paket Belajar (Fokus Utama / Highlight Konversi) */}
+          {/* 4. Paket Belajar */}
           <Link
             href={APP_ROUTES.pricing}
             className={cn(
-              "ml-1 inline-flex items-center gap-1.5 rounded-full border border-blue-200 bg-blue-50/90 px-3.5 py-1.5 text-xs font-semibold text-blue-700 shadow-sm transition-all hover:bg-blue-100 hover:text-blue-800 xl:text-sm",
-              pathname === APP_ROUTES.pricing &&
-                "border-blue-600 bg-blue-600 text-white shadow-blue-500/20 hover:bg-blue-700 hover:text-white",
+              "py-1 text-sm font-medium tracking-[-0.01em] text-slate-600 transition-colors hover:text-slate-950",
+              pathname === APP_ROUTES.pricing && "font-semibold text-blue-700",
             )}
           >
-            <Sparkles className="size-3.5 text-amber-500" aria-hidden />
-            <span>Paket Belajar</span>
+            Paket Belajar
           </Link>
         </nav>
 
         {/* Right CTA / Auth Area */}
-        <div className="hidden items-center gap-2.5 lg:flex">
+        <div className="hidden items-center gap-3 lg:flex">
           {isLoading ? (
             <div
               aria-hidden
@@ -268,19 +241,19 @@ export function SiteHeader() {
               <Button
                 asChild
                 variant="outline"
-                className="h-9 max-w-[180px] gap-2 border-blue-200 bg-blue-50/70 px-3 text-blue-900 hover:bg-blue-100/70"
+                className="h-9 max-w-[180px] gap-2 border-slate-200 bg-white px-3 text-slate-800 hover:bg-slate-50"
               >
                 <Link href={APP_ROUTES.account} title={user.email ?? displayName}>
                   {avatarUrl ? (
                     <Image
                       src={avatarUrl}
                       alt={displayName}
-                      width={22}
-                      height={22}
-                      className="size-5.5 shrink-0 rounded-full object-cover"
+                      width={20}
+                      height={20}
+                      className="size-5 shrink-0 rounded-full object-cover"
                     />
                   ) : (
-                    <UserIcon className="size-4 shrink-0 text-blue-700" aria-hidden />
+                    <UserIcon className="size-3.5 shrink-0 text-slate-500" aria-hidden />
                   )}
                   <span className="truncate text-xs font-semibold">{displayName}</span>
                 </Link>
@@ -291,7 +264,7 @@ export function SiteHeader() {
                 size="icon"
                 disabled={isSigningOut}
                 onClick={handleSignOut}
-                className="size-9 text-slate-500 hover:bg-rose-50 hover:text-rose-600"
+                className="size-9 text-slate-400 hover:bg-rose-50 hover:text-rose-600"
                 aria-label="Keluar akun"
                 title="Keluar"
               >
@@ -299,17 +272,16 @@ export function SiteHeader() {
               </Button>
             </div>
           ) : (
-            <div className="flex items-center gap-2">
-              <Button
-                asChild
-                variant="ghost"
-                className="h-9 px-3 text-xs font-medium text-slate-600 hover:text-blue-700 xl:text-sm"
+            <div className="flex items-center gap-3">
+              <Link
+                href={loginHref}
+                className="px-2 py-1.5 text-sm font-medium text-slate-600 transition-colors hover:text-slate-950"
               >
-                <Link href={loginHref}>Masuk</Link>
-              </Button>
+                Masuk
+              </Link>
               <Button
                 asChild
-                className="h-9 bg-blue-600 px-4 text-xs font-semibold text-white shadow-sm shadow-blue-500/20 hover:bg-blue-700 xl:text-sm"
+                className="h-9 rounded-lg bg-blue-600 px-4 text-xs font-semibold text-white shadow-xs transition-colors hover:bg-blue-700 xl:text-sm"
               >
                 <Link href={APP_ROUTES.register}>Daftar Gratis</Link>
               </Button>
@@ -323,23 +295,25 @@ export function SiteHeader() {
           aria-label={mobileMenuOpen ? "Tutup menu navigasi" : "Buka menu navigasi"}
           aria-expanded={mobileMenuOpen}
           onClick={() => setMobileMenuOpen((open) => !open)}
-          className="inline-flex size-10 items-center justify-center rounded-lg border border-blue-100 text-blue-950 hover:bg-blue-50 lg:hidden"
+          className="inline-flex size-9 items-center justify-center rounded-lg border border-slate-200 text-slate-700 hover:bg-slate-50 lg:hidden"
         >
-          {mobileMenuOpen ? <X className="size-5" aria-hidden /> : <Menu className="size-5" aria-hidden />}
+          {mobileMenuOpen ? (
+            <X className="size-4.5" aria-hidden />
+          ) : (
+            <Menu className="size-4.5" aria-hidden />
+          )}
         </button>
       </div>
 
       {/* Mobile Navigation Drawer */}
       {mobileMenuOpen && (
-        <div className="border-t border-blue-100 bg-white px-5 py-4 lg:hidden">
-          <nav aria-label="Navigasi mobile" className="grid gap-1.5 text-sm font-medium text-blue-950">
-            {/* Bank Soal Accordion Section */}
-            <div className="rounded-xl border border-blue-100 bg-slate-50/70 p-2.5">
-              <p className="flex items-center gap-1.5 px-2 py-1 text-[11px] font-bold uppercase tracking-wider text-slate-500">
-                <BookOpen className="size-3.5 text-blue-600" aria-hidden />
+        <div className="border-t border-slate-100 bg-white px-5 py-4 lg:hidden">
+          <nav aria-label="Navigasi mobile" className="grid gap-1 text-sm font-medium text-slate-800">
+            <div className="rounded-xl border border-slate-200/80 bg-slate-50/70 p-2.5">
+              <p className="px-2 py-1 text-[11px] font-semibold uppercase tracking-wider text-slate-400">
                 Bank Soal SKD (2.540 Soal)
               </p>
-              <div className="mt-1.5 grid gap-1">
+              <div className="mt-1 grid gap-0.5">
                 {BANK_SOAL_ITEMS.map((item) => (
                   <Link
                     key={item.href}
@@ -356,40 +330,35 @@ export function SiteHeader() {
                 <Link
                   href={APP_ROUTES.courseDetail("intensif-skd-cpns")}
                   onClick={() => setMobileMenuOpen(false)}
-                  className="flex items-center gap-2 rounded-lg bg-white px-2.5 py-2 text-xs font-semibold text-blue-700 shadow-sm"
+                  className="mt-1 block rounded-lg bg-white px-2.5 py-2 text-xs font-semibold text-blue-700 shadow-2xs"
                 >
-                  <Compass className="size-3.5" aria-hidden />
-                  Roadmap Learning Path SKD (5 Tahap)
+                  Roadmap Learning Path SKD &rarr;
                 </Link>
               </div>
             </div>
 
-            {/* Core Drill Links */}
             <Link
               href={APP_ROUTES.sprint}
               onClick={() => setMobileMenuOpen(false)}
-              className="flex items-center gap-2 rounded-lg px-3 py-2 transition-colors hover:bg-blue-50 hover:text-blue-700"
+              className="rounded-lg px-3 py-2.5 transition-colors hover:bg-slate-50 hover:text-blue-700"
             >
-              <Zap className="size-4 text-amber-500" aria-hidden />
-              <span>Sprint Drill 10 Menit</span>
+              Sprint 10m
             </Link>
 
             <Link
               href={APP_ROUTES.tryout}
               onClick={() => setMobileMenuOpen(false)}
-              className="flex items-center gap-2 rounded-lg px-3 py-2 transition-colors hover:bg-blue-50 hover:text-blue-700"
+              className="rounded-lg px-3 py-2.5 transition-colors hover:bg-slate-50 hover:text-blue-700"
             >
-              <Award className="size-4 text-blue-600" aria-hidden />
-              <span>Simulasi Tryout CAT 110 Soal</span>
+              Tryout CAT
             </Link>
 
             <Link
               href={APP_ROUTES.pricing}
               onClick={() => setMobileMenuOpen(false)}
-              className="flex items-center gap-2 rounded-lg bg-blue-50 px-3 py-2 font-semibold text-blue-700"
+              className="rounded-lg px-3 py-2.5 font-semibold text-blue-700 transition-colors hover:bg-blue-50"
             >
-              <Sparkles className="size-4 text-amber-500" aria-hidden />
-              <span>Paket Belajar &amp; Harga</span>
+              Paket Belajar
             </Link>
 
             {/* Secondary Landing Anchor Links */}
@@ -398,21 +367,21 @@ export function SiteHeader() {
                 <Link
                   href={APP_ROUTES.programs}
                   onClick={() => setMobileMenuOpen(false)}
-                  className="rounded px-2 py-1.5 hover:bg-slate-50 hover:text-blue-700"
+                  className="rounded px-2 py-1.5 hover:bg-slate-50 hover:text-slate-900"
                 >
                   Program
                 </Link>
                 <Link
                   href={APP_ROUTES.method}
                   onClick={() => setMobileMenuOpen(false)}
-                  className="rounded px-2 py-1.5 hover:bg-slate-50 hover:text-blue-700"
+                  className="rounded px-2 py-1.5 hover:bg-slate-50 hover:text-slate-900"
                 >
                   Metode
                 </Link>
                 <Link
                   href={APP_ROUTES.faq}
                   onClick={() => setMobileMenuOpen(false)}
-                  className="rounded px-2 py-1.5 hover:bg-slate-50 hover:text-blue-700"
+                  className="rounded px-2 py-1.5 hover:bg-slate-50 hover:text-slate-900"
                 >
                   FAQ
                 </Link>
@@ -424,9 +393,8 @@ export function SiteHeader() {
           <div className="mt-4 border-t border-slate-100 pt-3">
             {user ? (
               <div className="grid gap-2">
-                <Button asChild variant="outline" className="w-full border-blue-200 bg-blue-50/70 text-blue-900">
+                <Button asChild variant="outline" className="w-full border-slate-200 text-slate-800">
                   <Link href={APP_ROUTES.account} onClick={() => setMobileMenuOpen(false)}>
-                    <UserIcon className="size-4" aria-hidden />
                     Akun Saya ({displayName})
                   </Link>
                 </Button>
@@ -437,7 +405,6 @@ export function SiteHeader() {
                   onClick={handleSignOut}
                   className="w-full border-rose-200 text-rose-700 hover:bg-rose-50"
                 >
-                  <LogOut className="size-4" aria-hidden />
                   Keluar
                 </Button>
               </div>
@@ -445,11 +412,10 @@ export function SiteHeader() {
               <div className="grid grid-cols-2 gap-2">
                 <Button asChild variant="outline" className="w-full border-slate-200 text-slate-700">
                   <Link href={loginHref} onClick={() => setMobileMenuOpen(false)}>
-                    <LogIn className="size-4" aria-hidden />
                     Masuk
                   </Link>
                 </Button>
-                <Button asChild className="w-full bg-blue-600 hover:bg-blue-700 text-white">
+                <Button asChild className="w-full bg-blue-600 text-white hover:bg-blue-700">
                   <Link href={APP_ROUTES.register} onClick={() => setMobileMenuOpen(false)}>
                     Daftar Gratis
                   </Link>
