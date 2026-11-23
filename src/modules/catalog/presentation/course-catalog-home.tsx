@@ -10,15 +10,10 @@ export async function CourseCatalogHome() {
   const courses = await createCourseRepository().listPublished();
 
   return (
-    <div className="min-h-screen bg-[#f8fbff] text-slate-950">
+    <div className="min-h-screen bg-[#f8fafc] text-slate-950">
       <SiteHeader />
 
-      <main className="relative overflow-hidden border-t border-blue-100/80">
-        <div
-          aria-hidden
-          className="pointer-events-none absolute right-[-7rem] top-16 h-[22rem] w-[22rem] rounded-full opacity-70 [background-image:radial-gradient(#bad7ff_1.6px,transparent_1.6px)] [background-size:18px_18px]"
-        />
-
+      <main>
         <CpnsHeroSection />
         <CpnsFeaturesSection />
         <CourseCatalogBrowser courses={courses} />

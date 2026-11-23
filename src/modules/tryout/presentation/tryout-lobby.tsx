@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import {
-  ArrowLeft,
   ArrowRight,
   Award,
   CheckCircle2,
@@ -11,7 +10,6 @@ import {
   History,
   Lock,
   Play,
-  ShieldCheck,
   Shuffle,
   Sparkles,
   Trash2,
@@ -79,136 +77,35 @@ export function TryoutLobby({
 
   return (
     <div className="mx-auto max-w-[1280px] px-5 py-8 sm:px-8 sm:py-10 lg:px-10">
-      {/* Header & Aturan Resmi BKN */}
-      <div className="border-b border-blue-100 pb-8">
-        <Button
-          asChild
-          variant="ghost"
-          className="-ml-2 mb-3 text-blue-700 hover:bg-blue-50 hover:text-blue-800"
-        >
-          <Link href={APP_ROUTES.home}>
-            <ArrowLeft className="size-4" aria-hidden />
-            Kembali ke Beranda
-          </Link>
-        </Button>
+      {/* Header & Ringkasan Standar BKN */}
+      <div className="border-b border-slate-200/80 pb-6">
+        <p className="text-xs font-semibold uppercase tracking-[0.16em] text-blue-700">
+          Simulasi CAT • SKD CPNS
+        </p>
+        <h1 className="mt-1.5 text-2xl font-bold tracking-tight text-slate-950 sm:text-3xl">
+          Tryout CAT SKD Resmi
+        </h1>
+        <p className="mt-1.5 max-w-2xl text-sm leading-6 text-slate-600">
+          Simulasi 110 soal dalam 100 menit sesuai standar BKN. Pembahasan lengkap dan
+          smart rekomendasi belajar dibuka setelah ujian selesai.
+        </p>
 
-        <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
-          <div>
-            <p className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-blue-700">
-              <ShieldCheck className="size-4" aria-hidden />
-              Simulasi Ujian Berbasis Komputer • SKD CPNS
-            </p>
-            <h1 className="mt-2 text-2xl font-semibold tracking-tight text-slate-950 sm:text-4xl">
-              Tryout CAT SKD Resmi
-            </h1>
-            <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-600 sm:text-base">
-              Uji kesiapan penuh dengan komposisi standar BKN: 110 soal terstratifikasi dari seluruh
-              pilar TWK, pola TIU, dan aspek TKP dalam 100 menit. Kunci jawaban dan pembahasan
-              ditahan hingga ujian selesai.
-            </p>
-          </div>
-
-          <div className="flex flex-wrap gap-2">
-            <Button
-              asChild
-              variant="outline"
-              className="border-indigo-200 bg-indigo-50/70 font-semibold text-indigo-800 hover:bg-indigo-100"
-            >
-              <Link href={APP_ROUTES.sprint}>Sprint 10–15 Menit</Link>
-            </Button>
-            <Button
-              asChild
-              variant="outline"
-              className="border-blue-200 text-blue-700 hover:bg-blue-50"
-            >
-              <Link href={APP_ROUTES.twkPractice}>Latihan TWK</Link>
-            </Button>
-            <Button
-              asChild
-              variant="outline"
-              className="border-blue-200 text-blue-700 hover:bg-blue-50"
-            >
-              <Link href={APP_ROUTES.tiuPractice}>Latihan TIU</Link>
-            </Button>
-            <Button
-              asChild
-              variant="outline"
-              className="border-blue-200 text-blue-700 hover:bg-blue-50"
-            >
-              <Link href={APP_ROUTES.tkpPractice}>Latihan TKP</Link>
-            </Button>
-          </div>
-        </div>
-
-        {/* Kartu Standar Ambang Batas BKN */}
-        <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          <div className="rounded-2xl border border-blue-100 bg-white p-4 shadow-2xs">
-            <div className="flex items-center justify-between">
-              <span className="rounded-md bg-blue-600 px-2 py-0.5 text-xs font-bold text-white">
-                TWK
-              </span>
-              <span className="text-xs font-semibold text-slate-500">
-                {officialCfg.subtests.TWK.questionCount} soal
-              </span>
-            </div>
-            <p className="mt-2.5 text-lg font-bold text-slate-950">
-              PG {officialCfg.subtests.TWK.passingGrade}{" "}
-              <span className="text-xs font-medium text-slate-500">
-                / {officialCfg.subtests.TWK.maxScore}
-              </span>
-            </p>
-            <p className="mt-0.5 text-xs text-slate-600">Benar +5 • Salah/Kosong 0</p>
-          </div>
-
-          <div className="rounded-2xl border border-violet-100 bg-white p-4 shadow-2xs">
-            <div className="flex items-center justify-between">
-              <span className="rounded-md bg-violet-600 px-2 py-0.5 text-xs font-bold text-white">
-                TIU
-              </span>
-              <span className="text-xs font-semibold text-slate-500">
-                {officialCfg.subtests.TIU.questionCount} soal
-              </span>
-            </div>
-            <p className="mt-2.5 text-lg font-bold text-slate-950">
-              PG {officialCfg.subtests.TIU.passingGrade}{" "}
-              <span className="text-xs font-medium text-slate-500">
-                / {officialCfg.subtests.TIU.maxScore}
-              </span>
-            </p>
-            <p className="mt-0.5 text-xs text-slate-600">Benar +5 • Salah/Kosong 0</p>
-          </div>
-
-          <div className="rounded-2xl border border-teal-100 bg-white p-4 shadow-2xs">
-            <div className="flex items-center justify-between">
-              <span className="rounded-md bg-teal-600 px-2 py-0.5 text-xs font-bold text-white">
-                TKP
-              </span>
-              <span className="text-xs font-semibold text-slate-500">
-                {officialCfg.subtests.TKP.questionCount} soal
-              </span>
-            </div>
-            <p className="mt-2.5 text-lg font-bold text-slate-950">
-              PG {officialCfg.subtests.TKP.passingGrade}{" "}
-              <span className="text-xs font-medium text-slate-500">
-                / {officialCfg.subtests.TKP.maxScore}
-              </span>
-            </p>
-            <p className="mt-0.5 text-xs text-slate-600">Skala 1–5 poin • Kosong 0</p>
-          </div>
-
-          <div className="rounded-2xl border border-slate-200 bg-slate-900 p-4 text-white shadow-2xs">
-            <div className="flex items-center justify-between">
-              <span className="inline-flex items-center gap-1 text-xs font-semibold uppercase tracking-wider text-blue-200">
-                <Clock className="size-3.5" aria-hidden />
-                Waktu CAT
-              </span>
-              <span className="text-xs font-semibold text-slate-300">Maks 550</span>
-            </div>
-            <p className="mt-2.5 text-lg font-bold">100 Menit</p>
-            <p className="mt-0.5 text-xs text-slate-300">
-              ~54 detik/soal • Auto-submit saat habis
-            </p>
-          </div>
+        {/* Strip Ringkas Ambang Batas BKN */}
+        <div className="mt-5 flex flex-wrap items-center gap-x-5 gap-y-2 rounded-xl border border-slate-200/90 bg-white px-4 py-3 text-xs text-slate-600 shadow-2xs">
+          <span className="font-semibold text-slate-900">Standar Resmi BKN:</span>
+          <span>
+            <strong className="text-slate-900">TWK</strong> {officialCfg.subtests.TWK.questionCount} soal (PG {officialCfg.subtests.TWK.passingGrade})
+          </span>
+          <span className="hidden text-slate-300 sm:inline">•</span>
+          <span>
+            <strong className="text-slate-900">TIU</strong> {officialCfg.subtests.TIU.questionCount} soal (PG {officialCfg.subtests.TIU.passingGrade})
+          </span>
+          <span className="hidden text-slate-300 sm:inline">•</span>
+          <span>
+            <strong className="text-slate-900">TKP</strong> {officialCfg.subtests.TKP.questionCount} soal (PG {officialCfg.subtests.TKP.passingGrade})
+          </span>
+          <span className="hidden text-slate-300 sm:inline">•</span>
+          <span className="font-semibold text-blue-700">100 Menit (Maks 550)</span>
         </div>
       </div>
 
@@ -326,23 +223,16 @@ export function TryoutLobby({
                     ) : null}
                   </div>
 
-                  <h3 className="mt-3 text-lg font-semibold text-slate-950">{preset.title}</h3>
+                  <h3 className="mt-3 text-base font-bold text-slate-950 sm:text-lg">{preset.title}</h3>
                   <p className="mt-1.5 text-xs leading-5 text-slate-600">{preset.subtitle}</p>
 
-                  <div className="mt-4 flex flex-wrap gap-1.5 text-[11px] font-semibold text-slate-700">
-                    <span className="rounded-lg bg-slate-100 px-2.5 py-1">
-                      TWK {cfg.subtests.TWK.questionCount}
-                    </span>
-                    <span className="rounded-lg bg-slate-100 px-2.5 py-1">
-                      TIU {cfg.subtests.TIU.questionCount}
-                    </span>
-                    <span className="rounded-lg bg-slate-100 px-2.5 py-1">
-                      TKP {cfg.subtests.TKP.questionCount}
-                    </span>
-                    <span className="rounded-lg bg-blue-50 px-2.5 py-1 text-blue-800">
+                  <p className="mt-3.5 text-xs font-medium text-slate-500">
+                    TWK {cfg.subtests.TWK.questionCount} • TIU {cfg.subtests.TIU.questionCount} • TKP{" "}
+                    {cfg.subtests.TKP.questionCount} •{" "}
+                    <span className="font-semibold text-slate-800">
                       {Math.round(cfg.durationSec / 60)} menit
                     </span>
-                  </div>
+                  </p>
                 </div>
 
                 {isLocked ? (

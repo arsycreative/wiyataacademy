@@ -1,110 +1,113 @@
 import Link from "next/link";
-import { ArrowRight, ArrowUpRight } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { EXAM_PILLARS } from "@/modules/catalog/presentation/cpns-landing-content";
 import { APP_ROUTES } from "@/shared/constants/app";
 
+const SKD_SUBTEST_PREVIEW = [
+  { code: "TWK", name: "Tes Wawasan Kebangsaan", detail: "30 soal • PG 65" },
+  { code: "TIU", name: "Tes Intelegensia Umum", detail: "35 soal • PG 80" },
+  { code: "TKP", name: "Tes Karakteristik Pribadi", detail: "45 soal • PG 166" },
+] as const;
+
 export function CpnsHeroSection() {
   return (
-    <section className="relative flex min-h-[calc(100svh-4.5rem)] flex-col justify-between">
-      <div className="mx-auto flex w-full max-w-[1280px] flex-1 items-center px-5 py-10 sm:px-8 lg:px-10">
-        <div className="grid w-full items-center gap-12 lg:grid-cols-12 lg:gap-10">
+    <section className="flex min-h-[calc(100svh-4.5rem)] flex-col justify-between bg-white">
+      <div className="mx-auto flex w-full max-w-[1280px] flex-1 items-center px-5 py-12 sm:px-8 lg:px-10">
+        <div className="grid w-full items-center gap-12 lg:grid-cols-12 lg:gap-12">
           <div className="lg:col-span-7">
-            <p className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-blue-700">
-              <span className="h-2 w-2 rounded-full bg-blue-600" aria-hidden />
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-blue-700">
               Bimbel Intensif SKD CPNS
             </p>
 
-            <h1 className="mt-5 text-[clamp(2.5rem,5.4vw,4.5rem)] font-semibold leading-[1.03] tracking-tight text-slate-950">
+            <h1 className="mt-4 text-[clamp(2.4rem,5vw,4.15rem)] font-semibold leading-[1.06] tracking-tight text-slate-950">
               Siap Lolos Seleksi{" "}
               <span className="text-blue-600">SKD CPNS</span>
             </h1>
 
-            <p className="mt-6 max-w-[490px] text-lg leading-8 text-slate-600">
-              Pendampingan belajar terarah untuk TWK, TIU, dan TKP sesuai kisi-kisi terbaru.
+            <p className="mt-5 max-w-[500px] text-base leading-7 text-slate-600 sm:text-lg">
+              Belajar terarah dengan 2.540+ bank soal HOTS, latihan kecepatan
+              Sprint 10 menit, dan simulasi CAT resmi standar BKN.
             </p>
 
-            <div className="mt-9 flex flex-wrap items-center gap-6">
+            <div className="mt-8 flex flex-wrap items-center gap-4">
               <Button
                 asChild
-                className="h-12 bg-blue-600 px-7 text-base font-semibold text-white shadow-lg shadow-blue-200/70 hover:bg-blue-700"
+                className="h-11 rounded-lg bg-blue-600 px-6 text-sm font-semibold text-white shadow-xs hover:bg-blue-700 sm:text-base"
               >
-                <Link href={APP_ROUTES.programs}>
-                  Lihat Program SKD
+                <Link href={APP_ROUTES.tryout}>
+                  Coba Simulasi Gratis
                   <ArrowRight className="size-4" aria-hidden />
                 </Link>
               </Button>
-              <Link
-                href={APP_ROUTES.method}
-                className="inline-flex items-center gap-1.5 text-sm font-semibold text-slate-700 transition-colors hover:text-blue-700"
+              <Button
+                asChild
+                variant="outline"
+                className="h-11 rounded-lg border-slate-200 px-6 text-sm font-semibold text-slate-700 hover:bg-slate-50 sm:text-base"
               >
-                Pelajari metode belajar
-                <ArrowUpRight className="size-4" aria-hidden />
-              </Link>
+                <Link href={APP_ROUTES.pricing}>Lihat Paket Belajar</Link>
+              </Button>
             </div>
           </div>
 
           <div className="lg:col-span-5">
-            <div className="relative mx-auto max-w-[460px] py-4 sm:py-6">
-              <div
-                aria-hidden
-                className="absolute inset-x-4 bottom-0 top-8 rotate-3 rounded-3xl bg-blue-100/80"
-              />
-
-              <div className="relative overflow-hidden rounded-3xl bg-[linear-gradient(135deg,#1e3a8a_0%,#2563eb_55%,#7c3aed_100%)] p-7 text-white shadow-2xl shadow-blue-200/80 sm:p-8">
-                <div
-                  aria-hidden
-                  className="absolute inset-0 opacity-20 [background-image:radial-gradient(#ffffff_1px,transparent_1px)] [background-size:20px_20px]"
-                />
-
-                <div className="relative z-10">
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs font-semibold uppercase tracking-[0.16em] text-blue-100">
-                      Fokus Utama
-                    </span>
-                    <span className="rounded-full bg-white/15 px-3 py-1 text-xs font-semibold">
-                      SKD CPNS
-                    </span>
-                  </div>
-
-                  <p className="mt-5 text-2xl font-semibold leading-snug tracking-tight">
-                    Kuasai Seluruh Subtes SKD Secara Bertahap
+            <div className="rounded-2xl border border-slate-200/90 bg-slate-50/60 p-6 shadow-xs sm:p-7">
+              <div className="flex items-center justify-between border-b border-slate-200/80 pb-4">
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+                    Struktur Ujian Resmi
                   </p>
-
-                  <div className="mt-7 space-y-3">
-                    <div className="flex items-center justify-between rounded-2xl bg-white px-4 py-3.5 text-slate-900 shadow-lg">
-                      <span className="text-sm font-semibold">Wawasan Kebangsaan</span>
-                      <span className="rounded-md bg-blue-600 px-2.5 py-1 text-xs font-bold text-white">
-                        TWK
-                      </span>
-                    </div>
-                    <div className="ml-5 flex items-center justify-between rounded-2xl bg-white/95 px-4 py-3.5 text-slate-900 shadow-lg">
-                      <span className="text-sm font-semibold">Intelegensia Umum</span>
-                      <span className="rounded-md bg-violet-600 px-2.5 py-1 text-xs font-bold text-white">
-                        TIU
-                      </span>
-                    </div>
-                    <div className="mr-4 flex items-center justify-between rounded-2xl bg-white/90 px-4 py-3.5 text-slate-900 shadow-lg">
-                      <span className="text-sm font-semibold">Karakteristik Pribadi</span>
-                      <span className="rounded-md bg-teal-600 px-2.5 py-1 text-xs font-bold text-white">
-                        TKP
-                      </span>
-                    </div>
-                  </div>
+                  <p className="mt-0.5 text-base font-bold text-slate-950">
+                    SKD CAT BKN (110 Soal • 100 Menit)
+                  </p>
                 </div>
+              </div>
+
+              <div className="mt-4 divide-y divide-slate-200/70">
+                {SKD_SUBTEST_PREVIEW.map((item) => (
+                  <div
+                    key={item.code}
+                    className="flex items-center justify-between py-3.5 first:pt-1 last:pb-1"
+                  >
+                    <div>
+                      <p className="text-sm font-semibold text-slate-900">
+                        {item.name}
+                      </p>
+                      <p className="text-xs text-slate-500">{item.detail}</p>
+                    </div>
+                    <span className="rounded-md border border-slate-200 bg-white px-2.5 py-1 text-xs font-bold text-slate-800">
+                      {item.code}
+                    </span>
+                  </div>
+                ))}
+              </div>
+
+              <div className="mt-5 flex items-center justify-between border-t border-slate-200/80 pt-4 text-xs text-slate-600">
+                <span>Tersedia mode Gratis Trial &amp; Paket Penuh</span>
+                <Link
+                  href={APP_ROUTES.tiuPractice}
+                  className="font-semibold text-blue-700 hover:underline"
+                >
+                  Latih Soal &rarr;
+                </Link>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      <div className="border-t border-blue-900/20 bg-[#0f2454] text-white">
+      <div className="border-t border-slate-800 bg-slate-950 text-white">
         <div className="mx-auto grid max-w-[1280px] divide-y divide-white/10 px-5 sm:grid-cols-2 sm:divide-y-0 lg:grid-cols-4 lg:divide-x sm:px-8 lg:px-10">
           {EXAM_PILLARS.map((pillar) => (
-            <div key={pillar.code} className="py-5 lg:px-6 lg:first:pl-0 lg:last:pr-0">
-              <p className="text-sm font-semibold tracking-wide text-white">{pillar.code}</p>
-              <p className="mt-0.5 text-xs text-blue-200">{pillar.label}</p>
+            <div
+              key={pillar.code}
+              className="py-4 lg:px-6 lg:first:pl-0 lg:last:pr-0"
+            >
+              <p className="text-sm font-semibold tracking-wide text-white">
+                {pillar.code}
+              </p>
+              <p className="mt-0.5 text-xs text-slate-400">{pillar.label}</p>
             </div>
           ))}
         </div>

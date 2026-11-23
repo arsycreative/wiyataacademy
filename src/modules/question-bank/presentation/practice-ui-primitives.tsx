@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowLeft, CheckCircle2, ChevronLeft, ChevronRight, RotateCcw } from "lucide-react";
+import { CheckCircle2, ChevronLeft, ChevronRight, RotateCcw } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -53,32 +53,22 @@ export function SubtestPracticeIntro({
   ];
 
   return (
-    <div className="mb-8 flex flex-col gap-5 border-b border-blue-100 pb-6 lg:flex-row lg:items-end lg:justify-between">
+    <div className="mb-6 flex flex-col gap-4 border-b border-slate-200/80 pb-5 lg:flex-row lg:items-end lg:justify-between">
       <div>
-        <Button
-          asChild
-          variant="ghost"
-          className="-ml-2 mb-3 text-blue-700 hover:bg-blue-50 hover:text-blue-800"
-        >
-          <Link href={APP_ROUTES.home}>
-            <ArrowLeft className="size-4" aria-hidden />
-            Kembali ke Beranda
-          </Link>
-        </Button>
-        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-blue-700">
-          Bank Soal Terpisah • SKD CPNS
+        <p className="text-xs font-semibold uppercase tracking-[0.16em] text-blue-700">
+          Bank Soal SKD CPNS
         </p>
-        <h1 className="mt-2 text-2xl font-semibold tracking-tight text-slate-950 sm:text-4xl">
+        <h1 className="mt-1.5 text-2xl font-bold tracking-tight text-slate-950 sm:text-3xl">
           {title}
         </h1>
-        <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-600 sm:text-base">
+        <p className="mt-1.5 max-w-2xl text-sm leading-6 text-slate-600">
           {description}
         </p>
       </div>
 
       <nav
         aria-label="Pilih subtes latihan SKD"
-        className="inline-flex w-fit shrink-0 flex-wrap items-center gap-1.5 rounded-2xl border border-blue-100 bg-white p-1.5 shadow-xs"
+        className="inline-flex w-fit shrink-0 items-center gap-1 rounded-xl border border-slate-200/90 bg-white p-1 shadow-2xs"
       >
         {tabs.map((tab) => {
           const isActive = activeSubtest === tab.id;
@@ -88,39 +78,24 @@ export function SubtestPracticeIntro({
               href={tab.href}
               aria-current={isActive ? "page" : undefined}
               className={cn(
-                "inline-flex items-center gap-2 rounded-xl px-3.5 py-2 text-xs font-semibold transition-colors sm:px-4 sm:text-sm",
+                "inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold transition-colors sm:px-3.5 sm:text-sm",
                 isActive
-                  ? "bg-blue-600 text-white shadow-xs"
-                  : "text-slate-600 hover:bg-blue-50 hover:text-blue-800",
+                  ? "bg-blue-600 text-white"
+                  : "text-slate-600 hover:bg-slate-50 hover:text-slate-950",
               )}
             >
               <span>{tab.id}</span>
               <span
                 className={cn(
-                  "rounded-full px-2 py-0.5 text-[11px] font-bold",
-                  isActive ? "bg-white/20 text-white" : "bg-slate-100 text-slate-600",
+                  "text-[11px] font-medium",
+                  isActive ? "text-blue-100" : "text-slate-400",
                 )}
               >
-                {tab.count.toLocaleString("id-ID")} soal
+                ({tab.count.toLocaleString("id-ID")})
               </span>
             </Link>
           );
         })}
-        <Link
-          href={`${APP_ROUTES.sprint}?subtest=${activeSubtest}`}
-          className="inline-flex items-center gap-1.5 rounded-xl border border-indigo-200 bg-indigo-50 px-3 py-2 text-xs font-semibold text-indigo-800 transition-colors hover:bg-indigo-100 sm:px-3.5 sm:text-sm"
-        >
-          <span>Sprint 10m</span>
-        </Link>
-        <Link
-          href={APP_ROUTES.tryout}
-          className="inline-flex items-center gap-1.5 rounded-xl bg-slate-900 px-3.5 py-2 text-xs font-semibold text-white transition-colors hover:bg-slate-800 sm:px-4 sm:text-sm"
-        >
-          <span>Tryout CAT</span>
-          <span className="rounded-full bg-white/15 px-2 py-0.5 text-[11px] font-bold">
-            110 soal
-          </span>
-        </Link>
       </nav>
     </div>
   );

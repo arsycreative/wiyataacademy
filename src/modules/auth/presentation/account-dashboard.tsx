@@ -3,18 +3,19 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useMemo, useState, type FormEvent } from "react";
+import { useEffect, useMemo, useState, type FormEvent, type ReactNode } from "react";
 import {
   ArrowRight,
-  Award,
   BookOpen,
   CheckCircle2,
+  ChevronDown,
   Clock,
   Cloud,
   CloudOff,
   Loader2,
   LogOut,
   Save,
+  ShieldCheck,
   User as UserIcon,
   XCircle,
 } from "lucide-react";
@@ -51,10 +52,14 @@ type AccountUser = {
 
 type AccountDashboardProps = {
   user: AccountUser;
+  isAdmin?: boolean;
+  billingSection?: ReactNode;
   initialCloudProgress: SanitizedPracticeProgress | null;
   initialSummaries: AllProgressSummaries;
   initialSchemaMissing: boolean;
 };
+
+type AccountTab = "progress" | "billing" | "settings";
 
 function getInitials(name: string, email: string): string {
   const source = name.trim() || email.split("@")[0] || "WA";
@@ -67,6 +72,8 @@ function getInitials(name: string, email: string): string {
 
 export function AccountDashboard({
   user,
+  isAdmin = false,
+  billingSection,
   initialCloudProgress,
   initialSummaries,
   initialSchemaMissing,
@@ -74,6 +81,7 @@ export function AccountDashboard({
   const router = useRouter();
   const addToast = useToastStore((state) => state.addToast);
 
+  const [activeTab, setActiveTab] = useState<AccountTab>("progress");
   const [fullName, setFullName] = useState(user.fullName);
   const [savedName, setSavedName] = useState(user.fullName);
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
@@ -85,7 +93,6 @@ export function AccountDashboard({
   const [summaries, setSummaries] = useState<AllProgressSummaries>(initialSummaries);
   const [tryoutHistory, setTryoutHistory] = useState<TryoutHistoryRecord[]>([]);
 
-  // Gabungkan progres lokal browser agar ringkasan di /akun selalu mutakhir tanpa membebani client bundle
   useEffect(() => {
     let cancelled = false;
     const frame = window.requestAnimationFrame(() => {
@@ -107,10 +114,6 @@ export function AccountDashboard({
       window.cancelAnimationFrame(frame);
     };
   }, [initialCloudProgress]);
-
-  const tiuSummary = summaries.tiu;
-  const twkSummary = summaries.twk;
-  const tkpSummary = summaries.tkp;
 
   const formattedJoinDate = useMemo(() => {
     try {
@@ -184,97 +187,64 @@ export function AccountDashboard({
     }
   };
 
-  const hasGoogle = user.providers.includes("google");
-  const hasEmail = user.providers.includes("email");
-
   return (
     <div className="space-y-6">
-      {/* Header Profil Pengguna */}
-      <section className="rounded-2xl border border-blue-100 bg-white p-6 shadow-sm shadow-blue-100/60 sm:p-8">
-        <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
+      {/* Header Profil Ringkas */}
+      <section className="rounded-2xl border border-slate-200/90 bg-white p-6 shadow-2xs sm:p-7">
+        <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-4">
             {user.avatarUrl ? (
               <Image
                 src={user.avatarUrl}
                 alt={savedName || user.email}
-                width={64}
-                height={64}
-                className="size-16 rounded-2xl border border-blue-100 object-cover shadow-xs"
+                width={56}
+                height={56}
+                className="size-14 rounded-xl border border-slate-200 object-cover"
               />
             ) : (
-              <div className="flex size-16 shrink-0 items-center justify-center rounded-2xl bg-blue-600 text-xl font-bold text-white shadow-md shadow-blue-200">
+              <div className="flex size-14 shrink-0 items-center justify-center rounded-xl bg-blue-600 text-lg font-bold text-white">
                 {getInitials(savedName, user.email)}
               </div>
             )}
 
             <div className="min-w-0">
-              <div className="flex flex-wrap items-center gap-2">
-                <h1 className="truncate text-xl font-semibold text-slate-950 sm:text-2xl">
-                  {savedName || "Peserta Wiyata Academy"}
-                </h1>
-                {hasGoogle && (
-                  <span className="inline-flex items-center rounded-full bg-blue-50 px-2.5 py-0.5 text-xs font-semibold text-blue-700">
-                    Google
-                  </span>
-                )}
-                {hasEmail && (
-                  <span className="inline-flex items-center rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-semibold text-slate-700">
-                    Email
-                  </span>
-                )}
-              </div>
-              <p className="mt-1 truncate text-sm text-slate-600">{user.email}</p>
-              <p className="mt-0.5 text-xs text-slate-500">
-                Bergabung sejak {formattedJoinDate}
+              <h1 className="truncate text-xl font-bold text-slate-950 sm:text-2xl">
+                {savedName || "Peserta Wiyata Academy"}
+              </h1>
+              <p className="mt-0.5 truncate text-sm text-slate-500">
+                {user.email} • Bergabung {formattedJoinDate}
               </p>
             </div>
           </div>
 
           <div className="flex flex-wrap items-center gap-2.5">
+            {isAdmin && (
+              <Button
+                asChild
+                variant="outline"
+                className="border-slate-300 text-xs font-semibold text-slate-800 hover:bg-slate-50"
+              >
+                <Link href={APP_ROUTES.admin}>
+                  <ShieldCheck className="size-4 text-blue-600" aria-hidden />
+                  Dashboard Admin
+                </Link>
+              </Button>
+            )}
             <Button
               asChild
-              variant="outline"
-              className="border-blue-200 font-semibold text-blue-700 hover:bg-blue-50 hover:text-blue-800"
-            >
-              <Link href={APP_ROUTES.twkPractice}>
-                <BookOpen className="size-4" aria-hidden />
-                Latihan TWK
-              </Link>
-            </Button>
-            <Button
-              asChild
-              variant="outline"
-              className="border-blue-200 font-semibold text-blue-700 hover:bg-blue-50 hover:text-blue-800"
-            >
-              <Link href={APP_ROUTES.tkpPractice}>
-                <BookOpen className="size-4" aria-hidden />
-                Latihan TKP
-              </Link>
-            </Button>
-            <Button
-              asChild
-              className="bg-slate-900 font-semibold text-white hover:bg-slate-800"
-            >
-              <Link href={APP_ROUTES.tryout}>
-                <Award className="size-4" aria-hidden />
-                Tryout CAT
-              </Link>
-            </Button>
-            <Button
-              asChild
-              className="bg-blue-600 font-semibold text-white hover:bg-blue-700"
+              className="bg-blue-600 text-xs font-semibold text-white hover:bg-blue-700 sm:text-sm"
             >
               <Link href={APP_ROUTES.tiuPatternPractice(progressState.lastPattern)}>
                 <BookOpen className="size-4" aria-hidden />
-                Lanjut Latihan TIU
+                Lanjut Latihan
               </Link>
             </Button>
             <Button
               type="button"
-              variant="outline"
+              variant="ghost"
               disabled={isSigningOut}
               onClick={handleSignOut}
-              className="border-rose-200 text-rose-700 hover:bg-rose-50 hover:text-rose-800"
+              className="text-xs font-medium text-slate-500 hover:bg-rose-50 hover:text-rose-600"
             >
               {isSigningOut ? (
                 <Loader2 className="size-4 animate-spin" aria-hidden />
@@ -285,134 +255,64 @@ export function AccountDashboard({
             </Button>
           </div>
         </div>
+
+        {/* 3-Tab Navigation */}
+        <div
+          role="tablist"
+          aria-label="Navigasi menu akun"
+          className="mt-6 flex flex-wrap gap-1 border-t border-slate-100 pt-4"
+        >
+          {(
+            [
+              { id: "progress", label: "Progres Belajar" },
+              { id: "billing", label: "Paket & Transaksi" },
+              { id: "settings", label: "Pengaturan Profil" },
+            ] as const
+          ).map((tab) => {
+            const isActive = activeTab === tab.id;
+            return (
+              <button
+                key={tab.id}
+                type="button"
+                role="tab"
+                aria-selected={isActive}
+                onClick={() => setActiveTab(tab.id)}
+                className={cn(
+                  "rounded-lg px-4 py-2 text-xs font-semibold transition-colors sm:text-sm",
+                  isActive
+                    ? "bg-blue-50 text-blue-700"
+                    : "text-slate-600 hover:bg-slate-50 hover:text-slate-950",
+                )}
+              >
+                {tab.label}
+              </button>
+            );
+          })}
+        </div>
       </section>
 
-      <div className="grid gap-6 lg:grid-cols-12 lg:items-start">
-        {/* Form Edit Nama Profil */}
-        <section className="rounded-2xl border border-blue-100 bg-white p-6 shadow-sm shadow-blue-100/60 lg:col-span-5">
-          <div className="flex items-center gap-2 text-blue-700">
-            <UserIcon className="size-4" aria-hidden />
-            <h2 className="text-base font-semibold text-slate-950">Pengaturan Profil</h2>
-          </div>
-          <p className="mt-1 text-xs leading-5 text-slate-600">
-            Perbarui nama tampilan yang digunakan di akun Wiyata Academy Anda.
-          </p>
-
-          <form onSubmit={handleProfileSave} noValidate className="mt-5 space-y-4">
-            <div>
-              <label
-                htmlFor="account-full-name"
-                className="block text-sm font-medium text-slate-800"
-              >
-                Nama Lengkap
-              </label>
-              <input
-                id="account-full-name"
-                type="text"
-                value={fullName}
-                onChange={(e) => setFullName(e.target.value)}
-                className={cn(
-                  "mt-1.5 h-11 w-full rounded-xl border bg-white px-3.5 text-sm text-slate-950 outline-none transition focus:ring-3",
-                  fieldErrors.fullName
-                    ? "border-rose-400 focus:border-rose-500 focus:ring-rose-200/70"
-                    : "border-slate-200 focus:border-blue-500 focus:ring-blue-100",
-                )}
-              />
-              {fieldErrors.fullName?.[0] && (
-                <p className="mt-1 text-xs font-medium text-rose-600">
-                  {fieldErrors.fullName[0]}
-                </p>
-              )}
-            </div>
-
-            <div>
-              <label
-                htmlFor="account-email"
-                className="block text-sm font-medium text-slate-800"
-              >
-                Email Terdaftar
-              </label>
-              <input
-                id="account-email"
-                type="email"
-                disabled
-                value={user.email}
-                className="mt-1.5 h-11 w-full cursor-not-allowed rounded-xl border border-slate-200 bg-slate-50 px-3.5 text-sm text-slate-500"
-              />
-            </div>
-
-            <Button
-              type="submit"
-              disabled={isSavingProfile}
-              className="h-10 bg-blue-600 px-5 text-sm font-semibold text-white hover:bg-blue-700"
-            >
-              {isSavingProfile ? (
-                <Loader2 className="size-4 animate-spin" aria-hidden />
-              ) : (
-                <Save className="size-4" aria-hidden />
-              )}
-              Simpan Profil
-            </Button>
-          </form>
-
-          {/* Status Sinkronisasi Akun */}
-          <div className="mt-6 rounded-xl border border-slate-200 bg-slate-50/80 p-4 text-xs text-slate-700">
-            {initialSchemaMissing ? (
-              <div className="flex items-start gap-2.5">
-                <CloudOff className="mt-0.5 size-4 shrink-0 text-amber-600" aria-hidden />
-                <div>
-                  <p className="font-semibold text-slate-900">
-                    Skema tabel progres belum diterapkan
-                  </p>
-                  <p className="mt-1 leading-5 text-slate-600">
-                    Progres latihan sementara tersimpan aman di browser ini. Jalankan{" "}
-                    <code className="rounded bg-slate-200/70 px-1 py-0.5 text-[11px]">
-                      supabase/migrations/001_auth_and_tiu_progress.sql
-                    </code>{" "}
-                    di SQL Editor (serta{" "}
-                    <code className="rounded bg-slate-200/70 px-1 py-0.5 text-[11px]">
-                      002_supabase_rls.sql
-                    </code>{" "}
-                    bila di-host di Supabase).
-                  </p>
-                </div>
-              </div>
-            ) : (
-              <div className="flex items-start gap-2.5">
-                <Cloud className="mt-0.5 size-4 shrink-0 text-emerald-600" aria-hidden />
-                <div>
-                  <p className="font-semibold text-slate-900">
-                    Sinkronisasi Akun Aktif
-                  </p>
-                  <p className="mt-1 leading-5 text-slate-600">
-                    Jawaban, penanda ragu-ragu, dan pola latihan terakhir Anda tersimpan otomatis ke
-                    database akun.
-                  </p>
-                </div>
-              </div>
-            )}
-          </div>
-        </section>
-
-        {/* Ringkasan Tryout CAT & Progres TKP (6 Aspek), TWK (5 Pilar), TIU (9 Pola) */}
-        <div className="space-y-6 lg:col-span-7">
-          <section className="rounded-2xl border border-blue-100 bg-white p-6 shadow-sm shadow-blue-100/60">
+      {/* Tab 1: Progres Belajar */}
+      {activeTab === "progress" && (
+        <div className="space-y-5">
+          {/* Riwayat Tryout CAT */}
+          <section className="rounded-2xl border border-slate-200/90 bg-white p-6 shadow-2xs">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div>
-                <h2 className="text-base font-semibold text-slate-950">
-                  Simulasi Tryout CAT SKD (110 Soal)
+                <h2 className="text-base font-bold text-slate-950">
+                  Riwayat Tryout CAT SKD
                 </h2>
-                <p className="mt-0.5 text-xs text-slate-600">
-                  Pantau capaian skor tryout berbatas waktu terhadap passing grade BKN.
+                <p className="mt-0.5 text-xs text-slate-500">
+                  Capaian skor simulasi berbatas waktu terhadap passing grade BKN.
                 </p>
               </div>
               <Button
                 asChild
                 size="sm"
-                className="bg-slate-900 font-semibold text-white hover:bg-slate-800"
+                variant="outline"
+                className="border-slate-200 text-xs font-semibold text-slate-800 hover:bg-slate-50"
               >
                 <Link href={APP_ROUTES.tryout}>
-                  Mulai Tryout
+                  Buka Tryout CAT
                   <ArrowRight className="size-3.5" aria-hidden />
                 </Link>
               </Button>
@@ -420,10 +320,10 @@ export function AccountDashboard({
 
             {tryoutHistory.length === 0 ? (
               <div className="mt-4 flex items-center gap-3 rounded-xl border border-dashed border-slate-200 bg-slate-50/70 p-4 text-xs text-slate-600">
-                <Clock className="size-4 shrink-0 text-blue-600" aria-hidden />
+                <Clock className="size-4 shrink-0 text-slate-400" aria-hidden />
                 <span>
-                  Belum ada riwayat simulasi tryout di perangkat ini. Coba paket resmi 110 soal (100
-                  menit) atau Mini Tryout 35 soal di halaman Tryout CAT.
+                  Belum ada riwayat simulasi tryout di perangkat ini. Coba Mini Tryout gratis atau
+                  Paket Resmi 110 soal.
                 </span>
               </div>
             ) : (
@@ -476,27 +376,135 @@ export function AccountDashboard({
             )}
           </section>
 
-          <SubtestSummaryCard
-            title="Ringkasan Latihan TKP (6 Aspek)"
-            subtitle="Pantau progres pengerjaan dan capaian skor 1–5 poin dari 6 aspek TKP SKD CPNS."
-            summary={tkpSummary}
-            buildPracticeHref={APP_ROUTES.tkpPatternPractice}
-            isTkpPoints
-          />
-          <SubtestSummaryCard
-            title="Ringkasan Latihan TWK (5 Pilar)"
-            subtitle="Pantau progres pengerjaan dan akurasi dari 5 pilar Tes Wawasan Kebangsaan."
-            summary={twkSummary}
-            buildPracticeHref={APP_ROUTES.twkPatternPractice}
-          />
-          <SubtestSummaryCard
-            title="Ringkasan Latihan TIU (9 Pola)"
-            subtitle="Pantau progres pengerjaan dan akurasi dari setiap pola TIU SKD CPNS."
-            summary={tiuSummary}
-            buildPracticeHref={APP_ROUTES.tiuPatternPractice}
-          />
+          {/* Ringkasan Subtes Collapsible */}
+          <div className="grid gap-4 lg:grid-cols-3">
+            <SubtestSummaryCard
+              title="TWK (5 Pilar)"
+              summary={summaries.twk}
+              buildPracticeHref={APP_ROUTES.twkPatternPractice}
+            />
+            <SubtestSummaryCard
+              title="TIU (9 Pola)"
+              summary={summaries.tiu}
+              buildPracticeHref={APP_ROUTES.tiuPatternPractice}
+            />
+            <SubtestSummaryCard
+              title="TKP (6 Aspek)"
+              summary={summaries.tkp}
+              buildPracticeHref={APP_ROUTES.tkpPatternPractice}
+              isTkpPoints
+            />
+          </div>
         </div>
-      </div>
+      )}
+
+      {/* Tab 2: Paket & Transaksi */}
+      {activeTab === "billing" && <div>{billingSection}</div>}
+
+      {/* Tab 3: Pengaturan Profil */}
+      {activeTab === "settings" && (
+        <div className="grid gap-6 lg:grid-cols-12 lg:items-start">
+          <section className="rounded-2xl border border-slate-200/90 bg-white p-6 shadow-2xs lg:col-span-6">
+            <div className="flex items-center gap-2 text-slate-900">
+              <UserIcon className="size-4 text-blue-600" aria-hidden />
+              <h2 className="text-base font-bold">Pengaturan Profil</h2>
+            </div>
+            <p className="mt-1 text-xs text-slate-500">
+              Perbarui nama tampilan yang digunakan pada akun dan rapor tryout Anda.
+            </p>
+
+            <form onSubmit={handleProfileSave} noValidate className="mt-5 space-y-4">
+              <div>
+                <label
+                  htmlFor="account-full-name"
+                  className="block text-xs font-semibold text-slate-700"
+                >
+                  Nama Lengkap
+                </label>
+                <input
+                  id="account-full-name"
+                  type="text"
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
+                  className={cn(
+                    "mt-1.5 h-10 w-full rounded-xl border bg-white px-3.5 text-sm text-slate-950 outline-none transition focus:ring-2",
+                    fieldErrors.fullName
+                      ? "border-rose-400 focus:border-rose-500 focus:ring-rose-200/70"
+                      : "border-slate-200 focus:border-blue-500 focus:ring-blue-100",
+                  )}
+                />
+                {fieldErrors.fullName?.[0] && (
+                  <p className="mt-1 text-xs font-medium text-rose-600">
+                    {fieldErrors.fullName[0]}
+                  </p>
+                )}
+              </div>
+
+              <div>
+                <label
+                  htmlFor="account-email"
+                  className="block text-xs font-semibold text-slate-700"
+                >
+                  Email Terdaftar
+                </label>
+                <input
+                  id="account-email"
+                  type="email"
+                  disabled
+                  value={user.email}
+                  className="mt-1.5 h-10 w-full cursor-not-allowed rounded-xl border border-slate-200 bg-slate-50 px-3.5 text-sm text-slate-500"
+                />
+              </div>
+
+              <Button
+                type="submit"
+                disabled={isSavingProfile}
+                className="h-10 bg-blue-600 px-5 text-xs font-semibold text-white hover:bg-blue-700"
+              >
+                {isSavingProfile ? (
+                  <Loader2 className="size-4 animate-spin" aria-hidden />
+                ) : (
+                  <Save className="size-4" aria-hidden />
+                )}
+                Simpan Perubahan
+              </Button>
+            </form>
+          </section>
+
+          <section className="rounded-2xl border border-slate-200/90 bg-white p-6 shadow-2xs lg:col-span-6">
+            <h2 className="text-base font-bold text-slate-950">
+              Status Sinkronisasi Cloud
+            </h2>
+            <div className="mt-4 rounded-xl border border-slate-200/80 bg-slate-50/70 p-4 text-xs text-slate-700">
+              {initialSchemaMissing ? (
+                <div className="flex items-start gap-2.5">
+                  <CloudOff className="mt-0.5 size-4 shrink-0 text-amber-600" aria-hidden />
+                  <div>
+                    <p className="font-semibold text-slate-900">
+                      Skema tabel progres belum diterapkan
+                    </p>
+                    <p className="mt-1 leading-5 text-slate-600">
+                      Progres latihan sementara tersimpan di browser ini. Jalankan migrasi
+                      database di Supabase SQL Editor untuk mengaktifkan sinkronisasi cloud.
+                    </p>
+                  </div>
+                </div>
+              ) : (
+                <div className="flex items-start gap-2.5">
+                  <Cloud className="mt-0.5 size-4 shrink-0 text-emerald-600" aria-hidden />
+                  <div>
+                    <p className="font-semibold text-slate-900">Sinkronisasi Cloud Aktif</p>
+                    <p className="mt-1 leading-5 text-slate-600">
+                      Jawaban latihan, penanda ragu-ragu, dan progres belajar tersimpan otomatis
+                      ke akun Anda.
+                    </p>
+                  </div>
+                </div>
+              )}
+            </div>
+          </section>
+        </div>
+      )}
     </div>
   );
 }
@@ -514,13 +522,11 @@ type SummaryItem = {
 
 function SubtestSummaryCard({
   title,
-  subtitle,
   summary,
   buildPracticeHref,
   isTkpPoints = false,
 }: {
   title: string;
-  subtitle: string;
   summary: {
     totalQuestions: number;
     totalAnswered: number;
@@ -532,6 +538,13 @@ function SubtestSummaryCard({
   buildPracticeHref: (patternId: string) => string;
   isTkpPoints?: boolean;
 }) {
+  const [expanded, setExpanded] = useState(false);
+
+  const completionPct =
+    summary.totalQuestions > 0
+      ? Math.round((summary.totalAnswered / summary.totalQuestions) * 100)
+      : 0;
+
   const accuracyPct = isTkpPoints
     ? (summary.totalMaxAnsweredPoints ?? 0) > 0
       ? Math.round(
@@ -543,95 +556,69 @@ function SubtestSummaryCard({
       : 0;
 
   return (
-    <section className="rounded-2xl border border-blue-100 bg-white p-6 shadow-sm shadow-blue-100/60">
-      <div className="flex flex-wrap items-center justify-between gap-3">
+    <section className="rounded-2xl border border-slate-200/90 bg-white p-5 shadow-2xs">
+      <div className="flex items-start justify-between gap-2">
         <div>
-          <h2 className="text-base font-semibold text-slate-950">{title}</h2>
-          <p className="mt-0.5 text-xs text-slate-600">{subtitle}</p>
+          <h2 className="text-sm font-bold text-slate-950">{title}</h2>
+          <p className="mt-0.5 text-xs text-slate-500">
+            {summary.totalAnswered}/{summary.totalQuestions} terjawab • Akurasi {accuracyPct}%
+          </p>
         </div>
-
-        <div className="flex items-center gap-2">
-          <div className="rounded-xl border border-blue-100 bg-blue-50/70 px-3 py-1.5 text-center">
-            <p className="text-[11px] font-medium text-blue-700">Terjawab</p>
-            <p className="text-sm font-bold text-blue-950">
-              {summary.totalAnswered}/{summary.totalQuestions}
-            </p>
-          </div>
-          <div className="rounded-xl border border-emerald-100 bg-emerald-50/70 px-3 py-1.5 text-center">
-            <p className="text-[11px] font-medium text-emerald-700">
-              {isTkpPoints ? "Skor Poin" : "Akurasi"}
-            </p>
-            <p className="text-sm font-bold text-emerald-950">
-              {isTkpPoints && summary.totalAnswered > 0
-                ? `${summary.totalEarnedPoints ?? 0}/${summary.totalMaxAnsweredPoints ?? 0} (${accuracyPct}%)`
-                : `${accuracyPct}%`}
-            </p>
-          </div>
-        </div>
+        <span className="rounded-md bg-blue-50 px-2 py-0.5 text-xs font-bold text-blue-700">
+          {completionPct}%
+        </span>
       </div>
 
-      <div className="mt-5 divide-y divide-slate-100">
-        {summary.patterns.map((pattern) => {
-          const completionPct =
-            pattern.totalQuestions > 0
-              ? Math.round((pattern.answeredCount / pattern.totalQuestions) * 100)
-              : 0;
-          const patternAccuracy = isTkpPoints
-            ? pattern.answeredCount > 0 && (pattern.maxAnsweredPoints ?? 0) > 0
-              ? `${pattern.earnedPoints ?? 0}/${pattern.maxAnsweredPoints ?? 0} poin (${Math.round(
-                  ((pattern.earnedPoints ?? 0) / (pattern.maxAnsweredPoints ?? 1)) * 100,
-                )}%)`
-              : null
-            : pattern.answeredCount > 0
-              ? `${Math.round((pattern.correctCount / pattern.answeredCount) * 100)}% benar`
-              : null;
+      <div className="mt-3 h-2 w-full overflow-hidden rounded-full bg-slate-100">
+        <div
+          className="h-full rounded-full bg-blue-600 transition-all"
+          style={{ width: `${completionPct}%` }}
+        />
+      </div>
 
-          return (
-            <div
-              key={pattern.patternId}
-              className="flex flex-col gap-2 py-3.5 first:pt-0 last:pb-0 sm:flex-row sm:items-center sm:justify-between"
-            >
-              <div className="min-w-0 flex-1">
-                <div className="flex items-center gap-2">
-                  <span className="flex size-6 shrink-0 items-center justify-center rounded-md bg-blue-50 text-xs font-semibold text-blue-700">
-                    {pattern.order}
-                  </span>
-                  <p className="truncate text-sm font-semibold text-slate-900">
-                    {pattern.label}
-                  </p>
-                  {completionPct === 100 && (
-                    <CheckCircle2
-                      className="size-4 shrink-0 text-emerald-600"
-                      aria-label="Selesai"
-                    />
-                  )}
-                </div>
+      <button
+        type="button"
+        onClick={() => setExpanded((prev) => !prev)}
+        className="mt-4 flex w-full items-center justify-between border-t border-slate-100 pt-3 text-xs font-semibold text-slate-600 hover:text-blue-700"
+      >
+        <span>{expanded ? "Sembunyikan rincian pola" : `Lihat rincian (${summary.patterns.length} modul)`}</span>
+        <ChevronDown
+          className={cn("size-3.5 transition-transform", expanded && "rotate-180")}
+          aria-hidden
+        />
+      </button>
 
-                <div className="mt-2 flex items-center gap-3 pl-8">
-                  <div className="h-2 flex-1 overflow-hidden rounded-full bg-slate-100">
-                    <div
-                      className="h-full rounded-full bg-blue-600 transition-all"
-                      style={{ width: `${completionPct}%` }}
-                    />
-                  </div>
-                  <span className="shrink-0 text-xs font-medium text-slate-600">
-                    {pattern.answeredCount}/{pattern.totalQuestions}
-                    {patternAccuracy !== null ? ` • ${patternAccuracy}` : ""}
-                  </span>
-                </div>
-              </div>
-
-              <Link
-                href={buildPracticeHref(pattern.patternId)}
-                className="ml-8 inline-flex shrink-0 items-center gap-1 text-xs font-semibold text-blue-700 hover:text-blue-800 hover:underline sm:ml-4"
+      {expanded && (
+        <div className="mt-3 divide-y divide-slate-100 border-t border-slate-100 pt-2">
+          {summary.patterns.map((pattern) => {
+            const pct =
+              pattern.totalQuestions > 0
+                ? Math.round((pattern.answeredCount / pattern.totalQuestions) * 100)
+                : 0;
+            return (
+              <div
+                key={pattern.patternId}
+                className="flex items-center justify-between gap-2 py-2.5 text-xs"
               >
-                Latih
-                <ArrowRight className="size-3.5" aria-hidden />
-              </Link>
-            </div>
-          );
-        })}
-      </div>
+                <div className="min-w-0">
+                  <p className="truncate font-medium text-slate-800">
+                    {pattern.order}. {pattern.label}
+                  </p>
+                  <p className="text-[11px] text-slate-500">
+                    {pattern.answeredCount}/{pattern.totalQuestions} ({pct}%)
+                  </p>
+                </div>
+                <Link
+                  href={buildPracticeHref(pattern.patternId)}
+                  className="shrink-0 font-semibold text-blue-700 hover:underline"
+                >
+                  Latih &rarr;
+                </Link>
+              </div>
+            );
+          })}
+        </div>
+      )}
     </section>
   );
 }

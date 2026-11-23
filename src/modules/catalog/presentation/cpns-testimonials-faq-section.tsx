@@ -93,19 +93,13 @@ export function CpnsTestimonialsAndFaqSection() {
                 Informasi singkat mengenai program persiapan CPNS di Wiyata Academy.
               </p>
 
-              <div className="mt-8 rounded-2xl bg-[linear-gradient(135deg,#1459f5_0%,#4d63f7_48%,#8f55f3_100%)] p-6 text-white shadow-lg shadow-blue-200/70">
-                <p className="text-lg font-semibold">
-                  Siap mulai persiapan seleksi CPNS sekarang?
-                </p>
-                <p className="mt-1.5 text-sm text-white/85">
-                  Pilih jalur belajar yang paling sesuai dengan formasi targetmu.
-                </p>
+              <div className="mt-6">
                 <Button
                   asChild
-                  className="mt-5 h-10 bg-white px-5 text-sm font-semibold text-blue-700 hover:bg-blue-50"
+                  className="h-10 bg-blue-600 px-5 text-sm font-semibold text-white hover:bg-blue-700"
                 >
-                  <Link href={APP_ROUTES.programs}>
-                    Lihat Program Sekarang
+                  <Link href={APP_ROUTES.pricing}>
+                    Pilih Paket Belajar
                     <ArrowRight className="size-4" aria-hidden />
                   </Link>
                 </Button>

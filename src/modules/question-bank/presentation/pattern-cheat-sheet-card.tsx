@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { AlertTriangle, BookOpen, ChevronDown, Clock, Sparkles } from "lucide-react";
+import { AlertTriangle, BookOpen, ChevronDown, Sparkles } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { getPatternCheatSheet } from "@/modules/question-bank/domain/pattern-cheat-sheets";
@@ -20,36 +20,29 @@ export function PatternCheatSheetCard({
   return (
     <section
       aria-label={`Ringkasan materi dan trik cepat ${patternLabel}`}
-      className="rounded-2xl border border-indigo-200/80 bg-[linear-gradient(135deg,#eef2ff_0%,#ffffff_55%,#f0f9ff_100%)] shadow-xs"
+      className="rounded-xl border border-slate-200/90 bg-white shadow-2xs"
     >
       <button
         type="button"
         aria-expanded={expanded}
         onClick={() => setExpanded((prev) => !prev)}
-        className="flex w-full items-center justify-between gap-3 px-4 py-3.5 text-left sm:px-5"
+        className="flex w-full items-center justify-between gap-3 px-4 py-3 text-left sm:px-5"
       >
-        <div className="flex min-w-0 items-start gap-3 sm:items-center">
-          <span className="mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-xl bg-indigo-600 text-white shadow-xs sm:mt-0">
-            <BookOpen className="size-4" aria-hidden />
-          </span>
+        <div className="flex min-w-0 items-center gap-2.5">
+          <BookOpen className="size-4 shrink-0 text-blue-600" aria-hidden />
           <div className="min-w-0">
-            <div className="flex flex-wrap items-center gap-2">
-              <span className="text-[11px] font-bold uppercase tracking-wider text-indigo-700">
-                Cheat Sheet &amp; Trik Cepat
-              </span>
-              <span className="inline-flex items-center gap-1 rounded-full bg-white/90 px-2 py-0.5 text-[11px] font-semibold text-slate-700 ring-1 ring-indigo-100">
-                <Clock className="size-3 text-indigo-600" aria-hidden />
-                Target ≤ {sheet.targetSecondsPerQuestion} dtk/soal
-              </span>
-            </div>
-            <p className="mt-0.5 truncate text-xs font-semibold text-slate-900 sm:text-sm">
-              {sheet.headline}
+            <p className="truncate text-xs font-semibold text-slate-900 sm:text-sm">
+              Ringkasan Rumus &amp; Trik Cepat:{" "}
+              <span className="font-normal text-slate-600">{sheet.headline}</span>
             </p>
           </div>
         </div>
 
-        <span className="inline-flex shrink-0 items-center gap-1 rounded-lg bg-white px-2.5 py-1.5 text-xs font-semibold text-indigo-700 ring-1 ring-indigo-200/80">
-          {expanded ? "Tutup Ringkasan" : "Pelajari Rumus & Trik"}
+        <span className="inline-flex shrink-0 items-center gap-1.5 text-xs font-semibold text-blue-700">
+          <span className="hidden text-[11px] font-medium text-slate-400 sm:inline">
+            ≤ {sheet.targetSecondsPerQuestion} dtk/soal
+          </span>
+          <span>{expanded ? "Tutup" : "Lihat Rumus"}</span>
           <ChevronDown
             className={cn(
               "size-3.5 transition-transform duration-200",

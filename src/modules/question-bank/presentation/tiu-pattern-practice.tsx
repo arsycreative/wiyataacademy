@@ -1599,64 +1599,66 @@ export function TiuPatternPractice({
             )}
           </div>
 
-          {/* Baris 2: Tab Sub-Pola */}
-          {allPatternQuestions.length > 0 && activeMeta.subPatterns.length > 0 && (
-            <div className="mt-4 border-t border-slate-100 pt-4">
-              <div className="flex flex-wrap items-center gap-1.5">
-                <FilterPill
-                  active={selectedSubPattern === "all"}
-                  label={`Semua Topik (${allPatternQuestions.length})`}
-                  onClick={() => handleSubPatternChange("all")}
-                />
-                {activeMeta.subPatterns.map((sub) => (
-                  <FilterPill
-                    key={sub}
-                    active={selectedSubPattern === sub}
-                    label={`${capitalize(sub)} (${subPatternCounts[sub] ?? 0})`}
-                    onClick={() => handleSubPatternChange(sub)}
-                  />
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Baris 3 (Hanya tampil jika sudah ada progres/flag atau sedang mengulang soal salah): Filter Status Jawaban */}
+          {/* Baris 2 Ringkas: Dropdown Topik & Status (menggantikan deretan pill bertumpuk) */}
           {allPatternQuestions.length > 0 &&
-            (hasPatternProgress || retrySession !== null) && (
-              <div className="mt-3 flex flex-wrap items-center justify-between gap-2 rounded-xl bg-slate-50/90 px-3.5 py-2.5">
-                <div className="flex flex-wrap items-center gap-1.5">
-                  <span className="mr-1 text-xs font-medium text-slate-500">
-                    Tampilkan:
-                  </span>
-                  <StatusChip
-                    active={retrySession === null && statusFilter === "all"}
-                    label={`Semua (${statusCounts.all})`}
-                    onClick={() => handleStatusFilterChange("all")}
-                  />
-                  <StatusChip
-                    active={retrySession === null && statusFilter === "unanswered"}
-                    label={`Belum Diisi (${statusCounts.unanswered})`}
-                    onClick={() => handleStatusFilterChange("unanswered")}
-                  />
-                  {statusCounts.wrong > 0 && (
-                    <StatusChip
-                      active={retrySession === null && statusFilter === "wrong"}
-                      label={`Salah (${statusCounts.wrong})`}
-                      onClick={() => handleStatusFilterChange("wrong")}
-                    />
+            (activeMeta.subPatterns.length > 0 ||
+              hasPatternProgress ||
+              retrySession !== null) && (
+              <div className="mt-4 flex flex-wrap items-center justify-between gap-2.5 border-t border-slate-100 pt-3.5">
+                <div className="flex flex-wrap items-center gap-2">
+                  {activeMeta.subPatterns.length > 0 && (
+                    <select
+                      aria-label="Filter topik soal"
+                      value={selectedSubPattern}
+                      onChange={(e) => handleSubPatternChange(e.target.value)}
+                      className="h-8 rounded-lg border border-slate-200 bg-slate-50/80 px-2.5 text-xs font-medium text-slate-800 focus:border-blue-400 focus:bg-white focus:outline-none"
+                    >
+                      <option value="all">
+                        Semua Topik ({allPatternQuestions.length})
+                      </option>
+                      {activeMeta.subPatterns.map((sub) => (
+                        <option key={sub} value={sub}>
+                          {capitalize(sub)} ({subPatternCounts[sub] ?? 0})
+                        </option>
+                      ))}
+                    </select>
                   )}
-                  {statusCounts.flagged > 0 && (
-                    <StatusChip
-                      active={retrySession === null && statusFilter === "flagged"}
-                      label={`Ragu-ragu (${statusCounts.flagged})`}
-                      onClick={() => handleStatusFilterChange("flagged")}
-                    />
-                  )}
-                  {retrySession !== null && (
-                    <span className="rounded-md bg-rose-700 px-2.5 py-1 text-xs font-semibold text-white">
-                      Ulang Salah ({retrySummary?.completedCount ?? 0}/
-                      {filteredQuestions.length})
-                    </span>
+
+                  {(hasPatternProgress || retrySession !== null) && (
+                    <select
+                      aria-label="Filter status pengerjaan"
+                      value={retrySession !== null ? "retry" : statusFilter}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        if (val !== "retry") {
+                          handleStatusFilterChange(val as StatusFilter);
+                        }
+                      }}
+                      className="h-8 rounded-lg border border-slate-200 bg-slate-50/80 px-2.5 text-xs font-medium text-slate-800 focus:border-blue-400 focus:bg-white focus:outline-none"
+                    >
+                      <option value="all">
+                        Semua Status ({statusCounts.all})
+                      </option>
+                      <option value="unanswered">
+                        Belum Diisi ({statusCounts.unanswered})
+                      </option>
+                      {statusCounts.wrong > 0 && (
+                        <option value="wrong">
+                          Salah ({statusCounts.wrong})
+                        </option>
+                      )}
+                      {statusCounts.flagged > 0 && (
+                        <option value="flagged">
+                          Ragu-ragu ({statusCounts.flagged})
+                        </option>
+                      )}
+                      {retrySession !== null && (
+                        <option value="retry">
+                          Ulang Salah ({retrySummary?.completedCount ?? 0}/
+                          {filteredQuestions.length})
+                        </option>
+                      )}
+                    </select>
                   )}
                 </div>
 
@@ -2062,31 +2064,6 @@ function QuestionCard({
         </div>
       )}
     </article>
-  );
-}
-
-function FilterPill({
-  active,
-  label,
-  onClick,
-}: {
-  active: boolean;
-  label: string;
-  onClick: () => void;
-}) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className={cn(
-        "rounded-lg border px-3 py-1.5 text-xs font-semibold transition-colors",
-        active
-          ? "border-blue-600 bg-blue-600 text-white shadow-xs"
-          : "border-slate-200 bg-white text-slate-600 hover:border-blue-200 hover:bg-blue-50/50 hover:text-blue-700",
-      )}
-    >
-      {label}
-    </button>
   );
 }
 

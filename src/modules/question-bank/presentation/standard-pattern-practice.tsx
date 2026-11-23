@@ -1602,63 +1602,67 @@ export function StandardPatternPractice({
                 )}
               </div>
 
-              {/* Filter Sub-Topik */}
-              {allPatternQuestions.length > 0 && activeMeta.subPatterns.length > 0 && (
-                <div className="mt-4 border-t border-slate-100 pt-4">
-                  <div className="flex flex-wrap items-center gap-1.5">
-                    <PracticeFilterPill
-                      active={selectedSubPattern === "all"}
-                      label={`Semua Topik (${allPatternQuestions.length})`}
-                      onClick={() => handleSubPatternChange("all")}
-                    />
-                    {activeMeta.subPatterns.map((sub) => (
-                      <PracticeFilterPill
-                        key={sub}
-                        active={selectedSubPattern === sub}
-                        label={`${formatSubPatternLabel(sub)} (${subPatternCounts[sub] ?? 0})`}
-                        onClick={() => handleSubPatternChange(sub)}
-                      />
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Filter Status */}
+              {/* Filter Ringkas: Dropdown Topik & Status */}
               {allPatternQuestions.length > 0 &&
-                (hasPatternProgress || retrySession !== null) && (
-                  <div className="mt-3 flex flex-wrap items-center justify-between gap-2 rounded-xl bg-slate-50/90 px-3.5 py-2.5">
-                    <div className="flex flex-wrap items-center gap-1.5">
-                      <span className="mr-1 text-xs font-medium text-slate-500">
-                        Tampilkan:
-                      </span>
-                      <PracticeStatusChip
-                        active={retrySession === null && statusFilter === "all"}
-                        label={`Semua (${statusCounts.all})`}
-                        onClick={() => handleStatusFilterChange("all")}
-                      />
-                      <PracticeStatusChip
-                        active={retrySession === null && statusFilter === "unanswered"}
-                        label={`Belum Diisi (${statusCounts.unanswered})`}
-                        onClick={() => handleStatusFilterChange("unanswered")}
-                      />
-                      {statusCounts.wrong > 0 && (
-                        <PracticeStatusChip
-                          active={retrySession === null && statusFilter === "wrong"}
-                          label={`${ui.wrongChipLabel} (${statusCounts.wrong})`}
-                          onClick={() => handleStatusFilterChange("wrong")}
-                        />
+                (activeMeta.subPatterns.length > 0 ||
+                  hasPatternProgress ||
+                  retrySession !== null) && (
+                  <div className="mt-4 flex flex-wrap items-center justify-between gap-2.5 border-t border-slate-100 pt-3.5">
+                    <div className="flex flex-wrap items-center gap-2">
+                      {activeMeta.subPatterns.length > 0 && (
+                        <select
+                          aria-label="Filter topik soal"
+                          value={selectedSubPattern}
+                          onChange={(e) => handleSubPatternChange(e.target.value)}
+                          className="h-8 rounded-lg border border-slate-200 bg-slate-50/80 px-2.5 text-xs font-medium text-slate-800 focus:border-blue-400 focus:bg-white focus:outline-none"
+                        >
+                          <option value="all">
+                            Semua Topik ({allPatternQuestions.length})
+                          </option>
+                          {activeMeta.subPatterns.map((sub) => (
+                            <option key={sub} value={sub}>
+                              {formatSubPatternLabel(sub)} (
+                              {subPatternCounts[sub] ?? 0})
+                            </option>
+                          ))}
+                        </select>
                       )}
-                      {statusCounts.flagged > 0 && (
-                        <PracticeStatusChip
-                          active={retrySession === null && statusFilter === "flagged"}
-                          label={`Ragu-ragu (${statusCounts.flagged})`}
-                          onClick={() => handleStatusFilterChange("flagged")}
-                        />
-                      )}
-                      {retrySession !== null && (
-                        <span className="rounded-md bg-rose-700 px-2.5 py-1 text-xs font-semibold text-white">
-                          Ulang ({retrySummary?.completedCount ?? 0}/{filteredQuestions.length})
-                        </span>
+
+                      {(hasPatternProgress || retrySession !== null) && (
+                        <select
+                          aria-label="Filter status pengerjaan"
+                          value={retrySession !== null ? "retry" : statusFilter}
+                          onChange={(e) => {
+                            const val = e.target.value;
+                            if (val !== "retry") {
+                              handleStatusFilterChange(val as StatusFilter);
+                            }
+                          }}
+                          className="h-8 rounded-lg border border-slate-200 bg-slate-50/80 px-2.5 text-xs font-medium text-slate-800 focus:border-blue-400 focus:bg-white focus:outline-none"
+                        >
+                          <option value="all">
+                            Semua Status ({statusCounts.all})
+                          </option>
+                          <option value="unanswered">
+                            Belum Diisi ({statusCounts.unanswered})
+                          </option>
+                          {statusCounts.wrong > 0 && (
+                            <option value="wrong">
+                              {ui.wrongChipLabel} ({statusCounts.wrong})
+                            </option>
+                          )}
+                          {statusCounts.flagged > 0 && (
+                            <option value="flagged">
+                              Ragu-ragu ({statusCounts.flagged})
+                            </option>
+                          )}
+                          {retrySession !== null && (
+                            <option value="retry">
+                              Ulang ({retrySummary?.completedCount ?? 0}/
+                              {filteredQuestions.length})
+                            </option>
+                          )}
+                        </select>
                       )}
                     </div>
 
