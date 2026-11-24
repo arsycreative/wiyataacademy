@@ -4,6 +4,7 @@ import {
   type TkpQuestionDraft,
 } from "@/modules/question-bank/domain/question";
 import { sosialBudayaBatch2Drafts } from "./batches/03-sosial-budaya-batch-2";
+import { sosialBudayaBatch3Drafts } from "./batches/03-sosial-budaya-batch-3";
 
 const sosialBudayaDrafts: readonly TkpQuestionDraft[] = [
   {
@@ -930,5 +931,5 @@ const sosialBudayaDrafts: readonly TkpQuestionDraft[] = [
 
 export const sosialBudayaQuestions: readonly Question[] = buildTkpPatternQuestions(
   "sosial-budaya",
-  [...sosialBudayaDrafts, ...sosialBudayaBatch2Drafts],
+  [...sosialBudayaDrafts, ...sosialBudayaBatch2Drafts, ...sosialBudayaBatch3Drafts],
 );

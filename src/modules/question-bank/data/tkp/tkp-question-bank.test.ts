@@ -45,7 +45,7 @@ describe("TKP question bank", () => {
       ...ALL_TWK_QUESTIONS.map((q) => q.id),
     ]);
 
-    expect(ALL_TKP_QUESTIONS).toHaveLength(480);
+    expect(ALL_TKP_QUESTIONS).toHaveLength(570);
     expect(new Set(tkpIds).size).toBe(tkpIds.length);
     expect(new Set(tkpPrompts).size).toBe(tkpPrompts.length);
 
@@ -54,25 +54,31 @@ describe("TKP question bank", () => {
     }
   });
 
-  it("contains 80 questions per TKP aspect (16 per sub-aspect) with balanced difficulty & 5-point positions", () => {
-    expect(pelayananPublikQuestions).toHaveLength(80);
-    expect(jejaringKerjaQuestions).toHaveLength(80);
-    expect(sosialBudayaQuestions).toHaveLength(80);
-    expect(tikQuestions).toHaveLength(80);
-    expect(profesionalismeQuestions).toHaveLength(80);
-    expect(antiRadikalismeQuestions).toHaveLength(80);
+  it("contains 95 questions per TKP aspect (16 per base sub-aspect + 15 FR HOTS dilemma) with balanced difficulty & 5-point positions", () => {
+    expect(pelayananPublikQuestions).toHaveLength(95);
+    expect(jejaringKerjaQuestions).toHaveLength(95);
+    expect(sosialBudayaQuestions).toHaveLength(95);
+    expect(tikQuestions).toHaveLength(95);
+    expect(profesionalismeQuestions).toHaveLength(95);
+    expect(antiRadikalismeQuestions).toHaveLength(95);
 
     for (const patternId of TKP_PATTERN_IDS) {
       const expectedSubPatterns = TKP_PATTERNS[patternId].subPatterns;
-      expect(expectedSubPatterns).toHaveLength(5);
+      expect(expectedSubPatterns).toHaveLength(6);
 
-      for (const subPattern of expectedSubPatterns) {
+      expectedSubPatterns.forEach((subPattern, index) => {
         const scoped = getTkpQuestionsByPattern(patternId, { subPattern });
-        expect(scoped).toHaveLength(16);
-        expect(scoped.filter((q) => q.difficulty === "mudah")).toHaveLength(4);
-        expect(scoped.filter((q) => q.difficulty === "sedang")).toHaveLength(8);
-        expect(scoped.filter((q) => q.difficulty === "sulit")).toHaveLength(4);
-      }
+        if (index < 5) {
+          expect(scoped).toHaveLength(16);
+          expect(scoped.filter((q) => q.difficulty === "mudah")).toHaveLength(4);
+          expect(scoped.filter((q) => q.difficulty === "sedang")).toHaveLength(8);
+          expect(scoped.filter((q) => q.difficulty === "sulit")).toHaveLength(4);
+        } else {
+          expect(scoped).toHaveLength(15);
+          expect(scoped.filter((q) => q.difficulty === "sedang")).toHaveLength(8);
+          expect(scoped.filter((q) => q.difficulty === "sulit")).toHaveLength(7);
+        }
+      });
 
       for (const difficulty of DIFFICULTIES) {
         expect(getTkpQuestionsByPattern(patternId, { difficulty }).length).toBeGreaterThan(0);
@@ -80,7 +86,7 @@ describe("TKP question bank", () => {
 
       const bank = TKP_QUESTION_BANKS[patternId];
       for (const key of OPTION_KEYS) {
-        expect(bank.filter((q) => q.answer === key)).toHaveLength(16);
+        expect(bank.filter((q) => q.answer === key)).toHaveLength(19);
       }
     }
   });
@@ -96,12 +102,12 @@ describe("TKP question bank", () => {
     const stats = getTkpPatternStats();
     expect(stats).toHaveLength(6);
     expect(stats.map((s) => ({ id: s.id, order: s.order, total: s.total }))).toEqual([
-      { id: "pelayanan-publik", order: 1, total: 80 },
-      { id: "jejaring-kerja", order: 2, total: 80 },
-      { id: "sosial-budaya", order: 3, total: 80 },
-      { id: "tik", order: 4, total: 80 },
-      { id: "profesionalisme", order: 5, total: 80 },
-      { id: "anti-radikalisme", order: 6, total: 80 },
+      { id: "pelayanan-publik", order: 1, total: 95 },
+      { id: "jejaring-kerja", order: 2, total: 95 },
+      { id: "sosial-budaya", order: 3, total: 95 },
+      { id: "tik", order: 4, total: 95 },
+      { id: "profesionalisme", order: 5, total: 95 },
+      { id: "anti-radikalisme", order: 6, total: 95 },
     ]);
   });
 });

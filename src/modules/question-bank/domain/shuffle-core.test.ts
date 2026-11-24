@@ -6,7 +6,7 @@ import { TWK_QUESTION_BANKS } from "@/modules/question-bank/data/twk";
 import { getPatternIdFromQuestionId } from "./shuffle-core";
 
 describe("shuffle-core", () => {
-  it("maps every single one of the 2,700 question IDs to its exact PracticePatternId without loading data files", () => {
+  it("maps every single one of the 2,890 question IDs to its exact PracticePatternId without loading data files", () => {
     let checked = 0;
     for (const banks of [TIU_QUESTION_BANKS, TWK_QUESTION_BANKS, TKP_QUESTION_BANKS]) {
       for (const [patternId, questions] of Object.entries(banks)) {
@@ -16,7 +16,7 @@ describe("shuffle-core", () => {
         }
       }
     }
-    expect(checked).toBe(2700);
+    expect(checked).toBe(2890);
     expect(getPatternIdFromQuestionId("tiu-sin-001")).toBe("sinonim-antonim-akronim");
     expect(getPatternIdFromQuestionId("invalid-id")).toBeUndefined();
   });

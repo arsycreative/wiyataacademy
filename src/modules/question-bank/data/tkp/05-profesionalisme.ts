@@ -4,6 +4,7 @@ import {
   type TkpQuestionDraft,
 } from "@/modules/question-bank/domain/question";
 import { profesionalismeBatch2Drafts } from "./batches/05-profesionalisme-batch-2";
+import { profesionalismeBatch3Drafts } from "./batches/05-profesionalisme-batch-3";
 
 const profesionalismeDrafts: readonly TkpQuestionDraft[] = [
   {
@@ -930,5 +931,5 @@ const profesionalismeDrafts: readonly TkpQuestionDraft[] = [
 
 export const profesionalismeQuestions: readonly Question[] = buildTkpPatternQuestions(
   "profesionalisme",
-  [...profesionalismeDrafts, ...profesionalismeBatch2Drafts],
+  [...profesionalismeDrafts, ...profesionalismeBatch2Drafts, ...profesionalismeBatch3Drafts],
 );

@@ -168,13 +168,14 @@ export const TWK_PATTERNS: Record<TwkPatternId, TwkPatternMeta> = {
     order: 1,
     label: "Nasionalisme",
     description:
-      "Kesadaran berbangsa, sejarah perjuangan & Sumpah Pemuda, cinta produk dalam negeri, toleransi, budaya global, serta netralitas ASN.",
+      "Kesadaran berbangsa, sejarah perjuangan & Sumpah Pemuda, cinta produk dalam negeri, toleransi, budaya global, netralitas ASN, serta penalaran kasus aktual.",
     subPatterns: [
       "sumpah-pemuda-dan-sejarah-perjuangan",
       "cinta-tanah-air-dan-produk-dalam-negeri",
       "toleransi-dan-persatuan-dalam-keberagaman",
       "budaya-dan-identitas-nasional-di-era-global",
       "kepentingan-bangsa-dan-netralitas-asn",
+      "penalaran-kasus-nasionalisme-aktual",
     ],
   },
   integritas: {
@@ -182,13 +183,14 @@ export const TWK_PATTERNS: Record<TwkPatternId, TwkPatternMeta> = {
     order: 2,
     label: "Integritas",
     description:
-      "Antikorupsi dan gratifikasi, konsistensi kejujuran, kode etik ASN BerAKHLAK, konflik kepentingan, serta akuntabilitas dan whistleblowing.",
+      "Antikorupsi dan gratifikasi, konsistensi kejujuran, kode etik ASN BerAKHLAK, konflik kepentingan era digital, LHKPN, serta akuntabilitas dan whistleblowing.",
     subPatterns: [
       "antikorupsi-gratifikasi-dan-suap",
       "konsistensi-kejujuran-dan-keteladanan",
       "kode-etik-dan-nilai-dasar-asn",
       "konflik-kepentingan-dan-penyalahgunaan-wewenang",
       "whistleblowing-transparansi-dan-akuntabilitas",
+      "penalaran-dilema-integritas-digital",
     ],
   },
   "bela-negara": {
@@ -196,13 +198,14 @@ export const TWK_PATTERNS: Record<TwkPatternId, TwkPatternMeta> = {
     order: 3,
     label: "Bela Negara",
     description:
-      "Landasan hukum bela negara, ancaman militer-nirmiliter-hibrida, pertahanan siber & literasi digital, pengabdian profesi, dan kedaulatan wilayah.",
+      "Landasan hukum bela negara, ancaman militer-nirmiliter-hibrida, pertahanan siber & UU PDP, ketahanan nasional, pengabdian profesi, dan kedaulatan wilayah.",
     subPatterns: [
       "dasar-hukum-dan-nilai-bela-negara",
       "ancaman-militer-nirmiliter-dan-hibrida",
       "bela-negara-di-ruang-siber-dan-literasi-digital",
       "bela-negara-melalui-profesi-dan-kesiapsiagaan-bencana",
       "pertahanan-semesta-dan-kedaulatan-wilayah",
+      "penalaran-bela-negara-kontemporer",
     ],
   },
   "pilar-negara": {
@@ -210,13 +213,14 @@ export const TWK_PATTERNS: Record<TwkPatternId, TwkPatternMeta> = {
     order: 4,
     label: "Pilar Negara",
     description:
-      "Nilai dan pengamalan Pancasila, UUD 1945 dan lembaga negara, NKRI dan otonomi daerah, Bhinneka Tunggal Ika, serta sejarah perumusan dasar negara.",
+      "Nilai dan pengamalan Pancasila, UUD 1945 dan check & balances lembaga negara, NKRI dan otonomi daerah, Bhinneka Tunggal Ika, serta penalaran lintas pilar.",
     subPatterns: [
       "pancasila-nilai-dan-pengamalan",
       "uud-1945-hak-kewajiban-dan-lembaga-negara",
       "nkri-otonomi-daerah-dan-ketatanegaraan",
       "bhinneka-tunggal-ika-dan-kerukunan",
       "perumusan-pancasila-dan-dasar-negara",
+      "penalaran-konstitusi-dan-lintas-pilar",
     ],
   },
   "bahasa-indonesia": {
@@ -224,13 +228,14 @@ export const TWK_PATTERNS: Record<TwkPatternId, TwkPatternMeta> = {
     order: 5,
     label: "Bahasa Indonesia",
     description:
-      "Kaidah EYD Edisi V, kalimat efektif, ide pokok dan penalaran wacana, diksi dan kata baku KBBI, serta tata naskah dinas dan bahasa negara.",
+      "Kaidah EYD Edisi V, kalimat efektif, ide pokok dan penalaran wacana, kalimat sumbang & inti kalimat panjang, diksi baku KBBI, serta tata naskah dinas.",
     subPatterns: [
       "ejaan-dan-tanda-baca",
       "kalimat-efektif-dan-struktur-kalimat",
       "ide-pokok-paragraf-dan-penalaran-wacana",
       "diksi-kata-baku-dan-imbuhan",
       "naskah-dinas-dan-bahasa-negara",
+      "penalaran-wacana-dan-kalimat-sumbang",
     ],
   },
 };
@@ -260,13 +265,14 @@ export const TKP_PATTERNS: Record<TkpPatternId, TkpPatternMeta> = {
     order: 1,
     label: "Pelayanan Publik",
     description:
-      "Keramahan, empati, ketanggapan, kepatuhan SOP, akses inklusif kelompok rentan, layanan bebas pungli, dan perbaikan mutu keluhan.",
+      "Keramahan, empati, ketanggapan, kepatuhan SOP, akses inklusif kelompok rentan, layanan bebas pungli, serta dilema layanan krisis dan keluhan viral.",
     subPatterns: [
       "sikap-ramah-empati-dan-pengendalian-emosi",
       "solusi-cepat-dan-kepatuhan-sop",
       "pelayanan-inklusif-dan-kelompok-rentan",
       "transparansi-standar-dan-bebas-pungli",
       "penanganan-keluhan-dan-evaluasi-mutu",
+      "dilema-layanan-krisis-dan-viral",
     ],
   },
   "jejaring-kerja": {
@@ -274,13 +280,14 @@ export const TKP_PATTERNS: Record<TkpPatternId, TkpPatternMeta> = {
     order: 2,
     label: "Jejaring Kerja",
     description:
-      "Koordinasi lintas unit/instansi, kepercayaan kemitraan profesional, pembagian peran tim, berbagi pengetahuan, serta mediasi konflik kerja.",
+      "Koordinasi lintas unit/instansi, kepercayaan kemitraan profesional, pembagian peran tim, berbagi pengetahuan, mediasi konflik, serta kolaborasi hybrid lintas generasi.",
     subPatterns: [
       "koordinasi-lintas-unit-dan-instansi",
       "membangun-kepercayaan-dan-relasi-profesional",
       "kolaborasi-tim-dan-pembagian-peran",
       "berbagi-pengetahuan-dan-keterbukaan-informasi",
       "resolusi-konflik-kerja-dan-mediasi",
+      "dilema-kolaborasi-hybrid-dan-lintas-generasi",
     ],
   },
   "sosial-budaya": {
@@ -288,13 +295,14 @@ export const TKP_PATTERNS: Record<TkpPatternId, TkpPatternMeta> = {
     order: 3,
     label: "Sosial Budaya",
     description:
-      "Adaptasi kearifan lokal, toleransi keberagaman agama dan budaya, komunikasi lintas dialek, kepekaan gotong royong, dan antiprimordialisme.",
+      "Adaptasi kearifan lokal, toleransi keberagaman agama dan budaya, komunikasi lintas dialek, kepekaan gotong royong, serta dilema inklusi di wilayah majemuk.",
     subPatterns: [
       "adaptasi-lingkungan-dan-kearifan-lokal",
       "toleransi-antarumat-dan-keberagaman-budaya",
       "komunikasi-lintas-budaya-dan-bahasa",
       "kepekaan-sosial-dan-gotong-royong",
       "menolak-diskriminasi-dan-primordialisme",
+      "dilema-inklusi-dan-sensitivitas-budaya",
     ],
   },
   tik: {
@@ -302,13 +310,14 @@ export const TKP_PATTERNS: Record<TkpPatternId, TkpPatternMeta> = {
     order: 4,
     label: "Teknologi Informasi & Komunikasi",
     description:
-      "Adaptasi sistem digital dan AI terverifikasi, keamanan data dan antiphishing, efisiensi kerja berbasis TIK, literasi cek fakta, dan etika daring.",
+      "Adaptasi sistem digital dan AI terverifikasi, etika AI generatif & UU PDP, keamanan data antiphishing/deepfake, efisiensi kerja TIK, serta etika daring.",
     subPatterns: [
       "adaptasi-sistem-digital-dan-otomatisasi-ai",
       "keamanan-informasi-privasi-dan-anti-phishing",
       "pemanfaatan-tik-untuk-efisiensi-kinerja",
       "literasi-digital-dan-verifikasi-informasi",
       "etika-komunikasi-daring-dan-pelayanan-elektronik",
+      "dilema-etika-ai-dan-data-sensitif",
     ],
   },
   profesionalisme: {
@@ -316,13 +325,14 @@ export const TKP_PATTERNS: Record<TkpPatternId, TkpPatternMeta> = {
     order: 5,
     label: "Profesionalisme",
     description:
-      "Manajemen prioritas dan tenggat, integritas pertanggungjawaban kerja, resiliensi di bawah tekanan, netralitas birokrasi, dan perbaikan diri.",
+      "Manajemen prioritas dan tenggat, integritas pertanggungjawaban kerja, resiliensi di bawah tekanan, netralitas birokrasi, serta dilema tekanan atasan.",
     subPatterns: [
       "skala-prioritas-dan-manajemen-tenggat",
       "tanggung-jawab-dan-integritas-kerja",
       "ketangguhan-di-bawah-tekanan-dan-fleksibilitas",
       "disiplin-etika-birokrasi-dan-netralitas",
       "pengembangan-diri-dan-inisiatif-kualitas",
+      "dilema-integritas-kinerja-dan-tekanan-atasan",
     ],
   },
   "anti-radikalisme": {
@@ -330,13 +340,14 @@ export const TKP_PATTERNS: Record<TkpPatternId, TkpPatternMeta> = {
     order: 6,
     label: "Anti-Radikalisme",
     description:
-      "Deteksi dini propaganda ekstrem, moderasi beragama, kesetiaan pada Pancasila-UUD 1945-NKRI, pencegahan hoaks kebencian, dan pelaporan prosedural.",
+      "Deteksi dini propaganda ekstrem, moderasi beragama, kesetiaan Pancasila-UUD 1945-NKRI, pencegahan hoaks kebencian, serta moderasi ruang digital & komunitas.",
     subPatterns: [
       "deteksi-dini-dan-respons-konten-ekstrem",
       "moderasi-beragama-dan-penolakan-intoleransi",
       "kesetiaan-ideologi-pancasila-uud-nkri",
       "pencegahan-radikalisme-digital-dan-hoaks-kebencian",
       "pendekatan-persuasif-edukatif-dan-pelaporan-prosedural",
+      "dilema-moderasi-ruang-digital-dan-komunitas",
     ],
   },
 };

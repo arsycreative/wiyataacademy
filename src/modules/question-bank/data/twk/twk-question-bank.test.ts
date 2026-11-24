@@ -40,7 +40,7 @@ describe("TWK question bank", () => {
       TIU_PATTERN_IDS.flatMap((id) => TIU_QUESTION_BANKS[id]).map((q) => q.id),
     );
 
-    expect(ALL_TWK_QUESTIONS).toHaveLength(400);
+    expect(ALL_TWK_QUESTIONS).toHaveLength(500);
     expect(new Set(twkIds).size).toBe(twkIds.length);
     expect(new Set(twkPrompts).size).toBe(twkPrompts.length);
 
@@ -49,24 +49,30 @@ describe("TWK question bank", () => {
     }
   });
 
-  it("contains 80 questions per TWK pillar (16 per sub-pattern) with balanced difficulty & answer keys", () => {
-    expect(nasionalismeQuestions).toHaveLength(80);
-    expect(integritasQuestions).toHaveLength(80);
-    expect(belaNegaraQuestions).toHaveLength(80);
-    expect(pilarNegaraQuestions).toHaveLength(80);
-    expect(bahasaIndonesiaQuestions).toHaveLength(80);
+  it("contains 100 questions per TWK pillar (16 per base sub-pattern + 20 FR HOTS) with balanced difficulty & answer keys", () => {
+    expect(nasionalismeQuestions).toHaveLength(100);
+    expect(integritasQuestions).toHaveLength(100);
+    expect(belaNegaraQuestions).toHaveLength(100);
+    expect(pilarNegaraQuestions).toHaveLength(100);
+    expect(bahasaIndonesiaQuestions).toHaveLength(100);
 
     for (const patternId of TWK_PATTERN_IDS) {
       const expectedSubPatterns = TWK_PATTERNS[patternId].subPatterns;
-      expect(expectedSubPatterns).toHaveLength(5);
+      expect(expectedSubPatterns).toHaveLength(6);
 
-      for (const subPattern of expectedSubPatterns) {
+      expectedSubPatterns.forEach((subPattern, index) => {
         const scoped = getTwkQuestionsByPattern(patternId, { subPattern });
-        expect(scoped).toHaveLength(16);
-        expect(scoped.filter((q) => q.difficulty === "mudah")).toHaveLength(4);
-        expect(scoped.filter((q) => q.difficulty === "sedang")).toHaveLength(8);
-        expect(scoped.filter((q) => q.difficulty === "sulit")).toHaveLength(4);
-      }
+        if (index < 5) {
+          expect(scoped).toHaveLength(16);
+          expect(scoped.filter((q) => q.difficulty === "mudah")).toHaveLength(4);
+          expect(scoped.filter((q) => q.difficulty === "sedang")).toHaveLength(8);
+          expect(scoped.filter((q) => q.difficulty === "sulit")).toHaveLength(4);
+        } else {
+          expect(scoped).toHaveLength(20);
+          expect(scoped.filter((q) => q.difficulty === "sedang")).toHaveLength(10);
+          expect(scoped.filter((q) => q.difficulty === "sulit")).toHaveLength(10);
+        }
+      });
 
       for (const difficulty of DIFFICULTIES) {
         expect(
@@ -76,7 +82,7 @@ describe("TWK question bank", () => {
 
       const bank = TWK_QUESTION_BANKS[patternId];
       for (const key of OPTION_KEYS) {
-        expect(bank.filter((q) => q.answer === key)).toHaveLength(16);
+        expect(bank.filter((q) => q.answer === key)).toHaveLength(20);
       }
     }
   });
@@ -92,11 +98,11 @@ describe("TWK question bank", () => {
     const stats = getTwkPatternStats();
     expect(stats).toHaveLength(5);
     expect(stats.map((s) => ({ id: s.id, order: s.order, total: s.total }))).toEqual([
-      { id: "nasionalisme", order: 1, total: 80 },
-      { id: "integritas", order: 2, total: 80 },
-      { id: "bela-negara", order: 3, total: 80 },
-      { id: "pilar-negara", order: 4, total: 80 },
-      { id: "bahasa-indonesia", order: 5, total: 80 },
+      { id: "nasionalisme", order: 1, total: 100 },
+      { id: "integritas", order: 2, total: 100 },
+      { id: "bela-negara", order: 3, total: 100 },
+      { id: "pilar-negara", order: 4, total: 100 },
+      { id: "bahasa-indonesia", order: 5, total: 100 },
     ]);
   });
 });

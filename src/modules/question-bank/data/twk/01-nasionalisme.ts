@@ -4,6 +4,7 @@ import {
   type QuestionDraft,
 } from "@/modules/question-bank/domain/question";
 import { nasionalismeBatch2Drafts } from "./batches/01-nasionalisme-batch-2";
+import { nasionalismeBatch3Drafts } from "./batches/01-nasionalisme-batch-3";
 
 const nasionalismeDrafts: readonly QuestionDraft[] = [
   {
@@ -650,5 +651,5 @@ const nasionalismeDrafts: readonly QuestionDraft[] = [
 
 export const nasionalismeQuestions: readonly Question[] = buildTwkPatternQuestions(
   "nasionalisme",
-  [...nasionalismeDrafts, ...nasionalismeBatch2Drafts],
+  [...nasionalismeDrafts, ...nasionalismeBatch2Drafts, ...nasionalismeBatch3Drafts],
 );

@@ -48,7 +48,7 @@ describe("subtest-summary", () => {
       { [q2.id]: 8888 },
     );
 
-    expect(summary.totalQuestions).toBe(400);
+    expect(summary.totalQuestions).toBe(500);
     expect(summary.totalAnswered).toBe(2);
     expect(summary.totalCorrect).toBe(1);
     expect(summary.totalFlagged).toBe(1);
@@ -98,7 +98,7 @@ describe("subtest-summary", () => {
       { [q2.id]: 6262 },
     );
 
-    expect(summary.totalQuestions).toBe(480);
+    expect(summary.totalQuestions).toBe(570);
     expect(summary.totalAnswered).toBe(2);
     expect(summary.totalEarnedPoints).toBe(9);
     expect(summary.totalMaxAnsweredPoints).toBe(10);

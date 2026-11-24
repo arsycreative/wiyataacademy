@@ -4,6 +4,7 @@ import {
   type TkpQuestionDraft,
 } from "@/modules/question-bank/domain/question";
 import { jejaringKerjaBatch2Drafts } from "./batches/02-jejaring-kerja-batch-2";
+import { jejaringKerjaBatch3Drafts } from "./batches/02-jejaring-kerja-batch-3";
 
 const jejaringKerjaDrafts: readonly TkpQuestionDraft[] = [
   {
@@ -930,5 +931,5 @@ const jejaringKerjaDrafts: readonly TkpQuestionDraft[] = [
 
 export const jejaringKerjaQuestions: readonly Question[] = buildTkpPatternQuestions(
   "jejaring-kerja",
-  [...jejaringKerjaDrafts, ...jejaringKerjaBatch2Drafts],
+  [...jejaringKerjaDrafts, ...jejaringKerjaBatch2Drafts, ...jejaringKerjaBatch3Drafts],
 );

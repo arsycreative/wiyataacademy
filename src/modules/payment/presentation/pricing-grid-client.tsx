@@ -61,7 +61,7 @@ const PRICING_TIERS: Array<{
     buttonClass:
       "w-full bg-blue-600 text-white shadow-lg shadow-blue-500/25 hover:bg-blue-700",
     features: [
-      { text: "2.700+ Soal HOTS Terupdate (TWK, TIU, TKP)", bold: true },
+      { text: "2.890+ Soal HOTS Terupdate (TWK, TIU, TKP)", bold: true },
       { text: "Cheat Sheet Rumus Cepat 20 Modul", bold: true },
       { text: "Sprint Drill 10-15 Menit Berbatas Waktu" },
       { text: "Simulasi Tryout CAT Resmi 110 Soal" },

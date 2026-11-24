@@ -75,8 +75,8 @@ export const skdIntensifSyllabus: readonly CourseSyllabusSection[] = [
   {
     title: "Tahap 2: TWK — 5 Pilar Kebangsaan",
     description:
-      "Latih soal studi kasus implementasi Nasionalisme, Integritas, Bela Negara, Pilar Negara, dan Bahasa Negara.",
-    lessons: "5 pilar • 400 soal",
+      "Latih soal studi kasus implementasi Nasionalisme, Integritas, Bela Negara, Pilar Negara, dan Bahasa Indonesia (termasuk penalaran wacana & multi-pernyataan).",
+    lessons: "5 pilar • 500 soal",
     href: "/latihan/twk",
   },
   {
@@ -89,8 +89,8 @@ export const skdIntensifSyllabus: readonly CourseSyllabusSection[] = [
   {
     title: "Tahap 4: TKP — 6 Aspek Strategi Skor 5",
     description:
-      "Bedah Pelayanan Publik, Jejaring Kerja, Sosial Budaya, TIK, Profesionalisme, dan Anti-Radikalisme agar konsisten meraih poin 5.",
-    lessons: "6 aspek • 480 soal",
+      "Bedah Pelayanan Publik, Jejaring Kerja, Sosial Budaya, TIK & AI, Profesionalisme, dan Anti-Radikalisme termasuk dilema tipis Skor 5 vs 4.",
+    lessons: "6 aspek • 570 soal",
     href: "/latihan/tkp",
   },
   {
@@ -230,13 +230,13 @@ const detailBySlug: Record<string, CourseDetail> = {
     description:
       "Roadmap belajar interaktif 5 tahap untuk menembus ambang batas dan meraih skor tinggi SKD CPNS berbasis CAT BKN.",
     duration: "5 tahap terstruktur",
-    lessons: "20 modul • 2.700 soal",
+    lessons: "20 modul • 2.890 soal",
     practiceTests: "Tryout CAT 110 Soal + Mini 35 Soal",
     bannerLabel: "SKD CPNS 2026",
     bannerTheme: "blue",
     bannerUrl: "/images/courses/asn-cpns-banner.svg",
     outcomes: [
-      "Menguasai 5 pilar TWK (400 soal), 9 pola TIU (1.820 soal), dan 6 aspek TKP (480 soal) sesuai kisi-kisi FR BKN terbaru.",
+      "Menguasai 5 pilar TWK (500 soal), 9 pola TIU (1.820 soal), dan 6 aspek TKP (570 soal) sesuai kisi-kisi FR BKN terbaru.",
       "Mempelajari Cheat Sheet konsep inti, rumus cepat, dan jebakan umum di setiap modul sebelum berlatih soal HOTS.",
       "Memantau progres pengerjaan dan akurasi tiap modul secara langsung pada roadmap belajar interaktif.",
       "Mengelola ritme 100 menit untuk 110 soal pada simulasi CAT resmi lengkap dengan evaluasi ambang batas BKN.",
@@ -251,7 +251,7 @@ const detailBySlug: Record<string, CourseDetail> = {
       {
         question: "Apakah materi dan bank soal sudah sesuai kisi-kisi CPNS terbaru?",
         answer:
-          "Ya, seluruh 2.700 soal TWK, TIU, dan TKP beserta ambang batas CAT (TWK 65, TIU 80, TKP 166) mengacu pada standar seleksi SKD CPNS FR BKN terbaru.",
+          "Ya, seluruh 2.890 soal TWK, TIU, dan TKP beserta ambang batas CAT (TWK 65, TIU 80, TKP 166) mengacu pada standar seleksi SKD CPNS FR BKN terbaru.",
       },
       {
         question: "Apakah harus menyelesaikan tahap secara berurutan?",

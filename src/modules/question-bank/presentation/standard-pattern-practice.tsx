@@ -1722,7 +1722,7 @@ export function StandardPatternPractice({
             {isCurrentPatternLocked ? (
               <PremiumPaywallCard
                 title={`Buka Modul ${activeMeta.label} (${patternStats.find((p) => p.id === activePattern)?.total ?? 0} Soal HOTS)`}
-                description={`Pilar gratis (${subtest === "TWK" ? "Nasionalisme" : "Pelayanan Publik"}) dapat dicoba kapan saja. Untuk membuka seluruh pilar ${subtest}, pembahasan, serta 2.700+ soal SKD, aktifkan Paket Belajar Wiyata Academy.`}
+                description={`Pilar gratis (${subtest === "TWK" ? "Nasionalisme" : "Pelayanan Publik"}) dapat dicoba kapan saja. Untuk membuka seluruh pilar ${subtest}, pembahasan, serta 2.890+ soal SKD, aktifkan Paket Belajar Wiyata Academy.`}
               />
             ) : isPatternLoading ? (
               <section className="flex flex-col items-center justify-center rounded-2xl border border-blue-100 bg-white px-6 py-16 text-center">

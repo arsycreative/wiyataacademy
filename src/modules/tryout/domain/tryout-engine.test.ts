@@ -15,6 +15,8 @@ import {
   TRYOUT_MODE_CONFIGS,
   TRYOUT_PRESETS,
   TRYOUT_TIU_BLUEPRINT_QUOTAS,
+  TRYOUT_TKP_BLUEPRINT_QUOTAS,
+  TRYOUT_TWK_BLUEPRINT_QUOTAS,
 } from "./tryout-engine";
 
 describe("tryout-engine", () => {
@@ -30,8 +32,14 @@ describe("tryout-engine", () => {
     expect(tiuItems.every((item) => item.subtest === "TIU")).toBe(true);
     expect(tkpItems.every((item) => item.subtest === "TKP")).toBe(true);
 
-    // Every pillar, active FR BKN TIU pattern, and TKP aspect is represented
+    // Every pillar, active FR BKN TIU pattern, and TKP aspect is represented with weighted quotas
     expect(new Set(twkItems.map((i) => i.question.pattern)).size).toBe(TWK_PATTERN_IDS.length);
+    expect(twkItems.filter((i) => i.question.pattern === "nasionalisme")).toHaveLength(
+      TRYOUT_TWK_BLUEPRINT_QUOTAS.official.nasionalisme,
+    );
+    expect(twkItems.filter((i) => i.question.pattern === "bahasa-indonesia")).toHaveLength(
+      TRYOUT_TWK_BLUEPRINT_QUOTAS.official["bahasa-indonesia"],
+    );
     expect(new Set(tiuItems.map((i) => i.question.pattern)).size).toBe(
       TRYOUT_ACTIVE_TIU_PATTERNS.length,
     );
@@ -45,6 +53,9 @@ describe("tryout-engine", () => {
       tiuItems.filter((i) => i.question.pattern === "perbandingan-kuantitatif"),
     ).toHaveLength(TRYOUT_TIU_BLUEPRINT_QUOTAS.official["perbandingan-kuantitatif"]);
     expect(new Set(tkpItems.map((i) => i.question.pattern)).size).toBe(TKP_PATTERN_IDS.length);
+    expect(tkpItems.filter((i) => i.question.pattern === "pelayanan-publik")).toHaveLength(
+      TRYOUT_TKP_BLUEPRINT_QUOTAS.official["pelayanan-publik"],
+    );
 
     // Every question ID is unique and numbers run 1..110
     expect(new Set(items.map((i) => i.question.id)).size).toBe(110);

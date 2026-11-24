@@ -24,6 +24,7 @@ export const PATTERN_CHEAT_SHEETS: Record<PracticePatternId, PatternCheatSheet> 
       "Pada dilema ekonomi/pengadaan, pilih opsi yang memperkuat kemandirian nasional/UMKM lokal tanpa melanggar aturan mutu dan transparansi.",
       "Untuk soal netralitas ASN, tolak segala bentuk keberpihakan (like/share/pose/fasilitas dinas) kepada peserta pemilu atau pilkada.",
       "Pada kasus budaya global, pilih sikap adaptif-selektif: menyerap teknologi/ilmu modern sambil menjaga jati diri serta nilai Pancasila.",
+      "Bedakan Nasionalisme (rasa bangga, persatuan, cinta bangsa & kepentingan kolektif lintas daerah) vs Bela Negara (kesiapsiagaan menjaga keutuhan & kedaulatan dari ancaman nyata).",
     ],
     commonTraps: [
       "Mengira nasionalisme berarti menolak total budaya atau teknologi asing (chauvinisme/isolasionis).",
@@ -33,31 +34,31 @@ export const PATTERN_CHEAT_SHEETS: Record<PracticePatternId, PatternCheatSheet> 
   integritas: {
     patternId: "integritas",
     targetSecondsPerQuestion: 45,
-    headline: "Kejujuran tanpa kompromi, tolak gratifikasi, dan patuhi prosedur pelaporan",
+    headline: "Kejujuran tanpa kompromi, tolak gratifikasi digital & patuhi prosedur pelaporan",
     coreConcept:
-      "Pilar Integritas menilai keselarasan antara perkataan, tindakan, kode etik ASN BerAKHLAK, serta kepatuhan hukum antikorupsi (UU Tipikor, pelaporan gratifikasi ke KPK maksimal 30 hari kerja, konflik kepentingan, dan mekanisme whistleblowing resmi).",
+      "Pilar Integritas menilai keselarasan perkataan, tindakan, kode etik ASN BerAKHLAK (UU No. 20/2023), kepatuhan antikorupsi (UU Tipikor, pelaporan gratifikasi termasuk voucher/sponsorship digital ke UPG/KPK maksimal 30 hari kerja), LHKPN, konflik kepentingan, dan whistleblowing.",
     fastTricks: [
-      "Gratifikasi yang berkaitan dengan jabatan dan berlawanan dengan kewajiban wajib ditolak; jika terpaksa diterima (misal dikirim tanpa diketahui), laporkan ke UPG/KPK maksimal 30 hari kerja.",
-      "Pada konflik kepentingan (keluarga/kolega ikut tender atau layanan), wajib menyatakan mundur (recusal) dari pengambilan keputusan dan menyerahkan ke pejabat lain yang netral.",
+      "Gratifikasi yang berkaitan dengan jabatan (termasuk voucher e-wallet, tiket, atau sponsorship vendor) wajib ditolak; jika terpaksa diterima, laporkan ke UPG/KPK maksimal 30 hari kerja.",
+      "Pada konflik kepentingan (keluarga/kolega ikut tender e-catalog atau layanan), wajib menyatakan mundur (recusal) secara tertulis dan menyerahkan ke pejabat lain yang netral.",
       "Untuk temuan pelanggaran internal, pilih pelaporan melalui saluran resmi (atasan berwenang, APIP/Inspektorat, atau WBS) disertai bukti, bukan menyebar di media sosial secara anonim.",
       "Bedakan uang suap (ada kesepakatan/transaksional sebelum atau sesudah tindakan) dengan gratifikasi (pemberian tanpa kesepakatan langsung, tetapi berhubungan dengan jabatan).",
     ],
     commonTraps: [
-      "Menganggap bingkisan hari raya/ucapan terima kasih dari mitra kerja boleh diterima asalkan 'diberikan sesudah pekerjaan selesai'.",
+      "Menganggap bingkisan hari raya/voucher digital dari mitra kerja boleh diterima asalkan 'diberikan sesudah pekerjaan selesai' atau 'nilainya kecil'.",
       "Memilih diam dengan alasan 'menjaga nama baik instansi' saat melihat manipulasi SPJ atau pungli.",
     ],
   },
   "bela-negara": {
     patternId: "bela-negara",
     targetSecondsPerQuestion: 45,
-    headline: "Kontribusi aktif sesuai profesi menghadapi ancaman militer, nirmiliter & siber",
+    headline: "Kontribusi aktif sesuai profesi menghadapi ancaman militer, nirmiliter, siber & UU PDP",
     coreConcept:
-      "Bela Negara merujuk pada Pasal 27 ayat (3) dan Pasal 30 UUD 1945 serta UU Pengelolaan Sumber Daya Nasional (PSDN). Di era modern, ujian banyak mengangkat ancaman nirmiliter dan hibrida: kejahatan siber/SPBE, disinformasi pemecah belah, kesiapsiagaan bencana, hingga pengabdian di wilayah 3T.",
+      "Bela Negara merujuk pada Pasal 27 ayat (3) dan Pasal 30 UUD 1945 serta UU PSDN. Pada FR terbaru, ujian banyak mengangkat ancaman nirmiliter dan hibrida: keamanan siber/SPBE, pelindungan data pribadi (UU PDP No. 27/2022), ketahanan pangan-energi, disinformasi/deepfake, serta pengabdian di wilayah 3T.",
     fastTricks: [
       "Pasal 27 ayat (3) UUD 1945 mengatur hak dan kewajiban Bela Negara setiap warga negara; Pasal 30 ayat (1)–(2) menegaskan sistem Sishankamrata (TNI–Polri komponen utama, rakyat komponen pendukung).",
-      "Pada kasus disinformasi/deepfake atau serangan siber di instansi, gabungkan verifikasi fakta otoritas resmi, pengamanan sistem, dan edukasi publik.",
-      "Bela negara bukan hanya wajib militer—ASN yang menjaga kualitas layanan di daerah 3T, guru di perbatasan, dan nakes tanggap bencana adalah wujud bela negara lewat profesi.",
-      "Pada kasus sumber daya alam atau perbatasan (ZEE, pulau terluar), utamakan penegakan kedaulatan berbasis hukum nasional & konvensi internasional (UNCLOS 1982).",
+      "Pada kasus disinformasi/deepfake, kebocoran data warga (UU PDP), atau serangan siber di instansi, gabungkan pengamanan sistem, verifikasi otoritas resmi, dan edukasi publik.",
+      "Bela negara bukan hanya wajib militer—ASN yang menjaga kualitas layanan di daerah 3T, guru di perbatasan, nakes tanggap bencana, dan penjaga ketahanan pangan adalah wujud bela negara lewat profesi.",
+      "Pada soal multi-pernyataan (1)-(4), bedakan tindakan Bela Negara (aktif menangkal ancaman/menjaga kedaulatan & keselamatan bangsa) dari sekadar kegiatan sosial rutin biasa.",
     ],
     commonTraps: [
       "Menyempitkan makna bela negara hanya sebagai angkat senjata atau latihan kemiliteran.",
@@ -67,31 +68,31 @@ export const PATTERN_CHEAT_SHEETS: Record<PracticePatternId, PatternCheatSheet> 
   "pilar-negara": {
     patternId: "pilar-negara",
     targetSecondsPerQuestion: 50,
-    headline: "Bedakan nilai Pancasila, kewenangan lembaga UUD 1945 & urusan otonomi NKRI",
+    headline: "Bedakan nilai Pancasila, check & balances UUD 1945 & urusan otonomi NKRI",
     coreConcept:
-      "Pilar Negara menguji pemahaman konseptual dan konstitusional atas 4 konsensus dasar: Pancasila (nilai dasar-instrumental-praksis), UUD 1945 hasil amandemen (check and balances lembaga negara), NKRI (6 urusan pemerintahan absolut vs konkuren), dan Bhinneka Tunggal Ika.",
+      "Pilar Negara menguji penalaran konseptual dan konstitusional atas 4 konsensus dasar: Pancasila (nilai dasar-instrumental-praksis), UUD 1945 hasil amandemen (check and balances lembaga negara), NKRI (6 urusan pemerintahan absolut vs konkuren), dan Bhinneka Tunggal Ika.",
     fastTricks: [
       "Hafalkan 6 urusan absolut pemerintah pusat (UU Pemda): Politik luar negeri, Pertahanan, Keamanan, Yustisi, Moneter & fiskal nasional, serta Agama.",
-      "Bedakan kewenangan lembaga: MK menguji UU terhadap UUD 1945 & memutus sengketa pilkada/hasil pemilu; MA menguji peraturan di bawah UU terhadap UU.",
-      "Untuk soal Sila Pancasila: Sila 2 fokus kemanusiaan/HAM & kesetaraan martabat tanpa batas negara; Sila 3 fokus persatuan bangsa & NKRI; Sila 5 fokus keadilan distributif, hak publik, serta keseimbangan hak–kewajiban sosial.",
+      "Bedakan kewenangan lembaga: MK menguji UU terhadap UUD 1945 & memutus sengketa hasil pemilu; MA menguji peraturan di bawah UU terhadap UU; BPK memeriksa pengelolaan keuangan negara secara independen.",
+      "Untuk soal Sila Pancasila: Sila 2 fokus martabat manusia/HAM & empati individu lintas batas; Sila 3 fokus persatuan bangsa & NKRI; Sila 4 fokus musyawarah mufakat & demokratis; Sila 5 fokus keadilan distributif, pemerataan akses publik, dan keseimbangan hak–kewajiban sosial.",
       "Ketahui tonggak perumusan: 1 Juni 1945 (pidato Soekarno), 22 Juni 1945 (Piagam Jakarta oleh Panitia Sembilan), dan 18 Agustus 1945 (pengesahan UUD 1945 oleh PPKI).",
     ],
     commonTraps: [
       "Tertukar antara kewenangan MK (uji UU terhadap UUD 1945) dan MA (uji PP/Perpres/Perda terhadap UU).",
-      "Tertukar penerapan Sila ke-2 (kemanusiaan/empati individu & HAM) dengan Sila ke-5 (keadilan sosial bagi masyarakat luas).",
+      "Tertukar penerapan Sila ke-2 (kemanusiaan/empati individu & HAM) dengan Sila ke-5 (keadilan sosial & pemerataan kebijakan bagi masyarakat luas).",
     ],
   },
   "bahasa-indonesia": {
     patternId: "bahasa-indonesia",
     targetSecondsPerQuestion: 50,
-    headline: "Cek S-P-O kalimat efektif, kaidah EYD V, kata baku KBBI & simpulan teks",
+    headline: "Cek S-P-O inti kalimat panjang, kalimat sumbang, kaidah EYD V & simpulan wacana",
     coreConcept:
-      "Subtes Bahasa Indonesia dalam TWK tidak sekadar menguji hafalan KBBI, tetapi kemampuan mengidentifikasi kalimat efektif dalam naskah dinas, penggunaan ejaan EYD Edisi V, struktur paragraf deduktif/induktif, serta kedudukan bahasa negara dalam UU No. 24 Tahun 2009.",
+      "Subtes Bahasa Indonesia dalam TWK modern menekankan penalaran wacana: menemukan kalimat tidak padu (sumbang), membedah inti kalimat majemuk panjang, menarik simpulan tersirat tanpa over-generalization, hubungan antarparagraf, serta EYD V dan tata naskah dinas.",
     fastTricks: [
-      "Kalimat yang diawali preposisi ('Bagi...', 'Dalam...', 'Untuk...', 'Di...') sering kehilangan Subjek sehingga tidak efektif—hapus preposisinya atau perbaiki strukturnya.",
-      "Waspadai pleonasme (kata mubazir): 'para hadirin sekalian', 'agar supaya', 'saling tolong-menolong', 'banyak para peserta'.",
+      "Kalimat yang diawali preposisi ('Bagi...', 'Dalam...', 'Untuk...', 'Di...') sering kehilangan Subjek sehingga tidak efektif—untuk mencari INTI KALIMAT panjang, buang seluruh keterangan & perluasan ('yang...') lalu sisakan S + P (+ O).",
+      "Untuk mencari KALIMAT SUMBANG/TIDAK PADU, tentukan dulu 1 topik utama kalimat pokok, lalu cari 1 kalimat yang melenceng ke topik lain atau memutus alur koherensi.",
       "Aturan EYD V gabungan kata: gabung jika mendapat awalan+akhiran sekaligus ('menyebarluaskan', 'pertanggungjawaban'); pisah jika hanya salah satu ('sebar luaskan', 'tanggung jawabnya'); selalu digabung untuk bentuk terikat ('pascapanen', 'nonformal', 'antarinstansi').",
-      "Untuk ide pokok paragraf, cari kalimat utama (awal/akhir/campuran) yang bersifat paling umum dan menaungi seluruh kalimat penjelas.",
+      "Untuk simpulan tersirat paragraf, pilih pernyataan yang merangkum seluruh gagasan teks tanpa menambahkan klaim mutlak ('selalu', 'pasti', 'semua') di luar teks.",
     ],
     commonTraps: [
       "Mengira kalimat panjang dengan banyak anak kalimat pasti lengkap, padahal tidak memiliki Predikat utama.",
@@ -262,12 +263,12 @@ export const PATTERN_CHEAT_SHEETS: Record<PracticePatternId, PatternCheatSheet> 
   "pelayanan-publik": {
     patternId: "pelayanan-publik",
     targetSecondsPerQuestion: 35,
-    headline: "Skor 5 = ramah + empati + solusi konkret di tempat + tetap dalam koridor SOP",
+    headline: "Skor 5 = empati + solusi konkret di tempat + perbaikan sistemik & tetap taat SOP",
     coreConcept:
-      "Aspek Pelayanan Publik menilai orientasi ASN dalam memberi kepuasan kepada masyarakat: cepat tanggap, adil tanpa diskriminasi/pungli, ramah pada warga yang emosi, dan proaktif memperbaiki mutu layanan.",
+      "Aspek Pelayanan Publik menilai orientasi ASN dalam memberi kepuasan kepada masyarakat: cepat tanggap, adil tanpa diskriminasi/pungli, tenang menghadapi krisis atau keluhan viral media sosial, dan proaktif memperbaiki mutu layanan.",
     fastTricks: [
-      "Bedakan Skor 5 vs Pengecoh Skor 4: Skor 4 biasanya sopan & sesuai SOP tapi PASIF (menyuruh warga menunggu, melempar ke loket lain, atau sekadar minta maaf). Skor 5 sopan, taat SOP, DAN langsung menuntaskan kebutuhan warga saat itu juga.",
-      "Pada warga marah/komplain: tenangkan dengan empati, dengarkan masalahnya, jelaskan prosedur dengan transparan, lalu berikan jalan keluar nyata.",
+      "Bedakan Skor 5 vs Pengecoh Skor 4: Skor 4 biasanya sopan & taat SOP tetapi berhenti di lingkup sempit/pasif; Skor 5 menuntaskan kebutuhan warga saat itu juga SEKALIGUS membangun perbaikan atau koordinasi agar kendala serupa tidak berulang.",
+      "Pada keluhan viral di media sosial: jangan defensif atau menghapus komentar—verifikasi fakta layanan, hubungi warga dengan empati, selesaikan kasusnya sesuai SOP, dan sampaikan klarifikasi transparan lewat kanal resmi.",
       "Tolak tegas segala imbalan/tip/uang pelicin bahkan setelah layanan tuntas—kembalikan secara santun sambil menjelaskan layanan gratis atau tarif resmi.",
       "Prioritaskan kelompok rentan (lansia, disabilitas, ibu hamil) secara manusiawi tanpa merusak keadilan antrean.",
     ],
@@ -313,13 +314,13 @@ export const PATTERN_CHEAT_SHEETS: Record<PracticePatternId, PatternCheatSheet> 
   tik: {
     patternId: "tik",
     targetSecondsPerQuestion: 35,
-    headline: "Skor 5 = antusias adopsi sistem baru, jaga keamanan data & verifikasi informasi",
+    headline: "Skor 5 = adaptif sistem/AI terverifikasi, lindungi data pribadi (UU PDP) & edukasi tim",
     coreConcept:
-      "Aspek TIK menilai kesiapan ASN bertransformasi digital (SPBE), mengadopsi aplikasi kerja dan AI secara bijak, menjaga keamanan siber/privasi OTP/data warga, serta melawan misinformasi di ruang kerja digital.",
+      "Aspek TIK menilai kesiapan ASN bertransformasi digital (SPBE), memanfaatkan otomasi & AI generatif secara etis tanpa membocorkan data rahasia (UU PDP), menangkal phishing/deepfake, serta membina literasi digital rekan kerja.",
     fastTricks: [
-      "Saat ada aplikasi/sistem baru (atau AI), Skor 5 langsung mempelajarinya dengan antusias, memakainya sesuai SOP verifikasi, dan membantu rekan yang belum paham.",
-      "Terkait keamanan informasi (link mencurigakan/phishing, permintaan OTP, file tidak dikenal): JANGAN klik atau teruskan—verifikasi lewat kanal resmi dan laporkan ke tim IT/keamanan.",
-      "Data pribadi pemohon/masyarakat hanya diakses sesuai wewenang tugas, tidak diunduh ke perangkat pribadi sembarangan atau diumbar di grup chat.",
+      "Saat memanfaatkan AI generatif untuk draf kerja: JANGAN pernah mengunggah NIK, data pribadi warga, atau dokumen rahasia negara ke layanan publik—anonimkan dulu atau gunakan sistem internal terverifikasi, lalu cek ulang akurasi hasilnya.",
+      "Terkait keamanan informasi (phishing, voice-cloning deepfake mengatasnamakan pimpinan, permintaan OTP): JANGAN klik atau ikuti instruksi—verifikasi lewat kanal resmi terpisah dan laporkan ke tim TI.",
+      "Saat ada sistem digital baru, Skor 5 langsung mempelajarinya dengan antusias, menguji integrasi kerjanya, dan berbagi panduan praktis agar rekan senior ikut terbantu.",
       "Sebelum membagikan informasi atau kebijakan di grup kerja, pastikan kebenarannya melalui rujukan resmi (Kementerian/BKN/instansi terkait).",
     ],
     commonTraps: [

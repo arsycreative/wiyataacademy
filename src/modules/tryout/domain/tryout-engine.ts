@@ -3,15 +3,15 @@ import { TKP_QUESTION_BANKS } from "@/modules/question-bank/data/tkp";
 import { TWK_QUESTION_BANKS } from "@/modules/question-bank/data/twk";
 import {
   TIU_PATTERNS,
-  TKP_PATTERN_IDS,
   TKP_PATTERNS,
-  TWK_PATTERN_IDS,
   TWK_PATTERNS,
   type OptionKey,
   type PracticePatternId,
   type Question,
   type QuestionSubtest,
   type TiuPatternId,
+  type TkpPatternId,
+  type TwkPatternId,
 } from "@/modules/question-bank/domain/question";
 import {
   hashStringWithSeed,
@@ -61,26 +61,6 @@ export type {
   TryoutQuestionResult,
   TryoutSubtestConfig,
 };
-
-function computeStratifiedQuotas(
-  bucketCount: number,
-  totalNeeded: number,
-  seed: number,
-): number[] {
-  const base = Math.floor(totalNeeded / bucketCount);
-  const remainder = totalNeeded % bucketCount;
-  const quotas = Array.from({ length: bucketCount }, () => base);
-  if (remainder > 0) {
-    const indices = seededShuffle(
-      Array.from({ length: bucketCount }, (_, i) => i),
-      hashStringWithSeed("quota", seed),
-    );
-    for (let i = 0; i < remainder; i += 1) {
-      quotas[indices[i]] += 1;
-    }
-  }
-  return quotas;
-}
 
 /**
  * Blueprint berbobot FR SKD CPNS BKN terbaru untuk subtes TIU:
@@ -194,51 +174,111 @@ const TIU_FR_PRIORITY_SUBPATTERNS: Partial<Record<TiuPatternId, readonly string[
   "deret-angka": ["deret-suku-ke-n", "deret-matriks-tabel"],
 };
 
-function selectWeightedTiuQuestions(mode: TryoutMode, seed: number): Question[] {
-  const subtestSeed = hashStringWithSeed("tryout:TIU", seed);
-  const quotas = TRYOUT_TIU_BLUEPRINT_QUOTAS[mode];
+/**
+ * Blueprint berbobot FR SKD CPNS BKN terbaru untuk subtes TWK (30 soal resmi / 10 mini):
+ * memprioritaskan penalaran studi kasus Nasionalisme, Pilar Negara, Integritas, dan Bela Negara
+ * serta penalaran wacana Bahasa Indonesia.
+ */
+export const TRYOUT_TWK_BLUEPRINT_QUOTAS: Readonly<
+  Record<TryoutMode, Readonly<Record<TwkPatternId, number>>>
+> = {
+  official: {
+    nasionalisme: 7,
+    integritas: 6,
+    "bela-negara": 6,
+    "pilar-negara": 7,
+    "bahasa-indonesia": 4,
+  },
+  mini: {
+    nasionalisme: 2,
+    integritas: 2,
+    "bela-negara": 2,
+    "pilar-negara": 2,
+    "bahasa-indonesia": 2,
+  },
+};
+
+/**
+ * Blueprint berbobot FR SKD CPNS BKN terbaru untuk subtes TKP (45 soal resmi / 14 mini)
+ * dengan stratifikasi sub-aspek dilema Skor 5 vs 4 di seluruh 6 aspek.
+ */
+export const TRYOUT_TKP_BLUEPRINT_QUOTAS: Readonly<
+  Record<TryoutMode, Readonly<Record<TkpPatternId, number>>>
+> = {
+  official: {
+    "pelayanan-publik": 8,
+    "jejaring-kerja": 8,
+    "sosial-budaya": 7,
+    tik: 7,
+    profesionalisme: 8,
+    "anti-radikalisme": 7,
+  },
+  mini: {
+    "pelayanan-publik": 3,
+    "jejaring-kerja": 2,
+    "sosial-budaya": 2,
+    tik: 2,
+    profesionalisme: 3,
+    "anti-radikalisme": 2,
+  },
+};
+
+const TWK_FR_PRIORITY_SUBPATTERNS: Partial<Record<TwkPatternId, readonly string[]>> = {
+  nasionalisme: ["penalaran-kasus-nasionalisme-aktual"],
+  integritas: ["penalaran-dilema-integritas-digital"],
+  "bela-negara": ["penalaran-bela-negara-kontemporer"],
+  "pilar-negara": ["penalaran-konstitusi-dan-lintas-pilar"],
+  "bahasa-indonesia": [
+    "penalaran-wacana-dan-kalimat-sumbang",
+    "ide-pokok-paragraf-dan-penalaran-wacana",
+  ],
+};
+
+const TKP_FR_PRIORITY_SUBPATTERNS: Partial<Record<TkpPatternId, readonly string[]>> = {
+  "pelayanan-publik": ["dilema-layanan-krisis-dan-viral"],
+  "jejaring-kerja": ["dilema-kolaborasi-hybrid-dan-lintas-generasi"],
+  "sosial-budaya": ["dilema-inklusi-dan-sensitivitas-budaya"],
+  tik: ["dilema-etika-ai-dan-data-sensitif"],
+  profesionalisme: ["dilema-integritas-kinerja-dan-tekanan-atasan"],
+  "anti-radikalisme": ["dilema-moderasi-ruang-digital-dan-komunitas"],
+};
+
+function selectWeightedSubtestQuestions<TId extends PracticePatternId>(
+  quotas: Readonly<Record<TId, number>>,
+  banks: Readonly<Record<TId, readonly Question[]>>,
+  prioritySubPatterns: Partial<Record<TId, readonly string[]>>,
+  seed: number,
+  salt: string,
+): Question[] {
+  const subtestSeed = hashStringWithSeed(`tryout:${salt}`, seed);
   const picked: Question[] = [];
 
-  for (const patternId of Object.keys(quotas) as TiuPatternId[]) {
+  for (const patternId of Object.keys(quotas) as TId[]) {
     const quota = quotas[patternId];
     if (quota <= 0) continue;
-    const bank = TIU_QUESTION_BANKS[patternId];
-    const patternSeed = hashStringWithSeed(`pick:TIU:${patternId}`, subtestSeed);
+    const bank = banks[patternId];
+    const patternSeed = hashStringWithSeed(`pick:${salt}:${patternId}`, subtestSeed);
     picked.push(
       ...pickSubPatternStratified(
         bank,
         quota,
         patternSeed,
-        TIU_FR_PRIORITY_SUBPATTERNS[patternId] ?? [],
+        prioritySubPatterns[patternId] ?? [],
       ),
     );
   }
 
-  return seededShuffle(picked, hashStringWithSeed("order:TIU", subtestSeed));
+  return seededShuffle(picked, hashStringWithSeed(`order:${salt}`, subtestSeed));
 }
 
-function selectStratifiedQuestions<TId extends PracticePatternId>(
-  patternIds: readonly TId[],
-  banks: Record<TId, readonly Question[]>,
-  totalNeeded: number,
-  seed: number,
-  salt: string,
-): Question[] {
-  const subtestSeed = hashStringWithSeed(`tryout:${salt}`, seed);
-  const quotas = computeStratifiedQuotas(patternIds.length, totalNeeded, subtestSeed);
-  const picked: Question[] = [];
-
-  patternIds.forEach((patternId, idx) => {
-    const quota = quotas[idx];
-    const bank = banks[patternId];
-    const shuffled = seededShuffle(
-      bank,
-      hashStringWithSeed(`pick:${salt}:${patternId}`, subtestSeed),
-    );
-    picked.push(...shuffled.slice(0, quota));
-  });
-
-  return seededShuffle(picked, hashStringWithSeed(`order:${salt}`, subtestSeed));
+function selectWeightedTiuQuestions(mode: TryoutMode, seed: number): Question[] {
+  return selectWeightedSubtestQuestions(
+    TRYOUT_TIU_BLUEPRINT_QUOTAS[mode],
+    TIU_QUESTION_BANKS,
+    TIU_FR_PRIORITY_SUBPATTERNS,
+    seed,
+    "TIU",
+  );
 }
 
 export function getPatternLabel(subtest: QuestionSubtest, patternId: string): string {
@@ -260,20 +300,19 @@ export function generateTryoutQuestions(
   seed: number,
 ): TryoutQuestionItem[] {
   const normalizedSeed = (Number.isFinite(seed) && seed > 0 ? seed >>> 0 : 1) || 1;
-  const config = TRYOUT_MODE_CONFIGS[mode];
 
-  const twkRaw = selectStratifiedQuestions(
-    TWK_PATTERN_IDS,
+  const twkRaw = selectWeightedSubtestQuestions(
+    TRYOUT_TWK_BLUEPRINT_QUOTAS[mode],
     TWK_QUESTION_BANKS,
-    config.subtests.TWK.questionCount,
+    TWK_FR_PRIORITY_SUBPATTERNS,
     normalizedSeed,
     "TWK",
   );
   const tiuRaw = selectWeightedTiuQuestions(mode, normalizedSeed);
-  const tkpRaw = selectStratifiedQuestions(
-    TKP_PATTERN_IDS,
+  const tkpRaw = selectWeightedSubtestQuestions(
+    TRYOUT_TKP_BLUEPRINT_QUOTAS[mode],
     TKP_QUESTION_BANKS,
-    config.subtests.TKP.questionCount,
+    TKP_FR_PRIORITY_SUBPATTERNS,
     normalizedSeed,
     "TKP",
   );

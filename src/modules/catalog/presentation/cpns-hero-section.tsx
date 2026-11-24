@@ -27,7 +27,7 @@ export function CpnsHeroSection() {
             </h1>
 
             <p className="mt-5 max-w-[500px] text-base leading-7 text-slate-600 sm:text-lg">
-              Belajar terarah dengan 2.700+ bank soal HOTS, latihan kecepatan
+              Belajar terarah dengan 2.890+ bank soal HOTS, latihan kecepatan
               Sprint 10 menit, dan simulasi CAT resmi standar BKN.
             </p>
 

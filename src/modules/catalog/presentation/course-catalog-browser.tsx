@@ -15,7 +15,7 @@ import { useCatalogStore } from "./stores/catalog-store";
 
 const CORE_PILLARS = [
   {
-    tag: "2.700+ Soal HOTS",
+    tag: "2.890+ Soal HOTS",
     title: "Bank Soal Terstruktur",
     description:
       "Latihan fokus per pola untuk TWK (5 pilar), TIU (9 pola), dan TKP (6 aspek) lengkap dengan ringkasan rumus cepat.",
