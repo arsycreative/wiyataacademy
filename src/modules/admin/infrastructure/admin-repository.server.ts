@@ -610,7 +610,7 @@ export async function getAdminUserDetail(
 ): Promise<AdminUserDetailResult | null> {
   const { client } = await getAdminDbClient();
 
-  const [profileRes, progressRes, subsRes, ordersRes] = await Promise.all([
+  const [profileRes, progressRes, subsRes, ordersRes, tryoutRes] = await Promise.all([
     client
       .from("profiles")
       .select("id, email, full_name, role, created_at")
@@ -641,6 +641,14 @@ export async function getAdminUserDetail(
       )
       .eq("user_id", userId)
       .order("created_at", { ascending: false }),
+    client
+      .from("tryout_attempts")
+      .select(
+        "id, mode, preset_id, package_label, twk_score, tiu_score, tkp_score, total_score, max_score, passed, duration_used_sec, completed_at",
+      )
+      .eq("user_id", userId)
+      .order("completed_at", { ascending: false })
+      .limit(10),
   ]);
 
   if (!profileRes.data) return null;
@@ -684,6 +692,9 @@ export async function getAdminUserDetail(
     progressUpdatedAt: rawProgress?.updated_at ?? null,
     subscriptions: (subsRes.data ?? []) as AdminSubscriptionSummary[],
     orders,
+    tryoutAttempts: tryoutRes.error
+      ? []
+      : ((tryoutRes.data ?? []) as AdminUserDetailResult["tryoutAttempts"]),
   };
 }
 

@@ -16,6 +16,7 @@ import {
   LogOut,
   Save,
   ShieldCheck,
+  Trophy,
   User as UserIcon,
   XCircle,
 } from "lucide-react";
@@ -32,6 +33,10 @@ import {
   sanitizePracticeProgress,
   type SanitizedPracticeProgress,
 } from "@/modules/question-bank/infrastructure/tiu-progress-sync";
+import {
+  mergeTryoutHistoryRecords,
+  type TryoutAttemptRankSummary,
+} from "@/modules/tryout/domain/leaderboard";
 import {
   readTryoutHistory,
   type TryoutHistoryRecord,
@@ -57,6 +62,8 @@ type AccountDashboardProps = {
   initialCloudProgress: SanitizedPracticeProgress | null;
   initialSummaries: AllProgressSummaries;
   initialSchemaMissing: boolean;
+  initialCloudTryoutHistory?: readonly TryoutHistoryRecord[];
+  nationalRank?: TryoutAttemptRankSummary | null;
 };
 
 type AccountTab = "progress" | "billing" | "settings";
@@ -77,6 +84,8 @@ export function AccountDashboard({
   initialCloudProgress,
   initialSummaries,
   initialSchemaMissing,
+  initialCloudTryoutHistory = [],
+  nationalRank = null,
 }: AccountDashboardProps) {
   const router = useRouter();
   const addToast = useToastStore((state) => state.addToast);
@@ -91,12 +100,16 @@ export function AccountDashboard({
     initialCloudProgress ?? sanitizePracticeProgress({}),
   );
   const [summaries, setSummaries] = useState<AllProgressSummaries>(initialSummaries);
-  const [tryoutHistory, setTryoutHistory] = useState<TryoutHistoryRecord[]>([]);
+  const [tryoutHistory, setTryoutHistory] = useState<TryoutHistoryRecord[]>(() => [
+    ...initialCloudTryoutHistory,
+  ]);
 
   useEffect(() => {
     let cancelled = false;
     const frame = window.requestAnimationFrame(() => {
-      setTryoutHistory(readTryoutHistory());
+      setTryoutHistory(
+        mergeTryoutHistoryRecords(readTryoutHistory(), initialCloudTryoutHistory),
+      );
       const localProgress = readLocalTiuProgress();
       if (!localProgress) return;
       const merged = mergePracticeProgress(localProgress, initialCloudProgress);
@@ -113,7 +126,7 @@ export function AccountDashboard({
       cancelled = true;
       window.cancelAnimationFrame(frame);
     };
-  }, [initialCloudProgress]);
+  }, [initialCloudProgress, initialCloudTryoutHistory]);
 
   const formattedJoinDate = useMemo(() => {
     try {
@@ -298,11 +311,20 @@ export function AccountDashboard({
           <section className="rounded-2xl border border-slate-200/90 bg-white p-6 shadow-2xs">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div>
-                <h2 className="text-base font-bold text-slate-950">
-                  Riwayat Tryout CAT SKD
-                </h2>
+                <div className="flex flex-wrap items-center gap-2">
+                  <h2 className="text-base font-bold text-slate-950">
+                    Riwayat Tryout CAT SKD
+                  </h2>
+                  {nationalRank && (
+                    <span className="inline-flex items-center gap-1 rounded-full border border-blue-200 bg-blue-50 px-2.5 py-0.5 text-[11px] font-bold text-blue-700">
+                      <Trophy className="size-3" aria-hidden />
+                      Rank #{nationalRank.rank}/{nationalRank.totalParticipants} (Top{" "}
+                      {nationalRank.topPercent}%)
+                    </span>
+                  )}
+                </div>
                 <p className="mt-0.5 text-xs text-slate-500">
-                  Capaian skor simulasi berbatas waktu terhadap passing grade BKN.
+                  Capaian skor simulasi berbatas waktu terhadap passing grade BKN (tersinkron ke Cloud).
                 </p>
               </div>
               <Button

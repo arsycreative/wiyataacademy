@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { BookOpen, Loader2, Receipt, X } from "lucide-react";
+import { BookOpen, Loader2, Receipt, Trophy, X } from "lucide-react";
 
 import {
   formatIdr,
@@ -174,6 +174,55 @@ function UserDetailPanel({
                     );
                   })}
                 </div>
+              </div>
+
+              {/* Riwayat Tryout CAT (Cloud Sync) */}
+              <div>
+                <h3 className="mb-2 flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-slate-500">
+                  <Trophy className="size-3.5 text-amber-600" aria-hidden />
+                  Riwayat Tryout CAT ({detail.tryoutAttempts?.length ?? 0})
+                </h3>
+                {!detail.tryoutAttempts || detail.tryoutAttempts.length === 0 ? (
+                  <p className="rounded-xl border border-dashed border-slate-200 py-4 text-center text-xs text-slate-500">
+                    Belum ada riwayat Tryout CAT tersinkron di cloud.
+                  </p>
+                ) : (
+                  <div className="space-y-2">
+                    {detail.tryoutAttempts.map((attempt) => (
+                      <div
+                        key={attempt.id}
+                        className="rounded-xl border border-slate-200 p-3 text-xs"
+                      >
+                        <div className="flex items-center justify-between gap-2">
+                          <span className="font-semibold text-slate-900">
+                            {attempt.package_label}
+                          </span>
+                          <span
+                            className={
+                              attempt.passed
+                                ? "rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-bold text-emerald-700"
+                                : "rounded-full bg-rose-100 px-2 py-0.5 text-[10px] font-bold text-rose-700"
+                            }
+                          >
+                            {attempt.passed ? "LULUS PG" : "BELUM PG"}
+                          </span>
+                        </div>
+                        <div className="mt-1.5 flex items-center justify-between text-[11px] text-slate-600">
+                          <span>
+                            TWK {attempt.twk_score} • TIU {attempt.tiu_score} • TKP{" "}
+                            {attempt.tkp_score}
+                          </span>
+                          <span className="font-bold text-slate-950">
+                            {attempt.total_score}/{attempt.max_score}
+                          </span>
+                        </div>
+                        <p className="mt-1 text-[10px] text-slate-400">
+                          {formatShortDateTime(attempt.completed_at)}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
 
               {/* Paket Aktif */}

@@ -219,9 +219,8 @@ export function readTryoutHistory(): TryoutHistoryRecord[] {
   }
 }
 
-export function appendTryoutHistory(record: TryoutHistoryRecord): TryoutHistoryRecord[] {
-  const existing = readTryoutHistory().filter((item) => item.id !== record.id);
-  const next = [record, ...existing].slice(0, MAX_HISTORY_ITEMS);
+export function writeTryoutHistory(records: readonly TryoutHistoryRecord[]): TryoutHistoryRecord[] {
+  const next = records.slice(0, MAX_HISTORY_ITEMS);
   if (typeof window !== "undefined") {
     try {
       window.localStorage.setItem(TRYOUT_HISTORY_STORAGE_KEY, JSON.stringify(next));
@@ -232,15 +231,13 @@ export function appendTryoutHistory(record: TryoutHistoryRecord): TryoutHistoryR
   return next;
 }
 
+export function appendTryoutHistory(record: TryoutHistoryRecord): TryoutHistoryRecord[] {
+  const existing = readTryoutHistory().filter((item) => item.id !== record.id);
+  return writeTryoutHistory([record, ...existing]);
+}
+
 export function deleteTryoutHistoryItem(recordId: string): TryoutHistoryRecord[] {
   const next = readTryoutHistory().filter((item) => item.id !== recordId);
-  if (typeof window !== "undefined") {
-    try {
-      window.localStorage.setItem(TRYOUT_HISTORY_STORAGE_KEY, JSON.stringify(next));
-    } catch {
-      // Abaikan error penyimpanan browser
-    }
-  }
-  return next;
+  return writeTryoutHistory(next);
 }
 

@@ -55,6 +55,21 @@ export interface AdminUserItem {
   total_spent: number;
 }
 
+export interface AdminTryoutAttemptItem {
+  id: string;
+  mode: string;
+  preset_id: string;
+  package_label: string;
+  twk_score: number;
+  tiu_score: number;
+  tkp_score: number;
+  total_score: number;
+  max_score: number;
+  passed: boolean;
+  duration_used_sec: number;
+  completed_at: string;
+}
+
 export interface AdminUserDetailResult {
   user: {
     id: string;
@@ -67,6 +82,7 @@ export interface AdminUserDetailResult {
   progressUpdatedAt: string | null;
   subscriptions: AdminSubscriptionSummary[];
   orders: AdminOrderItem[];
+  tryoutAttempts: AdminTryoutAttemptItem[];
 }
 
 export interface ProductRevenueBreakdown {

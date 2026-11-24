@@ -17,6 +17,7 @@ import {
   RotateCcw,
   Sparkles,
   Target,
+  Trophy,
   XCircle,
   Zap,
 } from "lucide-react";
@@ -30,6 +31,7 @@ import {
   OptionContent,
   QuestionPrompt,
 } from "@/modules/question-bank/presentation/question-content";
+import type { TryoutAttemptRankSummary } from "@/modules/tryout/domain/leaderboard";
 import { buildStudyRecommendationPlan } from "@/modules/tryout/domain/study-recommendation";
 import {
   buildPatternPracticeHref,
@@ -50,6 +52,8 @@ type TryoutResultReviewProps = {
   answers: Readonly<Record<string, OptionKey>>;
   flagged: Readonly<Record<string, boolean>>;
   evaluation: TryoutEvaluation;
+  rankSummary?: TryoutAttemptRankSummary | null;
+  cloudSynced?: boolean;
   onBackToLobby: () => void;
   onRetakeFresh: () => void;
 };
@@ -60,6 +64,8 @@ export function TryoutResultReview({
   answers,
   flagged,
   evaluation,
+  rankSummary = null,
+  cloudSynced = false,
   onBackToLobby,
   onRetakeFresh,
 }: TryoutResultReviewProps) {
@@ -224,8 +230,31 @@ export function TryoutResultReview({
                 ~{evaluation.avgSecondsPerAnswered} dtk/soal terjawab
               </p>
             </div>
+
+            {rankSummary && (
+              <div className="min-w-[145px] rounded-2xl border border-blue-200 bg-white px-5 py-3.5 text-center shadow-2xs">
+                <p className="inline-flex items-center gap-1 text-xs font-medium text-blue-700">
+                  <Trophy className="size-3.5" aria-hidden />
+                  Ranking Nasional
+                </p>
+                <p className="mt-0.5 text-2xl font-extrabold tabular-nums text-slate-950">
+                  #{rankSummary.rank}
+                  <span className="text-xs font-semibold text-slate-400">
+                    /{rankSummary.totalParticipants}
+                  </span>
+                </p>
+                <p className="mt-0.5 text-[11px] font-semibold text-blue-700">
+                  Top {rankSummary.topPercent}% • Rata² {rankSummary.averageScore}
+                </p>
+              </div>
+            )}
           </div>
         </div>
+        {cloudSynced && (
+          <p className="mt-4 text-xs font-medium text-slate-500 print:hidden">
+            Hasil simulasi ini telah tersimpan otomatis ke akun Cloud Anda dan masuk ke Ranking Nasional.
+          </p>
+        )}
       </section>
 
       {/* 3 Subtest Passing-Grade Cards */}

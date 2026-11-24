@@ -1,24 +1,30 @@
 "use client";
 
 import Link from "next/link";
+import { useState } from "react";
 import {
   ArrowRight,
   Award,
   CheckCircle2,
   Clock,
+  Cloud,
+  CloudOff,
   FileText,
   History,
+  Loader2,
   Lock,
   Play,
   Shuffle,
   Sparkles,
   Trash2,
+  Trophy,
   XCircle,
   Zap,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import type { LeaderboardResponse } from "@/modules/tryout/domain/leaderboard";
 import {
   formatDurationClock,
   formatDurationVerbose,
@@ -31,9 +37,22 @@ import type {
   TryoutHistoryRecord,
 } from "@/modules/tryout/infrastructure/tryout-storage";
 import { APP_ROUTES } from "@/shared/constants/app";
+import { TryoutLeaderboardCard } from "./tryout-leaderboard-card";
+
+export type TryoutCloudSyncStatus =
+  | "local-only"
+  | "syncing"
+  | "synced"
+  | "schema-missing";
+
+type LobbyBottomTab = "history" | "leaderboard";
 
 type TryoutLobbyProps = {
   hasOfficialAccess?: boolean;
+  isAuthenticated?: boolean;
+  cloudSyncStatus?: TryoutCloudSyncStatus;
+  initialLeaderboard?: LeaderboardResponse | null;
+  leaderboardRefreshSignal?: number;
   activeSession: ActiveTryoutSession | null;
   activeRemainingSec: number;
   history: readonly TryoutHistoryRecord[];
@@ -60,6 +79,10 @@ function formatDateId(iso: string): string {
 
 export function TryoutLobby({
   hasOfficialAccess = true,
+  isAuthenticated = false,
+  cloudSyncStatus = "local-only",
+  initialLeaderboard = null,
+  leaderboardRefreshSignal = 0,
   activeSession,
   activeRemainingSec,
   history,
@@ -69,6 +92,7 @@ export function TryoutLobby({
   onOpenHistory,
   onDeleteHistory,
 }: TryoutLobbyProps) {
+  const [bottomTab, setBottomTab] = useState<LobbyBottomTab>("history");
   const officialCfg = TRYOUT_MODE_CONFIGS.official;
   const activeAnswered = activeSession ? Object.keys(activeSession.answers).length : 0;
   const activeTotal = activeSession
@@ -269,109 +293,173 @@ export function TryoutLobby({
         </div>
       </section>
 
-      {/* Riwayat Tryout CAT */}
-      <section className="mt-10 rounded-2xl border border-blue-100 bg-white p-6 shadow-2xs">
-        <div className="flex flex-wrap items-center justify-between gap-2">
-          <div className="flex items-center gap-2">
-            <History className="size-5 text-blue-700" aria-hidden />
-            <h2 className="text-lg font-semibold text-slate-950">Riwayat Tryout CAT</h2>
+      {/* Tab Riwayat Tryout CAT & Ranking Nasional */}
+      <section className="mt-10 rounded-2xl border border-slate-200/90 bg-white p-6 shadow-2xs">
+        <div className="flex flex-col gap-3 border-b border-slate-100 pb-4 sm:flex-row sm:items-center sm:justify-between">
+          <div
+            role="tablist"
+            aria-label="Riwayat dan Ranking Nasional Tryout CAT"
+            className="inline-flex rounded-xl border border-slate-200 bg-slate-50/80 p-1"
+          >
+            <button
+              type="button"
+              role="tab"
+              aria-selected={bottomTab === "history"}
+              onClick={() => setBottomTab("history")}
+              className={cn(
+                "inline-flex items-center gap-1.5 rounded-lg px-3.5 py-1.5 text-xs font-semibold transition sm:text-sm",
+                bottomTab === "history"
+                  ? "bg-white text-slate-950 shadow-2xs"
+                  : "text-slate-600 hover:text-slate-900",
+              )}
+            >
+              <History className="size-4 text-blue-700" aria-hidden />
+              Riwayat Tryout ({history.length})
+            </button>
+            <button
+              type="button"
+              role="tab"
+              aria-selected={bottomTab === "leaderboard"}
+              onClick={() => setBottomTab("leaderboard")}
+              className={cn(
+                "inline-flex items-center gap-1.5 rounded-lg px-3.5 py-1.5 text-xs font-semibold transition sm:text-sm",
+                bottomTab === "leaderboard"
+                  ? "bg-white text-slate-950 shadow-2xs"
+                  : "text-slate-600 hover:text-slate-900",
+              )}
+            >
+              <Trophy className="size-4 text-amber-600" aria-hidden />
+              Ranking Nasional
+            </button>
           </div>
-          <span className="text-xs font-medium text-slate-500">
-            Tersimpan otomatis di perangkat ini ({history.length} sesi)
-          </span>
+
+          <div className="flex items-center gap-2 text-xs font-medium">
+            {cloudSyncStatus === "synced" ? (
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-emerald-700">
+                <Cloud className="size-3.5" aria-hidden />
+                Tersinkron ke Cloud
+              </span>
+            ) : cloudSyncStatus === "syncing" ? (
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-blue-200 bg-blue-50 px-2.5 py-1 text-blue-700">
+                <Loader2 className="size-3.5 animate-spin" aria-hidden />
+                Menyinkronkan ke Cloud...
+              </span>
+            ) : cloudSyncStatus === "schema-missing" ? (
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-200 bg-amber-50 px-2.5 py-1 text-amber-800">
+                <CloudOff className="size-3.5" aria-hidden />
+                Lokal (Menunggu Migrasi 006)
+              </span>
+            ) : (
+              <Link
+                href={`${APP_ROUTES.login}?next=${encodeURIComponent(APP_ROUTES.tryout)}`}
+                className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1 text-slate-600 transition hover:border-blue-200 hover:text-blue-700"
+              >
+                <CloudOff className="size-3.5" aria-hidden />
+                Masuk untuk Cloud Sync &amp; Ranking
+              </Link>
+            )}
+          </div>
         </div>
 
-        {history.length === 0 ? (
-          <div className="mt-5 rounded-xl border border-dashed border-slate-200 bg-slate-50/70 px-5 py-8 text-center">
-            <FileText className="mx-auto size-8 text-slate-400" aria-hidden />
-            <p className="mt-2 text-sm font-semibold text-slate-800">
-              Belum ada riwayat tryout CAT
-            </p>
-            <p className="mt-1 text-xs text-slate-500">
-              Pilih salah satu paket simulasi di atas untuk mengukur skor TWK, TIU, dan TKP Anda
-              berdasarkan passing grade BKN.
-            </p>
-          </div>
-        ) : (
-          <div className="mt-4 divide-y divide-slate-100">
-            {history.map((record) => (
-              <div
-                key={record.id}
-                className="flex flex-col gap-3 py-4 first:pt-1 last:pb-0 lg:flex-row lg:items-center lg:justify-between"
-              >
-                <div className="min-w-0">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <p className="text-sm font-semibold text-slate-950">{record.packageLabel}</p>
-                    <span
-                      className={cn(
-                        "inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-bold",
-                        record.passed
-                          ? "bg-emerald-50 text-emerald-700"
-                          : "bg-rose-50 text-rose-700",
-                      )}
-                    >
-                      {record.passed ? (
-                        <CheckCircle2 className="size-3.5" aria-hidden />
-                      ) : (
-                        <XCircle className="size-3.5" aria-hidden />
-                      )}
-                      {record.passed ? "LULUS PG" : "BELUM LULUS PG"}
-                    </span>
-                  </div>
-                  <p className="mt-1 text-xs text-slate-500">
-                    {formatDateId(record.completedAt)} • Durasi{" "}
-                    {formatDurationVerbose(record.durationUsedSec)}
-                  </p>
-                </div>
-
-                <div className="flex flex-wrap items-center gap-2">
-                  {(["TWK", "TIU", "TKP"] as const).map((sub) => {
-                    const st = record.subtests[sub];
-                    return (
+        <div className="mt-5">
+          {bottomTab === "leaderboard" ? (
+            <TryoutLeaderboardCard
+              initialLeaderboard={initialLeaderboard}
+              isAuthenticated={isAuthenticated}
+              refreshSignal={leaderboardRefreshSignal}
+            />
+          ) : history.length === 0 ? (
+            <div className="rounded-xl border border-dashed border-slate-200 bg-slate-50/70 px-5 py-8 text-center">
+              <FileText className="mx-auto size-8 text-slate-400" aria-hidden />
+              <p className="mt-2 text-sm font-semibold text-slate-800">
+                Belum ada riwayat tryout CAT
+              </p>
+              <p className="mt-1 text-xs text-slate-500">
+                Pilih salah satu paket simulasi di atas untuk mengukur skor TWK, TIU, dan TKP Anda
+                berdasarkan passing grade BKN.
+              </p>
+            </div>
+          ) : (
+            <div className="divide-y divide-slate-100">
+              {history.map((record) => (
+                <div
+                  key={record.id}
+                  className="flex flex-col gap-3 py-4 first:pt-0 last:pb-0 lg:flex-row lg:items-center lg:justify-between"
+                >
+                  <div className="min-w-0">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <p className="text-sm font-semibold text-slate-950">{record.packageLabel}</p>
                       <span
-                        key={sub}
                         className={cn(
-                          "rounded-lg border px-2.5 py-1 text-xs font-semibold",
-                          st.passed
-                            ? "border-emerald-200 bg-emerald-50/70 text-emerald-800"
-                            : "border-rose-200 bg-rose-50/70 text-rose-800",
+                          "inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-bold",
+                          record.passed
+                            ? "bg-emerald-50 text-emerald-700"
+                            : "bg-rose-50 text-rose-700",
                         )}
                       >
-                        {sub}: {st.score}
-                        <span className="opacity-70">/{st.passingGrade}</span>
+                        {record.passed ? (
+                          <CheckCircle2 className="size-3.5" aria-hidden />
+                        ) : (
+                          <XCircle className="size-3.5" aria-hidden />
+                        )}
+                        {record.passed ? "LULUS PG" : "BELUM LULUS PG"}
                       </span>
-                    );
-                  })}
+                    </div>
+                    <p className="mt-1 text-xs text-slate-500">
+                      {formatDateId(record.completedAt)} • Durasi{" "}
+                      {formatDurationVerbose(record.durationUsedSec)}
+                    </p>
+                  </div>
 
-                  <span className="rounded-lg bg-slate-900 px-3 py-1 text-xs font-bold text-white">
-                    Total {record.totalScore}/{record.maxScore}
-                  </span>
+                  <div className="flex flex-wrap items-center gap-2">
+                    {(["TWK", "TIU", "TKP"] as const).map((sub) => {
+                      const st = record.subtests[sub];
+                      return (
+                        <span
+                          key={sub}
+                          className={cn(
+                            "rounded-lg border px-2.5 py-1 text-xs font-semibold",
+                            st.passed
+                              ? "border-emerald-200 bg-emerald-50/70 text-emerald-800"
+                              : "border-rose-200 bg-rose-50/70 text-rose-800",
+                          )}
+                        >
+                          {sub}: {st.score}
+                          <span className="opacity-70">/{st.passingGrade}</span>
+                        </span>
+                      );
+                    })}
 
-                  <Button
-                    type="button"
-                    size="sm"
-                    variant="outline"
-                    onClick={() => onOpenHistory(record)}
-                    className="border-blue-200 text-blue-700 hover:bg-blue-50"
-                  >
-                    Rapor &amp; Pembahasan
-                  </Button>
+                    <span className="rounded-lg bg-slate-900 px-3 py-1 text-xs font-bold text-white">
+                      Total {record.totalScore}/{record.maxScore}
+                    </span>
 
-                  <Button
-                    type="button"
-                    size="icon"
-                    variant="ghost"
-                    aria-label={`Hapus riwayat ${record.packageLabel}`}
-                    onClick={() => onDeleteHistory(record.id)}
-                    className="size-8 text-slate-400 hover:bg-rose-50 hover:text-rose-600"
-                  >
-                    <Trash2 className="size-4" aria-hidden />
-                  </Button>
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant="outline"
+                      onClick={() => onOpenHistory(record)}
+                      className="border-blue-200 text-blue-700 hover:bg-blue-50"
+                    >
+                      Rapor &amp; Pembahasan
+                    </Button>
+
+                    <Button
+                      type="button"
+                      size="icon"
+                      variant="ghost"
+                      aria-label={`Hapus riwayat ${record.packageLabel}`}
+                      onClick={() => onDeleteHistory(record.id)}
+                      className="size-8 text-slate-400 hover:bg-rose-50 hover:text-rose-600"
+                    >
+                      <Trash2 className="size-4" aria-hidden />
+                    </Button>
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
-        )}
+              ))}
+            </div>
+          )}
+        </div>
       </section>
     </div>
   );

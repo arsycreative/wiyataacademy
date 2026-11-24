@@ -6,6 +6,12 @@ import { Loader2 } from "lucide-react";
 import type { OptionKey } from "@/modules/question-bank/domain/question";
 import { createRandomSeed } from "@/modules/question-bank/domain/shuffle-core";
 import {
+  findUnsyncedLocalAttempts,
+  mergeTryoutHistoryRecords,
+  type LeaderboardResponse,
+  type TryoutAttemptRankSummary,
+} from "@/modules/tryout/domain/leaderboard";
+import {
   TRYOUT_MODE_CONFIGS,
   type TryoutEvaluation,
   type TryoutExamQuestion,
@@ -21,18 +27,23 @@ import {
   readActiveTryoutSession,
   readTryoutHistory,
   writeActiveTryoutSession,
+  writeTryoutHistory,
   type ActiveTryoutSession,
   type TryoutHistoryRecord,
 } from "@/modules/tryout/infrastructure/tryout-storage";
 import { useToastStore } from "@/shared/stores/toast-store";
 import { TryoutExamRunner } from "./tryout-exam-runner";
-import { TryoutLobby } from "./tryout-lobby";
+import { TryoutLobby, type TryoutCloudSyncStatus } from "./tryout-lobby";
 import { TryoutResultReview } from "./tryout-result-review";
 
 type TryoutScreen = "lobby" | "exam" | "result";
 
 type TryoutCatExperienceProps = {
   hasOfficialAccess?: boolean;
+  isAuthenticated?: boolean;
+  initialCloudHistory?: readonly TryoutHistoryRecord[];
+  initialCloudSchemaMissing?: boolean;
+  initialLeaderboard?: LeaderboardResponse | null;
   siteHeader?: ReactNode;
   siteFooter?: ReactNode;
 };
@@ -41,6 +52,8 @@ type LoadedResultView = {
   record: TryoutHistoryRecord;
   items: TryoutQuestionItem[];
   evaluation: TryoutEvaluation;
+  rankSummary: TryoutAttemptRankSummary | null;
+  cloudSynced: boolean;
 };
 
 function computeRemainingSeconds(endsAtMs: number, nowMs: number = Date.now()): number {
@@ -70,8 +83,19 @@ async function submitAndGradeOnServer(params: {
   mode: TryoutMode;
   seed: number;
   answers: Readonly<Record<string, OptionKey>>;
+  flagged?: Readonly<Record<string, boolean>>;
   durationUsedSec: number;
-}): Promise<{ evaluation: TryoutEvaluation; items: TryoutQuestionItem[] }> {
+  durationLimitSec?: number;
+  attemptId?: string;
+  presetId?: string;
+  packageLabel?: string;
+  saveToCloud?: boolean;
+}): Promise<{
+  evaluation: TryoutEvaluation;
+  items: TryoutQuestionItem[];
+  cloudSynced: boolean;
+  rankSummary: TryoutAttemptRankSummary | null;
+}> {
   const response = await fetch("/api/tryout/submit", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -83,15 +107,26 @@ async function submitAndGradeOnServer(params: {
   const payload = (await response.json()) as {
     evaluation?: TryoutEvaluation;
     items?: TryoutQuestionItem[];
+    cloudSynced?: boolean;
+    rankSummary?: TryoutAttemptRankSummary | null;
   };
   if (!payload.evaluation || !Array.isArray(payload.items)) {
     throw new Error("Respons penilaian tryout tidak lengkap.");
   }
-  return { evaluation: payload.evaluation, items: payload.items };
+  return {
+    evaluation: payload.evaluation,
+    items: payload.items,
+    cloudSynced: Boolean(payload.cloudSynced),
+    rankSummary: payload.rankSummary ?? null,
+  };
 }
 
 export function TryoutCatExperience({
   hasOfficialAccess = true,
+  isAuthenticated = false,
+  initialCloudHistory = [],
+  initialCloudSchemaMissing = false,
+  initialLeaderboard = null,
   siteHeader,
   siteFooter,
 }: TryoutCatExperienceProps) {
@@ -101,12 +136,21 @@ export function TryoutCatExperience({
   const [activeSession, setActiveSession] = useState<ActiveTryoutSession | null>(null);
   const [activeItems, setActiveItems] = useState<TryoutExamQuestion[]>([]);
   const [remainingSec, setRemainingSec] = useState<number>(0);
-  const [history, setHistory] = useState<TryoutHistoryRecord[]>([]);
+  const [history, setHistory] = useState<TryoutHistoryRecord[]>(() => [
+    ...initialCloudHistory,
+  ]);
   const [loadedResult, setLoadedResult] = useState<LoadedResultView | null>(null);
   const [loadingMessage, setLoadingMessage] = useState<string | null>(null);
+  const [cloudSyncStatus, setCloudSyncStatus] = useState<TryoutCloudSyncStatus>(() => {
+    if (!isAuthenticated) return "local-only";
+    if (initialCloudSchemaMissing) return "schema-missing";
+    return "synced";
+  });
+  const [leaderboardRefreshSignal, setLeaderboardRefreshSignal] = useState<number>(0);
 
   const autoSubmittedRef = useRef<string | null>(null);
   const loadedExamKeyRef = useRef<string | null>(null);
+  const hasSyncedLocalToCloudRef = useRef<boolean>(false);
 
   const finalizeSession = useCallback(
     async (session: ActiveTryoutSession, reason: "manual" | "timeout") => {
@@ -119,29 +163,51 @@ export function TryoutCatExperience({
           session.durationLimitSec,
           Math.max(1, Math.round((Date.now() - session.startedAtMs) / 1000)),
         );
-        const { evaluation, items } = await submitAndGradeOnServer({
-          mode: session.mode,
-          seed: session.seed,
-          answers: session.answers,
-          durationUsedSec: elapsedSec,
-        });
+        const { evaluation, items, cloudSynced, rankSummary } =
+          await submitAndGradeOnServer({
+            mode: session.mode,
+            seed: session.seed,
+            answers: session.answers,
+            flagged: session.flagged,
+            durationUsedSec: elapsedSec,
+            durationLimitSec: session.durationLimitSec,
+            attemptId: session.id,
+            presetId: session.presetId,
+            packageLabel: session.packageLabel,
+            saveToCloud: true,
+          });
 
         const record = buildTryoutHistoryRecord(session, evaluation);
         const updatedHistory = appendTryoutHistory(record);
         clearActiveTryoutSession();
         loadedExamKeyRef.current = null;
 
-        setHistory(updatedHistory);
+        setHistory((prev) => mergeTryoutHistoryRecords(updatedHistory, prev));
         setActiveSession(null);
         setActiveItems([]);
         setRemainingSec(0);
-        setLoadedResult({ record, items, evaluation });
+        setLoadedResult({
+          record,
+          items,
+          evaluation,
+          rankSummary,
+          cloudSynced,
+        });
+        if (cloudSynced) {
+          setCloudSyncStatus("synced");
+          setLeaderboardRefreshSignal((n) => n + 1);
+        }
         setScreen("result");
 
         if (reason === "timeout") {
           addToast(
             "Waktu tryout CAT telah berakhir. Jawaban Anda otomatis dikumpulkan dan dinilai.",
             "info",
+          );
+        } else if (cloudSynced) {
+          addToast(
+            "Jawaban dinilai & tersimpan ke Cloud. Ranking Nasional telah diperbarui.",
+            "success",
           );
         } else {
           addToast(
@@ -162,11 +228,61 @@ export function TryoutCatExperience({
     [addToast],
   );
 
-  // Hydrate sesi aktif & riwayat dari localStorage saat mount
+  // Hydrate sesi aktif & sinkronkan riwayat lokal <-> cloud saat mount
   useEffect(() => {
+    let cancelled = false;
     const frame = window.requestAnimationFrame(() => {
-      const savedHistory = readTryoutHistory();
-      setHistory(savedHistory);
+      const localHistory = readTryoutHistory();
+      const merged = mergeTryoutHistoryRecords(localHistory, initialCloudHistory);
+      if (merged.length > 0) {
+        writeTryoutHistory(merged);
+      }
+      setHistory(merged);
+
+      // Unggah riwayat lokal yang belum ada di cloud (1 kali saja saat login)
+      if (
+        isAuthenticated &&
+        !initialCloudSchemaMissing &&
+        !hasSyncedLocalToCloudRef.current
+      ) {
+        const unsynced = findUnsyncedLocalAttempts(localHistory, initialCloudHistory);
+        if (unsynced.length > 0) {
+          hasSyncedLocalToCloudRef.current = true;
+          setCloudSyncStatus("syncing");
+          void fetch("/api/tryout/history", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ attempts: unsynced }),
+          })
+            .then(async (res) => {
+              if (!res.ok) return null;
+              return (await res.json()) as {
+                records?: TryoutHistoryRecord[];
+                schemaMissing?: boolean;
+                syncedCount?: number;
+              };
+            })
+            .then((payload) => {
+              if (cancelled || !payload) return;
+              if (payload.schemaMissing) {
+                setCloudSyncStatus("schema-missing");
+                return;
+              }
+              setCloudSyncStatus("synced");
+              if (Array.isArray(payload.records) && payload.records.length > 0) {
+                const reMerged = mergeTryoutHistoryRecords(localHistory, payload.records);
+                writeTryoutHistory(reMerged);
+                setHistory(reMerged);
+              }
+              if ((payload.syncedCount ?? 0) > 0) {
+                setLeaderboardRefreshSignal((n) => n + 1);
+              }
+            })
+            .catch(() => {
+              if (!cancelled) setCloudSyncStatus("synced");
+            });
+        }
+      }
 
       const savedActive = readActiveTryoutSession();
       if (!savedActive) return;
@@ -180,8 +296,11 @@ export function TryoutCatExperience({
       }
     });
 
-    return () => window.cancelAnimationFrame(frame);
-  }, [finalizeSession]);
+    return () => {
+      cancelled = true;
+      window.cancelAnimationFrame(frame);
+    };
+  }, [finalizeSession, initialCloudHistory, initialCloudSchemaMissing, isAuthenticated]);
 
   // Countdown timer real-time selama sesi aktif ada
   useEffect(() => {
@@ -269,13 +388,22 @@ export function TryoutCatExperience({
     async (record: TryoutHistoryRecord) => {
       setLoadingMessage("Memuat rapor & pembahasan lengkap dari server...");
       try {
-        const { evaluation, items } = await submitAndGradeOnServer({
+        const { evaluation, items, rankSummary } = await submitAndGradeOnServer({
           mode: record.mode,
           seed: record.seed,
           answers: record.answers,
           durationUsedSec: record.durationUsedSec,
+          presetId: record.presetId,
+          packageLabel: record.packageLabel,
+          saveToCloud: false,
         });
-        setLoadedResult({ record, items, evaluation });
+        setLoadedResult({
+          record,
+          items,
+          evaluation,
+          rankSummary,
+          cloudSynced: isAuthenticated && !initialCloudSchemaMissing,
+        });
         setScreen("result");
         window.scrollTo({ top: 0, behavior: "smooth" });
       } catch {
@@ -284,7 +412,7 @@ export function TryoutCatExperience({
         setLoadingMessage(null);
       }
     },
-    [addToast],
+    [addToast, initialCloudSchemaMissing, isAuthenticated],
   );
 
   const updateActiveSession = useCallback(
@@ -354,14 +482,28 @@ export function TryoutCatExperience({
   const handleDeleteHistory = useCallback(
     (recordId: string) => {
       const next = deleteTryoutHistoryItem(recordId);
-      setHistory(next);
+      setHistory((prev) => {
+        const filtered = prev.filter((item) => item.id !== recordId);
+        return mergeTryoutHistoryRecords(next, filtered);
+      });
       if (loadedResult?.record.id === recordId) {
         setLoadedResult(null);
         setScreen("lobby");
       }
+      if (isAuthenticated && !initialCloudSchemaMissing) {
+        void fetch(`/api/tryout/history?id=${encodeURIComponent(recordId)}`, {
+          method: "DELETE",
+        })
+          .then(() => {
+            setLeaderboardRefreshSignal((n) => n + 1);
+          })
+          .catch(() => {
+            // Biarkan state lokal tetap terhapus
+          });
+      }
       addToast("Riwayat tryout berhasil dihapus.", "info");
     },
-    [loadedResult, addToast],
+    [loadedResult, addToast, isAuthenticated, initialCloudSchemaMissing],
   );
 
   const handleRetakeFresh = useCallback(() => {
@@ -423,12 +565,18 @@ export function TryoutCatExperience({
             answers={loadedResult.record.answers}
             flagged={loadedResult.record.flagged}
             evaluation={loadedResult.evaluation}
+            rankSummary={loadedResult.rankSummary}
+            cloudSynced={loadedResult.cloudSynced}
             onBackToLobby={() => setScreen("lobby")}
             onRetakeFresh={handleRetakeFresh}
           />
         ) : (
           <TryoutLobby
             hasOfficialAccess={hasOfficialAccess}
+            isAuthenticated={isAuthenticated}
+            cloudSyncStatus={cloudSyncStatus}
+            initialLeaderboard={initialLeaderboard}
+            leaderboardRefreshSignal={leaderboardRefreshSignal}
             activeSession={activeSession}
             activeRemainingSec={remainingSec}
             history={history}

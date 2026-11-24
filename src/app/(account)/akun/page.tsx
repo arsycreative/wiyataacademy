@@ -14,6 +14,10 @@ import { AccountBillingSection } from "@/modules/payment/presentation/account-bi
 import { summarizeAllProgress } from "@/modules/question-bank/domain/subtest-summary";
 import { createTiuProgressRepository } from "@/modules/question-bank/infrastructure/tiu-progress-repository.server";
 import { sanitizePracticeProgress } from "@/modules/question-bank/infrastructure/tiu-progress-sync";
+import {
+  getAttemptRankSummary,
+  listUserTryoutAttemptsFromCloud,
+} from "@/modules/tryout/infrastructure/tryout-attempts-repository.server";
 import { APP_ROUTES } from "@/shared/constants/app";
 
 export const dynamic = "force-dynamic";
@@ -33,11 +37,14 @@ export default async function AccountPage() {
   const profileRepo = createProfileRepository();
   const progressRepo = createTiuProgressRepository();
 
-  const [profileRes, progressRes, billingSummary] = await Promise.all([
-    profileRepo.findById(user.id),
-    progressRepo.findByUserId(user.id),
-    getUserBillingSummary(user.id),
-  ]);
+  const [profileRes, progressRes, billingSummary, tryoutCloudRes, nationalRank] =
+    await Promise.all([
+      profileRepo.findById(user.id),
+      progressRepo.findByUserId(user.id),
+      getUserBillingSummary(user.id),
+      listUserTryoutAttemptsFromCloud(user.id, 20),
+      getAttemptRankSummary("all-official"),
+    ]);
 
   const initialSummaries = summarizeAllProgress(
     progressRes.data ?? sanitizePracticeProgress({}),
@@ -66,6 +73,8 @@ export default async function AccountPage() {
           initialCloudProgress={progressRes.data}
           initialSummaries={initialSummaries}
           initialSchemaMissing={profileRes.schemaMissing || progressRes.schemaMissing}
+          initialCloudTryoutHistory={tryoutCloudRes.records}
+          nationalRank={nationalRank}
         />
       </main>
 
