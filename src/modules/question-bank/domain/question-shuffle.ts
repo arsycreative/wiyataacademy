@@ -13,6 +13,7 @@ import {
   createInitialPatternSeeds,
   createRandomSeed,
   hashStringWithSeed,
+  isNonShuffledPracticePattern,
   seededShuffle,
   shuffleQuestionOptions,
 } from "./shuffle-core";
@@ -39,7 +40,8 @@ export function summarizeTiuProgress(
   const patterns: PatternProgressSummary[] = TIU_PATTERN_IDS.map((patternId) => {
     const meta = TIU_PATTERNS[patternId];
     const bank = TIU_QUESTION_BANKS[patternId];
-    const fallbackPatternSeed = patternSeeds[patternId] ?? 0;
+    const keepUnshuffled = isNonShuffledPracticePattern(patternId);
+    const fallbackPatternSeed = keepUnshuffled ? 0 : (patternSeeds[patternId] ?? 0);
 
     let answeredCount = 0;
     let correctCount = 0;
@@ -53,7 +55,9 @@ export function summarizeTiuProgress(
       const userAns = selectedAnswers[question.id];
       if (userAns !== undefined) {
         answeredCount += 1;
-        const effectiveSeed = questionSeeds[question.id] ?? fallbackPatternSeed;
+        const effectiveSeed = keepUnshuffled
+          ? 0
+          : (questionSeeds[question.id] ?? fallbackPatternSeed);
         const resolved = effectiveSeed
           ? shuffleQuestionOptions(question, effectiveSeed)
           : question;

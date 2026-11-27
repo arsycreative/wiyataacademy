@@ -46,6 +46,7 @@ import {
   createInitialPatternSeeds,
   createRandomSeed,
   hashStringWithSeed,
+  isNonShuffledPracticePattern,
   seededShuffle,
   shuffleQuestionOptions,
 } from "@/modules/question-bank/domain/shuffle-core";
@@ -376,11 +377,12 @@ export function TiuPatternPractice({
     [rawPatternQuestions],
   );
 
-  const activePatternSeed = patternSeeds[activePattern] ?? 0;
+  const isNonShuffledPattern = isNonShuffledPracticePattern(activePattern);
+  const activePatternSeed = isNonShuffledPattern ? 0 : (patternSeeds[activePattern] ?? 0);
 
-  // Shuffled questions (both question order and options A-E are randomized per seed)
+  // Shuffled questions (non-numeric patterns randomize order & options A-E; numeric patterns stay sequential & unshuffled)
   const allPatternQuestions = useMemo(() => {
-    if (!activePatternSeed) {
+    if (isNonShuffledPattern || !activePatternSeed) {
       return rawPatternQuestions;
     }
     const orderSeed = hashStringWithSeed(`order:${activePattern}`, activePatternSeed);
@@ -391,7 +393,7 @@ export function TiuPatternPractice({
         questionSeeds[question.id] ?? activePatternSeed,
       ),
     );
-  }, [rawPatternQuestions, activePattern, activePatternSeed, questionSeeds]);
+  }, [rawPatternQuestions, activePattern, activePatternSeed, isNonShuffledPattern, questionSeeds]);
 
   // Questions filtered by sub-pattern only (preserving shuffled order & options)
   const subPatternScopedQuestions = useMemo(
@@ -423,6 +425,7 @@ export function TiuPatternPractice({
             questionSeeds[q.id],
             activePatternSeed,
           );
+          if (isNonShuffledPattern) return rawQ;
           return tempSeed ? shuffleQuestionOptions(rawQ, tempSeed) : rawQ;
         });
     }
@@ -440,6 +443,7 @@ export function TiuPatternPractice({
     rawQuestionById,
     questionSeeds,
     activePatternSeed,
+    isNonShuffledPattern,
     statusFilter,
     selectedAnswers,
     flaggedQuestions,
@@ -636,18 +640,20 @@ export function TiuPatternPractice({
       );
 
       setActiveQuestionId(questionId);
-      setQuestionSeeds((prev) => {
-        if (!isPendingRetry && (prev[questionId] !== undefined || !activePatternSeed)) {
-          return prev;
-        }
-        if (!committedSeed) {
-          return prev;
-        }
-        return {
-          ...prev,
-          [questionId]: committedSeed,
-        };
-      });
+      if (!isNonShuffledPattern) {
+        setQuestionSeeds((prev) => {
+          if (!isPendingRetry && (prev[questionId] !== undefined || !activePatternSeed)) {
+            return prev;
+          }
+          if (!committedSeed) {
+            return prev;
+          }
+          return {
+            ...prev,
+            [questionId]: committedSeed,
+          };
+        });
+      }
       setSelectedAnswers((prev) => {
         if (!isPendingRetry && prev[questionId] !== undefined) {
           return prev;
@@ -661,7 +667,7 @@ export function TiuPatternPractice({
         setRetrySession((prev) => commitRetryAnswer(prev, questionId).nextSession);
       }
     },
-    [activePatternSeed, isReviewMode, questionSeeds, retrySession],
+    [activePatternSeed, isNonShuffledPattern, isReviewMode, questionSeeds, retrySession],
   );
 
   const startRetryForIds = useCallback(
@@ -1036,18 +1042,28 @@ export function TiuPatternPractice({
                 )}
               </Button>
 
-              {!isReviewMode && (
+              {!isReviewMode && (!isNonShuffledPattern || hasPatternProgress) && (
                 <Button
                   type="button"
                   size="sm"
                   variant="outline"
                   onClick={handleReset}
-                  title={hasPatternProgress ? "Reset & Acak" : "Acak Soal"}
+                  title={
+                    isNonShuffledPattern
+                      ? "Reset Progres Pola Ini"
+                      : hasPatternProgress
+                        ? "Reset & Acak"
+                        : "Acak Soal"
+                  }
                   className="h-8 border-slate-200 px-2.5 text-xs font-semibold text-slate-700 hover:bg-slate-50"
                 >
                   <RotateCcw className="size-3.5" aria-hidden />
                   <span className="hidden md:inline">
-                    {hasPatternProgress ? "Reset & Acak" : "Acak"}
+                    {isNonShuffledPattern
+                      ? "Reset"
+                      : hasPatternProgress
+                        ? "Reset & Acak"
+                        : "Acak"}
                   </span>
                 </Button>
               )}
@@ -1583,7 +1599,7 @@ export function TiuPatternPractice({
                   )}
                 </Button>
 
-                {!isReviewMode && (
+                {!isReviewMode && (!isNonShuffledPattern || hasPatternProgress) && (
                   <Button
                     type="button"
                     size="sm"
@@ -1592,7 +1608,11 @@ export function TiuPatternPractice({
                     className="h-9 border-slate-200 text-xs font-semibold text-slate-700 hover:bg-slate-50"
                   >
                     <RotateCcw className="size-3.5" aria-hidden />
-                    {hasPatternProgress ? "Reset & Acak" : "Acak Soal"}
+                    {isNonShuffledPattern
+                      ? "Reset Progres"
+                      : hasPatternProgress
+                        ? "Reset & Acak"
+                        : "Acak Soal"}
                   </Button>
                 )}
               </div>

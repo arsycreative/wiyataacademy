@@ -81,14 +81,45 @@ export function seededShuffle<T>(items: readonly T[], seed: number): T[] {
 }
 
 /**
+ * Pola hitungan (Numerik & Kuantitatif) pada Bank Soal TIU yang ditampilkan
+ * berurutan secara runtut (tanpa acak urutan soal maupun opsi A–E saat latihan).
+ */
+export const NON_SHUFFLED_PRACTICE_PATTERNS: readonly TiuPatternId[] = [
+  "hitung-cepat",
+  "perbandingan-kuantitatif",
+  "deret-angka",
+  "analisis-tabel",
+] as const;
+
+export function isNonShuffledPracticePattern(patternId: string): boolean {
+  return (NON_SHUFFLED_PRACTICE_PATTERNS as readonly string[]).includes(patternId);
+}
+
+/**
+ * Sub-pola dengan urutan opsi A–E baku (standar ujian CPNS/SNBT) sehingga
+ * opsinya TIDAK pernah diacak di mode mana pun (Bank Soal, Tryout CAT, maupun Sprint).
+ */
+export const FIXED_OPTION_SUBPATTERNS: readonly string[] = [
+  "kecukupan-data",
+  "hubungan-variabel-x-dan-y",
+] as const;
+
+export function hasFixedOptionOrder(
+  question: Pick<Question, "subPattern">,
+): boolean {
+  return FIXED_OPTION_SUBPATTERNS.includes(question.subPattern);
+}
+
+/**
  * Mengacak urutan opsi jawaban A–E untuk satu soal berdasarkan seed,
  * sekaligus memperbarui kunci `answer` ke posisi huruf yang baru.
+ * Mengembalikan soal apa adanya jika termasuk sub-pola beropsi baku (`FIXED_OPTION_SUBPATTERNS`).
  */
 export function shuffleQuestionOptions(
   question: Question,
   optionSeed: number,
 ): Question {
-  if (!optionSeed) return question;
+  if (!optionSeed || hasFixedOptionOrder(question)) return question;
   const perQuestionSeed = hashStringWithSeed(`opt:${question.id}`, optionSeed);
   const shuffledRawOptions = seededShuffle(question.options, perQuestionSeed);
 
@@ -113,12 +144,13 @@ export function shuffleQuestionOptions(
 
 /**
  * Mengacak opsi soal sekaligus memetakan skor TKP (1–5) ke huruf baru yang sejajar.
+ * Mengembalikan soal apa adanya jika termasuk sub-pola beropsi baku (`FIXED_OPTION_SUBPATTERNS`).
  */
 export function shuffleQuestionWithScores(
   question: Question,
   seed: number,
 ): Question {
-  if (!seed || seed <= 0) {
+  if (!seed || seed <= 0 || hasFixedOptionOrder(question)) {
     return question;
   }
 
