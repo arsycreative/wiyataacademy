@@ -163,6 +163,7 @@ export const PATTERN_CHEAT_SHEETS: Record<PracticePatternId, PatternCheatSheet> 
     fastTricks: [
       "Hafal pecahan sakti & pembagian setara: ÷0,25 = ×4; ÷0,125 = ×8; 12,5% = 1/8; 37,5% = 3/8; 62,5% = 5/8; 16,67% = 1/6; 33,33% = 1/3.",
       "Gunakan sifat setara a ÷ b ÷ c = a ÷ (b × c) dan (a × b) ÷ c = (a ÷ c) × b untuk mencoret faktor pembagi sebelum mengalikan angka besar.",
+      "Untuk soal pasangan setara (a × b = c × d atau a ÷ b = c ÷ d): eliminasi cepat 4 opsi salah dengan cek ekor angka (digit satuan), uji faktor prima unik (mis. kelipatan 7 atau 9), lalu cek rasio silang (a/c = d/b).",
       "Gunakan selisih kuadrat a² - b² = (a + b)(a - b) dan sifat distributif ab + ac = a(b + c) alih-alih menghitung manual satu per satu.",
       "Cek digit terakhir (ekor angka) dan taksiran kasar orde ratusan/ribuan jika pilihan ganda memiliki angka satuan atau besaran berbeda.",
     ],

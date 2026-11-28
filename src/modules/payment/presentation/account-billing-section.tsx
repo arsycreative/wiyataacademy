@@ -106,7 +106,7 @@ export function AccountBillingSection({
                   Status Akun: Paket Gratis (Trial)
                 </p>
                 <p className="mt-0.5 text-xs text-slate-600">
-                  Anda dapat mencoba pola gratis tiap subtes &amp; Mini Tryout 35 soal. Upgrade ke Paket Intensif untuk membuka 2.890+ soal dan Tryout Resmi 110 soal.
+                  Anda dapat mencoba pola gratis tiap subtes &amp; Mini Tryout 35 soal. Upgrade ke Paket Intensif untuk membuka 2.920+ soal dan Tryout Resmi 110 soal.
                 </p>
               </div>
             </div>

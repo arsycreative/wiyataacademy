@@ -109,12 +109,12 @@ describe("TIU question bank", () => {
     }
   });
 
-  it("contains 170 questions for hitung-cepat (30 per sub-pattern + 20 perkalian-dan-pembagian-setara)", () => {
-    expect(hitungCepatQuestions).toHaveLength(170);
+  it("contains 200 questions for hitung-cepat (30 per base sub-pattern + 50 perkalian-dan-pembagian-setara)", () => {
+    expect(hitungCepatQuestions).toHaveLength(200);
 
     const expectedSubPatterns: Record<string, number> = {
       "operasi-pecahan": 30,
-      "perkalian-dan-pembagian-setara": 20,
+      "perkalian-dan-pembagian-setara": 50,
       "operasi-desimal": 30,
       "persentase-dan-angka-sakti": 30,
       "aljabar-dan-kuadrat": 30,
@@ -290,7 +290,7 @@ describe("TIU question bank", () => {
     expect(stats[3]).toMatchObject({
       id: "hitung-cepat",
       order: 4,
-      total: 170,
+      total: 200,
     });
     expect(stats[4]).toMatchObject({
       id: "perbandingan-kuantitatif",

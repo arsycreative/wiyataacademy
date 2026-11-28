@@ -58,14 +58,14 @@ function makeHistoryRecord(
 }
 
 describe("computeSkdLearningPath", () => {
-  it("builds 5 structured stages totaling 2,890 practice questions and starts at diagnostic for new users", () => {
+  it("builds 5 structured stages totaling 2,920 practice questions and starts at diagnostic for new users", () => {
     const state = computeSkdLearningPath(
       summarizeAllProgress(sanitizePracticeProgress({})),
       [],
     );
 
     expect(state.stages).toHaveLength(5);
-    expect(state.totalQuestions).toBe(2890);
+    expect(state.totalQuestions).toBe(2920);
     expect(state.totalAnswered).toBe(0);
     expect(state.completedStagesCount).toBe(0);
     expect(state.nextAction.stageId).toBe("diagnostik");
