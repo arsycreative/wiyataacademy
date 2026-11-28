@@ -25,7 +25,7 @@ export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: "Akun & Progres Belajar",
   description:
-    "Kelola profil akun Wiyata Academy, status paket belajar, dan pantau progres latihan SKD CPNS.",
+    "Kelola profil akun Wiyata Edu, status paket belajar, dan pantau progres latihan SKD CPNS.",
 };
 
 export default async function AccountPage() {

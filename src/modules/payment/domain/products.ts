@@ -1,4 +1,4 @@
-/** Catalog produk yang bisa dibeli di Wiyata Academy */
+/** Catalog produk yang bisa dibeli di Wiyata Edu */
 export type ProductId = "skd-intensif" | "skd-premium" | "tryout-bundle";
 
 export interface Product {

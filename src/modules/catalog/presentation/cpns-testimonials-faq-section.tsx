@@ -90,7 +90,7 @@ export function CpnsTestimonialsAndFaqSection() {
                 Pertanyaan Umum
               </h2>
               <p className="mt-3 text-base leading-7 text-slate-600">
-                Informasi singkat mengenai program persiapan CPNS di Wiyata Academy.
+                Informasi singkat mengenai program persiapan CPNS di Wiyata Edu.
               </p>
 
               <div className="mt-6">

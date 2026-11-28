@@ -139,7 +139,7 @@ export function AuthForm({ mode, initialNext, initialError }: AuthFormProps) {
         }
 
         if (data.session) {
-          addToast("Akun berhasil dibuat. Selamat belajar di Wiyata Academy!", "success");
+          addToast("Akun berhasil dibuat. Selamat belajar di Wiyata Edu!", "success");
           router.push(nextPath);
           router.refresh();
           return;
@@ -225,8 +225,8 @@ export function AuthForm({ mode, initialNext, initialError }: AuthFormProps) {
             }
             alt={
               isRegister
-                ? "Ilustrasi belajar bersama Wiyata Academy"
-                : "Ilustrasi persiapan CPNS Wiyata Academy"
+                ? "Ilustrasi belajar bersama Wiyata Edu"
+                : "Ilustrasi persiapan CPNS Wiyata Edu"
             }
             width={420}
             height={380}
@@ -240,7 +240,7 @@ export function AuthForm({ mode, initialNext, initialError }: AuthFormProps) {
       <div className="flex flex-col justify-center p-6 sm:p-10 lg:col-span-7">
         <div className="mx-auto w-full max-w-[430px]">
           <h2 className="text-2xl font-semibold text-slate-950">
-            {isRegister ? "Buat Akun Wiyata Academy" : "Masuk ke Akun"}
+            {isRegister ? "Buat Akun Wiyata Edu" : "Masuk ke Akun"}
           </h2>
           <p className="mt-1.5 text-sm text-slate-600">
             {isRegister ? "Sudah punya akun? " : "Belum punya akun? "}

@@ -17,7 +17,7 @@ interface WhatsappFloatingButtonProps {
 }
 
 export function WhatsappFloatingButton({
-  message = "Halo CS Wiyata Academy, saya ingin bertanya seputar paket belajar SKD CPNS.",
+  message = "Halo CS Wiyata Edu, saya ingin bertanya seputar paket belajar SKD CPNS.",
   label = "Tanya CS",
   className,
 }: WhatsappFloatingButtonProps) {
@@ -26,7 +26,7 @@ export function WhatsappFloatingButton({
       href={buildWhatsappHref(message)}
       target="_blank"
       rel="noopener noreferrer"
-      aria-label={`Hubungi Customer Service Wiyata Academy via WhatsApp (${CS_WHATSAPP_DISPLAY})`}
+      aria-label={`Hubungi Customer Service Wiyata Edu via WhatsApp (${CS_WHATSAPP_DISPLAY})`}
       className={cn(
         "fixed bottom-5 right-5 z-40 inline-flex items-center gap-2.5 rounded-full bg-emerald-600 px-4 py-3 text-xs font-bold text-white shadow-xl shadow-emerald-900/20 ring-4 ring-white transition-all hover:scale-[1.03] hover:bg-emerald-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600 sm:px-5 sm:text-sm print:hidden",
         className,

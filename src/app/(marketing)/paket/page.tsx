@@ -72,7 +72,7 @@ export default async function PricingPage() {
               />
               <FaqItem
                 question="Apakah ada biaya langganan bulanan?"
-                answer="Tidak ada. Seluruh paket Wiyata Academy berlaku sekali bayar (one-time purchase) untuk akses selamanya."
+                answer="Tidak ada. Seluruh paket Wiyata Edu berlaku sekali bayar (one-time purchase) untuk akses selamanya."
               />
               <FaqItem
                 question="Bagaimana jika transaksi tertunda atau mengalami kendala?"
@@ -84,7 +84,7 @@ export default async function PricingPage() {
       </main>
 
       <SiteFooter />
-      <WhatsappFloatingButton message="Halo CS Wiyata Academy, saya ingin konsultasi atau bertanya tentang Paket Belajar SKD CPNS." />
+      <WhatsappFloatingButton message="Halo CS Wiyata Edu, saya ingin konsultasi atau bertanya tentang Paket Belajar SKD CPNS." />
     </div>
   );
 }

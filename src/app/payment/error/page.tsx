@@ -78,7 +78,7 @@ export default async function PaymentErrorPage({ searchParams }: ErrorPageProps)
       <SiteFooter />
       <WhatsappFloatingButton
         label="Bantuan Pembayaran"
-        message={`Halo CS Wiyata Academy, saya mengalami kendala pembayaran untuk Order ID ${orderId}.`}
+        message={`Halo CS Wiyata Edu, saya mengalami kendala pembayaran untuk Order ID ${orderId}.`}
       />
     </div>
   );

@@ -10,7 +10,7 @@ import { APP_ROUTES } from "@/shared/constants/app";
 export const metadata: Metadata = {
   title: "Syarat & Ketentuan, Kebijakan Privasi, dan Pengembalian Dana",
   description:
-    "Informasi hukum, kepemilikan platform oleh Arsy Studio, ketentuan transaksi pembayaran Midtrans, dan kebijakan pengembalian dana Wiyata Academy.",
+    "Informasi hukum, kepemilikan platform oleh Arsy Studio, ketentuan transaksi pembayaran Midtrans, dan kebijakan pengembalian dana Wiyata Edu.",
 };
 
 export default function TermsAndRefundPage() {
@@ -56,7 +56,7 @@ export default function TermsAndRefundPage() {
                 <h2>1. Identitas Usaha &amp; Kepemilikan Platform</h2>
               </div>
               <p>
-                Platform <strong>Wiyata Academy</strong> (<code className="rounded bg-slate-100 px-1.5 py-0.5 text-xs text-blue-700">wiyataacademy.netlify.app</code>) adalah produk dan layanan pembelajaran digital yang dimiliki, dikembangkan, dan dioperasikan sepenuhnya oleh:
+                Platform <strong>Wiyata Edu</strong> (<code className="rounded bg-slate-100 px-1.5 py-0.5 text-xs text-blue-700">wiyataacademy.netlify.app</code>) adalah produk dan layanan pembelajaran digital yang dimiliki, dikembangkan, dan dioperasikan sepenuhnya oleh:
               </p>
               <div className="rounded-xl border border-blue-100 bg-blue-50/50 p-4 font-medium text-slate-900">
                 <p className="font-bold text-blue-900">Arsy Studio</p>
@@ -80,7 +80,7 @@ export default function TermsAndRefundPage() {
               </div>
               <ul className="list-disc space-y-2 pl-5">
                 <li>
-                  Seluruh transaksi pembayaran untuk paket belajar Wiyata Academy ditagihkan atas nama merchant <strong>Arsy Studio</strong> dan diproses secara aman melalui gerbang pembayaran berlisensi Bank Indonesia, <strong>Midtrans (PT Midtrans)</strong>.
+                  Seluruh transaksi pembayaran untuk paket belajar Wiyata Edu ditagihkan atas nama merchant <strong>Arsy Studio</strong> dan diproses secara aman melalui gerbang pembayaran berlisensi Bank Indonesia, <strong>Midtrans (PT Midtrans)</strong>.
                 </li>
                 <li>
                   Metode pembayaran resmi yang didukung meliputi Virtual Account (BCA, BNI, BRI, Mandiri, Permata), QRIS (GoPay, ShopeePay, OVO, Dana, LinkAja), dan Kartu Kredit/Debit (Visa / Mastercard).
@@ -141,7 +141,7 @@ export default function TermsAndRefundPage() {
               </p>
               <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 text-xs sm:text-sm">
                 <p><strong>Merchant Pengelola:</strong> Arsy Studio</p>
-                <p><strong>Platform:</strong> Wiyata Academy (wiyataacademy.netlify.app)</p>
+                <p><strong>Platform:</strong> Wiyata Edu (wiyataacademy.netlify.app)</p>
                 <p><strong>Email Layanan:</strong> support@wiyataacademy.com / kontak.arsystudio@gmail.com</p>
                 <p><strong>Jam Operasional Bantuan:</strong> Senin – Sabtu, 08.00 – 20.00 WIB</p>
                 <p><strong>Domisili:</strong> Indonesia</p>

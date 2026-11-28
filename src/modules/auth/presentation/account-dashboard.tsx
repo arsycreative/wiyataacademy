@@ -222,7 +222,7 @@ export function AccountDashboard({
 
             <div className="min-w-0">
               <h1 className="truncate text-xl font-bold text-slate-950 sm:text-2xl">
-                {savedName || "Peserta Wiyata Academy"}
+                {savedName || "Peserta Wiyata Edu"}
               </h1>
               <p className="mt-0.5 truncate text-sm text-slate-500">
                 {user.email} • Bergabung {formattedJoinDate}

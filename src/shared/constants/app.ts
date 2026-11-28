@@ -1,4 +1,4 @@
-export const APP_NAME = "Wiyata Academy";
+export const APP_NAME = "Wiyata Edu";
 
 export const APP_ROUTES = {
   home: "/",

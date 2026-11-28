@@ -15,8 +15,8 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "Wiyata Academy — Bimbel Persiapan CPNS",
-    template: "%s | Wiyata Academy",
+    default: "Wiyata Edu — Bimbel Persiapan CPNS",
+    template: "%s | Wiyata Edu",
   },
   description:
     "Platform bimbingan belajar persiapan seleksi CPNS: modul terarah SKD (TWK, TIU, TKP) dan pendalaman SKB sesuai kisi-kisi terbaru.",

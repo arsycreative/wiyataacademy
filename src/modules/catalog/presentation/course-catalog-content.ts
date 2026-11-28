@@ -226,7 +226,7 @@ const detailBySlug: Record<string, CourseDetail> = {
     label: "Roadmap SKD CPNS",
     level: "Pemula – Lanjutan",
     price: "Akses Terbuka",
-    instructors: "Tim Kurikulum SKD Wiyata Academy",
+    instructors: "Tim Kurikulum SKD Wiyata Edu",
     description:
       "Roadmap belajar interaktif 5 tahap untuk menembus ambang batas dan meraih skor tinggi SKD CPNS berbasis CAT BKN.",
     duration: "5 tahap terstruktur",
@@ -242,7 +242,7 @@ const detailBySlug: Record<string, CourseDetail> = {
       "Mengelola ritme 100 menit untuk 110 soal pada simulasi CAT resmi lengkap dengan evaluasi ambang batas BKN.",
     ],
     about: [
-      "Intensif SKD CPNS kini berbentuk Learning Path interaktif yang menyatukan seluruh bank soal, cheat sheet rumus cepat, dan simulasi CAT Wiyata Academy ke dalam 5 tahap belajar berurutan.",
+      "Intensif SKD CPNS kini berbentuk Learning Path interaktif yang menyatukan seluruh bank soal, cheat sheet rumus cepat, dan simulasi CAT Wiyata Edu ke dalam 5 tahap belajar berurutan.",
       "Setiap tahap menampilkan progres nyata pengerjaan, persentase akurasi atau skor poin, serta tautan langsung ke setiap pilar TWK, pola TIU, aspek TKP, dan paket Tryout CAT.",
       "Masuk dengan akun Anda agar progres bank soal tersinkronisasi lintas perangkat dan riwayat skor simulasi mudah dipantau hingga hari ujian.",
     ],
@@ -335,7 +335,7 @@ const detailBySlug: Record<string, CourseDetail> = {
     label: "SKD CPNS",
     level: "Menengah",
     price: "Rp 169.000",
-    instructors: "Tim Mentor TIU Wiyata Academy",
+    instructors: "Tim Mentor TIU Wiyata Edu",
     description:
       "Kuasai trik berhitung cepat, deret angka, perbandingan kuantitatif, dan penalaran analitis tanpa kehabisan waktu.",
     duration: "4 minggu",
@@ -482,7 +482,7 @@ export function toCatalogCourse(course: CourseSummary): CatalogCourse {
       label,
       level,
       price,
-      instructors: "Tim Mentor ASN Wiyata Academy",
+      instructors: "Tim Mentor ASN Wiyata Edu",
       description: course.description,
       duration: course.duration,
       lessons: `${course.lessonCount} materi`,

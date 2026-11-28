@@ -83,7 +83,7 @@ export default async function PaymentPendingPage({ searchParams }: PendingPagePr
       <SiteFooter />
       <WhatsappFloatingButton
         label="Konfirmasi via WA"
-        message={`Halo CS Wiyata Academy, saya ingin konfirmasi pembayaran untuk Order ID ${orderId}.`}
+        message={`Halo CS Wiyata Edu, saya ingin konfirmasi pembayaran untuk Order ID ${orderId}.`}
       />
     </div>
   );

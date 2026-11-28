@@ -37,7 +37,7 @@ export default async function PaymentFinishPage({ searchParams }: FinishPageProp
           </h1>
 
           <p className="mt-3 text-sm text-slate-600 sm:text-base">
-            Terima kasih telah bergabung bersama Wiyata Academy. Seluruh modul latihan, bank soal
+            Terima kasih telah bergabung bersama Wiyata Edu. Seluruh modul latihan, bank soal
             HOTS, simulasi CAT, dan materi akselerasi sudah bisa kamu akses penuh.
           </p>
 
@@ -84,7 +84,7 @@ export default async function PaymentFinishPage({ searchParams }: FinishPageProp
       <SiteFooter />
       <WhatsappFloatingButton
         label="Butuh Bantuan CS"
-        message={`Halo CS Wiyata Academy, saya baru saja menyelesaikan pembayaran untuk Order ID ${orderId} dan butuh bantuan akses.`}
+        message={`Halo CS Wiyata Edu, saya baru saja menyelesaikan pembayaran untuk Order ID ${orderId} dan butuh bantuan akses.`}
       />
     </div>
   );

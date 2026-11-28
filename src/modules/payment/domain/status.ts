@@ -28,7 +28,7 @@ const MIDTRANS_TO_INTERNAL_STATUS: Record<string, OrderStatus> = {
 };
 
 /**
- * Memetakan `transaction_status` dari Midtrans API / Webhook ke status internal Wiyata Academy.
+ * Memetakan `transaction_status` dari Midtrans API / Webhook ke status internal Wiyata Edu.
  */
 export function mapMidtransTransactionStatus(
   transactionStatus: string,

@@ -31,7 +31,7 @@ export function AccountBillingSection({
             </h2>
           </div>
           <p className="mt-0.5 text-xs text-slate-600">
-            Status keanggotaan aktif dan catatan invoice pembayaran Anda di Wiyata Academy.
+            Status keanggotaan aktif dan catatan invoice pembayaran Anda di Wiyata Edu.
           </p>
         </div>
 

@@ -11,7 +11,7 @@ import { APP_ROUTES } from "@/shared/constants/app";
 export const metadata: Metadata = {
   title: "Daftar Akun",
   description:
-    "Buat akun gratis Wiyata Academy dengan Google atau email untuk menyimpan riwayat belajar dan skor latihan TIU CPNS.",
+    "Buat akun gratis Wiyata Edu dengan Google atau email untuk menyimpan riwayat belajar dan skor latihan SKD CPNS.",
 };
 
 type RegisterPageProps = {

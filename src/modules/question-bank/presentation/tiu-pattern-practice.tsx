@@ -1738,7 +1738,7 @@ export function TiuPatternPractice({
         {isCurrentPatternLocked ? (
           <PremiumPaywallCard
             title={`Buka Pola ${activeMeta.label} (${patternStats.find((p) => p.id === activePattern)?.total ?? 0} Soal HOTS)`}
-            description={`Pola "Sinonim, Antonim & Akronim" dapat dicoba secara gratis. Untuk mengakses ${activeMeta.label} beserta seluruh 9 pola TIU, TWK, dan TKP, silakan aktifkan Paket Belajar Wiyata Academy.`}
+            description={`Pola "Silogisme & Penalaran Induktif" serta "Sinonim, Antonim & Akronim" dapat dicoba secara gratis. Untuk mengakses ${activeMeta.label} beserta seluruh 9 pola TIU, TWK, dan TKP, silakan aktifkan Paket Belajar Wiyata Edu.`}
           />
         ) : isPatternLoading ? (
           <section className="flex flex-col items-center justify-center rounded-2xl border border-blue-100 bg-white px-6 py-16 text-center">

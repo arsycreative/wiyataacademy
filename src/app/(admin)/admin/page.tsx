@@ -32,7 +32,7 @@ export default async function AdminOverviewPage() {
           </h1>
           <p className="text-sm text-slate-500">
             Pantau pendapatan Midtrans, status transaksi, dan pertumbuhan siswa
-            Wiyata Academy.
+            Wiyata Edu.
           </p>
         </div>
 

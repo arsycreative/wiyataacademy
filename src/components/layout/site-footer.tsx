@@ -40,7 +40,7 @@ export function SiteFooter() {
         </nav>
 
         <div className="text-xs text-slate-500 sm:text-right">
-          <p>© {currentYear} Wiyata Academy by <strong className="font-semibold text-slate-700">Arsy Studio</strong>.</p>
+          <p>© {currentYear} Wiyata Edu by <strong className="font-semibold text-slate-700">Arsy Studio</strong>.</p>
           <p className="mt-0.5 text-[11px] text-slate-400">
             Pembayaran diproses secara aman melalui Midtrans.
           </p>

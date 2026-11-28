@@ -11,7 +11,7 @@ import { APP_ROUTES } from "@/shared/constants/app";
 export const metadata: Metadata = {
   title: "Masuk Akun",
   description:
-    "Masuk ke akun Wiyata Academy menggunakan Google atau email untuk menyimpan dan menyinkronkan progres latihan TIU SKD CPNS.",
+    "Masuk ke akun Wiyata Edu menggunakan Google atau email untuk menyimpan dan menyinkronkan progres latihan SKD CPNS.",
 };
 
 type LoginPageProps = {
